@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
+import qora.transaction.CreatePollTransaction;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
@@ -62,7 +63,13 @@ public class TransactionDetailsFactory
 		case Transaction.BUY_NAME_TRANSACTION:
 			
 			BuyNameTransaction namePurchase = (BuyNameTransaction) transaction;
-			return new BuyNameDetailsFrame(namePurchase);			
+			return new BuyNameDetailsFrame(namePurchase);	
+		
+		case Transaction.CREATE_POLL_TRANSACTION:
+			
+			CreatePollTransaction pollCreation = (CreatePollTransaction) transaction;
+			return new CreatePollDetailsFrame(pollCreation);			
+			
 		}
 		
 		return null;

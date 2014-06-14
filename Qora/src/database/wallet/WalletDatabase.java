@@ -21,6 +21,7 @@ public class WalletDatabase
 	private BlocksDatabase blocksDatabase;
 	private NamesDatabase namesDatabase;
 	private NameSalesDatabase nameSalesDatabase;
+	private PollDatabase pollDatabase;
 	
 	public static boolean isCorrupted()
 	{
@@ -72,6 +73,7 @@ public class WalletDatabase
 	    this.blocksDatabase = new BlocksDatabase(this, this.database);
 	    this.namesDatabase = new NamesDatabase(this, this.database);
 	    this.nameSalesDatabase = new NameSalesDatabase(this, this.database);
+	    this.pollDatabase = new PollDatabase(this, this.database);
 	}
 	
 	public void setVersion(int version)
@@ -109,6 +111,11 @@ public class WalletDatabase
 		return this.nameSalesDatabase;
 	}
 	
+	public PollDatabase getPollDatabase()
+	{
+		return this.pollDatabase;
+	}
+	
 	public void delete(Account account)
 	{
 		this.accountsDatabase.delete(account);
@@ -116,6 +123,7 @@ public class WalletDatabase
 		this.transactionsDatabase.delete(account);
 		this.namesDatabase.delete(account);
 		this.nameSalesDatabase.delete(account);
+		this.pollDatabase.delete(account);
 	}
 	
 	public void commit()

@@ -65,6 +65,11 @@ public class TransactionFactory {
 			
 			//PARSE CANCEL SELL NAME TRANSACTION
 			return BuyNameTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));	
+			
+		case Transaction.CREATE_POLL_TRANSACTION:
+			
+			//PARSE CREATE POLL TRANSACTION
+			return CreatePollTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));		
 		
 		}
 		

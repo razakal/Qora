@@ -12,6 +12,7 @@ import qora.block.GenesisBlock;
 import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.transaction.Transaction;
+import qora.voting.Poll;
 import database.DatabaseSet;
 
 public class BlockChain
@@ -221,6 +222,32 @@ public class BlockChain
 		return nameSales;		
 	}
 
+	public Map<Account, List<Poll>> scanPolls(List<Account> accounts)
+	{
+		//CREATE MAP
+		Map<Account, List<Poll>> polls = new HashMap<Account, List<Poll>>();
+		
+		for(Account account: accounts)
+		{
+			polls.put(account, new ArrayList<Poll>());
+		}
+			
+		//SCAN ALL POLLS
+		for(Poll poll: DatabaseSet.getInstance().getPollDatabase().getPolls())
+		{
+			for(Account account: accounts)
+			{
+				if(account.getAddress().equals(poll.getCreator().getAddress()))
+				{
+					polls.get(account).add(poll);
+				}
+			}
+		}
+		
+		//RETURN
+		return polls;		
+	}
+	
 	public Block getLastBlock() 
 	{	
 		return DatabaseSet.getInstance().getBlockDatabase().getLastBlock();

@@ -22,10 +22,12 @@ import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
+import qora.transaction.CreatePollTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
 import qora.transaction.UpdateNameTransaction;
+import qora.voting.Poll;
 import utils.ObserverMessage;
 import utils.Pair;
 
@@ -199,6 +201,27 @@ public class Wallet extends Observable implements Observer
 		}
 
 		return this.database.getNameSalesDatabase().getNameSales(account);
+	}
+	
+	public List<Pair<Account, Poll>> getPolls()
+	{
+		if(!this.exists())
+		{
+			return new ArrayList<Pair<Account, Poll>>();
+		}
+
+		List<Account> accounts = this.getAccounts();
+		return this.database.getPollDatabase().getPolls(accounts);
+	}
+	
+	public List<Poll> getPolls(Account account)
+	{
+		if(!this.exists())
+		{
+			return new ArrayList<Poll>();
+		}
+
+		return this.database.getPollDatabase().getPolls(account);
 	}
 	
 	//CREATE
@@ -393,6 +416,19 @@ public class Wallet extends Observable implements Observer
 	  	//ADD NAMES
 	  	this.database.getNameSalesDatabase().addAll(nameSales);
 	  	
+	  	//SCAN POLLS
+	  	Map<Account, List<Poll>> polls;
+	  	synchronized(accounts)
+	  	{
+	  		polls = Controller.getInstance().scanPolls(accounts);
+	  	}
+	  	
+	  	//DELETE POLLS
+	  	this.database.getPollDatabase().deleteAll(accounts);
+	  	
+	  	//ADD POLLS
+	  	this.database.getPollDatabase().addAll(polls);
+	  	
 	  	//NOTIFY OBSERVERS
 	    this.setChanged();
 	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions()));
@@ -404,7 +440,10 @@ public class Wallet extends Observable implements Observer
 	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));   
 	    
 	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));     	
+	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
+	    
+	    this.setChanged();
+	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));     	
 	}
 	
 	//UNLOCK
@@ -548,6 +587,9 @@ public class Wallet extends Observable implements Observer
 		
 		//SEND LAST NAME SALES ON REGISTER
 		o.update(this, new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
+		
+		//SEND LAST POLLS ON REGISTER
+		o.update(this, new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
 		
 		//SEND STATUS
 		int status = STATUS_LOCKED;
@@ -722,6 +764,52 @@ public class Wallet extends Observable implements Observer
 			
 			this.setChanged();
 			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+		}
+	}
+	
+	private void processPollCreation(CreatePollTransaction pollCreation)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		//CHECK IF WE ARE OWNER
+		if(this.accountExists(pollCreation.getPoll().getCreator().getAddress()))
+		{
+			//ADD POLL
+			this.database.getPollDatabase().add(pollCreation.getPoll());
+			
+			//NOTIFY
+			this.setChanged();
+			this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_POLL_TYPE, pollCreation.getPoll()));
+			
+			this.setChanged();
+			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
+		}
+	}
+	
+	private void orphanPollCreation(CreatePollTransaction pollCreation)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		//CHECK IF WE ARE OWNER
+		if(this.accountExists(pollCreation.getPoll().getCreator().getAddress()))
+		{
+			//DELETE POLL
+			this.database.getPollDatabase().delete(pollCreation.getPoll());
+			
+			//NOTIFY
+			this.setChanged();
+			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_POLL_TYPE, pollCreation.getPoll()));
+			
+			this.setChanged();
+			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
 		}
 	}
 	
@@ -1004,6 +1092,12 @@ public class Wallet extends Observable implements Observer
 				{
 					this.processNamePurchase((BuyNameTransaction) transaction);
 				}
+				
+				//CHECK IF POLL CREATION
+				if(transaction instanceof CreatePollTransaction)
+				{
+					this.processPollCreation((CreatePollTransaction) transaction);
+				}
 			}
 		}
 		
@@ -1017,6 +1111,12 @@ public class Wallet extends Observable implements Observer
 			if(transaction instanceof RegisterNameTransaction)
 			{
 				this.processNameRegistration((RegisterNameTransaction) transaction);
+			}
+			
+			//CHECK IF POLL CREATION
+			if(transaction instanceof CreatePollTransaction)
+			{
+				this.processPollCreation((CreatePollTransaction) transaction);
 			}
 		}
 		
@@ -1061,6 +1161,12 @@ public class Wallet extends Observable implements Observer
 				{
 					this.orphanNamePurchase((BuyNameTransaction) transaction);
 				}
+				
+				//CHECK IF POLL CREATION
+				if(transaction instanceof CreatePollTransaction)
+				{
+					this.orphanPollCreation((CreatePollTransaction) transaction);
+				}
 			}
 		}
 		
@@ -1074,6 +1180,12 @@ public class Wallet extends Observable implements Observer
 			if(transaction instanceof RegisterNameTransaction)
 			{
 				this.orphanNameRegistration((RegisterNameTransaction) transaction);
+			}
+			
+			//CHECK IF POLL CREATION
+			if(transaction instanceof CreatePollTransaction)
+			{
+				this.orphanPollCreation((CreatePollTransaction) transaction);
 			}
 		}
 	}

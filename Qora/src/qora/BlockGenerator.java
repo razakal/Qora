@@ -63,8 +63,9 @@ public class BlockGenerator extends Thread
 				Controller.getInstance().update();
 			}
 			
+			//TODO UNCOMMENT
 			//CHECK IF WE HAVE CONNECTIONS
-			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			if(true)//if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
 			{
 				//GET LAST BLOCK
 				byte[] lastBlockSignature = DatabaseSet.getInstance().getBlockDatabase().getLastBlockSignature();

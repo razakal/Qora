@@ -21,6 +21,8 @@ import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.transaction.Transaction;
+import qora.voting.Poll;
+import qora.voting.PollOption;
 import qora.wallet.Wallet;
 import settings.Settings;
 import utils.ObserverMessage;
@@ -765,6 +767,11 @@ public class Controller extends Observable {
 	{
 		return this.blockChain.scanNameSales(accounts);
 	}
+	
+	public Map<Account, List<Poll>> scanPolls(List<Account> accounts) 
+	{
+		return this.blockChain.scanPolls(accounts);
+	}
 
 	public long getNextBlockGeneratingBalance()
 	{
@@ -873,6 +880,25 @@ public class Controller extends Observable {
 		synchronized(this.transactionCreator)
 		{
 			return this.transactionCreator.createNamePurchase(buyer, nameSale, fee);
+		}
+	}
+
+	public int createPoll(PrivateKeyAccount creator, String name, String description, List<String> options, BigDecimal fee) 
+	{
+		//CREATE ONLY ONE TRANSACTION AT A TIME
+		synchronized(this.transactionCreator)
+		{
+			//CREATE POLL OPTIONS
+			List<PollOption> pollOptions = new ArrayList<PollOption>();
+			for(String option: options)
+			{
+				pollOptions.add(new PollOption(option));
+			}
+			
+			//CREATE POLL
+			Poll poll = new Poll(creator, name, description, pollOptions);
+			
+			return this.transactionCreator.createPollCreation(creator, poll, fee);
 		}
 	} 
 	

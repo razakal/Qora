@@ -7,6 +7,7 @@ import gui.models.WalletBlocksTableModel;
 import gui.models.WalletTransactionsTableModel;
 import gui.naming.NamingServicePanel;
 import gui.transaction.TransactionDetailsFactory;
+import gui.voting.VotingPanel;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -75,7 +76,9 @@ public class GeneralTabPane extends JTabbedPane{
 		
         this.addTab("Generated Blocks", new JScrollPane(blocksTable));
         
-        this.addTab("Naming service", new NamingServicePanel());       
+        this.addTab("Naming service", new NamingServicePanel());      
+        
+        this.addTab("Voting", new VotingPanel());       
 	}
 	
 }
