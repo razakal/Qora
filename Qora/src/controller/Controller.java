@@ -900,6 +900,18 @@ public class Controller extends Observable {
 			
 			return this.transactionCreator.createPollCreation(creator, poll, fee);
 		}
+	}
+
+	public int createPollVote(PrivateKeyAccount creator, Poll poll, PollOption option, BigDecimal fee) 
+	{
+		//CREATE ONLY ONE TRANSACTION AT A TIME
+		synchronized(this.transactionCreator)
+		{
+			//GET OPTION INDEX
+			int optionIndex = poll.getOptions().indexOf(option);
+			
+			return this.transactionCreator.createPollVote(creator, poll.getName(), optionIndex, fee);
+		}
 	} 
 	
 }

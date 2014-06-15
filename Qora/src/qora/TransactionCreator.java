@@ -23,6 +23,7 @@ import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
 import qora.transaction.UpdateNameTransaction;
+import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
 import utils.ObserverMessage;
 import utils.TransactionTimestampComparator;
@@ -216,6 +217,24 @@ public class TransactionCreator extends Observable
 						
 		//VALIDATE AND PROCESS
 		return this.afterCreate(pollCreation);
+	}
+	
+	public int createPollVote(PrivateKeyAccount creator, String poll, int optionIndex, BigDecimal fee)
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+						
+		//TIME
+		long time = NTP.getTime();
+						
+		//CREATE SIGNATURE
+		byte[] signature = VoteOnPollTransaction.generateSignature(this.fork, creator, poll, optionIndex, fee, time);
+					
+		//CREATE POLL VOTE
+		VoteOnPollTransaction pollVote = new VoteOnPollTransaction(creator, poll, optionIndex, fee, time, creator.getLastReference(this.fork), signature);
+						
+		//VALIDATE AND PROCESS
+		return this.afterCreate(pollVote);
 	}
 	
 	private int afterCreate(Transaction transaction)

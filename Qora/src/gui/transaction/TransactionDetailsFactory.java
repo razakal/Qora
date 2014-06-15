@@ -11,6 +11,7 @@ import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
 import qora.transaction.UpdateNameTransaction;
+import qora.transaction.VoteOnPollTransaction;
 
 public class TransactionDetailsFactory 
 {
@@ -69,7 +70,11 @@ public class TransactionDetailsFactory
 			
 			CreatePollTransaction pollCreation = (CreatePollTransaction) transaction;
 			return new CreatePollDetailsFrame(pollCreation);			
+
+		case Transaction.VOTE_ON_POLL_TRANSACTION:
 			
+			VoteOnPollTransaction pollVote = (VoteOnPollTransaction) transaction;
+			return new VoteOnPollDetailsFrame(pollVote);	
 		}
 		
 		return null;
