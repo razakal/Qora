@@ -40,6 +40,10 @@ public abstract class Transaction {
 	public static final int INVALID_OPTION_LENGTH = 20;
 	public static final int DUPLICATE_OPTION = 21;
 	public static final int POLL_ALREADY_CREATED = 22;
+	public static final int POLL_ALREADY_HAS_VOTES = 23;
+	public static final int POLL_NO_EXISTS = 24;
+	public static final int OPTION_NO_EXISTS = 25;
+	public static final int ALREADY_VOTED_FOR_THAT_OPTION = 26;
 	
 	//TYPES
 	public static final int GENESIS_TRANSACTION = 1;
@@ -52,6 +56,7 @@ public abstract class Transaction {
 	public static final int BUY_NAME_TRANSACTION = 7;
 	
 	public static final int CREATE_POLL_TRANSACTION = 8;
+	public static final int VOTE_ON_POLL_TRANSACTION = 9;
 	
 	//MINIMUM FEE
 	public static final BigDecimal MINIMUM_FEE = BigDecimal.ONE;

@@ -69,7 +69,12 @@ public class TransactionFactory {
 		case Transaction.CREATE_POLL_TRANSACTION:
 			
 			//PARSE CREATE POLL TRANSACTION
-			return CreatePollTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));		
+			return CreatePollTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));	
+			
+		case Transaction.VOTE_ON_POLL_TRANSACTION:
+			
+			//PARSE CREATE POLL VOTE
+			return VoteOnPollTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));		
 		
 		}
 		

@@ -33,6 +33,7 @@ public class DatabaseSet implements Observer {
 	private CancelSellNameDatabase cancelSellNameDatabase;
 	private BuyNameDatabase buyNameDatabase;
 	private PollDatabase PollDatabase;
+	private VoteOnPollDatabase voteOnPollDatabase;
 	
 	private DB database;
 	//private TxMaker transactionMaker;
@@ -135,6 +136,7 @@ public class DatabaseSet implements Observer {
 		this.cancelSellNameDatabase = new CancelSellNameDatabase(this, database);
 		this.buyNameDatabase = new BuyNameDatabase(this, database);
 		this.PollDatabase = new PollDatabase(this, database);
+		this.voteOnPollDatabase = new VoteOnPollDatabase(this, database);
 	}
 	
 	protected DatabaseSet(DatabaseSet parent)
@@ -153,6 +155,7 @@ public class DatabaseSet implements Observer {
 		this.cancelSellNameDatabase = new CancelSellNameDatabase(parent.cancelSellNameDatabase);
 		this.buyNameDatabase = new BuyNameDatabase(parent.buyNameDatabase);
 		this.PollDatabase = new PollDatabase(parent.PollDatabase);
+		this.voteOnPollDatabase = new VoteOnPollDatabase(parent.voteOnPollDatabase);
 	}
 	
 	public BalanceDatabase getBalanceDatabase() 
@@ -223,6 +226,11 @@ public class DatabaseSet implements Observer {
 	public PollDatabase getPollDatabase()
 	{
 		return this.PollDatabase;
+	}
+	
+	public VoteOnPollDatabase getVoteOnPollDatabase()
+	{
+		return this.voteOnPollDatabase;
 	}
 	
 	public DatabaseSet fork()

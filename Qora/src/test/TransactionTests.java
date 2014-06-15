@@ -27,6 +27,7 @@ import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
 import qora.transaction.TransactionFactory;
 import qora.transaction.UpdateNameTransaction;
+import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
 import qora.voting.PollOption;
 
@@ -2335,5 +2336,322 @@ public class TransactionTests {
 		assertEquals(false, databaseSet.getPollDatabase().containsPoll(poll));
 	}
 	
+	//VOTE ON POLL
+	
+	@Test
+	public void validateSignatureVoteOnPollTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = VoteOnPollTransaction.generateSignature(databaseSet, sender, "test", 5, BigDecimal.valueOf(1).setScale(8), timestamp);
+		
+		//CREATE POLL VOTE
+		Transaction pollVote = new VoteOnPollTransaction(sender, "test", 5, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
+		
+		//CHECK IF POLL VOTE IS VALID
+		assertEquals(true, pollVote.isSignatureValid());
+		
+		//INVALID SIGNATURE
+		pollVote = new VoteOnPollTransaction(sender, "test", 5, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), new byte[0]);
+		
+		//CHECK IF POLL VOTE IS INVALID
+		assertEquals(false, pollVote.isSignatureValid());
+	}
+		
+	@Test
+	public void validateVoteOnPollTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		Poll poll = new Poll(sender, "test", "this is the value", Arrays.asList(new PollOption("test"), new PollOption("test2")));
+		byte[] signature = CreatePollTransaction.generateSignature(databaseSet, sender, poll, BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE POLL CREATION
+		Transaction pollCreation = new CreatePollTransaction(sender, poll, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF POLL CREATION IS VALID
+		assertEquals(Transaction.VALIDATE_OKE, pollCreation.isValid(databaseSet));
+		pollCreation.process(databaseSet);
+		
+		//CREATE POLL VOTE
+		signature = VoteOnPollTransaction.generateSignature(databaseSet, sender, poll.getName(), 0, BigDecimal.valueOf(1).setScale(8), timestamp);
+		Transaction pollVote = new VoteOnPollTransaction(sender, poll.getName(), 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF POLL VOTE IS VALID
+		assertEquals(Transaction.VALIDATE_OKE, pollVote.isValid(databaseSet));
+		pollVote.process(databaseSet);
+		
+		//CREATE INVALID POLL VOTE INVALID NAME LENGTH
+		String longName = "";
+		for(int i=1; i<1000; i++)
+		{
+			longName += "oke";
+		}
+		pollVote = new VoteOnPollTransaction(sender, longName, 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+
+		//CHECK IF POLL VOTE IS INVALID
+		assertEquals(Transaction.INVALID_NAME_LENGTH, pollVote.isValid(databaseSet));
+		
+		//CREATE INVALID POLL VOTE POLL DOES NOT EXIST
+		pollVote = new VoteOnPollTransaction(sender, "test2", 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF POLL VOTE IS INVALID
+		assertEquals(Transaction.POLL_NO_EXISTS, pollVote.isValid(databaseSet));
+		
+		//CREATE INVALID POLL VOTE INVALID OPTION
+		pollVote = new VoteOnPollTransaction(sender, "test", 5, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF POLL VOTE IS INVALID
+		assertEquals(Transaction.OPTION_NO_EXISTS, pollVote.isValid(databaseSet));
+		
+		//CREATE INVALID POLL VOTE INVALID OPTION
+		pollVote = new VoteOnPollTransaction(sender, "test", -1, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+				
+		//CHECK IF POLL VOTE IS INVALID
+		assertEquals(Transaction.OPTION_NO_EXISTS, pollVote.isValid(databaseSet));
+		
+		//CRTEATE INVALID POLL VOTE VOTED ALREADY
+		pollVote = new VoteOnPollTransaction(sender, "test", 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		pollVote.process(databaseSet);
+		
+		//CHECK IF POLL VOTE IS INVALID
+		assertEquals(Transaction.ALREADY_VOTED_FOR_THAT_OPTION, pollVote.isValid(databaseSet));
+		
+		//CREATE INVALID POLL VOTE NOT ENOUGH BALANCE
+		seed = Crypto.getInstance().digest("invalid".getBytes());
+		privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount invalidOwner = new PrivateKeyAccount(privateKey);
+		pollVote = new VoteOnPollTransaction(invalidOwner, "test", 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF POLL VOTE IS INVALID
+		assertEquals(Transaction.NO_BALANCE, pollVote.isValid(databaseSet));
+		
+		//CREATE POLL CREATION INVALID REFERENCE
+		pollVote = new VoteOnPollTransaction(sender, "test", 1, BigDecimal.ONE.setScale(8), timestamp, invalidOwner.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF POLL CREATION IS INVALID
+		assertEquals(Transaction.INVALID_REFERENCE, pollVote.isValid(databaseSet));
+		
+		//CREATE POLL CREATION INVALID FEE
+		pollVote = new VoteOnPollTransaction(sender, "test", 1, BigDecimal.ZERO.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF POLL CREATION IS INVALID
+		assertEquals(Transaction.NEGATIVE_FEE, pollVote.isValid(databaseSet));
+	}
+
+	
+	@Test
+	public void parseVoteOnPollTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = VoteOnPollTransaction.generateSignature(databaseSet, sender, "test", 0, BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE POLL Vote
+		VoteOnPollTransaction pollVote = new VoteOnPollTransaction(sender, "test", 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CONVERT TO BYTES
+		byte[] rawPollVote = pollVote.toBytes();
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			VoteOnPollTransaction parsedPollVote = (VoteOnPollTransaction) TransactionFactory.getInstance().parse(rawPollVote);
+			
+			//CHECK INSTANCE
+			assertEquals(true, parsedPollVote instanceof VoteOnPollTransaction);
+			
+			//CHECK SIGNATURE
+			assertEquals(true, Arrays.equals(pollVote.getSignature(), parsedPollVote.getSignature()));
+			
+			//CHECK AMOUNT CREATOR
+			assertEquals(pollVote.getAmount(sender), parsedPollVote.getAmount(sender));	
+			
+			//CHECK CREATOR
+			assertEquals(pollVote.getCreator().getAddress(), parsedPollVote.getCreator().getAddress());	
+			
+			//CHECK POLL
+			assertEquals(pollVote.getPoll(), parsedPollVote.getPoll());	
+			
+			//CHECK POLL OPTION
+			assertEquals(pollVote.getOption(), parsedPollVote.getOption());	
+			
+			//CHECK FEE
+			assertEquals(pollVote.getFee(), parsedPollVote.getFee());	
+			
+			//CHECK REFERENCE
+			assertEquals(true, Arrays.equals(pollVote.getReference(), parsedPollVote.getReference()));	
+			
+			//CHECK TIMESTAMP
+			assertEquals(pollVote.getTimestamp(), parsedPollVote.getTimestamp());				
+		}
+		catch (Exception e) 
+		{
+			fail("Exception while parsing transaction.");
+		}
+		
+		//PARSE TRANSACTION FROM WRONG BYTES
+		rawPollVote = new byte[pollVote.getDataLength()];
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			TransactionFactory.getInstance().parse(rawPollVote);
+			
+			//FAIL
+			fail("this should throw an exception");
+		}
+		catch (Exception e) 
+		{
+			//EXCEPTION IS THROWN OKE
+		}	
+	}
+
+	
+	@Test
+	public void processVoteOnPollTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+								
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+					
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+				
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		Poll poll = new Poll(sender, "test", "this is the value", Arrays.asList(new PollOption("test"), new PollOption("second option")));
+		byte[] signature = CreatePollTransaction.generateSignature(databaseSet, sender, poll, BigDecimal.valueOf(1).setScale(8), timestamp);
+						
+		//CREATE POLL CREATION
+		Transaction pollCreation = new CreatePollTransaction(sender, poll, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);			
+		pollCreation.process(databaseSet);
+		
+		//CREATE POLL VOTE
+		Transaction pollVote = new VoteOnPollTransaction(sender, poll.getName(), 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);			
+		pollVote.process(databaseSet);
+		
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(998).setScale(8), sender.getConfirmedBalance(databaseSet));
+				
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(pollVote.getSignature(), sender.getLastReference(databaseSet)));
+		
+		//CHECK POLL VOTER
+		assertEquals(true, databaseSet.getPollDatabase().getPoll(poll.getName()).getOptions().get(0).hasVoter(sender));
+		
+		//CREATE POLL VOTE
+		pollVote = new VoteOnPollTransaction(sender, poll.getName(), 1, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);			
+		pollVote.process(databaseSet);
+				
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(997).setScale(8), sender.getConfirmedBalance(databaseSet));
+						
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(pollVote.getSignature(), sender.getLastReference(databaseSet)));
+				
+		//CHECK POLL VOTER
+		assertEquals(false, databaseSet.getPollDatabase().getPoll(poll.getName()).getOptions().get(0).hasVoter(sender));
+		
+		//CHECK POLL VOTER
+		assertEquals(true, databaseSet.getPollDatabase().getPoll(poll.getName()).getOptions().get(1).hasVoter(sender));
+	}
+	
+	@Test
+	public void orphanVoteOnPollTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+								
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+					
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+				
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		Poll poll = new Poll(sender, "test", "this is the value", Arrays.asList(new PollOption("test"), new PollOption("second option")));
+		byte[] signature = CreatePollTransaction.generateSignature(databaseSet, sender, poll, BigDecimal.valueOf(1).setScale(8), timestamp);
+						
+		//CREATE POLL CREATION
+		Transaction pollCreation = new CreatePollTransaction(sender, poll, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);			
+		pollCreation.process(databaseSet);
+		
+		//CREATE POLL VOTE
+		signature = VoteOnPollTransaction.generateSignature(databaseSet, sender, poll.getName(), 0, BigDecimal.valueOf(1).setScale(8), timestamp);
+		Transaction pollVote = new VoteOnPollTransaction(sender, poll.getName(), 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);			
+		pollVote.process(databaseSet);
+		pollVote.orphan(databaseSet);
+		
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(999).setScale(8), sender.getConfirmedBalance(databaseSet));
+				
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(pollCreation.getSignature(), sender.getLastReference(databaseSet)));
+		
+		//CHECK POLL VOTER
+		assertEquals(false, databaseSet.getPollDatabase().getPoll(poll.getName()).hasVotes());
+		
+		//CHECK POLL VOTER
+		assertEquals(false, databaseSet.getPollDatabase().getPoll(poll.getName()).getOptions().get(0).hasVoter(sender));
+
+	}
+	
+
 	
 }
