@@ -13,6 +13,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,6 +252,13 @@ public class CreatePollFrame extends JFrame
 				JOptionPane.showMessageDialog(new JFrame(), "Poll creation has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;	
+				
+			case Transaction.NOT_YET_RELEASED:
+				
+				Date release = new Date(Transaction.VOTING_RELEASE);	
+				DateFormat format = DateFormat.getDateTimeInstance();
+				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + format.format(release) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				break;
 			
 			case Transaction.NAME_NOT_LOWER_CASE:
 				

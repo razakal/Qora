@@ -11,7 +11,7 @@ import qora.voting.PollOption;
 public class PollOptionsTableModel extends AbstractTableModel
 {
 	private static final int COLUMN_NAME = 0;
-	private static final int COLUMN_VOTES = 1;
+	public static final int COLUMN_VOTES = 1;
 	public static final int COLUMN_PERCENTAGE = 2;
 	
 	private String[] columnNames = {"Name", "Votes", "% of Total"};

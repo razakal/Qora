@@ -45,6 +45,8 @@ public abstract class Transaction {
 	public static final int OPTION_NO_EXISTS = 25;
 	public static final int ALREADY_VOTED_FOR_THAT_OPTION = 26;
 	
+	public static final int NOT_YET_RELEASED = 1000;
+	
 	//TYPES
 	public static final int GENESIS_TRANSACTION = 1;
 	public static final int PAYMENT_TRANSACTION = 2;
@@ -60,6 +62,9 @@ public abstract class Transaction {
 	
 	//MINIMUM FEE
 	public static final BigDecimal MINIMUM_FEE = BigDecimal.ONE;
+	
+	//RELEASES
+	public static final long VOTING_RELEASE = 1403715600000l;
 	
 	//PROPERTIES LENGTH
 	protected static final int TYPE_LENGTH = 4;

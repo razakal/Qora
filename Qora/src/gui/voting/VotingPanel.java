@@ -20,12 +20,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 
 import qora.voting.Poll;
+import utils.BigDecimalStringComparator;
 
 @SuppressWarnings("serial")
 public class VotingPanel extends JPanel
 {
+	@SuppressWarnings("unchecked")
 	public VotingPanel()
 	{
 		this.setLayout(new GridBagLayout());
@@ -54,8 +57,11 @@ public class VotingPanel extends JPanel
 		
 		
 		//TABLE
-		final WalletPollsTableModel nameModel = new WalletPollsTableModel();
-		final JTable table = Gui.createSortableTable(nameModel, 0);
+		final WalletPollsTableModel pollsModel = new WalletPollsTableModel();
+		final JTable table = Gui.createSortableTable(pollsModel, 0);
+		
+		TableRowSorter<WalletPollsTableModel> sorter =  (TableRowSorter<WalletPollsTableModel>) table.getRowSorter();
+		sorter.setComparator(WalletPollsTableModel.COLUMN_TOTAL_VOTES, new BigDecimalStringComparator());
 				
 		//CHECKBOX FOR CONFIRMED
 		TableColumn confirmedColumn = table.getColumnModel().getColumn(3);
@@ -84,8 +90,8 @@ public class VotingPanel extends JPanel
 				if(e.getClickCount() == 2)
 				{
 					row = table.convertRowIndexToModel(row);
-					Poll poll = nameModel.getPoll(row);
-					new PollDetailsFrame(poll);
+					Poll poll = pollsModel.getPoll(row);
+					new PollFrame(poll);
 				}
 		     }
 		});

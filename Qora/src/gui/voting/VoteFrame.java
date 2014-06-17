@@ -13,6 +13,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -219,10 +221,17 @@ public class VoteFrame extends JFrame
 				JOptionPane.showMessageDialog(new JFrame(), "Poll vote has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;	
+				
+			case Transaction.NOT_YET_RELEASED:
+				
+				Date release = new Date(Transaction.VOTING_RELEASE);	
+				DateFormat format = DateFormat.getDateTimeInstance();
+				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + format.format(release) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				break;
 			
 			case Transaction.ALREADY_VOTED_FOR_THAT_OPTION:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "You have already voted for that option!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "You have already voted for that option!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.NEGATIVE_FEE:

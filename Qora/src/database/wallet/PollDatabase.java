@@ -116,6 +116,22 @@ public class PollDatabase {
 		   
 		pollsSet.add(poll.toBytes());
 	}
+	
+	public void update(Poll poll) {
+		
+		//DELETE PREVIOUS POLL WITH SAME NAME
+		for(Poll pollb: this.getPolls(poll.getCreator()))
+		{
+			if(pollb.getName().equals(poll.getName()))
+			{
+				this.delete(pollb);
+			}
+		}
+		
+		//ADD NEW POLL
+		this.add(poll);
+		
+	}
 
 	public void addAll(Map<Account, List<Poll>> polls) 
 	{

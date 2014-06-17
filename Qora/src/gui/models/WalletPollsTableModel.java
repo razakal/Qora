@@ -17,7 +17,7 @@ public class WalletPollsTableModel extends AbstractTableModel implements Observe
 {
 	private static final int COLUMN_NAME = 0;
 	private static final int COLUMN_ADDRESS = 1;
-	private static final int COLUMN_TOTAL_VOTES = 2;
+	public static final int COLUMN_TOTAL_VOTES = 2;
 	private static final int COLUMN_CONFIRMED = 3;
 	
 	private String[] columnNames = {"Name", "Creator", "Total Votes", "Confirmed"};

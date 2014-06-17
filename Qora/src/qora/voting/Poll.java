@@ -15,6 +15,7 @@ import com.google.common.primitives.Ints;
 import database.DatabaseSet;
 import qora.account.Account;
 import qora.crypto.Base58;
+import utils.Pair;
 
 public class Poll 
 {
@@ -79,6 +80,41 @@ public class Poll
 		for(PollOption option: this.options)
 		{
 			votes = votes.add(option.getVotes());
+		}
+		
+		return votes;
+	}
+	
+	public List<Pair<Account, PollOption>> getVotes() 
+	{
+		List<Pair<Account, PollOption>> votes = new ArrayList<Pair<Account, PollOption>>();
+		
+		for(PollOption option: this.options)
+		{
+			for(Account voter: option.getVoters())
+			{
+				Pair<Account, PollOption> vote = new Pair<Account, PollOption>(voter, option);
+				votes.add(vote);
+			}
+		}
+		
+		return votes;
+	}
+	
+	public List<Pair<Account, PollOption>> getVotes(List<Account> accounts)
+	{
+		List<Pair<Account, PollOption>> votes = new ArrayList<Pair<Account, PollOption>>();
+		
+		for(PollOption option: this.options)
+		{
+			for(Account voter: option.getVoters())
+			{
+				if(accounts.contains(voter))
+				{
+					Pair<Account, PollOption> vote = new Pair<Account, PollOption>(voter, option);
+					votes.add(vote);
+				}
+			}
 		}
 		
 		return votes;

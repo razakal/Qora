@@ -15,13 +15,16 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableRowSorter;
 
 import qora.crypto.Base58;
 import qora.transaction.CreatePollTransaction;
+import utils.BigDecimalStringComparator;
 
 @SuppressWarnings("serial")
 public class CreatePollDetailsFrame extends JFrame
 {
+	@SuppressWarnings("unchecked")
 	public CreatePollDetailsFrame(CreatePollTransaction pollCreation)
 	{
 		super("Qora - Transaction Details");
@@ -148,6 +151,10 @@ public class CreatePollDetailsFrame extends JFrame
 		detailGBC.gridy = 7;
 		PollOptionsTableModel pollOptionsTableModel = new PollOptionsTableModel(pollCreation.getPoll());
 		JTable table = Gui.createSortableTable(pollOptionsTableModel, 0);
+		
+		TableRowSorter<PollOptionsTableModel> sorter =  (TableRowSorter<PollOptionsTableModel>) table.getRowSorter();
+		sorter.setComparator(PollOptionsTableModel.COLUMN_VOTES, new BigDecimalStringComparator());
+		
 		this.add(new JScrollPane(table), detailGBC);
 		
 		//LABEL FEE

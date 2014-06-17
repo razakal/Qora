@@ -27,6 +27,7 @@ import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
 import qora.transaction.UpdateNameTransaction;
+import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
 import utils.ObserverMessage;
 import utils.Pair;
@@ -812,6 +813,50 @@ public class Wallet extends Observable implements Observer
 			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
 		}
 	}
+
+	private void processPollVote(VoteOnPollTransaction pollVote)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		//CHECK IF WE ARE OWNER
+		Poll poll = DatabaseSet.getInstance().getPollDatabase().getPoll(pollVote.getPoll());
+		if(this.accountExists(poll.getCreator().getAddress()))
+		{
+			//UPDATE POLL
+			//this.database.getPollDatabase().delete(poll);
+			this.database.getPollDatabase().update(poll);
+			
+			//NOTIFY
+			this.setChanged();
+			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
+		}
+	}
+	
+	private void orphanPollVote(VoteOnPollTransaction pollVote)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+				
+		//CHECK IF WE ARE OWNER
+		Poll poll = DatabaseSet.getInstance().getPollDatabase().getPoll(pollVote.getPoll());
+		if(this.accountExists(poll.getCreator().getAddress()))
+		{
+			//UPDATE POLL
+			//this.database.getPollDatabase().delete(poll);
+			this.database.getPollDatabase().update(poll);
+			
+			//NOTIFY
+			this.setChanged();
+			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
+		}
+	}	
 	
 	private void processNameUpdate(UpdateNameTransaction nameUpdate)
 	{
@@ -1098,6 +1143,12 @@ public class Wallet extends Observable implements Observer
 				{
 					this.processPollCreation((CreatePollTransaction) transaction);
 				}
+				
+				//CHECK IF POLL VOTE
+				if(transaction instanceof VoteOnPollTransaction)
+				{
+					this.processPollVote((VoteOnPollTransaction) transaction);
+				}
 			}
 		}
 		
@@ -1166,6 +1217,12 @@ public class Wallet extends Observable implements Observer
 				if(transaction instanceof CreatePollTransaction)
 				{
 					this.orphanPollCreation((CreatePollTransaction) transaction);
+				}
+				
+				//CHECK IF POLL VOTE
+				if(transaction instanceof VoteOnPollTransaction)
+				{
+					this.orphanPollVote((VoteOnPollTransaction) transaction);
 				}
 			}
 		}

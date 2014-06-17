@@ -6,47 +6,33 @@ import gui.models.PollOptionsTableModel;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableRowSorter;
 
 import qora.voting.Poll;
+import utils.BigDecimalStringComparator;
 
 @SuppressWarnings("serial")
-public class PollDetailsFrame extends JFrame
+public class PollDetailsPanel extends JPanel
 {
 	private Poll poll;
 	private JTable table;
 	
-	public PollDetailsFrame(Poll poll)
+	@SuppressWarnings("unchecked")
+	public PollDetailsPanel(Poll poll)
 	{
-		super("Qora - Poll Details");
-		
 		this.poll = poll;
-		
-		//ICON
-		List<Image> icons = new ArrayList<Image>();
-		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon16.png"));
-		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon32.png"));
-		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon64.png"));
-		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon128.png"));
-		this.setIconImages(icons);
-		
-		//CLOSE
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		//LAYOUT
 		this.setLayout(new GridBagLayout());
 		
 		//PADDING
-		((JComponent) this.getContentPane()).setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
 		//LABEL GBC
 		GridBagConstraints labelGBC = new GridBagConstraints();
@@ -109,6 +95,10 @@ public class PollDetailsFrame extends JFrame
 		detailGBC.gridy = 4;
 		PollOptionsTableModel pollOptionsTableModel = new PollOptionsTableModel(poll);
 		table = Gui.createSortableTable(pollOptionsTableModel, 0);
+		
+		TableRowSorter<PollOptionsTableModel> sorter =  (TableRowSorter<PollOptionsTableModel>) table.getRowSorter();
+		sorter.setComparator(PollOptionsTableModel.COLUMN_VOTES, new BigDecimalStringComparator());
+		
 		this.add(new JScrollPane(table), detailGBC);
 		
 		//ADD EXCHANGE BUTTON
@@ -125,10 +115,7 @@ public class PollDetailsFrame extends JFrame
 		this.add(allButton, detailGBC);
 		
 		//PACK
-		this.pack();
-        this.setResizable(false);
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+		this.setVisible(true);
 	}
 	
 	public void onVoteClick()
