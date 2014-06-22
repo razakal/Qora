@@ -17,6 +17,7 @@ public class Settings {
 	private static final int DEFAULT_MIN_CONNECTIONS = 5;
 	private static final int DEFAULT_MAX_CONNECTIONS = 20;
 	private static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
+	private static final int DEFAULT_PING_INTERVAL = 30000;
 	
 	//RPC
 	private static final int DEFAULT_RPC_PORT = 9085;
@@ -205,5 +206,15 @@ public class Settings {
 		}
 		
 		return DEFAULT_DATA_DIR;
+	}
+	
+	public int getPingInterval()
+	{
+		if(settingsMap.containsKey("pinginterval"))
+		{
+			return Integer.parseInt(settingsMap.get("pinginterval"));
+		}
+		
+		return DEFAULT_PING_INTERVAL;
 	}
 }

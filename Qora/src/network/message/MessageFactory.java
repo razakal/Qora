@@ -143,6 +143,12 @@ public class MessageFactory {
 			
 		switch(type)
 		{
+		//PING
+		case Message.PING_TYPE:
+			
+			message = new Message(type);
+			break;
+		
 		//GETPEERS
 		case Message.GET_PEERS_TYPE:
 						

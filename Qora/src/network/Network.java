@@ -210,6 +210,20 @@ public class Network extends Observable implements ConnectionCallback {
 		
 		switch(message.getType())
 		{
+		//PING
+		case Message.PING_TYPE:
+			
+			//CREATE PING
+			Message response = MessageFactory.getInstance().createPingMessage();
+			
+			//SET ID
+			response.setId(message.getId());
+			
+			//SEND BACK TO SENDER
+			message.getSender().sendMessage(response);
+			
+			break;
+		
 		//GETPEERS
 		case Message.GET_PEERS_TYPE: 
 			

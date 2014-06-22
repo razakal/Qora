@@ -23,6 +23,7 @@ public class Peer extends Thread{
 	private ConnectionCallback callback;
 	private Socket socket;
 	private OutputStream out;
+	private Pinger pinger;
 	
 	private Map<Integer, BlockingQueue<Message>> messages;
 	
@@ -42,7 +43,7 @@ public class Peer extends Thread{
 			this.messages = Collections.synchronizedMap(new HashMap<Integer, BlockingQueue<Message>>());
 			
 			//ENABLE KEEPALIVE
-			this.socket.setKeepAlive(true);
+			//this.socket.setKeepAlive(true);
 			
 			//TIMEOUT
 			this.socket.setSoTimeout(1000*60*60);
@@ -52,6 +53,9 @@ public class Peer extends Thread{
 			
 			//START COMMUNICATON THREAD
 			this.start();
+			
+			//START PINGER
+			//this.pinger = new Pinger(this);
 			
 			//ON SOCKET CONNECT
 			this.callback.onConnect(this);			
@@ -78,7 +82,7 @@ public class Peer extends Thread{
 			this.socket = new Socket(address, Network.PORT);
 			
 			//ENABLE KEEPALIVE
-			this.socket.setKeepAlive(true);
+			//this.socket.setKeepAlive(true);
 			
 			//TIMEOUT
 			this.socket.setSoTimeout(1000*60*60);
@@ -88,6 +92,9 @@ public class Peer extends Thread{
 			
 			//START COMMUNICATON THREAD
 			this.start();
+			
+			//START PINGER
+			//this.pinger = new Pinger(this);
 			
 			//ON SOCKET CONNECT
 			this.callback.onConnect(this);			
@@ -197,8 +204,6 @@ public class Peer extends Thread{
 		//SET ID
 		message.setId(id);
 		
-		//System.out.println("sending " + id + " to " + this.getAddress().getHostAddress());
-		
 		//PUT QUEUE INTO MAP SO WE KNOW WE ARE WAITING FOR A RESPONSE
 		BlockingQueue<Message> blockingQueue = new ArrayBlockingQueue<Message>(1);
 		this.messages.put(id, blockingQueue);
@@ -214,8 +219,6 @@ public class Peer extends Thread{
 			Message response = blockingQueue.poll(Settings.getInstance().getConnectionTimeout(), TimeUnit.MILLISECONDS);
 			this.messages.remove(id);
 			
-			//System.out.println("received " + id + " from " + this.getAddress().getHostAddress());
-			
 			return response;
 		} 
 		catch (InterruptedException e)
@@ -225,11 +228,23 @@ public class Peer extends Thread{
 			return null;
 		}
 	}
+	
+	public void onPingFail()
+	{
+		//DISCONNECTED
+		this.callback.onDisconnect(this);
+	}
 
 	public void close() 
 	{
 		try
 		{
+			//STOP PINGER
+			if(this.pinger != null)
+			{
+				this.pinger.stopPing();
+			}
+			
 			//CHECK IS SOCKET EXISTS
 			if(socket != null)
 			{
