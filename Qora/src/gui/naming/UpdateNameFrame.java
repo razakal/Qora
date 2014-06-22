@@ -25,6 +25,7 @@ import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import utils.Pair;
 
 @SuppressWarnings("serial")
 public class UpdateNameFrame extends JFrame
@@ -230,10 +231,10 @@ public class UpdateNameFrame extends JFrame
 		
 			//CREATE NAME UPDATE
 			PrivateKeyAccount owner = Controller.getInstance().getPrivateKeyAccountByAddress(name.getOwner().getAddress());
-			int valid = Controller.getInstance().updateName(owner, new Account(this.txtOwner.getText()), name.getName(), this.txtareaValue.getText(), fee);
+			Pair<Transaction, Integer> result = Controller.getInstance().updateName(owner, new Account(this.txtOwner.getText()), name.getName(), this.txtareaValue.getText(), fee);
 			
 			//CHECK VALIDATE MESSAGE
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				

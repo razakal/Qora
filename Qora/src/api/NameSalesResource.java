@@ -178,13 +178,13 @@ public class NameSalesResource
 			}
 				
 			//CREATE NAME SALE
-			int valid = Controller.getInstance().sellName(account, nameName, bdAmount, bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance().sellName(account, nameName, bdAmount, bdFee);
 				
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				
-				return String.valueOf(true);
+				return result.getA().toJson().toJSONString();
 			
 			case Transaction.INVALID_NAME_LENGTH:
 					
@@ -282,13 +282,13 @@ public class NameSalesResource
 			}
 			
 			//CREATE NAME SALE
-			int valid = Controller.getInstance().cancelSellName(account, nameSale, bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance().cancelSellName(account, nameSale, bdFee);
 				
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				
-				return String.valueOf(true);
+				return result.getA().toJson().toJSONString();
 			
 			case Transaction.INVALID_NAME_LENGTH:
 					
@@ -393,13 +393,13 @@ public class NameSalesResource
 			}
 			
 			//CREATE NAME SALE
-			int valid = Controller.getInstance().BuyName(account, nameSale, bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance().BuyName(account, nameSale, bdFee);
 				
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				
-				return String.valueOf(true);
+				return result.getA().toJson().toJSONString();
 			
 			case Transaction.INVALID_NAME_LENGTH:
 					

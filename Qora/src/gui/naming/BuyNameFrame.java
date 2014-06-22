@@ -23,6 +23,7 @@ import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.naming.NameSale;
 import qora.transaction.Transaction;
+import utils.Pair;
 
 @SuppressWarnings("serial")
 public class BuyNameFrame extends JFrame
@@ -211,10 +212,10 @@ public class BuyNameFrame extends JFrame
 		
 			//CREATE NAME PURCHASE
 			PrivateKeyAccount buyerPKA = Controller.getInstance().getPrivateKeyAccountByAddress(buyer.getAddress());
-			int valid = Controller.getInstance().BuyName(buyerPKA, nameSale, fee);
+			Pair<Transaction, Integer> result = Controller.getInstance().BuyName(buyerPKA, nameSale, fee);
 			
 			//CHECK VALIDATE MESSAGE
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				

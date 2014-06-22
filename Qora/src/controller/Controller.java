@@ -681,14 +681,27 @@ public class Controller extends Observable {
 		return this.wallet.unlock(password);
 	}
 	
-	public List<Pair<Account, Transaction>> getLastTransactions()
+	public List<Pair<Account, Transaction>> getLastTransactions(int limit)
 	{
-		return this.wallet.getLastTransactions();
+		return this.wallet.getLastTransactions(limit);
 	}
 	
-	public List<Transaction> getLastTransactions(Account account)
+	public Transaction getTransaction(byte[] signature) {
+		
+		//CHECK IF IN BLOCK
+		Block block = DatabaseSet.getInstance().getTransactionParentDatabase().getParent(signature);
+		if(block != null)
+		{
+			return block.getTransaction(signature);
+		}
+		
+		//CHECK IF IN TRANSACTION DATABASE
+		return DatabaseSet.getInstance().getTransactionsDatabase().getTransaction(signature);
+	}
+	
+	public List<Transaction> getLastTransactions(Account account, int limit)
 	{
-		return this.wallet.getLastTransactions(account);
+		return this.wallet.getLastTransactions(account, limit);
 	}
 	
 	public List<Pair<Account, Block>> getLastBlocks()
@@ -829,7 +842,7 @@ public class Controller extends Observable {
 		this.broadcastTransaction(transaction);
 	}
 	
-	public int sendPayment(PrivateKeyAccount sender, Account recipient, BigDecimal amount, BigDecimal fee)
+	public Pair<Transaction, Integer> sendPayment(PrivateKeyAccount sender, Account recipient, BigDecimal amount, BigDecimal fee)
 	{
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
@@ -838,7 +851,7 @@ public class Controller extends Observable {
 		}
 	}
 	
-	public int registerName(PrivateKeyAccount registrant, Account owner, String name, String value, BigDecimal fee)
+	public Pair<Transaction, Integer> registerName(PrivateKeyAccount registrant, Account owner, String name, String value, BigDecimal fee)
 	{
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
@@ -847,7 +860,7 @@ public class Controller extends Observable {
 		}
 	}
 	
-	public int updateName(PrivateKeyAccount owner, Account newOwner, String name, String value, BigDecimal fee)
+	public Pair<Transaction, Integer> updateName(PrivateKeyAccount owner, Account newOwner, String name, String value, BigDecimal fee)
 	{
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
@@ -856,7 +869,7 @@ public class Controller extends Observable {
 		}
 	}
 	
-	public int sellName(PrivateKeyAccount owner, String name, BigDecimal amount, BigDecimal fee)
+	public Pair<Transaction, Integer> sellName(PrivateKeyAccount owner, String name, BigDecimal amount, BigDecimal fee)
 	{
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
@@ -865,7 +878,7 @@ public class Controller extends Observable {
 		}
 	}
 
-	public int cancelSellName(PrivateKeyAccount owner, NameSale nameSale, BigDecimal fee)
+	public Pair<Transaction, Integer> cancelSellName(PrivateKeyAccount owner, NameSale nameSale, BigDecimal fee)
 	{
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
@@ -874,7 +887,7 @@ public class Controller extends Observable {
 		}
 	}
 	
-	public int BuyName(PrivateKeyAccount buyer, NameSale nameSale, BigDecimal fee)
+	public Pair<Transaction, Integer> BuyName(PrivateKeyAccount buyer, NameSale nameSale, BigDecimal fee)
 	{
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
@@ -883,7 +896,7 @@ public class Controller extends Observable {
 		}
 	}
 
-	public int createPoll(PrivateKeyAccount creator, String name, String description, List<String> options, BigDecimal fee) 
+	public Pair<Transaction, Integer> createPoll(PrivateKeyAccount creator, String name, String description, List<String> options, BigDecimal fee) 
 	{
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
@@ -902,7 +915,7 @@ public class Controller extends Observable {
 		}
 	}
 
-	public int createPollVote(PrivateKeyAccount creator, Poll poll, PollOption option, BigDecimal fee) 
+	public Pair<Transaction, Integer> createPollVote(PrivateKeyAccount creator, Poll poll, PollOption option, BigDecimal fee) 
 	{
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
@@ -912,6 +925,6 @@ public class Controller extends Observable {
 			
 			return this.transactionCreator.createPollVote(creator, poll.getName(), optionIndex, fee);
 		}
-	} 
+	}
 	
 }

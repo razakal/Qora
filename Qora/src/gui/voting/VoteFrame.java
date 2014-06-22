@@ -27,6 +27,7 @@ import qora.account.PrivateKeyAccount;
 import qora.transaction.Transaction;
 import qora.voting.Poll;
 import qora.voting.PollOption;
+import utils.Pair;
 
 @SuppressWarnings("serial")
 public class VoteFrame extends JFrame
@@ -210,10 +211,10 @@ public class VoteFrame extends JFrame
 			PrivateKeyAccount creator = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
 			PollOption option = (PollOption) this.cbxOptions.getSelectedItem();
 			
-			int valid = Controller.getInstance().createPollVote(creator, poll, option, fee);
+			Pair<Transaction, Integer> result = Controller.getInstance().createPollVote(creator, poll, option, fee);
 			
 			//CHECK VALIDATE MESSAGE
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				

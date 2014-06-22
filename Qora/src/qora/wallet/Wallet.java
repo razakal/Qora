@@ -120,7 +120,7 @@ public class Wallet extends Observable implements Observer
 		return WalletDatabase.exists();
 	}
 	
-	public List<Pair<Account, Transaction>> getLastTransactions()
+	public List<Pair<Account, Transaction>> getLastTransactions(int limit)
 	{
 		if(!this.exists())
 		{
@@ -128,17 +128,17 @@ public class Wallet extends Observable implements Observer
 		}
 
 		List<Account> accounts = this.getAccounts();
-		return this.database.getTransactionsDatabase().getLastTransactions(accounts);
+		return this.database.getTransactionsDatabase().getLastTransactions(accounts, limit);
 	}
 	
-	public List<Transaction> getLastTransactions(Account account)
+	public List<Transaction> getLastTransactions(Account account, int limit)
 	{
 		if(!this.exists())
 		{
 			return new ArrayList<Transaction>();
 		}
 
-		return this.database.getTransactionsDatabase().getLastTransactions(account);
+		return this.database.getTransactionsDatabase().getLastTransactions(account, limit);
 	}
 	
 	public List<Pair<Account, Block>> getLastBlocks()
@@ -340,7 +340,7 @@ public class Wallet extends Observable implements Observer
 	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));
 	    
 	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions()));
+	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
 	    
 	    //RETURN
 	    return true;
@@ -432,7 +432,7 @@ public class Wallet extends Observable implements Observer
 	  	
 	  	//NOTIFY OBSERVERS
 	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions()));
+	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
 	  		
 	    this.setChanged();
 	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));   
@@ -529,7 +529,7 @@ public class Wallet extends Observable implements Observer
 		    
 		    //NOTIFY
 		    this.setChanged();
-		    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions()));
+		    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
 		    
 		    this.setChanged();
 		    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));
@@ -578,7 +578,7 @@ public class Wallet extends Observable implements Observer
 		super.addObserver(o);
 		
 		//SEND LAST TRANSACTIONS ON REGISTER
-		o.update(this, new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions()));
+		o.update(this, new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
 		
 		//SEND LAST BLOCKS ON REGISTER
 		o.update(this, new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));
@@ -637,7 +637,7 @@ public class Wallet extends Observable implements Observer
 		{
 			//UPDATE OBSERVERS
 			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions()));
+			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
 		}
 	}
 	
@@ -671,7 +671,7 @@ public class Wallet extends Observable implements Observer
 		
 		//UPDATE OBSERVERS
 		this.setChanged();
-		this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions()));
+		this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
 	}
 
 	private void processBlock(Block block)

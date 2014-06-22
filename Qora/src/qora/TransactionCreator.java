@@ -26,6 +26,7 @@ import qora.transaction.UpdateNameTransaction;
 import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
 import utils.ObserverMessage;
+import utils.Pair;
 import utils.TransactionTimestampComparator;
 import database.DatabaseSet;
 
@@ -93,7 +94,7 @@ public class TransactionCreator extends Observable
 		}
 	}
 	
-	public int createPayment(PrivateKeyAccount sender, Account recipient, BigDecimal amount, BigDecimal fee)
+	public Pair<Transaction, Integer> createPayment(PrivateKeyAccount sender, Account recipient, BigDecimal amount, BigDecimal fee)
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -111,7 +112,7 @@ public class TransactionCreator extends Observable
 		return this.afterCreate(payment);
 	}
 	
-	public int createNameRegistration(PrivateKeyAccount registrant, Name name, BigDecimal fee)
+	public Pair<Transaction, Integer> createNameRegistration(PrivateKeyAccount registrant, Name name, BigDecimal fee)
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -129,7 +130,7 @@ public class TransactionCreator extends Observable
 		return this.afterCreate(nameRegistration);
 	}
 	
-	public int createNameUpdate(PrivateKeyAccount owner, Name name, BigDecimal fee)
+	public Pair<Transaction, Integer> createNameUpdate(PrivateKeyAccount owner, Name name, BigDecimal fee)
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -147,7 +148,7 @@ public class TransactionCreator extends Observable
 		return this.afterCreate(nameUpdate);
 	}
 	
-	public int createNameSale(PrivateKeyAccount owner, NameSale nameSale, BigDecimal fee)
+	public Pair<Transaction, Integer> createNameSale(PrivateKeyAccount owner, NameSale nameSale, BigDecimal fee)
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -165,7 +166,7 @@ public class TransactionCreator extends Observable
 		return this.afterCreate(nameSaleTransaction);
 	}
 
-	public int createCancelNameSale(PrivateKeyAccount owner, NameSale nameSale, BigDecimal fee)
+	public Pair<Transaction, Integer> createCancelNameSale(PrivateKeyAccount owner, NameSale nameSale, BigDecimal fee)
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -183,7 +184,7 @@ public class TransactionCreator extends Observable
 		return this.afterCreate(cancelNameSaleTransaction);
 	}
 
-	public int createNamePurchase(PrivateKeyAccount buyer, NameSale nameSale, BigDecimal fee)
+	public Pair<Transaction, Integer> createNamePurchase(PrivateKeyAccount buyer, NameSale nameSale, BigDecimal fee)
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -201,7 +202,7 @@ public class TransactionCreator extends Observable
 		return this.afterCreate(namePurchase);
 	}
 	
-	public int createPollCreation(PrivateKeyAccount creator, Poll poll, BigDecimal fee) 
+	public Pair<Transaction, Integer> createPollCreation(PrivateKeyAccount creator, Poll poll, BigDecimal fee) 
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -219,7 +220,7 @@ public class TransactionCreator extends Observable
 		return this.afterCreate(pollCreation);
 	}
 	
-	public int createPollVote(PrivateKeyAccount creator, String poll, int optionIndex, BigDecimal fee)
+	public Pair<Transaction, Integer> createPollVote(PrivateKeyAccount creator, String poll, int optionIndex, BigDecimal fee)
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -237,7 +238,7 @@ public class TransactionCreator extends Observable
 		return this.afterCreate(pollVote);
 	}
 	
-	private int afterCreate(Transaction transaction)
+	private Pair<Transaction, Integer> afterCreate(Transaction transaction)
 	{
 		//CHECK IF PAYMENT VALID
 		int valid = transaction.isValid(this.fork);		
@@ -251,6 +252,6 @@ public class TransactionCreator extends Observable
 		}
 				
 		//RETURN
-		return valid;
+		return new Pair<Transaction, Integer>(transaction, valid);
 	}
 }

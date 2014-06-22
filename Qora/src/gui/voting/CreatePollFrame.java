@@ -26,6 +26,7 @@ import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.transaction.Transaction;
+import utils.Pair;
 
 @SuppressWarnings("serial")
 public class CreatePollFrame extends JFrame
@@ -241,10 +242,10 @@ public class CreatePollFrame extends JFrame
 		
 			//CREATE POLL
 			PrivateKeyAccount creator = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
-			int valid = Controller.getInstance().createPoll(creator, this.txtName.getText(),this.txtareaDescription.getText(), this.optionsTableModel.getOptions(), fee);
+			Pair<Transaction, Integer> result = Controller.getInstance().createPoll(creator, this.txtName.getText(),this.txtareaDescription.getText(), this.optionsTableModel.getOptions(), fee);
 			
 			//CHECK VALIDATE MESSAGE
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				

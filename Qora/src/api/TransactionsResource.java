@@ -16,6 +16,7 @@ import org.json.simple.JSONObject;
 
 import controller.Controller;
 import qora.account.Account;
+import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import utils.Pair;
@@ -24,9 +25,30 @@ import utils.Pair;
 @Produces(MediaType.APPLICATION_JSON)
 public class TransactionsResource {
 
-	@SuppressWarnings("unchecked")
 	@GET
 	public String getTransactions()
+	{
+		return this.getTransactionsLimited(50);
+	}
+	
+	@GET
+	@Path("/{address}")
+	public String getTransactions(@PathParam("address") String address)
+	{
+		return this.getTransactionsLimited(address, 50);
+	}
+	
+	@GET
+	@Path("address/{address}")
+	public String getTransactionsTwo(@PathParam("address") String address)
+	{
+		return this.getTransactions(address);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("limit/{limit}")
+	public String getTransactionsLimited(@PathParam("limit") int limit)
 	{
 		//CHECK IF WALLET EXISTS
 		if(!Controller.getInstance().doesWalletExists())
@@ -35,7 +57,7 @@ public class TransactionsResource {
 		}
 		
 		//GET TRANSACTIONS
-		List<Pair<Account, Transaction>> transactions = Controller.getInstance().getLastTransactions();
+		List<Pair<Account, Transaction>> transactions = Controller.getInstance().getLastTransactions(limit);
 		
 		//ORGANIZE TRANSACTIONS
 		Map<Account, List<Transaction>> orderedTransactions = new HashMap<Account, List<Transaction>>();
@@ -71,8 +93,8 @@ public class TransactionsResource {
 	
 	@SuppressWarnings("unchecked")
 	@GET
-	@Path("/{address}")
-	public String getTransactions(@PathParam("address") String address)
+	@Path("address/{address}/limit/{limit}")
+	public String getTransactionsLimited(@PathParam("address") String address, @PathParam("limit") int limit)
 	{
 		//CHECK IF WALLET EXISTS
 		if(!Controller.getInstance().doesWalletExists())
@@ -94,12 +116,39 @@ public class TransactionsResource {
 		}
 		
 		JSONArray array = new JSONArray();
-		for(Transaction transaction: Controller.getInstance().getLastTransactions(account))
+		for(Transaction transaction: Controller.getInstance().getLastTransactions(account, limit))
 		{
 			array.add(transaction.toJson());
 		}
 		
 		return array.toJSONString();
+	}
+	
+	@GET
+	@Path("signature/{signature}")
+	public String getTransactionsBySignature(@PathParam("signature") String signature) throws Exception
+	{
+		//DECODE SIGNATURE
+		byte[] signatureBytes;
+		try
+		{
+			signatureBytes = Base58.decode(signature);
+		}
+		catch(Exception e)
+		{
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_SIGNATURE);
+		}
+		
+		//GET TRANSACTION
+		Transaction transaction = Controller.getInstance().getTransaction(signatureBytes);
+		
+		//CHECK IF TRANSACTION EXISTS
+		if(transaction == null)
+		{
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_TRANSACTION_NO_EXISTS);
+		}
+		
+		return transaction.toJson().toJSONString();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -117,4 +166,6 @@ public class TransactionsResource {
 		
 		return array.toJSONString();
 	}
+	
+	
 }

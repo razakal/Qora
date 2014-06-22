@@ -163,6 +163,19 @@ public class Block {
 		this.transactionCount++;
 	}
 	
+	public Transaction getTransaction(byte[] signature) {
+		
+		for(Transaction transaction: this.getTransactions())
+		{
+			if(Arrays.equals(transaction.getSignature(), signature))
+			{
+				return transaction;
+			}
+		}
+		
+		return null;
+	}
+	
 	public Block getParent()
 	{
 		return this.getParent(DatabaseSet.getInstance());

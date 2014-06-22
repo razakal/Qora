@@ -15,6 +15,7 @@ import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
+import utils.Pair;
 import controller.Controller;
 
 @Path("payment")
@@ -84,13 +85,13 @@ public class PaymentResource
 			}
 				
 			//SEND PAYMENT
-			int valid = Controller.getInstance().sendPayment(account, new Account(recipient), bdAmount, bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance().sendPayment(account, new Account(recipient), bdAmount, bdFee);
 				
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				
-				return String.valueOf(true);
+				return result.getA().toJson().toJSONString();
 			
 			case Transaction.INVALID_NAME_LENGTH:
 				

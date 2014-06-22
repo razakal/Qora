@@ -141,6 +141,7 @@ public abstract class Transaction {
 		transaction.put("timestamp", this.timestamp);
 		transaction.put("reference", Base58.encode(this.reference));
 		transaction.put("signature", Base58.encode(this.signature));
+		transaction.put("confirmations", this.getConfirmations());
 		
 		return transaction;
 	}

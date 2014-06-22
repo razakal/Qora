@@ -38,6 +38,9 @@ public class ApiErrorFactory
 	//BLOCKS
 	public static final int ERROR_BLOCK_NO_EXISTS = 301;
 	
+	//TRANSACTIONS
+	public static final int ERROR_TRANSACTION_NO_EXISTS = 311;
+	
 	//NAMING
 	public static final int ERROR_NAME_NO_EXISTS = 401;
 	public static final int ERROR_NAME_ALREADY_EXISTS = 402;

@@ -29,7 +29,7 @@ public class TransactionsDatabase {
 		this.database = database;
 	}
 	
-	public List<Transaction> getLastTransactions(Account account)
+	public List<Transaction> getLastTransactions(Account account, int limit)
 	{
 		List<Transaction> transactions = new ArrayList<Transaction>();
 		
@@ -39,7 +39,7 @@ public class TransactionsDatabase {
 			NavigableSet<byte[]> transactionsSet = this.database.createTreeSet(account.getAddress() + TRANSACTIONS).comparator(UnsignedBytes.lexicographicalComparator()).makeOrGet();
 			Iterator<byte[]> iterator = transactionsSet.descendingIterator();
 			
-			for(int i=0; i<50 && iterator.hasNext(); i++)
+			for(int i=0; i<limit && iterator.hasNext(); i++)
 			{
 				//GET TRANSACTION
 				byte[] bytes = iterator.next();
@@ -59,7 +59,7 @@ public class TransactionsDatabase {
 		return transactions;
 	}
 	
-	public List<Pair<Account, Transaction>> getLastTransactions(List<Account> accounts)
+	public List<Pair<Account, Transaction>> getLastTransactions(List<Account> accounts, int limit)
 	{
 		List<Pair<Account, Transaction>> transactions = new ArrayList<Pair<Account, Transaction>>();
 		
@@ -74,7 +74,7 @@ public class TransactionsDatabase {
 					NavigableSet<byte[]> transactionsSet = this.database.createTreeSet(account.getAddress() + TRANSACTIONS).comparator(UnsignedBytes.lexicographicalComparator()).makeOrGet();
 					Iterator<byte[]> iterator = transactionsSet.descendingIterator();
 					
-					for(int i=0; i<50 && iterator.hasNext(); i++)
+					for(int i=0; i<limit && iterator.hasNext(); i++)
 					{
 						//GET TRANSACTION
 						byte[] bytes = iterator.next();

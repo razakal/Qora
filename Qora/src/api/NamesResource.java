@@ -147,13 +147,13 @@ public class NamesResource
 			}
 				
 			//CREATE NAME
-			int valid = Controller.getInstance().registerName(account, account, name, value, bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance().registerName(account, account, name, value, bdFee);
 				
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				
-				return String.valueOf(true);
+				return result.getA().toJson().toJSONString();
 				
 			case Transaction.NAME_NOT_LOWER_CASE:
 				
@@ -254,13 +254,13 @@ public class NamesResource
 			}
 				
 			//UPDATE NAME
-			int valid = Controller.getInstance().updateName(account, new Account(newOwner), nameName, newValue, bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance().updateName(account, new Account(newOwner), nameName, newValue, bdFee);
 				
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				
-				return String.valueOf(true);
+				return result.getA().toJson().toJSONString();
 			
 			case Transaction.INVALID_NAME_LENGTH:
 					

@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 
 import qora.account.Account;
 import qora.transaction.Transaction;
+import utils.Pair;
 import controller.Controller;
 
 @SuppressWarnings("serial")
@@ -190,10 +191,10 @@ public class SendMoneyPanel extends JPanel
 			}
 		
 			//CREATE PAYMENT
-			int valid = Controller.getInstance().sendPayment(Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress()), recipient, amount, fee);
+			Pair<Transaction, Integer> result = Controller.getInstance().sendPayment(Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress()), recipient, amount, fee);
 			
 			//CHECK VALIDATE MESSAGE
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				

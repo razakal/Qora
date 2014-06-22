@@ -22,6 +22,7 @@ import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.transaction.Transaction;
+import utils.Pair;
 
 @SuppressWarnings("serial")
 public class RegisterNameFrame extends JFrame
@@ -204,10 +205,10 @@ public class RegisterNameFrame extends JFrame
 		
 			//CREATE NAME REGISTRATION
 			PrivateKeyAccount registrant = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
-			int valid = Controller.getInstance().registerName(registrant, registrant, this.txtName.getText(),this.txtareaValue.getText(), fee);
+			Pair<Transaction, Integer> result = Controller.getInstance().registerName(registrant, registrant, this.txtName.getText(),this.txtareaValue.getText(), fee);
 			
 			//CHECK VALIDATE MESSAGE
-			switch(valid)
+			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
 				
