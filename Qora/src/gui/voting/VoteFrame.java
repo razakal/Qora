@@ -158,18 +158,17 @@ public class VoteFrame extends JFrame
 		//DISABLE
 		this.voteButton.setEnabled(false);
 	
-		//TODO UNCOMMENT
 		//CHECK IF NETWORK OKE
-		/*if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
+		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
 		{
 			//NETWORK NOT OKE
 			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
 			
 			//ENABLE
-			this.createButton.setEnabled(true);
+			this.voteButton.setEnabled(true);
 			
 			return;
-		}*/
+		}
 		
 		//CHECK IF WALLET UNLOCKED
 		if(!Controller.getInstance().isWalletUnlocked())
