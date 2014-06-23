@@ -9,6 +9,7 @@ import java.util.List;
 
 import ntp.NTP;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.google.common.primitives.Bytes;
@@ -99,7 +100,16 @@ public class CreatePollTransaction extends Transaction
 				
 		//ADD CREATOR/NAME/DESCRIPTION/OPTIONS
 		transaction.put("creator", this.creator.getAddress());
-		transaction.put("poll", this.poll.toJson());
+		transaction.put("name", this.poll.getName());
+		transaction.put("description", this.poll.getDescription());
+		
+		JSONArray options = new JSONArray();
+		for(PollOption option: this.poll.getOptions())
+		{
+			options.add(option.getName());
+		}
+		
+		transaction.put("options", options);
 				
 		return transaction;	
 	}
@@ -186,7 +196,7 @@ public class CreatePollTransaction extends Transaction
 		//CHECK IF RELEASED
 		if(NTP.getTime() < VOTING_RELEASE)
 		{
-			return NOT_YET_RELEASED;
+			//TODO REMOVE return NOT_YET_RELEASED;
 		}
 		
 		//CHECK POLL NAME LENGTH

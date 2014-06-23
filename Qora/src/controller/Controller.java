@@ -739,6 +739,21 @@ public class Controller extends Observable {
 		return DatabaseSet.getInstance().getNameExchangeDatabase().getNameSales();
 	}
 	
+	public List<Pair<Account, Poll>> getPolls()
+	{
+		return this.wallet.getPolls();
+	}
+	
+	public List<Poll> getPolls(Account account)
+	{
+		return this.wallet.getPolls(account);
+	}
+	
+	public List<Poll> getAllPolls()
+	{
+		return DatabaseSet.getInstance().getPollDatabase().getPolls();
+	}
+	
 	public void onDatabaseCommit()
 	{
 		this.wallet.commit();
@@ -822,6 +837,13 @@ public class Controller extends Observable {
 	public NameSale getNameSale(String nameName)
 	{
 		return DatabaseSet.getInstance().getNameExchangeDatabase().getNameSale(nameName);
+	}
+	
+	//POLLS
+	
+	public Poll getPoll(String name)
+	{
+		return DatabaseSet.getInstance().getPollDatabase().getPoll(name);
 	}
 	
 	//TRANSACTIONS

@@ -120,6 +120,19 @@ public class Poll
 		return votes;
 	}
 	
+	public PollOption getOption(String option)
+	{
+		for(PollOption pollOption: this.options)
+		{
+			if(pollOption.getName().equals(option))
+			{
+				return pollOption;
+			}
+		}
+		
+		return null;
+	}
+	
 	//PARSE
 	
 	public static Poll parse(byte[] data) throws Exception
@@ -183,14 +196,15 @@ public class Poll
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Object toJson() 
+	public JSONObject toJson() 
 	{
 		//GET BASE
 		JSONObject poll = new JSONObject();
 										
-		//ADD NAME/VALUE/OWNER
+		//ADD NAME/DESCRIPTIONS/OPTIONS
 		poll.put("name", this.getName());
 		poll.put("description", this.getDescription());
+		
 		
 		JSONArray jsonOptions = new JSONArray();
 		for(PollOption option: this.options)

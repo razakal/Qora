@@ -30,6 +30,7 @@ public class ApiService {
         s.add(PaymentResource.class);
         s.add(NamesResource.class);
         s.add(NameSalesResource.class);
+        s.add(PollsResource.class);
         ResourceConfig config = new ResourceConfig(s);
 		
         //CREATE CONTAINER

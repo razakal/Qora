@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import qora.account.Account;
@@ -138,9 +139,18 @@ public class PollOption {
 	{
 		JSONObject pollOption = new JSONObject();
 								
-		//ADD NAME
+		//ADD NAME/TOTAL VOTES/VOTERS
 		pollOption.put("name", this.getName());
-								
+		pollOption.put("votes", this.getVotes().toPlainString());
+		
+		JSONArray voters = new JSONArray();
+		for(Account voter: this.voters)
+		{
+			voters.add(voter.getAddress());
+		}
+		
+		pollOption.put("voters", voters);
+		
 		return pollOption;	
 	}
 	

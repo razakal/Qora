@@ -14,6 +14,7 @@ public class ApiErrorFactory
 	public static final int ERROR_UNKNOWN = 0;
 	public static final int ERROR_JSON = 1;
 	public static final int ERROR_NO_BALANCE = 2;
+	public static final int ERROR_NOT_YET_RELEASED = 3;
 	
 	//VALIDATION
 	public static final int ERROR_INVALID_SIGNATURE = 101;
@@ -28,6 +29,8 @@ public class ApiErrorFactory
 	public static final int ERROR_INVALID_NAME_OWNER = 110;
 	public static final int ERROR_INVALID_BUYER = 111;
 	public static final int ERROR_INVALID_PUBLIC_KEY = 112;
+	public static final int ERROR_INVALID_OPTIONS_LENGTH = 113;
+	public static final int ERROR_INVALID_OPTION_LENGTH = 114;
 	
 	//WALLET
 	public static final int ERROR_WALLET_NO_EXISTS = 201;
@@ -48,6 +51,13 @@ public class ApiErrorFactory
 	public static final int ERROR_NAME_NOT_LOWER_CASE = 404;
 	public static final int ERROR_NAME_SALE_NO_EXISTS = 410;
 	public static final int ERROR_BUYER_ALREADY_OWNER = 411;
+	
+	//POLLS
+	public static final int ERROR_POLL_NO_EXISTS = 501;
+	public static final int ERROR_POLL_ALREADY_EXISTS = 502;
+	public static final int ERROR_DUPLICATE_OPTION = 503;
+	public static final int ERROR_POLL_OPTION_NO_EXISTS = 504;
+	public static final int ERROR_ALREADY_VOTED_FOR_THAT_OPTION = 505;
 	
 	private static ApiErrorFactory  instance;
 	
@@ -71,6 +81,7 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_UNKNOWN, "unknown error");
 		this.errorMessages.put(ERROR_JSON, "failed to parse json message");
 		this.errorMessages.put(ERROR_NO_BALANCE, "not enough balance");
+		this.errorMessages.put(ERROR_NOT_YET_RELEASED, "that feature is not yet released");
 		
 		//VALIDATION		
 		this.errorMessages.put(ERROR_INVALID_SIGNATURE, "invalid signature");
@@ -85,6 +96,8 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_INVALID_NAME_OWNER, "invalid name owner");
 		this.errorMessages.put(ERROR_INVALID_BUYER, "invalid buyer");
 		this.errorMessages.put(ERROR_INVALID_PUBLIC_KEY, "invalid public key");
+		this.errorMessages.put(ERROR_INVALID_OPTIONS_LENGTH, "invalid options length");
+		this.errorMessages.put(ERROR_INVALID_OPTION_LENGTH, "invalid option length");
 		
 		//WALLET
 		this.errorMessages.put(ERROR_WALLET_NO_EXISTS, "wallet does not exist");
@@ -95,6 +108,9 @@ public class ApiErrorFactory
 		//BLOCK
 		this.errorMessages.put(ERROR_BLOCK_NO_EXISTS, "block does not exist");
 		
+		//TRANSACTIONS
+		this.errorMessages.put(ERROR_TRANSACTION_NO_EXISTS, "transactions does not exist");
+		
 		//NAMING
 		this.errorMessages.put(ERROR_NAME_NO_EXISTS, "name does not exist");
 		this.errorMessages.put(ERROR_NAME_ALREADY_EXISTS, "name already exists");
@@ -102,6 +118,13 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_NAME_NOT_LOWER_CASE, "name must be lower case");
 		this.errorMessages.put(ERROR_NAME_SALE_NO_EXISTS, "namesale does not exist");
 		this.errorMessages.put(ERROR_BUYER_ALREADY_OWNER, "buyer is already owner");
+		
+		//POLLS
+		this.errorMessages.put(ERROR_POLL_NO_EXISTS, "poll does not exist");
+		this.errorMessages.put(ERROR_POLL_ALREADY_EXISTS, "poll already exists");
+		this.errorMessages.put(ERROR_DUPLICATE_OPTION, "not all options are unique");
+		this.errorMessages.put(ERROR_POLL_OPTION_NO_EXISTS, "option does not exist");
+		this.errorMessages.put(ERROR_ALREADY_VOTED_FOR_THAT_OPTION, "already voted for that option");
 	}
 	
 	@SuppressWarnings("unchecked")
