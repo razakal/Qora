@@ -234,7 +234,7 @@ public class VoteOnPollTransaction extends Transaction
 		//CHECK IF RELEASED
 		if(NTP.getTime() < VOTING_RELEASE)
 		{
-			//TODO REMOVE return NOT_YET_RELEASED;
+			return NOT_YET_RELEASED;
 		}
 		
 		//CHECK POLL LENGTH

@@ -202,6 +202,7 @@ public class Poll
 		JSONObject poll = new JSONObject();
 										
 		//ADD NAME/DESCRIPTIONS/OPTIONS
+		poll.put("creator", this.getCreator().getAddress());
 		poll.put("name", this.getName());
 		poll.put("description", this.getDescription());
 		
