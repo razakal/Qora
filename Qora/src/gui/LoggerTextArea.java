@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
 
 @SuppressWarnings("serial")
 public class LoggerTextArea extends JTextArea {
@@ -67,9 +68,27 @@ class TextComponentHandler extends Handler
 	{
 		if(isLoggable(record))
 		{
-			synchronized(text) 
+			synchronized(this.text) 
 		    {
-				text.append(this.getFormatter().format(record));
+				this.text.append(this.getFormatter().format(record));
+				
+				int rows = this.text.getLineCount();
+				
+				//ONLY KEEP LAST 1000 LANES TO PREVENT MEMORY ISSUES
+				if(rows > 10000)
+				{
+					try 
+					{
+						int end = this.text.getLineEndOffset(rows - 10000 - 1);
+						this.text.replaceRange("", 0, end);
+					} 
+					catch (BadLocationException e) 
+					{
+						e.printStackTrace();
+					}
+					
+				}
+				
 		    }
 		}   
 	}

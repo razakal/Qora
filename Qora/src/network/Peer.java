@@ -55,7 +55,7 @@ public class Peer extends Thread{
 			this.start();
 			
 			//START PINGER
-			//this.pinger = new Pinger(this);
+			this.pinger = new Pinger(this);
 			
 			//ON SOCKET CONNECT
 			this.callback.onConnect(this);			
@@ -94,7 +94,7 @@ public class Peer extends Thread{
 			this.start();
 			
 			//START PINGER
-			//this.pinger = new Pinger(this);
+			this.pinger = new Pinger(this);
 			
 			//ON SOCKET CONNECT
 			this.callback.onConnect(this);			
