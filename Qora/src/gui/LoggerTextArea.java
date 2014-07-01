@@ -72,9 +72,8 @@ class TextComponentHandler extends Handler
 		    {
 				this.text.append(this.getFormatter().format(record));
 				
-				int rows = this.text.getLineCount();
-				
 				//ONLY KEEP LAST 1000 LANES TO PREVENT MEMORY ISSUES
+				int rows = this.text.getLineCount();
 				if(rows > 10000)
 				{
 					try 

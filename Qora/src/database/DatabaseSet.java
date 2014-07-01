@@ -1,7 +1,6 @@
 package database;
 
 import java.io.File;
-import java.io.IOError;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -67,46 +66,6 @@ public class DatabaseSet implements Observer {
 		
 		return instance;
 	}	
-	
-	/*public DatabaseSet createTransaction()
-	{
-		return new DatabaseSet(this.transactionMaker.makeTx(), null);
-	}*/
-	
-	public static boolean isCorrupted()
-	{
-		try
-		{
-			//OPEN DB
-			File dbFile = new File(Settings.getInstance().getDataDir(), "data.dat");
-			
-			if(dbFile.exists())
-			{			
-				//CREATE DATABASE	
-				DB database = DBMaker.newFileDB(dbFile)
-						.closeOnJvmShutdown()
-						.make();
-				
-				//CHECK IF WE COULD OPEN DATABASE
-				if(database == null)
-				{
-					return true;
-				}
-				
-				//CLOSE
-				database.close();
-			}
-			
-			//RETURN
-			return false;
-		}
-		catch(IOError e)
-		{
-			e.printStackTrace();
-			
-			return true;
-		}
-	}
 	
 	public static DatabaseSet createEmptyDatabaseSet()
 	{

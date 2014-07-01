@@ -1,7 +1,6 @@
 package database.wallet;
 
 import java.io.File;
-import java.io.IOError;
 
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -23,37 +22,6 @@ public class WalletDatabase
 	private NameSalesDatabase nameSalesDatabase;
 	private PollDatabase pollDatabase;
 	
-	public static boolean isCorrupted()
-	{
-		try
-		{
-			if(WALLET_FILE.exists())
-			{			
-				//CREATE DATABASE	
-				DB database = DBMaker.newFileDB(WALLET_FILE)
-						.closeOnJvmShutdown()
-						.asyncWriteEnable()
-						.make();
-				
-				//CHECK IF WE COULD OPEN DATABASE
-				if(database == null)
-				{
-					return true;
-				}
-				
-				//CLOSE
-				database.close();
-			}
-			
-			//RETURN
-			return false;
-		}
-		catch(IOError e)
-		{
-			return true;
-		}
-	}
-	
 	public static boolean exists()
 	{
 		return WALLET_FILE.exists();
@@ -63,6 +31,10 @@ public class WalletDatabase
 	{
 		//OPEN WALLET
 		WALLET_FILE.getParentFile().mkdirs();
+		
+		//DELETE TRANSACTIONS
+		File transactionFile = new File(Settings.getInstance().getWalletDir(), "wallet.dat.t");
+		transactionFile.delete();	
 		
 	    this.database = DBMaker.newFileDB(WALLET_FILE)
 	    		.closeOnJvmShutdown()

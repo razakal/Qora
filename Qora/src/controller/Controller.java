@@ -96,18 +96,6 @@ public class Controller extends Observable {
     		}
         }
 		
-		//CHECK DATABASE CORRUPTED
-		if(DatabaseSet.isCorrupted())
-		{
-			throw new Exception("Failed to open database!");
-		}
-		
-		//CHECK WALLET CORRUPTED
-		if(Wallet.isCorrupted())
-		{
-			throw new Exception("Failed to open wallet!");
-		}
-		
 		//LOAD NATIVE LIBRARIES
 		if(!Ed25519.load())
 		{

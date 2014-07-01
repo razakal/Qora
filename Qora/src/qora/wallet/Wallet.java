@@ -40,11 +40,6 @@ public class Wallet extends Observable implements Observer
 	private WalletDatabase database;
 	private SecureWalletDatabase secureDatabase;
 	
-	public static boolean isCorrupted()
-	{
-		return WalletDatabase.isCorrupted();
-	}
-	
 	//CONSTRUCTORS
 	
 	public Wallet()

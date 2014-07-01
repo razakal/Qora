@@ -20,28 +20,6 @@ public class SecureWalletDatabase
 	
 	private AccountSeedsDatabase accountSeedsDatabase;
 	
-	public static boolean isCorrupted()
-	{
-		try
-		{	
-			//CREATE DATABASE	
-			DB database = DBMaker.newFileDB(SECURE_WALLET_FILE)
-					.closeOnJvmShutdown()
-					.asyncWriteEnable()
-					.make();
-			
-			//CLOSE
-			database.close();
-			
-			//RETURN
-			return false;
-		}
-		catch(Exception e)
-		{
-			return true;
-		}
-	}
-	
 	public static boolean exists()
 	{
 		return SECURE_WALLET_FILE.exists();
@@ -52,6 +30,10 @@ public class SecureWalletDatabase
 		//OPEN WALLET
 		SECURE_WALLET_FILE.getParentFile().mkdirs();
 				
+		//DELETE TRANSACTIONS
+		File transactionFile = new File(Settings.getInstance().getWalletDir(), "wallet.s.dat.t");
+		transactionFile.delete();	
+		
 		this.database = DBMaker.newFileDB(SECURE_WALLET_FILE)
 						.encryptionEnable(password)
 			    		.closeOnJvmShutdown()
