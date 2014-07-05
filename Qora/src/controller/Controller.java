@@ -219,7 +219,6 @@ public class Controller extends Observable {
 			
 			//FORCE CLOSE
 			System.exit(0);
-		
 		}
 	}
 	
