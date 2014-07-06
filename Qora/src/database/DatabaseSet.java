@@ -53,7 +53,7 @@ public class DatabaseSet implements Observer {
 			//CREATE DATABASE	
 			DB database = DBMaker.newFileDB(dbFile)
 					.closeOnJvmShutdown()
-					.asyncWriteEnable()
+					.cacheLRUEnable()
 					.make();
 			
 			TxMaker txMaker = DBMaker.newFileDB(dbFile)
