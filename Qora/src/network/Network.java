@@ -18,8 +18,8 @@ import network.message.MessageFactory;
 
 public class Network extends Observable implements ConnectionCallback {
 
-	public static final int PORT = 9084;
-	//public static final int PORT = 4809;
+	//public static final int PORT = 9084;
+	public static final int PORT = 4809;
 	
 	private static final int MAX_HANDLED_MESSAGES_SIZE = 10000;
 	
