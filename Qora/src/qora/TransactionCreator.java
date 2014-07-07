@@ -15,6 +15,7 @@ import qora.account.PublicKeyAccount;
 import qora.block.Block;
 import qora.naming.Name;
 import qora.naming.NameSale;
+import qora.transaction.ArbitraryTransaction;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreatePollTransaction;
@@ -236,6 +237,24 @@ public class TransactionCreator extends Observable
 						
 		//VALIDATE AND PROCESS
 		return this.afterCreate(pollVote);
+	}
+	
+	public Pair<Transaction, Integer> createArbitraryTransaction(PrivateKeyAccount creator, int service, byte[] data, BigDecimal fee) 
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+								
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		byte[] signature = ArbitraryTransaction.generateSignature(this.fork, creator, service, data, fee, time);
+							
+		//CREATE ARBITRARY TRANSACTION
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(creator, service, data, fee, time, creator.getLastReference(this.fork), signature);
+								
+		//VALIDATE AND PROCESS
+		return this.afterCreate(arbitraryTransaction);
 	}
 	
 	private Pair<Transaction, Integer> afterCreate(Transaction transaction)

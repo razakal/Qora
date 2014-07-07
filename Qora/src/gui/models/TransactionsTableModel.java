@@ -22,7 +22,7 @@ public class TransactionsTableModel extends AbstractTableModel implements Observ
 	private List<Transaction> transactions;
 	
 	private String[] columnNames = {"Timestamp", "Type", "Fee"};
-	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name Purchase", "Poll Creation", "Poll Vote"};
+	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name Purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction"};
 
 	public TransactionsTableModel()
 	{
