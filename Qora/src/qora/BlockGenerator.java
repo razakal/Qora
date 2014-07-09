@@ -64,8 +64,7 @@ public class BlockGenerator extends Thread
 			}
 			
 			//CHECK IF WE HAVE CONNECTIONS
-			//TODO REMOVE
-			while(true)//if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
 			{
 				//GET LAST BLOCK
 				byte[] lastBlockSignature = DatabaseSet.getInstance().getBlockDatabase().getLastBlockSignature();
@@ -145,7 +144,7 @@ public class BlockGenerator extends Thread
 					}
 				}
 			}
-			/*else //TODO REMOVE
+			else
 			{
 				//SLEEP
 				try 
@@ -156,7 +155,7 @@ public class BlockGenerator extends Thread
 				{
 					e.printStackTrace();
 				}
-			}*/
+			}
 		}
 	}
 	

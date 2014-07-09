@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ntp.NTP;
+
 import org.json.simple.JSONObject;
 
 import com.google.common.primitives.Bytes;
@@ -216,6 +218,12 @@ public class ArbitraryTransaction extends Transaction
 	@Override
 	public int isValid(DatabaseSet db) 
 	{
+		//CHECK IF RELEASED
+		if(NTP.getTime() < ARBITRARY_TRANSACTIONS_RELEASE)
+		{
+			return NOT_YET_RELEASED;
+		}
+		
 		//CHECK DATA SIZE
 		if(data.length > 4000 || data.length < 1)
 		{

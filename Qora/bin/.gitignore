@@ -1,11 +1,5 @@
 /Start.class
 /api
-/controller
-/database
-/gui
-/network
-/ntp
 /qora
-/settings
-/test
-/utils
+/controller
+/network

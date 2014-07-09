@@ -18,9 +18,9 @@ import qora.transaction.Transaction;
 import utils.Pair;
 import controller.Controller;
 
-@Path("arbitrarytransaction")
+@Path("arbitrarytransactions")
 @Produces(MediaType.APPLICATION_JSON)
-public class ArbitraryTransactionResource 
+public class ArbitraryTransactionsResource 
 {
 	@POST
 	@Consumes(MediaType.WILDCARD)
@@ -91,6 +91,10 @@ public class ArbitraryTransactionResource
 			case Transaction.VALIDATE_OKE:
 				
 				return result.getA().toJson().toJSONString();
+				
+			case Transaction.NOT_YET_RELEASED:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NOT_YET_RELEASED);			
 			
 			case Transaction.INVALID_DATA_LENGTH:
 				
