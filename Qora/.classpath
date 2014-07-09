@@ -35,8 +35,6 @@
 	<classpathentry kind="lib" path="libs/jsonrpc4j/portlet-2.0.jar"/>
 	<classpathentry kind="lib" path="libs/guava-15.0.jar"/>
 	<classpathentry kind="lib" path="libs/json-simple-1.1.1.jar"/>
-	<classpathentry kind="lib" path="libs/leveldb-0.5.jar"/>
-	<classpathentry kind="lib" path="libs/leveldb-api-0.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Qora/libs/native"/>
@@ -65,6 +63,6 @@
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-server.jar"/>
 	<classpathentry kind="lib" path="libs/javax.ws.rs-api-2.0-rc3.jar"/>
-	<classpathentry kind="lib" path="libs/mapdb-1.1.0-20140503.165555-2.jar"/>
+	<classpathentry kind="lib" path="libs/mapdb-1.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
