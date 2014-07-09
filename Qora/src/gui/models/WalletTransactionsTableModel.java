@@ -26,7 +26,7 @@ public class WalletTransactionsTableModel extends AbstractTableModel implements 
 	private List<Pair<Account, Transaction>> transactions;
 	
 	private String[] columnNames = {"Confirmations", "Timestamp", "Type", "Address", "Amount"};
-	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name purchase", "Poll Creation", "Poll Vote"};
+	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction"};
 
 	public WalletTransactionsTableModel()
 	{

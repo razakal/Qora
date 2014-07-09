@@ -44,6 +44,7 @@ public abstract class Transaction {
 	public static final int POLL_NO_EXISTS = 24;
 	public static final int OPTION_NO_EXISTS = 25;
 	public static final int ALREADY_VOTED_FOR_THAT_OPTION = 26;
+	public static final int INVALID_DATA_LENGTH = 27;
 	
 	public static final int NOT_YET_RELEASED = 1000;
 	
@@ -60,11 +61,14 @@ public abstract class Transaction {
 	public static final int CREATE_POLL_TRANSACTION = 8;
 	public static final int VOTE_ON_POLL_TRANSACTION = 9;
 	
+	public static final int ARBITRARY_TRANSACTION = 10;
+	
 	//MINIMUM FEE
 	public static final BigDecimal MINIMUM_FEE = BigDecimal.ONE;
 	
 	//RELEASES
 	public static final long VOTING_RELEASE = 1403715600000l;
+	public static final long ARBITRARY_TRANSACTIONS_RELEASE = 1405702800000l;
 	
 	//PROPERTIES LENGTH
 	protected static final int TYPE_LENGTH = 4;

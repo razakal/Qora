@@ -17,6 +17,7 @@ import qora.crypto.Crypto;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
+import qora.transaction.ArbitraryTransaction;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreatePollTransaction;
@@ -2652,6 +2653,246 @@ public class TransactionTests {
 
 	}
 	
+	//ARBITRARY TRANSACTION
+	
+	@Test
+	public void validateSignatureArbitraryTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet, sender, 4889, "test".getBytes(), BigDecimal.valueOf(1).setScale(8), timestamp);
+		
+		//CREATE ARBITRARY TRANSACTION
+		Transaction arbitraryTransaction = new ArbitraryTransaction(sender, 4889, "test".getBytes(), BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
+		
+		//CHECK IF ARBITRARY TRANSACTION IS VALID
+		assertEquals(true, arbitraryTransaction.isSignatureValid());
+		
+		//INVALID SIGNATURE
+		arbitraryTransaction = new ArbitraryTransaction(sender, 4889, "test".getBytes(), BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), new byte[0]);
+		
+		//CHECK IF POLL VOTE IS INVALID
+		assertEquals(false, arbitraryTransaction.isSignatureValid());
+	}
+		
+	@Test
+	public void validateArbitraryTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] data = "test".getBytes();
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet, sender, 4776, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE ARBITRARY TRANSACTION
+		Transaction arbitraryTransaction = new ArbitraryTransaction(sender, 4776, data, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF ARBITRARY TRANSACTION IS VALID
+		assertEquals(Transaction.VALIDATE_OKE, arbitraryTransaction.isValid(databaseSet));
+		arbitraryTransaction.process(databaseSet);
+		
+		//CREATE INVALID ARBITRARY TRANSACTION INVALID data LENGTH
+		byte[] longData = new byte[5000];
+		arbitraryTransaction = new ArbitraryTransaction(sender, 4776, longData, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 
+		//CHECK IF ARBITRARY TRANSACTION IS INVALID
+		assertEquals(Transaction.INVALID_DATA_LENGTH, arbitraryTransaction.isValid(databaseSet));
+		
+		//CREATE INVALID ARBITRARY TRANSACTION NOT ENOUGH BALANCE
+		seed = Crypto.getInstance().digest("invalid".getBytes());
+		privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount invalidOwner = new PrivateKeyAccount(privateKey);
+		arbitraryTransaction = new ArbitraryTransaction(invalidOwner, 4776, data, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF ARBITRARY TRANSACTION IS INVALID
+		assertEquals(Transaction.NO_BALANCE, arbitraryTransaction.isValid(databaseSet));
+		
+		//CREATE ARBITRARY TRANSACTION INVALID REFERENCE
+		arbitraryTransaction = new ArbitraryTransaction(sender, 4776, data, BigDecimal.ONE.setScale(8), timestamp, invalidOwner.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF ARBITRARY TRANSACTION IS INVALID
+		assertEquals(Transaction.INVALID_REFERENCE, arbitraryTransaction.isValid(databaseSet));
+		
+		//CREATE ARBITRARY TRANSACTION INVALID FEE
+		arbitraryTransaction = new ArbitraryTransaction(sender, 4776, data, BigDecimal.ZERO.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF ARBITRARY TRANSACTION IS INVALID
+		assertEquals(Transaction.NEGATIVE_FEE, arbitraryTransaction.isValid(databaseSet));
+	}
+
+	
+	@Test
+	public void parseArbitraryTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet, sender, 4776, "test".getBytes(), BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE ARBITRARY TRANSACTION
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(sender, 4776, "test".getBytes(),BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CONVERT TO BYTES
+		byte[] rawArbitraryTransaction = arbitraryTransaction.toBytes();
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			ArbitraryTransaction parsedArbitraryTransaction = (ArbitraryTransaction) TransactionFactory.getInstance().parse(rawArbitraryTransaction);
+			
+			//CHECK INSTANCE
+			assertEquals(true, parsedArbitraryTransaction instanceof ArbitraryTransaction);
+			
+			//CHECK SIGNATURE
+			assertEquals(true, Arrays.equals(arbitraryTransaction.getSignature(), parsedArbitraryTransaction.getSignature()));
+			
+			//CHECK AMOUNT CREATOR
+			assertEquals(arbitraryTransaction.getAmount(sender), parsedArbitraryTransaction.getAmount(sender));	
+			
+			//CHECK CREATOR
+			assertEquals(arbitraryTransaction.getCreator().getAddress(), parsedArbitraryTransaction.getCreator().getAddress());	
+			
+			//CHECK VERSION
+			assertEquals(arbitraryTransaction.getService(), parsedArbitraryTransaction.getService());	
+			
+			//CHECK DATA
+			assertEquals(true, Arrays.equals(arbitraryTransaction.getData(), parsedArbitraryTransaction.getData()));	
+			
+			//CHECK FEE
+			assertEquals(arbitraryTransaction.getFee(), parsedArbitraryTransaction.getFee());	
+			
+			//CHECK REFERENCE
+			assertEquals(true, Arrays.equals(arbitraryTransaction.getReference(), parsedArbitraryTransaction.getReference()));	
+			
+			//CHECK TIMESTAMP
+			assertEquals(arbitraryTransaction.getTimestamp(), parsedArbitraryTransaction.getTimestamp());				
+		}
+		catch (Exception e) 
+		{
+			fail("Exception while parsing transaction.");
+		}
+		
+		//PARSE TRANSACTION FROM WRONG BYTES
+		rawArbitraryTransaction = new byte[arbitraryTransaction.getDataLength()];
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			TransactionFactory.getInstance().parse(rawArbitraryTransaction);
+			
+			//FAIL
+			fail("this should throw an exception");
+		}
+		catch (Exception e) 
+		{
+			//EXCEPTION IS THROWN OKE
+		}	
+	}
+
+	
+	@Test
+	public void processArbitraryTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+								
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+					
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+				
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet, sender, 4776, "test".getBytes(), BigDecimal.valueOf(1).setScale(8), timestamp);
+						
+		//CREATE ARBITRARY TRANSACTION
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(sender, 4776, "test".getBytes(),BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		arbitraryTransaction.process(databaseSet);				
+		
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(999).setScale(8), sender.getConfirmedBalance(databaseSet));
+				
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(arbitraryTransaction.getSignature(), sender.getLastReference(databaseSet)));
+	}
+	
+	@Test
+	public void orphanArbitraryTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+								
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+					
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+				
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet, sender, 4776, "test".getBytes(), BigDecimal.valueOf(1).setScale(8), timestamp);
+								
+		//CREATE ARBITRARY TRANSACTION
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(sender, 4776, "test".getBytes(),BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		arbitraryTransaction.process(databaseSet);	
+		arbitraryTransaction.orphan(databaseSet);
+		
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(1000).setScale(8), sender.getConfirmedBalance(databaseSet));
+				
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(transaction.getSignature(), sender.getLastReference(databaseSet)));
+	}
 	
 }

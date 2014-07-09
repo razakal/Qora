@@ -75,6 +75,11 @@ public class TransactionFactory {
 			
 			//PARSE CREATE POLL VOTE
 			return VoteOnPollTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));		
+			
+		case Transaction.ARBITRARY_TRANSACTION:
+			
+			//PARSE ARBITRARY TRANSACTION
+			return ArbitraryTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));			
 		
 		}
 		

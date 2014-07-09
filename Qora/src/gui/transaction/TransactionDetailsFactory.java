@@ -2,6 +2,7 @@ package gui.transaction;
 
 import javax.swing.JFrame;
 
+import qora.transaction.ArbitraryTransaction;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreatePollTransaction;
@@ -74,7 +75,12 @@ public class TransactionDetailsFactory
 		case Transaction.VOTE_ON_POLL_TRANSACTION:
 			
 			VoteOnPollTransaction pollVote = (VoteOnPollTransaction) transaction;
-			return new VoteOnPollDetailsFrame(pollVote);	
+			return new VoteOnPollDetailsFrame(pollVote);
+			
+		case Transaction.ARBITRARY_TRANSACTION:
+			
+			ArbitraryTransaction arbitraryTransaction = (ArbitraryTransaction) transaction;
+			return new ArbitraryTransactionDetailsFrame(arbitraryTransaction);	
 		}
 		
 		return null;

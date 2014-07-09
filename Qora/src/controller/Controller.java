@@ -937,4 +937,13 @@ public class Controller extends Observable {
 		}
 	}
 	
+	public Pair<Transaction, Integer> createArbitraryTransaction(PrivateKeyAccount creator, int service, byte[] data, BigDecimal fee) 
+	{
+		//CREATE ONLY ONE TRANSACTION AT A TIME
+		synchronized(this.transactionCreator)
+		{
+			return this.transactionCreator.createArbitraryTransaction(creator, service, data, fee);
+		}
+	}
+	
 }
