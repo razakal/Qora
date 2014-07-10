@@ -5,9 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import network.Peer;
 
@@ -29,7 +30,7 @@ public class Settings {
 	
 	private static Settings instance;
 	
-	private Map<String, String> settingsMap;
+	private JSONObject settingsJSON;
 	
 	public static Settings getInstance()
 	{
@@ -47,11 +48,8 @@ public class Settings {
 		
 		try
 		{
-			//INIT MAP
-			settingsMap = new HashMap<String, String>();
-			
 			//OPEN FILE
-			File file = new File("settings.ini");
+			File file = new File("settings.json");
 			
 			//CREATE FILE IF IT DOESNT EXIST
 			if(!file.exists())
@@ -63,15 +61,16 @@ public class Settings {
 			reader = new BufferedReader(new FileReader(file));
 			
 			String line;
+			String jsonString = "";
 			
 			//READ LINE
 			while ((line = reader.readLine()) != null)
 			{
-				String[] splitLine = line.split(" ");
-				
-				//ADD TO MAP
-				settingsMap.put(splitLine[0], splitLine[1]);
+				jsonString += line;
 		    }
+			
+			//CREATE JSON OBJECT
+			this.settingsJSON = (JSONObject) JSONValue.parse(jsonString);
 			
 			//CLOSE
 			reader.close();
@@ -88,18 +87,15 @@ public class Settings {
 	{
 		try
 		{
-			//GET PEERS FOR MAP
-			String peersString = settingsMap.get("knownpeers");
-			
-			//SPLIT PEERS
-			String[] peersArray = peersString.split(";");
+			//GET PEERS FROM JSON
+			JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
 			
 			//CREATE LIST WITH PEERS
 			List<Peer> peers = new ArrayList<Peer>();
 			
-			for(int i=0; i<peersArray.length; i++)
+			for(int i=0; i<peersArray.size(); i++)
 			{
-				InetAddress address = InetAddress.getByName(peersArray[i]);
+				InetAddress address = InetAddress.getByName((String) peersArray.get(i));
 				
 				//CHECK IF SOCKET IS NOT LOCALHOST
 				if(!address.equals(InetAddress.getLocalHost()))
@@ -124,9 +120,9 @@ public class Settings {
 	
 	public int getMaxConnections()
 	{
-		if(settingsMap.containsKey("maxconnections"))
+		if(this.settingsJSON.containsKey("maxconnections"))
 		{
-			return Integer.parseInt(settingsMap.get("maxconnections"));
+			return ((Long) this.settingsJSON.get("maxconnections")).intValue();
 		}
 		
 		return DEFAULT_MAX_CONNECTIONS;
@@ -134,9 +130,9 @@ public class Settings {
 	
 	public int getMinConnections()
 	{
-		if(settingsMap.containsKey("minconnections"))
+		if(this.settingsJSON.containsKey("minconnections"))
 		{
-			return Integer.parseInt(settingsMap.get("minconnections"));
+			return ((Long) this.settingsJSON.get("minconnections")).intValue();
 		}
 		
 		return DEFAULT_MIN_CONNECTIONS;
@@ -144,9 +140,9 @@ public class Settings {
 	
 	public int getConnectionTimeout()
 	{
-		if(settingsMap.containsKey("connectiontimeout"))
+		if(this.settingsJSON.containsKey("connectiontimeout"))
 		{
-			return Integer.parseInt(settingsMap.get("connectiontimeout"));
+			return ((Long) this.settingsJSON.get("connectiontimeout")).intValue();
 		}
 		
 		return DEFAULT_CONNECTION_TIMEOUT;
@@ -154,9 +150,9 @@ public class Settings {
 	
 	public int getRpcPort()
 	{
-		if(settingsMap.containsKey("rpcport"))
+		if(this.settingsJSON.containsKey("rpcport"))
 		{
-			return Integer.parseInt(settingsMap.get("rpcport"));
+			return ((Long) this.settingsJSON.get("rpcport")).intValue();
 		}
 		
 		return DEFAULT_RPC_PORT;
@@ -166,16 +162,16 @@ public class Settings {
 	{
 		try
 		{
-			if(settingsMap.containsKey("rpcallowed"))
+			if(this.settingsJSON.containsKey("rpcallowed"))
 			{
-				//GET PEERS FOR MAP
-				String rpcAllowed = settingsMap.get("rpcallowed");
+				//GET PEERS FROM JSON
+				JSONArray allowedArray = (JSONArray) this.settingsJSON.get("rpcallowed");
 				
-				//SPLIT PEERS
-				String[] allowed = rpcAllowed.split(";");
+				//CREATE LIST WITH PEERS
+				String[] allowed = (String[]) allowedArray.toArray();
 				
 				//RETURN
-				return allowed;
+				return allowed;	
 			}
 			
 			//RETURN
@@ -190,9 +186,9 @@ public class Settings {
 	
 	public String getWalletDir()
 	{
-		if(settingsMap.containsKey("walletdir"))
+		if(this.settingsJSON.containsKey("walletdir"))
 		{
-			return settingsMap.get("walletdir");
+			return (String) this.settingsJSON.get("walletdir");
 		}
 		
 		return DEFAULT_WALLET_DIR;
@@ -200,9 +196,9 @@ public class Settings {
 	
 	public String getDataDir()
 	{
-		if(settingsMap.containsKey("datadir"))
+		if(this.settingsJSON.containsKey("datadir"))
 		{
-			return settingsMap.get("datadir");
+			return (String) this.settingsJSON.get("datadir");
 		}
 		
 		return DEFAULT_DATA_DIR;
@@ -210,9 +206,9 @@ public class Settings {
 	
 	public int getPingInterval()
 	{
-		if(settingsMap.containsKey("pinginterval"))
+		if(this.settingsJSON.containsKey("pinginterval"))
 		{
-			return Integer.parseInt(settingsMap.get("pinginterval"));
+			return ((Long) this.settingsJSON.get("pinginterval")).intValue();
 		}
 		
 		return DEFAULT_PING_INTERVAL;
