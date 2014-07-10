@@ -16,6 +16,7 @@ import qora.block.Block;
 import qora.block.BlockFactory;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
+import settings.Settings;
 import utils.ObserverMessage;
 import utils.TransactionFeeComparator;
 
@@ -36,6 +37,15 @@ public class BlockGenerator extends Thread
 	private boolean run = true;
 	private Map<PrivateKeyAccount, Block> blocks;
 	private Block solvingBlock;
+	private List<PrivateKeyAccount> cachedAccounts;
+	
+	public BlockGenerator()
+	{
+		if(Settings.getInstance().isGeneratorKeyCachingEnabled())
+		{
+			this.cachedAccounts = new ArrayList<PrivateKeyAccount>();
+		}
+	}
 	
 	public void addUnconfirmedTransaction(Transaction transaction)
 	{
@@ -51,6 +61,30 @@ public class BlockGenerator extends Thread
 	public List<Transaction> getUnconfirmedTransactions()
 	{
 		return DatabaseSet.getInstance().getTransactionsDatabase().getTransactions();
+	}
+	
+	private List<PrivateKeyAccount> getKnownAccounts()
+	{
+		//CHECK IF CACHING ENABLED
+		if(Settings.getInstance().isGeneratorKeyCachingEnabled())
+		{
+			List<PrivateKeyAccount> privateKeyAccounts = Controller.getInstance().getPrivateKeyAccounts();
+			
+			//IF ACCOUNTS EXISTS
+			if(privateKeyAccounts.size() > 0)
+			{
+				//CACHE ACCOUNTS
+				this.cachedAccounts = privateKeyAccounts;
+			}
+			
+			//RETURN CACHED ACCOUNTS
+			return this.cachedAccounts;
+		}
+		else
+		{
+			//RETURN ACCOUNTS
+			return Controller.getInstance().getPrivateKeyAccounts();
+		}
 	}
 	
 	public void run()
@@ -83,7 +117,7 @@ public class BlockGenerator extends Thread
 				if(Controller.getInstance().doesWalletExists() /*&& Controller.getInstance().isWalletUnlocked()*/)
 				{
 					//PREVENT CONCURRENT MODIFY EXCEPTION
-					List<PrivateKeyAccount> knownAccounts = Controller.getInstance().getPrivateKeyAccounts();							
+					List<PrivateKeyAccount> knownAccounts = this.getKnownAccounts();							
 					synchronized(knownAccounts)
 					{
 						for(PrivateKeyAccount account: knownAccounts)

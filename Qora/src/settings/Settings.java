@@ -28,6 +28,8 @@ public class Settings {
 	private static final String DEFAULT_DATA_DIR = "data";
 	private static final String DEFAULT_WALLET_DIR = "wallet";
 	
+	private static final boolean DEFAULT_GENERATOR_KEY_CACHING = false;
+	
 	private static Settings instance;
 	
 	private JSONObject settingsJSON;
@@ -212,5 +214,15 @@ public class Settings {
 		}
 		
 		return DEFAULT_PING_INTERVAL;
+	}
+
+	public boolean isGeneratorKeyCachingEnabled() 
+	{
+		if(this.settingsJSON.containsKey("generatorkeycaching"))
+		{
+			return ((Boolean) this.settingsJSON.get("generatorkeycaching")).booleanValue();
+		}
+		
+		return DEFAULT_GENERATOR_KEY_CACHING;
 	}
 }

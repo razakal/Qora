@@ -8,5 +8,6 @@
 		"193.242.149.63",
 		"113.250.226.131"
 	],
-	"minconnections": 10
+	"minconnections": 10,
+	"generatorkeycaching": true
 }
