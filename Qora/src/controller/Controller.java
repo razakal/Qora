@@ -769,6 +769,11 @@ public class Controller extends Observable {
 		return this.blockChain.scanTransactions(accounts);
 	}
 	
+	public Pair<Block, List<Transaction>> scanTransactions(Block block, int blockLimit, int transactionLimit, int type, int service, Account account) {
+		return this.blockChain.scanTransactions(block, blockLimit, transactionLimit, type, service, account);
+		
+	}
+	
 	public Map<Account, List<Block>> scanBlocks(List<Account> accounts) 
 	{
 		return this.blockChain.scanBlocks(accounts);

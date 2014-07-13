@@ -11,8 +11,10 @@ import qora.block.Block;
 import qora.block.GenesisBlock;
 import qora.naming.Name;
 import qora.naming.NameSale;
+import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.voting.Poll;
+import utils.Pair;
 import database.DatabaseSet;
 
 public class BlockChain
@@ -137,6 +139,66 @@ public class BlockChain
 		
 		//RETURN
 		return transactions;
+	}
+	
+	public Pair<Block, List<Transaction>> scanTransactions(Block block, int blockLimit, int transactionLimit, int type, int service, Account account) 
+	{	
+		//CREATE LIST
+		List<Transaction> transactions = new ArrayList<Transaction>();
+		
+		//START FROM BLOCK
+		int scannedBlocks = 0;
+		do
+		{		
+			//FOR ALL TRANSACTIONS IN BLOCK
+			for(Transaction transaction: block.getTransactions())
+			{
+				//CHECK IF ACCOUNT INVOLVED
+				if(account != null && !transaction.isInvolved(account))
+				{
+					continue;
+				}
+				
+				//CHECK IF TYPE OKE
+				if(type != -1 && transaction.getType() != type)
+				{
+					continue;
+				}
+				
+				//CHECK IF SERVICE OKE
+				if(service != -1 && transaction.getType() == Transaction.ARBITRARY_TRANSACTION)
+				{
+					ArbitraryTransaction arbitraryTransaction = (ArbitraryTransaction) transaction;
+					
+					if(arbitraryTransaction.getService() != service)
+					{
+						continue;
+					}
+				}
+				
+				//ADD TO LIST
+				transactions.add(transaction);
+			}
+			
+			//SET BLOCK TO CHILD
+			block = block.getChild();
+			scannedBlocks++;
+		}
+		//WHILE BLOCKS EXIST && NOT REACHED TRANSACTIONLIMIT && NOT REACHED BLOCK LIMIT
+		while(block != null && (transactions.size() < transactionLimit || transactionLimit == -1) && (scannedBlocks < blockLimit || blockLimit == -1)); 
+		
+		//CHECK IF WE REACHED THE END
+		if(block == null)
+		{
+			block = this.getLastBlock();
+		}
+		else
+		{
+			block = block.getParent();
+		}
+		
+		//RETURN PARENT BLOCK AS WE GET CHILD RIGHT BEFORE END OF WHILE
+		return new Pair<Block, List<Transaction>>(block, transactions);
 	}
 
 	public Map<Account, List<Block>> scanBlocks(List<Account> accounts) 
