@@ -146,6 +146,12 @@ public class BlockChain
 		//CREATE LIST
 		List<Transaction> transactions = new ArrayList<Transaction>();
 		
+		//IF NO BLOCK START FROM GENESIS
+		if(block == null)
+		{
+			block = new GenesisBlock();
+		}
+		
 		//START FROM BLOCK
 		int scannedBlocks = 0;
 		do

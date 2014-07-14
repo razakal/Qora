@@ -179,26 +179,30 @@ public class TransactionsResource {
 		{
 			//READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
-			String signature = (String) jsonObject.get("start");
 			
 			//GET BLOCK
-			byte[] signatureBytes;
-			try
+			Block block = null;
+			if(jsonObject.containsKey("start"))
 			{
-				signatureBytes = Base58.decode(signature);
+				byte[] signatureBytes;
+				try
+				{
+					String signature = (String) jsonObject.get("start");
+					signatureBytes = Base58.decode(signature);
+				}
+				catch(Exception e)
+				{
+					throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_SIGNATURE);
+				}
+						
+				block = Controller.getInstance().getBlock(signatureBytes);
+				
+				//CHECK IF BLOCK EXISTS
+				if(block == null)
+				{
+					throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_BLOCK_NO_EXISTS);
+				}	
 			}
-			catch(Exception e)
-			{
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_SIGNATURE);
-			}
-					
-			Block block = Controller.getInstance().getBlock(signatureBytes);
-					
-			//CHECK IF BLOCK EXISTS
-			if(block == null)
-			{
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_BLOCK_NO_EXISTS);
-			}	
 			
 			//CHECK FOR BLOCKLIMIT
 			int blockLimit = -1;
@@ -299,7 +303,16 @@ public class TransactionsResource {
 			JSONObject json = new JSONObject();
 			
 			json.put("lastscanned", Base58.encode(result.getA().getSignature()));
-			json.put("amount", result.getA().getHeight() - block.getHeight() + 1);
+			
+			
+			if(block != null)
+			{
+				json.put("amount", result.getA().getHeight() - block.getHeight() + 1);
+			}
+			else
+			{
+				json.put("amount", result.getA().getHeight());
+			}
 			
 			JSONArray transactions = new JSONArray();
 			for(Transaction transaction: result.getB())
@@ -314,11 +327,13 @@ public class TransactionsResource {
 		catch(NullPointerException e)
 		{
 			//JSON EXCEPTION
+			e.printStackTrace();
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
 		}
 		catch(ClassCastException e)
 		{
 			//JSON EXCEPTION
+			e.printStackTrace();
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
 		}
 	}
