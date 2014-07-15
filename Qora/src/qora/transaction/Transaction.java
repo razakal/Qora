@@ -10,6 +10,7 @@ import org.json.simple.JSONObject;
 import database.DatabaseSet;
 import qora.account.Account;
 import qora.crypto.Base58;
+import settings.Settings;
 
 public abstract class Transaction {
 	
@@ -131,6 +132,13 @@ public abstract class Transaction {
 	public boolean hasMinimumFee()
 	{
 		return this.fee.compareTo(MINIMUM_FEE) >= 0;
+	}
+	
+	public boolean hasMinimumFeePerByte()
+	{
+		BigDecimal minFeePerByte = BigDecimal.ONE.divide(BigDecimal.valueOf(Settings.getInstance().getMaxBytePerFee()), MathContext.DECIMAL32);
+		
+		return this.feePerByte().compareTo(minFeePerByte) >= 0;
 	}
 	
 	//PARSE/CONVERT

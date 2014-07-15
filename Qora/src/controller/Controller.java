@@ -395,8 +395,8 @@ public class Controller extends Observable {
 				return;
 			}
 			
-			//CHECK IF TRANSACTION HAS MINIMUM FEE
-			if(transaction.hasMinimumFee())
+			//CHECK IF TRANSACTION HAS MINIMUM FEE AND MINIMUM FEE PER BYTE
+			if(transaction.hasMinimumFee() && transaction.hasMinimumFeePerByte())
 			{				
 				//ADD TO UNCONFIRMED TRANSACTIONS
 				this.blockGenerator.addUnconfirmedTransaction(transaction);

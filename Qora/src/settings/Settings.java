@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -29,6 +30,8 @@ public class Settings {
 	private static final String DEFAULT_WALLET_DIR = "wallet";
 	
 	private static final boolean DEFAULT_GENERATOR_KEY_CACHING = false;
+	
+	private static final int DEFAULT_MAX_BYTE_PER_FEE = 500;
 	
 	private static Settings instance;
 	
@@ -224,5 +227,15 @@ public class Settings {
 		}
 		
 		return DEFAULT_GENERATOR_KEY_CACHING;
+	}
+	
+	public int getMaxBytePerFee() 
+	{
+		if(this.settingsJSON.containsKey("maxbyteperfee"))
+		{
+			return ((Long) this.settingsJSON.get("maxbyteperfee")).intValue();
+		}
+		
+		return DEFAULT_MAX_BYTE_PER_FEE;
 	}
 }
