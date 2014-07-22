@@ -29,6 +29,7 @@ public class BlockDatabase {
 		this.blockMap = database.createTreeMap("blocks")
 				.keySerializer(BTreeKeySerializer.BASIC)
 				.comparator(UnsignedBytes.lexicographicalComparator())
+				.valuesOutsideNodesEnable()
 				.makeOrGet();
 	}
 	

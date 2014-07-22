@@ -6,7 +6,6 @@ import java.util.Observer;
 
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
-import org.mapdb.TxMaker;
 
 import controller.Controller;
 import settings.Settings;
@@ -14,7 +13,7 @@ import utils.ObserverMessage;
 
 public class DatabaseSet implements Observer {
 
-	private static final int ACTIONS_BEFORE_COMMIT = 5000;
+	private static final int ACTIONS_BEFORE_COMMIT = 10000;
 	
 	private static DatabaseSet instance;
 	
@@ -35,7 +34,6 @@ public class DatabaseSet implements Observer {
 	private VoteOnPollDatabase voteOnPollDatabase;
 	
 	private DB database;
-	//private TxMaker transactionMaker;
 	private int actions;
 	
 	public static DatabaseSet getInstance()
@@ -52,16 +50,11 @@ public class DatabaseSet implements Observer {
 			
 			//CREATE DATABASE	
 			DB database = DBMaker.newFileDB(dbFile)
-					.transactionDisable()
 					.closeOnJvmShutdown()
 					.make();
 			
-			TxMaker txMaker = DBMaker.newFileDB(dbFile)
-					.closeOnJvmShutdown()
-					.makeTxMaker();
-			
 			//CREATE INSTANCE
-			instance = new DatabaseSet(database, txMaker);
+			instance = new DatabaseSet(database);
 		}
 		
 		return instance;
@@ -72,13 +65,12 @@ public class DatabaseSet implements Observer {
 		DB database = DBMaker.newMemoryDB()
 				.make();
 		
-		return new DatabaseSet(database, null);
+		return new DatabaseSet(database);
 	}
 	
-	public DatabaseSet(DB database, TxMaker transactionMaker)
+	public DatabaseSet(DB database)
 	{
 		this.database = database;
-		//this.transactionMaker = transactionMaker;
 		this.actions = 0;
 		
 		this.balanceDatabase = new BalanceDatabase(this, database);
@@ -204,6 +196,7 @@ public class DatabaseSet implements Observer {
 			if(!this.database.isClosed())
 			{
 				this.database.commit();
+				this.database.compact();
 				this.database.close();
 			}
 		}
@@ -227,6 +220,7 @@ public class DatabaseSet implements Observer {
 			if(this.actions >= ACTIONS_BEFORE_COMMIT)
 			{
 				this.database.commit();
+				this.database.compact();
 				this.actions = 0;
 				
 				//NOTIFY CONTROLLER SO HE CAN NOTIFY WALLET

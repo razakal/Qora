@@ -31,7 +31,7 @@ public class Settings {
 	
 	private static final boolean DEFAULT_GENERATOR_KEY_CACHING = false;
 	
-	private static final int DEFAULT_MAX_BYTE_PER_FEE = 500;
+	private static final int DEFAULT_MAX_BYTE_PER_FEE = 512;
 	
 	private static Settings instance;
 	
