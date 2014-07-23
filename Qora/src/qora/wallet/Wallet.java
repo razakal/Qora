@@ -2,10 +2,12 @@ package qora.wallet;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Logger;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -425,6 +427,9 @@ public class Wallet extends Observable implements Observer
 	  	//ADD POLLS
 	  	this.database.getPollDatabase().addAll(polls);
 	  	
+	  	//SET LAST BLOCK
+	  	this.database.setLastBlockSignature(Controller.getInstance().getLastBlock().getSignature());
+	  	
 	  	//NOTIFY OBSERVERS
 	    this.setChanged();
 	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
@@ -677,16 +682,27 @@ public class Wallet extends Observable implements Observer
 			return;
 		}
 		
+		//CHECK IF WE NEED TO RESYNC
+		byte[] lastBlockSignature = this.database.getLastBlockSignature();
+		if(lastBlockSignature == null || !Arrays.equals(lastBlockSignature, block.getReference()))
+		{
+			Logger.getGlobal().info("Wallet not synchronized with current blockchain: synchronizing wallet.");
+			this.synchronize();
+		}
+		
+		//SET AS LAST BLOCK
+		this.database.setLastBlockSignature(block.getSignature());
+			
 		//CHECK IF WE ARE GENERATOR
 		if(this.accountExists(block.getGenerator().getAddress()))
 		{
 			//ADD BLOCK
 			this.database.getBlocksDatabase().add(block);
-			
+				
 			//KEEP TRACK OF UNCONFIRMED BALANCE
 			BigDecimal unconfirmedBalance = this.getUnconfirmedBalance(block.getGenerator().getAddress()).add(block.getTotalFee());
 			this.database.getAccountsDatabase().update(block.getGenerator(), unconfirmedBalance);
-			
+				
 			//UPDATE OBSERVERS
 			this.setChanged();
 			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));

@@ -2,6 +2,7 @@ package database.wallet;
 
 import java.io.File;
 
+import org.mapdb.Atomic.Var;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
@@ -13,6 +14,7 @@ public class WalletDatabase
 	private static final File WALLET_FILE = new File(Settings.getInstance().getWalletDir(), "wallet.dat");
 	
 	private static final String VERSION = "version";
+	private static final String LAST_BLOCK = "lastBlock";
 	
 	private DB database;	
 	private AccountsDatabase accountsDatabase;
@@ -56,6 +58,18 @@ public class WalletDatabase
 	public int getVersion()
 	{
 		return this.database.getAtomicInteger(VERSION).intValue();
+	}
+	
+	public void setLastBlockSignature(byte[] signature)
+	{
+		Var<byte[]> atomic = this.database.getAtomicVar(LAST_BLOCK);
+		atomic.set(signature);
+	}
+	
+	public byte[] getLastBlockSignature()
+	{
+		Var<byte[]> atomic = this.database.getAtomicVar(LAST_BLOCK);
+		return atomic.get();
 	}
 	
 	public AccountsDatabase getAccountsDatabase()
