@@ -1,18 +1,17 @@
 package gui.models;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
-
 import controller.Controller;
+import database.BlockMap;
+import database.SortableList;
 import qora.block.Block;
 import utils.ObserverMessage;
 
 @SuppressWarnings("serial")
-public class BlocksTableModel extends AbstractTableModel implements Observer{
+public class BlocksTableModel extends QoraTableModel<byte[], Block> implements Observer{
 
 	public static final int COLUMN_HEIGHT = 0;
 	public static final int COLUMN_TIMESTAMP = 1;
@@ -21,13 +20,18 @@ public class BlocksTableModel extends AbstractTableModel implements Observer{
 	public static final int COLUMN_TRANSACTIONS = 4;
 	public static final int COLUMN_FEE = 5;
 	
-	private List<Block> blocks;
+	private SortableList<byte[], Block> blocks;
 	
 	private String[] columnNames = {"Height", "Timestamp", "Generator", "Generating Balance", "Transactions", "Fee"};
 	
 	public BlocksTableModel()
 	{
 		Controller.getInstance().addObserver(this);
+	}
+	
+	@Override
+	public SortableList<byte[], Block> getSortableList() {
+		return this.blocks;
 	}
 	
 	@Override
@@ -61,7 +65,7 @@ public class BlocksTableModel extends AbstractTableModel implements Observer{
 			return null;
 		}
 		
-		Block block = blocks.get(row);
+		Block block = blocks.get(row).getB();
 		
 		switch(column)
 		{
@@ -114,16 +118,29 @@ public class BlocksTableModel extends AbstractTableModel implements Observer{
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_BLOCK_TYPE)
 		{			
-			this.blocks = (List<Block>) message.getValue();
-				
+			if(this.blocks == null)
+			{
+				this.blocks = (SortableList<byte[], Block>) message.getValue();
+				this.blocks.registerObserver();
+				this.blocks.sort(BlockMap.HEIGHT_INDEX, true);
+			}	
+			
+			this.fireTableDataChanged();
+		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE)
+		{
 			this.fireTableDataChanged();
 		}
 	}
 
 	public void removeObservers() 
 	{
+		this.blocks.removeObserver();
 		Controller.getInstance().deleteObserver(this);
 	}
 }

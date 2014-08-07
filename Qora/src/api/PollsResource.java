@@ -2,6 +2,7 @@ package api;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -363,7 +364,7 @@ public class PollsResource
 	@GET
 	public String getAllPolls()
 	{
-		List<Poll> polls = Controller.getInstance().getAllPolls();
+		Collection<Poll> polls = Controller.getInstance().getAllPolls();
 		JSONArray array = new JSONArray();
 		
 		for(Poll poll: polls)

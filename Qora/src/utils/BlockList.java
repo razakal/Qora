@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.block.Block;
 
 public class BlockList extends AbstractList<Block> 
@@ -25,7 +25,7 @@ public class BlockList extends AbstractList<Block>
 	{
 		if(!this.blocks.containsKey(this.blockSignatures.get(index)))
 		{
-			this.blocks.put(this.blockSignatures.get(index), DatabaseSet.getInstance().getBlockDatabase().getBlock(this.blockSignatures.get(index)));
+			this.blocks.put(this.blockSignatures.get(index), DBSet.getInstance().getBlockMap().get(this.blockSignatures.get(index)));
 		}
 		
 		return this.blocks.get(this.blockSignatures.get(index));

@@ -18,7 +18,7 @@ import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import utils.Pair;
 import controller.Controller;
-import database.DatabaseSet;
+import database.DBSet;
 
 @Path("blocks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -226,7 +226,7 @@ public class BlocksResource
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_SIGNATURE);
 		}
 
-		Block block = DatabaseSet.getInstance().getBlockDatabase().getBlock(signatureBytes);
+		Block block = DBSet.getInstance().getBlockMap().get(signatureBytes);
 				
 		//CHECK IF BLOCK EXISTS
 		if(block == null)

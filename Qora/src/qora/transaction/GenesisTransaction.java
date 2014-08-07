@@ -15,7 +15,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 
 public class GenesisTransaction extends Transaction {
 
@@ -162,7 +162,7 @@ public class GenesisTransaction extends Transaction {
 	}
 	
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{	
 		//CHECK IF AMOUNT IS POSITIVE
 		if(this.amount.compareTo(BigDecimal.ZERO) == -1)
@@ -182,7 +182,7 @@ public class GenesisTransaction extends Transaction {
 	//PROCESS/ORPHAN
 	
 	@Override
-	public void process(DatabaseSet db) {
+	public void process(DBSet db) {
 		
 		//UPDATE BALANCE
 		this.recipient.setConfirmedBalance(this.amount, db);
@@ -193,7 +193,7 @@ public class GenesisTransaction extends Transaction {
 	}
 	
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UNDO BALANCE
 		this.recipient.setConfirmedBalance(BigDecimal.ZERO, db);

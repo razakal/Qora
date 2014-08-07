@@ -13,7 +13,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
@@ -185,7 +185,7 @@ public class RegisterNameTransaction extends Transaction
 	}
 	
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{
 		//CHECK NAME LENGTH
 		int nameLength = this.name.getName().getBytes(StandardCharsets.UTF_8).length;
@@ -214,7 +214,7 @@ public class RegisterNameTransaction extends Transaction
 		}
 		
 		//CHECK NAME NOT REGISTRED ALREADY
-		if(db.getNameDatabase().containsName(this.name))
+		if(db.getNameMap().contains(this.name))
 		{
 			return NAME_ALREADY_REGISTRED;
 		}
@@ -228,7 +228,6 @@ public class RegisterNameTransaction extends Transaction
 		//CHECK IF REFERENCE IS OKE
 		if(!Arrays.equals(this.registrant.getLastReference(db), this.reference))
 		{
-			//byte[] reference = this.registrant.getLastReference(db);
 			return INVALID_REFERENCE;
 		}
 		
@@ -244,7 +243,7 @@ public class RegisterNameTransaction extends Transaction
 	//PROCESS/ORPHAN
 
 	@Override
-	public void process(DatabaseSet db)
+	public void process(DBSet db)
 	{
 		//UPDATE OWNER
 		this.registrant.setConfirmedBalance(this.registrant.getConfirmedBalance(db).subtract(this.fee), db);
@@ -253,12 +252,12 @@ public class RegisterNameTransaction extends Transaction
 		this.registrant.setLastReference(this.signature, db);
 		
 		//INSERT INTO DATABASE
-		db.getNameDatabase().addName(this.name);
+		db.getNameMap().add(this.name);
 	}
 
 
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UPDATE OWNER
 		this.registrant.setConfirmedBalance(this.registrant.getConfirmedBalance(db).add(this.fee), db);
@@ -267,7 +266,7 @@ public class RegisterNameTransaction extends Transaction
 		this.registrant.setLastReference(this.reference, db);
 				
 		//INSERT INTO DATABASE
-		db.getNameDatabase().deleteName(this.name);		
+		db.getNameMap().delete(this.name);		
 	}
 
 	@Override
@@ -312,7 +311,7 @@ public class RegisterNameTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 
-	public static byte[] generateSignature(DatabaseSet db, PrivateKeyAccount creator, Name name, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Name name, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		

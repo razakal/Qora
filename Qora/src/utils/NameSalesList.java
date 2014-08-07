@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.naming.NameSale;
 
 public class NameSalesList extends AbstractList<NameSale> 
@@ -25,7 +25,7 @@ public class NameSalesList extends AbstractList<NameSale>
 	{
 		if(!this.nameSales.containsKey(this.nameSaleKeys.get(index)))
 		{
-			this.nameSales.put(this.nameSaleKeys.get(index), DatabaseSet.getInstance().getNameExchangeDatabase().getNameSale(this.nameSaleKeys.get(index)));
+			this.nameSales.put(this.nameSaleKeys.get(index), DBSet.getInstance().getNameExchangeMap().getNameSale(this.nameSaleKeys.get(index)));
 		}
 		
 		return this.nameSales.get(this.nameSaleKeys.get(index));

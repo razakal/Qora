@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.crypto.Base58;
 import settings.Settings;
@@ -170,26 +170,26 @@ public abstract class Transaction {
 	
 	public int isValid()
 	{
-		return this.isValid(DatabaseSet.getInstance());
+		return this.isValid(DBSet.getInstance());
 	}
 	
-	public abstract int isValid(DatabaseSet db);
+	public abstract int isValid(DBSet db);
 	
 	//PROCESS/ORPHAN
 	
 	public void process()
 	{
-		this.process(DatabaseSet.getInstance());
+		this.process(DBSet.getInstance());
 	}
 		
-	public abstract void process(DatabaseSet db);
+	public abstract void process(DBSet db);
 
 	public void orphan()
 	{
-		this.orphan(DatabaseSet.getInstance());
+		this.orphan(DBSet.getInstance());
 	}
 	
-	public abstract void orphan(DatabaseSet db);
+	public abstract void orphan(DBSet db);
 	
 	//REST
 	
@@ -216,25 +216,25 @@ public abstract class Transaction {
 
 	public boolean isConfirmed()
 	{
-		return this.isConfirmed(DatabaseSet.getInstance());
+		return this.isConfirmed(DBSet.getInstance());
 	}
 	
-	public boolean isConfirmed(DatabaseSet db)
+	public boolean isConfirmed(DBSet db)
 	{
-		return DatabaseSet.getInstance().getTransactionParentDatabase().contains(this);
+		return DBSet.getInstance().getTransactionMap().contains(this);
 	}
 	
 	public int getConfirmations()
 	{
 		//CHECK IF IN TRANSACTIONDATABASE
-		if(DatabaseSet.getInstance().getTransactionsDatabase().contains(this))
+		if(DBSet.getInstance().getTransactionMap().contains(this))
 		{
 			return 0;
 		}
 		
 		//CALCULATE CONFIRMATIONS
-		int lastBlockHeight = DatabaseSet.getInstance().getHeightDatabase().getHeightBySignature(DatabaseSet.getInstance().getBlockDatabase().getLastBlockSignature());
-		int transactionBlockHeight = DatabaseSet.getInstance().getHeightDatabase().getHeightBySignature(DatabaseSet.getInstance().getTransactionParentDatabase().getParentSignature(this));
+		int lastBlockHeight = DBSet.getInstance().getHeightMap().get(DBSet.getInstance().getBlockMap().getLastBlockSignature());
+		int transactionBlockHeight = DBSet.getInstance().getHeightMap().get(DBSet.getInstance().getTransactionParentMap().getParent(this.signature));
 		
 		//RETURN
 		return 1 + lastBlockHeight - transactionBlockHeight;

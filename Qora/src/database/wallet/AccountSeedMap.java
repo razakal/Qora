@@ -11,7 +11,7 @@ import com.google.common.primitives.UnsignedBytes;
 
 import qora.account.PrivateKeyAccount;
 
-public class AccountSeedsDatabase {
+public class AccountSeedMap {
 
 	private static final String ACCOUNT_SEEDS = "accountSeeds";
 	
@@ -19,7 +19,7 @@ public class AccountSeedsDatabase {
 	
 	private List<PrivateKeyAccount> privateKeyAccounts;	
 	
-	public AccountSeedsDatabase(SecureWalletDatabase secureWalletDatabase, DB database) 
+	public AccountSeedMap(SecureWalletDatabase secureWalletDatabase, DB database) 
 	{	
 		//OPEN MAP
 		this.accountSeedsSet = database.createTreeSet(ACCOUNT_SEEDS)

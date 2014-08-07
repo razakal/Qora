@@ -18,7 +18,7 @@ import qora.transaction.Transaction;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 
 public class GenesisBlock extends Block{
 	
@@ -259,10 +259,10 @@ public class GenesisBlock extends Block{
 	}
 	
 	@Override
-	public boolean isValid(DatabaseSet db)
+	public boolean isValid(DBSet db)
 	{
 		//CHECK IF NO OTHER BLOCK IN DB
-		if(db.getBlockDatabase().getLastBlock() != null)
+		if(db.getBlockMap().getLastBlock() != null)
 		{
 			return false;
 		}

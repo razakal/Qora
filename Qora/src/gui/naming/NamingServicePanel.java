@@ -1,7 +1,7 @@
 package gui.naming;
 
-import gui.Gui;
-import gui.models.NamingServiceTableModel;
+import gui.QoraRowSorter;
+import gui.models.WalletNamesTableModel;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -22,6 +24,7 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 
+import database.wallet.NameMap;
 import qora.naming.Name;
 
 @SuppressWarnings("serial")
@@ -52,13 +55,20 @@ public class NamingServicePanel extends JPanel
 		buttonGBC.gridx = 0;	
 		buttonGBC.gridy = 1;	
 		
-		//TABLE
-		final NamingServiceTableModel nameModel = new NamingServiceTableModel();
-		final JTable table = Gui.createSortableTable(nameModel, 0);
+		//NAMES
+		final WalletNamesTableModel namesModel = new WalletNamesTableModel();
+		final JTable namesTable = new JTable(namesModel);
+		
+		//NAMES SORTER
+		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
+		indexes.put(WalletNamesTableModel.COLUMN_NAME, NameMap.NAME_INDEX);
+		indexes.put(WalletNamesTableModel.COLUMN_ADDRESS, NameMap.OWNER_INDEX);
+		QoraRowSorter sorter = new QoraRowSorter(namesModel, indexes);
+		namesTable.setRowSorter(sorter);
 		
 		//CHECKBOX FOR CONFIRMED
-		TableColumn confirmedColumn = table.getColumnModel().getColumn(2);
-		confirmedColumn.setCellRenderer(table.getDefaultRenderer(Boolean.class));
+		TableColumn confirmedColumn = namesTable.getColumnModel().getColumn(2);
+		confirmedColumn.setCellRenderer(namesTable.getDefaultRenderer(Boolean.class));
 		
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
@@ -67,10 +77,10 @@ public class NamingServicePanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				int row = table.getSelectedRow();
-				row = table.convertRowIndexToModel(row);
+				int row = namesTable.getSelectedRow();
+				row = namesTable.convertRowIndexToModel(row);
 							
-				Name name = nameModel.getName(row);
+				Name name = namesModel.getName(row);
 				new UpdateNameFrame(name);
 			}
 		});
@@ -81,10 +91,10 @@ public class NamingServicePanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				int row = table.getSelectedRow();
-				row = table.convertRowIndexToModel(row);
+				int row = namesTable.getSelectedRow();
+				row = namesTable.convertRowIndexToModel(row);
 							
-				Name name = nameModel.getName(row);
+				Name name = namesModel.getName(row);
 				new SellNameFrame(name);
 			}
 		});
@@ -95,29 +105,29 @@ public class NamingServicePanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				int row = table.getSelectedRow();
-				row = table.convertRowIndexToModel(row);
+				int row = namesTable.getSelectedRow();
+				row = namesTable.convertRowIndexToModel(row);
 							
-				Name name = nameModel.getName(row);
+				Name name = namesModel.getName(row);
 				new NameDetailsFrame(name);
 			}
 		});
 		menu.add(details);
 		
-		table.setComponentPopupMenu(menu);
-		table.addMouseListener(new MouseAdapter() 
+		namesTable.setComponentPopupMenu(menu);
+		namesTable.addMouseListener(new MouseAdapter() 
 		{
 		     @Override
 		     public void mousePressed(MouseEvent e) 
 		     {
 		        Point p = e.getPoint();
-		        int row = table.rowAtPoint(p);
-		        table.setRowSelectionInterval(row, row);
+		        int row = namesTable.rowAtPoint(p);
+		        namesTable.setRowSelectionInterval(row, row);
 		     }
 		});
 		
 		//ADD NAMING SERVICE TABLE
-		this.add(new JScrollPane(table), tableGBC);
+		this.add(new JScrollPane(namesTable), tableGBC);
 			
 		//ADD REGISTER BUTTON
 		JButton registerButton = new JButton("Register");

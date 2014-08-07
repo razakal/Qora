@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Map;
+import java.util.TreeMap;
 
-import gui.Gui;
+import gui.QoraRowSorter;
 import gui.models.WalletNameSalesTableModel;
 
 import javax.swing.JMenuItem;
@@ -14,10 +16,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.table.TableRowSorter;
 
+import database.wallet.NameSaleMap;
 import qora.naming.NameSale;
-import utils.BigDecimalStringComparator;
 
 
 public class NameExchangeTabPane extends JTabbedPane{
@@ -27,7 +28,6 @@ public class NameExchangeTabPane extends JTabbedPane{
 	private AllNameSalesPanel allNameSalesPanel;
 	private WalletNameSalesTableModel walletNameSalesTableModel;
 		
-	@SuppressWarnings("unchecked")
 	public NameExchangeTabPane()
 	{
 		super();
@@ -36,12 +36,17 @@ public class NameExchangeTabPane extends JTabbedPane{
 		this.allNameSalesPanel = new AllNameSalesPanel();
 		this.addTab("All Names", this.allNameSalesPanel);
 		
-		//WALLET NAME SALES
+		//NAME SALES
 		this.walletNameSalesTableModel = new WalletNameSalesTableModel();
-		final JTable walletNameSalesTable = Gui.createSortableTable(this.walletNameSalesTableModel, 0);
-		
-		TableRowSorter<WalletNameSalesTableModel> sorter =  (TableRowSorter<WalletNameSalesTableModel>) walletNameSalesTable.getRowSorter();
-		sorter.setComparator(WalletNameSalesTableModel.COLUMN_PRICE, new BigDecimalStringComparator());
+		final JTable walletNameSalesTable = new JTable(this.walletNameSalesTableModel);
+			
+		//NAME SALE SORTER
+		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
+		indexes.put(WalletNameSalesTableModel.COLUMN_NAME, NameSaleMap.NAME_INDEX);
+		indexes.put(WalletNameSalesTableModel.COLUMN_OWNER, NameSaleMap.SELLER_INDEX);
+		indexes.put(WalletNameSalesTableModel.COLUMN_PRICE, NameSaleMap.AMOUNT_INDEX);
+		QoraRowSorter sorter = new QoraRowSorter(this.walletNameSalesTableModel, indexes);
+		walletNameSalesTable.setRowSorter(sorter);
 			
 		//MENU
 		JPopupMenu walletNameSalesMenu = new JPopupMenu();	

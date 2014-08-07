@@ -23,7 +23,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 
 public class Block {
 	
@@ -120,7 +120,7 @@ public class Block {
 		return this.transactionCount;		
 	}
 	
-	public List<Transaction> getTransactions() 
+	public synchronized List<Transaction> getTransactions() 
 	{
 		if(this.transactions == null)
 		{
@@ -178,32 +178,32 @@ public class Block {
 	
 	public Block getParent()
 	{
-		return this.getParent(DatabaseSet.getInstance());
+		return this.getParent(DBSet.getInstance());
 	}
 	
-	public Block getParent(DatabaseSet db)
+	public Block getParent(DBSet db)
 	{
-		return db.getBlockDatabase().getBlock(this.reference);
+		return db.getBlockMap().get(this.reference);
 	}
 	
 	public Block getChild()
 	{
-		return this.getChild(DatabaseSet.getInstance());
+		return this.getChild(DBSet.getInstance());
 	}
 	
-	public Block getChild(DatabaseSet db)
+	public Block getChild(DBSet db)
 	{
-		return db.getChildDatabase().getChild(this);
+		return db.getChildMap().get(this);
 	}
 	
 	public int getHeight()
 	{
-		return this.getHeight(DatabaseSet.getInstance());
+		return this.getHeight(DBSet.getInstance());
 	}
 	
-	public int getHeight(DatabaseSet db)
+	public int getHeight(DBSet db)
 	{
-		return db.getHeightDatabase().getHeight(this);
+		return db.getHeightMap().get(this);
 	}
 	
 	public void setTransactionsSignature(byte[] transactionsSignature) 
@@ -421,10 +421,10 @@ public class Block {
 	
 	public boolean isValid()
 	{
-		return this.isValid(DatabaseSet.getInstance());
+		return this.isValid(DBSet.getInstance());
 	}
 	
-	public boolean isValid(DatabaseSet db)
+	public boolean isValid(DBSet db)
 	{				
 		//CHECK IF PARENT EXISTS
 		if(this.reference == null || this.getParent(db) == null)
@@ -486,7 +486,7 @@ public class Block {
 		}
 		
 		//CHECK TRANSACTIONS
-		DatabaseSet fork = db.fork();
+		DBSet fork = db.fork();
 		for(Transaction transaction: this.getTransactions())
 		{
 			//CHECK IF NOT GENESISTRANSACTION
@@ -519,10 +519,10 @@ public class Block {
 	
 	public void process()
 	{
-		this.process(DatabaseSet.getInstance());
+		this.process(DBSet.getInstance());
 	}
 	
-	public void process(DatabaseSet db)
+	public void process(DBSet db)
 	{	
 		//PROCESS TRANSACTIONS
 		for(Transaction transaction: this.getTransactions())
@@ -531,10 +531,10 @@ public class Block {
 			transaction.process(db);
 			
 			//SET PARENT
-			db.getTransactionParentDatabase().setParent(transaction, this);
+			db.getTransactionParentMap().set(transaction, this);
 			
 			//REMOVE FROM UNCONFIRMED DATABASE
-			db.getTransactionsDatabase().remove(transaction);
+			db.getTransactionMap().delete(transaction);
 		}
 		
 		//PROCESS FEE
@@ -549,31 +549,31 @@ public class Block {
 		if(parent != null)
 		{
 			//SET AS CHILD OF PARENT
-			db.getChildDatabase().setChild(parent, this);		
+			db.getChildMap().set(parent, this);		
 			
 			//SET BLOCK HEIGHT
 			int height = parent.getHeight(db) + 1;
-			db.getHeightDatabase().setHeight(this, height);
+			db.getHeightMap().set(this, height);
 		}
 		else
 		{
 			//IF NO PARENT HEIGHT IS 1
-			db.getHeightDatabase().setHeight(this, 1);
+			db.getHeightMap().set(this, 1);
 		}
 		
 		//ADD TO DB
-		db.getBlockDatabase().addBlock(this);
+		db.getBlockMap().add(this);
 				
 		//UPDATE LAST BLOCK
-		db.getBlockDatabase().setLastBlock(this);		
+		db.getBlockMap().setLastBlock(this);		
 	}
 	
 	public void orphan()
 	{	
-		this.orphan(DatabaseSet.getInstance());
+		this.orphan(DBSet.getInstance());
 	}
 	
-	public void orphan(DatabaseSet db)
+	public void orphan(DBSet db)
 	{
 		//ORPHAN TRANSACTIONS
 		this.orphanTransactions(this.getTransactions(), db);
@@ -587,19 +587,19 @@ public class Block {
 		}
 				
 		//DELETE BLOCK FROM DB
-		db.getBlockDatabase().deleteBlock(this);
+		db.getBlockMap().delete(this);
 				
 		//SET PARENT AS LAST BLOCK
-		db.getBlockDatabase().setLastBlock(this.getParent(db));
+		db.getBlockMap().setLastBlock(this.getParent(db));
 				
 		//ADD ORPHANED TRANASCTIONS BACK TO DATABASE
 		for(Transaction transaction: this.getTransactions())
 		{
-			db.getTransactionsDatabase().addTransaction(transaction);
+			db.getTransactionMap().add(transaction);
 		}
 	}
 	
-	private void orphanTransactions(List<Transaction> transactions, DatabaseSet db)
+	private void orphanTransactions(List<Transaction> transactions, DBSet db)
 	{
 		//ORPHAN ALL TRANSACTIONS IN DB BACK TO FRONT
 		for(int i=transactions.size() -1; i>=0; i--)

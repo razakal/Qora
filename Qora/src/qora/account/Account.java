@@ -7,7 +7,7 @@ import controller.Controller;
 import qora.BlockGenerator;
 import qora.block.Block;
 import qora.transaction.Transaction;
-import database.DatabaseSet;
+import database.DBSet;
 
 public class Account {
 	
@@ -37,41 +37,41 @@ public class Account {
 	
 	public BigDecimal getUnconfirmedBalance()
 	{
-		return this.getUnconfirmedBalance(DatabaseSet.getInstance());
+		return this.getUnconfirmedBalance(DBSet.getInstance());
 	}
 	
-	public BigDecimal getUnconfirmedBalance(DatabaseSet db)
+	public BigDecimal getUnconfirmedBalance(DBSet db)
 	{
 		return Controller.getInstance().getUnconfirmedBalance(this.getAddress());
 	}
 	
 	public BigDecimal getConfirmedBalance()
 	{
-		return this.getConfirmedBalance(DatabaseSet.getInstance());
+		return this.getConfirmedBalance(DBSet.getInstance());
 	}
 	
-	public BigDecimal getConfirmedBalance(DatabaseSet db)
+	public BigDecimal getConfirmedBalance(DBSet db)
 	{
-		return db.getBalanceDatabase().getBalance(getAddress());
+		return db.getBalanceMap().get(getAddress());
 	}
 
 	public void setConfirmedBalance(BigDecimal amount)
 	{
-		this.setConfirmedBalance(amount, DatabaseSet.getInstance());
+		this.setConfirmedBalance(amount, DBSet.getInstance());
 	}
 	
-	public void setConfirmedBalance(BigDecimal amount, DatabaseSet db)
+	public void setConfirmedBalance(BigDecimal amount, DBSet db)
 	{
 		//UPDATE BALANCE IN DB
-		db.getBalanceDatabase().setBalance(getAddress(), amount);
+		db.getBalanceMap().set(getAddress(), amount);
 	}
 	
 	public BigDecimal getBalance(int confirmations)
 	{
-		return this.getBalance(confirmations, DatabaseSet.getInstance());
+		return this.getBalance(confirmations, DBSet.getInstance());
 	}
 	
-	public BigDecimal getBalance(int confirmations, DatabaseSet db)
+	public BigDecimal getBalance(int confirmations, DBSet db)
 	{
 		//CHECK IF UNCONFIRMED BALANCE
 		if(confirmations <= 0)
@@ -87,7 +87,7 @@ public class Account {
 		
 		//GO TO PARENT BLOCK 10
 		BigDecimal balance = this.getConfirmedBalance(db);
-		Block block = db.getBlockDatabase().getLastBlock();
+		Block block = db.getBlockMap().getLastBlock();
 		
 		for(int i=1; i<confirmations && block != null && block instanceof Block; i++)
 		{
@@ -106,31 +106,31 @@ public class Account {
 		return balance;
 	}
 	
-	private void updateGeneratingBalance(DatabaseSet db)
+	private void updateGeneratingBalance(DBSet db)
 	{
 		//CHECK IF WE NEED TO RECALCULATE
 		if(this.lastBlockSignature == null)
 		{
-			this.lastBlockSignature = db.getBlockDatabase().getLastBlockSignature();
+			this.lastBlockSignature = db.getBlockMap().getLastBlockSignature();
 			calculateGeneratingBalance(db);
 		}
 		else
 		{
 			//CHECK IF WE NEED TO RECALCULATE
-			if(!Arrays.equals(this.lastBlockSignature, db.getBlockDatabase().getLastBlockSignature()))
+			if(!Arrays.equals(this.lastBlockSignature, db.getBlockMap().getLastBlockSignature()))
 			{
-				this.lastBlockSignature = db.getBlockDatabase().getLastBlockSignature();
+				this.lastBlockSignature = db.getBlockMap().getLastBlockSignature();
 				calculateGeneratingBalance(db);
 			}
 		}
 	}
 	
-	public void calculateGeneratingBalance(DatabaseSet db)
+	public void calculateGeneratingBalance(DBSet db)
 	{
 		//CONFIRMED BALANCE + ALL NEGATIVE AMOUNTS IN LAST 9 BLOCKS
 		BigDecimal balance = this.getConfirmedBalance(db);
 		
-		Block block = db.getBlockDatabase().getLastBlock();
+		Block block = db.getBlockMap().getLastBlock();
 		
 		for(int i=1; i<BlockGenerator.RETARGET && block != null && block.getHeight(db) > 1; i++)
 		{
@@ -159,10 +159,10 @@ public class Account {
 	
 	public BigDecimal getGeneratingBalance()
 	{
-		return this.getGeneratingBalance(DatabaseSet.getInstance());
+		return this.getGeneratingBalance(DBSet.getInstance());
 	}
 	
-	public BigDecimal getGeneratingBalance(DatabaseSet db)
+	public BigDecimal getGeneratingBalance(DBSet db)
 	{	
 		//UPDATE
 		updateGeneratingBalance(db);
@@ -175,32 +175,32 @@ public class Account {
 	
 	public byte[] getLastReference()
 	{
-		return this.getLastReference(DatabaseSet.getInstance());
+		return this.getLastReference(DBSet.getInstance());
 	}
 	
-	public byte[] getLastReference(DatabaseSet db)
+	public byte[] getLastReference(DBSet db)
 	{
-		return db.getReferenceDatabase().getReference(this);
+		return db.getReferenceMap().get(this);
 	}
 	
 	public void setLastReference(byte[] reference)
 	{
-		this.setLastReference(reference, DatabaseSet.getInstance());
+		this.setLastReference(reference, DBSet.getInstance());
 	}
 	
-	public void setLastReference(byte[] reference, DatabaseSet db)
+	public void setLastReference(byte[] reference, DBSet db)
 	{
-		db.getReferenceDatabase().setReference(this, reference);
+		db.getReferenceMap().set(this, reference);
 	}
 	
 	public void removeReference() 
 	{
-		this.removeReference(DatabaseSet.getInstance());
+		this.removeReference(DBSet.getInstance());
 	}
 	
-	public void removeReference(DatabaseSet db) 
+	public void removeReference(DBSet db) 
 	{
-		db.getReferenceDatabase().remove(this);
+		db.getReferenceMap().delete(this);
 	}
 	
 	//TOSTRING

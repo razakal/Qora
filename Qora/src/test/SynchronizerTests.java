@@ -20,7 +20,7 @@ import qora.crypto.Crypto;
 import qora.crypto.Ed25519;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.Transaction;
-import database.DatabaseSet;
+import database.DBSet;
 
 public class SynchronizerTests {
 
@@ -30,7 +30,7 @@ public class SynchronizerTests {
 		Ed25519.load();
 		
 		//GENERATE 5 BLOCKS FROM ACCOUNT 1
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 		
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -78,7 +78,7 @@ public class SynchronizerTests {
 		transaction.process(databaseSet);
 		
 		//FORK
-		DatabaseSet fork = databaseSet.fork();	
+		DBSet fork = databaseSet.fork();	
 		
 		//GENERATE NEXT 5 BLOCKS
 		List<Block> newBlocks = new ArrayList<Block>();
@@ -109,7 +109,7 @@ public class SynchronizerTests {
 			synchronizer.synchronize(databaseSet, null, newBlocks);
 			
 			//CHECK LAST 5 BLOCKS
-			lastBlock = databaseSet.getBlockDatabase().getLastBlock();
+			lastBlock = databaseSet.getBlockMap().getLastBlock();
 			for(int i=4; i>=0; i--)
 			{
 				//CHECK LAST BLOCK
@@ -129,7 +129,7 @@ public class SynchronizerTests {
 			assertEquals(true, Arrays.equals(lastBlock.getSignature(), genesisBlock.getSignature()));
 			
 			//CHECK HEIGHT
-			assertEquals(11, databaseSet.getBlockDatabase().getLastBlock().getHeight(databaseSet));
+			assertEquals(11, databaseSet.getBlockMap().getLastBlock().getHeight(databaseSet));
 		}
 		catch(Exception e)
 		{
@@ -143,8 +143,8 @@ public class SynchronizerTests {
 		Ed25519.load();
 		
 		//GENERATE 5 BLOCKS FROM ACCOUNT 1
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
-		DatabaseSet databaseSet2 = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+		DBSet databaseSet2 = DBSet.createEmptyDatabaseSet();
 		
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -220,7 +220,7 @@ public class SynchronizerTests {
 			synchronizer.synchronize(databaseSet, genesisBlock, newBlocks);
 			
 			//CHECK BLOCKS
-			lastBlock = databaseSet.getBlockDatabase().getLastBlock();
+			lastBlock = databaseSet.getBlockMap().getLastBlock();
 			for(int i=9; i>=0; i--)
 			{
 				//CHECK LAST BLOCK
@@ -232,7 +232,7 @@ public class SynchronizerTests {
 			assertEquals(true, Arrays.equals(lastBlock.getSignature(), genesisBlock.getSignature()));
 			
 			//CHECK HEIGHT
-			assertEquals(11, databaseSet.getBlockDatabase().getLastBlock().getHeight(databaseSet));
+			assertEquals(11, databaseSet.getBlockMap().getLastBlock().getHeight(databaseSet));
 		}
 		catch(Exception e)
 		{

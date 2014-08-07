@@ -17,7 +17,7 @@ import qora.crypto.Crypto;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.Transaction;
-import database.DatabaseSet;
+import database.DBSet;
 
 public class GeneratorTests {
 
@@ -25,7 +25,7 @@ public class GeneratorTests {
 	public void generateNewBlock() 
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 		
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -70,7 +70,7 @@ public class GeneratorTests {
 	public void addTransactions()
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -91,7 +91,7 @@ public class GeneratorTests {
 		
 		//ADD 10 UNCONFIRMED VALID TRANSACTIONS	
 		Account recipient = new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g");
-		DatabaseSet snapshot = databaseSet.fork();
+		DBSet snapshot = databaseSet.fork();
 		for(int i=0; i<10; i++)
 		{
 			long timestamp = NTP.getTime();
@@ -118,7 +118,7 @@ public class GeneratorTests {
 	public void addManyTransactions()
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -139,7 +139,7 @@ public class GeneratorTests {
 		
 		//ADD 10 UNCONFIRMED VALID TRANSACTIONS	
 		Account recipient = new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g");
-		DatabaseSet snapshot = databaseSet.fork();
+		DBSet snapshot = databaseSet.fork();
 		for(int i=0; i<10000; i++)
 		{
 			long timestamp = NTP.getTime();

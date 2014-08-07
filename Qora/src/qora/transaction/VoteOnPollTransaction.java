@@ -15,7 +15,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
@@ -229,7 +229,7 @@ public class VoteOnPollTransaction extends Transaction
 	}
 	
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{
 		//CHECK IF RELEASED
 		if(NTP.getTime() < VOTING_RELEASE)
@@ -251,13 +251,13 @@ public class VoteOnPollTransaction extends Transaction
 		}
 		
 		//CHECK POLL EXISTS
-		if(!db.getPollDatabase().containsPoll(this.poll))
+		if(!db.getPollMap().contains(this.poll))
 		{
 			return POLL_NO_EXISTS;
 		}
 		
 		//CHECK OPTION EXISTS
-		Poll poll = db.getPollDatabase().getPoll(this.poll);
+		Poll poll = db.getPollMap().get(this.poll);
 		if(poll.getOptions().size()-1 < this.option || this.option < 0)
 		{
 			return OPTION_NO_EXISTS;
@@ -294,7 +294,7 @@ public class VoteOnPollTransaction extends Transaction
 	//PROCESS/ORPHAN
 
 	@Override
-	public void process(DatabaseSet db)
+	public void process(DBSet db)
 	{
 		//UPDATE CREATOR
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(db).subtract(this.fee), db);
@@ -303,21 +303,21 @@ public class VoteOnPollTransaction extends Transaction
 		this.creator.setLastReference(this.signature, db);
 		
 		//ADD VOTE TO POLL
-		Poll poll = db.getPollDatabase().getPoll(this.poll);
+		Poll poll = db.getPollMap().get(this.poll).copy();
 		int previousOption = poll.addVoter(this.creator, this.option);
-		db.getPollDatabase().addPoll(poll);
+		db.getPollMap().add(poll);
 		
 		//CHECK IF WE HAD PREVIOUSLY VOTED
 		if(previousOption != -1)
 		{
 			//ADD TO ORPHAN DATABASE
-			db.getVoteOnPollDatabase().setOrphanData(this, previousOption);
+			db.getVoteOnPollDatabase().set(this, previousOption);
 		}
 	}
 
 
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UPDATE CREATOR
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(db).add(this.fee), db);
@@ -326,17 +326,17 @@ public class VoteOnPollTransaction extends Transaction
 		this.creator.setLastReference(this.reference, db);
 				
 		//DELETE VOTE FROM POLL
-		Poll poll = db.getPollDatabase().getPoll(this.poll);
+		Poll poll = db.getPollMap().get(this.poll).copy();
 		poll.deleteVoter(this.creator, this.option);
 		
 		//RESTORE PREVIOUS VOTE
-		int previousOption = db.getVoteOnPollDatabase().getOrphanData(this);
+		int previousOption = db.getVoteOnPollDatabase().get(this);
 		if(previousOption != -1)
 		{
 			poll.addVoter(this.creator, previousOption);
 		}
 		
-		db.getPollDatabase().addPoll(poll);
+		db.getPollMap().add(poll);
 	}
 
 	@Override
@@ -380,7 +380,7 @@ public class VoteOnPollTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 
-	public static byte[] generateSignature(DatabaseSet db, PrivateKeyAccount creator, String poll, int option, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, String poll, int option, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		

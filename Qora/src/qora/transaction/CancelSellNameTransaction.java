@@ -19,7 +19,7 @@ import qora.account.PublicKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.naming.NameSale;
-import database.DatabaseSet;
+import database.DBSet;
 
 public class CancelSellNameTransaction extends Transaction
 {
@@ -210,7 +210,7 @@ public class CancelSellNameTransaction extends Transaction
 	}
 
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{
 		//CHECK NAME LENGTH
 		int nameLength = this.name.getBytes(StandardCharsets.UTF_8).length;
@@ -220,7 +220,7 @@ public class CancelSellNameTransaction extends Transaction
 		}
 		
 		//CHECK IF NAME EXISTS
-		Name name = db.getNameDatabase().getName(this.name);
+		Name name = db.getNameMap().get(this.name);
 		if(name == null)
 		{
 			return NAME_DOES_NOT_EXIST;
@@ -239,7 +239,7 @@ public class CancelSellNameTransaction extends Transaction
 		}
 		
 		//CHECK IF NAME FOR SALE ALREADY
-		if(!db.getNameExchangeDatabase().containsName(this.name))
+		if(!db.getNameExchangeMap().contains(this.name))
 		{
 			return NAME_NOT_FOR_SALE;
 		}
@@ -268,7 +268,7 @@ public class CancelSellNameTransaction extends Transaction
 	//PROCESS/ORPHAN
 
 	@Override
-	public void process(DatabaseSet db) 
+	public void process(DBSet db) 
 	{
 		//UPDATE OWNER
 		this.owner.setConfirmedBalance(this.owner.getConfirmedBalance(db).subtract(this.fee), db);
@@ -277,16 +277,16 @@ public class CancelSellNameTransaction extends Transaction
 		this.owner.setLastReference(this.signature, db);
 				
 		//SET ORPHAN DATA
-		NameSale nameSale = db.getNameExchangeDatabase().getNameSale(this.name);
-		db.getCancelSellNameDatabase().setOrphanData(this, nameSale);
+		NameSale nameSale = db.getNameExchangeMap().getNameSale(this.name);
+		db.getCancelSellNameMap().set(this, nameSale.getAmount());
 		
 		//DELETE FROM DATABASE
-		db.getNameExchangeDatabase().delete(this.name);
+		db.getNameExchangeMap().delete(this.name);
 		
 	}
 
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UPDATE OWNER
 		this.owner.setConfirmedBalance(this.owner.getConfirmedBalance(db).add(this.fee), db);
@@ -295,12 +295,12 @@ public class CancelSellNameTransaction extends Transaction
 		this.owner.setLastReference(this.reference, db);
 				
 		//ADD TO DATABASE
-		BigDecimal amount = db.getCancelSellNameDatabase().getOrphanData(this);
+		BigDecimal amount = db.getCancelSellNameMap().get(this);
 		NameSale nameSale = new NameSale(this.name, amount);
-		db.getNameExchangeDatabase().addNameSale(nameSale);	
+		db.getNameExchangeMap().add(nameSale);	
 		
 		//DELETE ORPHAN DATA
-		db.getCancelSellNameDatabase().remove(this);
+		db.getCancelSellNameMap().delete(this);
 	}
 
 	@Override
@@ -343,7 +343,7 @@ public class CancelSellNameTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 	
-	public static byte[] generateSignature(DatabaseSet db, PrivateKeyAccount creator, String name, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, String name, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		

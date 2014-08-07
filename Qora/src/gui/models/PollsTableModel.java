@@ -1,33 +1,37 @@
 package gui.models;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
-
+import controller.Controller;
 import qora.voting.Poll;
 import utils.ObserverMessage;
-import database.DatabaseSet;
+import database.DBSet;
+import database.SortableList;
 
 @SuppressWarnings("serial")
-public class PollsTableModel extends AbstractTableModel implements Observer
+public class PollsTableModel extends QoraTableModel<String, Poll> implements Observer
 {
-	private static final int COLUMN_NAME = 0;
+	public static final int COLUMN_NAME = 0;
 	private static final int COLUMN_CREATOR = 1;
 	public static final int COLUMN_VOTES = 2;
 	
 	private String[] columnNames = {"Name", "Creator", "Total Votes"};
-	private List<Poll> polls;
+	private SortableList<String, Poll> polls;
 	
 	public PollsTableModel()
 	{
-		DatabaseSet.getInstance().getPollDatabase().addObserver(this);
+		Controller.getInstance().addObserver(this);
+	}
+	
+	@Override
+	public SortableList<String, Poll> getSortableList() {
+		return this.polls;
 	}
 	
 	public Poll getPoll(int row)
 	{
-		return this.polls.get(row);
+		return this.polls.get(row).getB();
 	}
 	
 	@Override
@@ -56,7 +60,7 @@ public class PollsTableModel extends AbstractTableModel implements Observer
 			return null;
 		}
 		
-		Poll poll = this.polls.get(row);
+		Poll poll = this.polls.get(row).getB();
 		
 		switch(column)
 		{
@@ -104,16 +108,28 @@ public class PollsTableModel extends AbstractTableModel implements Observer
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_POLL_TYPE)
 		{			
-			this.polls = (List<Poll>) message.getValue();
+			if(this.polls == null)
+			{
+				this.polls = (SortableList<String, Poll>) message.getValue();
+				this.polls.registerObserver();
+			}	
 				
+			this.fireTableDataChanged();
+		}
+				
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_POLL_TYPE || message.getType() == ObserverMessage.REMOVE_POLL_TYPE)
+		{
 			this.fireTableDataChanged();
 		}
 	}
 	
 	public void removeObservers() 
 	{
-		DatabaseSet.getInstance().getPollDatabase().deleteObserver(this);
+		this.polls.removeObserver();
+		DBSet.getInstance().getPollMap().deleteObserver(this);
 	}
 }

@@ -18,7 +18,7 @@ public class SecureWalletDatabase
 	
 	private DB database;
 	
-	private AccountSeedsDatabase accountSeedsDatabase;
+	private AccountSeedMap accountSeedMap;
 	
 	public static boolean exists()
 	{
@@ -39,12 +39,12 @@ public class SecureWalletDatabase
 			    		.closeOnJvmShutdown()
 			            .make();
 			    
-		this.accountSeedsDatabase = new AccountSeedsDatabase(this, this.database);
+		this.accountSeedMap = new AccountSeedMap(this, this.database);
 	}
 	
-	public AccountSeedsDatabase getAccountSeedsDatabase()
+	public AccountSeedMap getAccountSeedMap()
 	{
-		return this.accountSeedsDatabase;
+		return this.accountSeedMap;
 	}
 
 	public void setSeed(byte[] seed) 
@@ -74,7 +74,7 @@ public class SecureWalletDatabase
 	
 	public void delete(PrivateKeyAccount account)
 	{
-		this.accountSeedsDatabase.delete(account);
+		this.accountSeedMap.delete(account);
 	}
 	
 	public void commit()

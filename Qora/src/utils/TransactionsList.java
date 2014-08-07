@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.transaction.Transaction;
 
 public class TransactionsList extends AbstractList<Transaction> 
@@ -25,7 +25,7 @@ public class TransactionsList extends AbstractList<Transaction>
 	{
 		if(!this.transactions.containsKey(this.transactionSignatures.get(index)))
 		{
-			this.transactions.put(this.transactionSignatures.get(index), DatabaseSet.getInstance().getTransactionsDatabase().getTransaction(this.transactionSignatures.get(index)));
+			this.transactions.put(this.transactionSignatures.get(index), DBSet.getInstance().getTransactionMap().get(this.transactionSignatures.get(index)));
 		}
 		
 		return this.transactions.get(this.transactionSignatures.get(index));

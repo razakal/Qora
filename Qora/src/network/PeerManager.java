@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.util.List;
 import java.util.logging.Logger;
 
-import database.DatabaseSet;
+import database.DBSet;
 import settings.Settings;
 
 public class PeerManager {
@@ -31,7 +31,7 @@ public class PeerManager {
 	public List<Peer> getKnownPeers()
 	{
 		//ASK DATABASE FOR A LIST OF PEERS
-		List<Peer> knownPeers = DatabaseSet.getInstance().getPeerDatabase().getKnownPeers(DATABASE_PEERS_AMOUNT);
+		List<Peer> knownPeers = DBSet.getInstance().getPeerMap().getKnownPeers(DATABASE_PEERS_AMOUNT);
 				
 		Logger.getGlobal().info("Peers retrieved from database : " + knownPeers.size());
 				
@@ -62,21 +62,21 @@ public class PeerManager {
 		}
 		
 		//ADD TO DATABASE
-		DatabaseSet.getInstance().getPeerDatabase().addPeer(peer);
+		DBSet.getInstance().getPeerMap().addPeer(peer);
 	}
 	
 	public void blacklistPeer(Peer peer)
 	{
-		DatabaseSet.getInstance().getPeerDatabase().blacklistPeer(peer);
+		DBSet.getInstance().getPeerMap().blacklistPeer(peer);
 	}
 	
 	public boolean isBlacklisted(InetAddress address)
 	{
-		return DatabaseSet.getInstance().getPeerDatabase().isBlacklisted(address);
+		return DBSet.getInstance().getPeerMap().isBlacklisted(address);
 	}
 	
 	public boolean isBlacklisted(Peer peer)
 	{
-		return DatabaseSet.getInstance().getPeerDatabase().isBlacklisted(peer.getAddress());
+		return DBSet.getInstance().getPeerMap().isBlacklisted(peer.getAddress());
 	}
 }

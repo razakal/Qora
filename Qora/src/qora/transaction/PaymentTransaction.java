@@ -17,7 +17,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 
 public class PaymentTransaction extends Transaction {
 
@@ -223,7 +223,7 @@ public class PaymentTransaction extends Transaction {
 	}
 	
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{
 		//CHECK IF RECIPIENT IS VALID ADDRESS
 		if(!Crypto.getInstance().isValidAddress(this.recipient.getAddress()))
@@ -261,7 +261,7 @@ public class PaymentTransaction extends Transaction {
 	//PROCESS/ORPHAN
 	
 	@Override
-	public void process(DatabaseSet db) 
+	public void process(DBSet db) 
 	{
 		//UPDATE SENDER
 		this.sender.setConfirmedBalance(this.sender.getConfirmedBalance(db).subtract(this.amount).subtract(this.fee), db);
@@ -276,11 +276,11 @@ public class PaymentTransaction extends Transaction {
 		if(Arrays.equals(this.recipient.getLastReference(db), new byte[0]))
 		{
 			this.recipient.setLastReference(this.signature, db);
-		}	
+		}		
 	}
 
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UPDATE SENDER
 		this.sender.setConfirmedBalance(this.sender.getConfirmedBalance(db).add(this.amount).add(this.fee), db);
@@ -353,10 +353,10 @@ public class PaymentTransaction extends Transaction {
 	
 	public static byte[] generateSignature(PrivateKeyAccount sender, Account recipient, BigDecimal amount, BigDecimal fee, long timestamp) 
 	{
-		return generateSignature(DatabaseSet.getInstance(), sender, recipient, amount, fee, timestamp);
+		return generateSignature(DBSet.getInstance(), sender, recipient, amount, fee, timestamp);
 	}
 	
-	public static byte[] generateSignature(DatabaseSet db, PrivateKeyAccount sender, Account recipient, BigDecimal amount, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount sender, Account recipient, BigDecimal amount, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		

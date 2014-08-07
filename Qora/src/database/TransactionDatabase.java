@@ -22,10 +22,10 @@ import utils.TransactionsList;
 public class TransactionDatabase extends Observable implements Observer {
 	
 	private TransactionDatabase parent;
-	private DatabaseSet databaseSet;	
+	private DBSet databaseSet;	
 	private Map<byte[], byte[]> transactionMap;	
 	
-	public TransactionDatabase(DatabaseSet databaseSet, DB database)
+	public TransactionDatabase(DBSet databaseSet, DB database)
 	{
 		this.databaseSet = databaseSet;
 		

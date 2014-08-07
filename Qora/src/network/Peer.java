@@ -123,7 +123,7 @@ public class Peer extends Thread{
 					//PROCESS NEW MESSAGE
 					Message message = MessageFactory.getInstance().parse(this, in);
 					
-					Logger.getGlobal().info("received message " + message.getType() + " from " + this.address.toString());
+					//Logger.getGlobal().info("received message " + message.getType() + " from " + this.address.toString());
 					
 					//CHECK IF WE ARE WAITING FOR A MESSAGE WITH THAT ID
 					if(message.hasId() && this.messages.containsKey(message.getId()))
@@ -170,7 +170,7 @@ public class Peer extends Thread{
 				return false;
 			}
 			
-			Logger.getGlobal().info("Sending message " + message.getType() + " to " + this.address.toString());
+			//Logger.getGlobal().info("Sending message " + message.getType() + " to " + this.address.toString());
 			
 			//SEND MESSAGE
 			synchronized(this.out)
@@ -179,7 +179,7 @@ public class Peer extends Thread{
 				this.out.flush();
 			}
 			
-			Logger.getGlobal().info("Sent message " + message.getType() + " to " + this.address.toString());
+			//Logger.getGlobal().info("Sent message " + message.getType() + " to " + this.address.toString());
 			
 			//RETURN
 			return true;

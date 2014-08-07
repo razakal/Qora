@@ -1,7 +1,6 @@
 package gui.voting;
 
-
-import gui.Gui;
+import gui.QoraRowSorter;
 import gui.models.WalletPollsTableModel;
 
 import java.awt.Dimension;
@@ -13,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -20,15 +21,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
-
+import database.wallet.PollMap;
 import qora.voting.Poll;
-import utils.BigDecimalStringComparator;
 
 @SuppressWarnings("serial")
 public class VotingPanel extends JPanel
 {
-	@SuppressWarnings("unchecked")
 	public VotingPanel()
 	{
 		this.setLayout(new GridBagLayout());
@@ -54,14 +52,16 @@ public class VotingPanel extends JPanel
 		buttonGBC.gridx = 0;	
 		buttonGBC.gridy = 1;	
 		
-		
-		
 		//TABLE
 		final WalletPollsTableModel pollsModel = new WalletPollsTableModel();
-		final JTable table = Gui.createSortableTable(pollsModel, 0);
+		final JTable table = new JTable(pollsModel);
 		
-		TableRowSorter<WalletPollsTableModel> sorter =  (TableRowSorter<WalletPollsTableModel>) table.getRowSorter();
-		sorter.setComparator(WalletPollsTableModel.COLUMN_TOTAL_VOTES, new BigDecimalStringComparator());
+		//POLLS SORTER
+		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
+		indexes.put(WalletPollsTableModel.COLUMN_NAME, PollMap.NAME_INDEX);
+		indexes.put(WalletPollsTableModel.COLUMN_ADDRESS, PollMap.CREATOR_INDEX);
+		QoraRowSorter sorter = new QoraRowSorter(pollsModel, indexes);
+		table.setRowSorter(sorter);
 				
 		//CHECKBOX FOR CONFIRMED
 		TableColumn confirmedColumn = table.getColumnModel().getColumn(3);
@@ -98,8 +98,6 @@ public class VotingPanel extends JPanel
 		
 		//ADD NAMING SERVICE TABLE
 		this.add(new JScrollPane(table), tableGBC);
-		
-		
 		
 		//ADD REGISTER BUTTON
 		JButton createButton = new JButton("Create Poll");

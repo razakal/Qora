@@ -9,7 +9,7 @@ import ntp.NTP;
 
 import org.junit.Test;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.BlockGenerator;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
@@ -36,7 +36,7 @@ public class BlockTests
 	public void validateGenesisBlock()
 	{
 		//CREATE EMPTY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE GENESIS BLOCK
 		Block genesisBlock = new GenesisBlock();
@@ -128,7 +128,7 @@ public class BlockTests
 	public void validateSignatureBlock()
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -205,7 +205,7 @@ public class BlockTests
 	public void validateBlock()
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -273,7 +273,7 @@ public class BlockTests
 	public void parseBlock()
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -293,7 +293,7 @@ public class BlockTests
 		Block block = blockGenerator.generateNextBlock(databaseSet, generator, genesisBlock);
 						
 		//FORK
-		DatabaseSet fork = databaseSet.fork();
+		DBSet fork = databaseSet.fork();
 				
 		//GENERATE PAYMENT 1
 		Account recipient = new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g");
@@ -371,7 +371,7 @@ public class BlockTests
 	public void processBlock()
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 										
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -391,7 +391,7 @@ public class BlockTests
 		Block block = blockGenerator.generateNextBlock(databaseSet, generator, genesisBlock);
 		
 		//FORK
-		DatabaseSet fork = databaseSet.fork();
+		DBSet fork = databaseSet.fork();
 		
 		//GENERATE PAYMENT 1
 		Account recipient = new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g");
@@ -443,14 +443,14 @@ public class BlockTests
 		assertEquals(2, block.getTransactionCount());
 		
 		//CHECK LAST BLOCK
-		assertEquals(true, Arrays.equals(block.getSignature(), databaseSet.getBlockDatabase().getLastBlock().getSignature()));
+		assertEquals(true, Arrays.equals(block.getSignature(), databaseSet.getBlockMap().getLastBlock().getSignature()));
 	}
 	
 	@Test
 	public void orphanBlock()
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 										
 		//PROCESS GENESISBLOCK
 		GenesisBlock genesisBlock = new GenesisBlock();
@@ -470,7 +470,7 @@ public class BlockTests
 		Block block = blockGenerator.generateNextBlock(databaseSet, generator, genesisBlock);
 		
 		//FORK
-		DatabaseSet fork = databaseSet.fork();
+		DBSet fork = databaseSet.fork();
 		
 		//GENERATE PAYMENT 1
 		Account recipient = new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g");
@@ -519,6 +519,6 @@ public class BlockTests
 		assertEquals(true, Arrays.equals(recipient2.getLastReference(databaseSet), new byte[0]));
 		
 		//CHECK LAST BLOCK
-		assertEquals(true, Arrays.equals(genesisBlock.getSignature(), databaseSet.getBlockDatabase().getLastBlock().getSignature()));
+		assertEquals(true, Arrays.equals(genesisBlock.getSignature(), databaseSet.getBlockMap().getLastBlock().getSignature()));
 	}
 }

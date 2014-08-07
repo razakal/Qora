@@ -13,7 +13,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
@@ -185,7 +185,7 @@ public class UpdateNameTransaction extends Transaction
 	}
 	
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{
 		//CHECK NAME LENGTH
 		int nameLength = this.name.getName().getBytes(StandardCharsets.UTF_8).length;
@@ -208,19 +208,19 @@ public class UpdateNameTransaction extends Transaction
 		}
 		
 		//CHECK IF NAME EXISTS
-		if(!db.getNameDatabase().containsName(this.name))
+		if(!db.getNameMap().contains(this.name))
 		{
 			return NAME_DOES_NOT_EXIST;
 		}
 		
 		//CHECK IF NAMESALE EXISTS
-		if(db.getNameExchangeDatabase().containsName(this.name.getName()))
+		if(db.getNameExchangeMap().contains(this.name.getName()))
 		{
 			return NAME_ALREADY_FOR_SALE;
 		}
 		
 		//CHECK IF OWNER IS OWNER
-		if(!db.getNameDatabase().getName(this.name.getName()).getOwner().getAddress().equals(this.owner.getAddress()))
+		if(!db.getNameMap().get(this.name.getName()).getOwner().getAddress().equals(this.owner.getAddress()))
 		{
 			return INVALID_NAME_OWNER;
 		}
@@ -249,7 +249,7 @@ public class UpdateNameTransaction extends Transaction
 	//PROCESS/ORPHAN
 
 	@Override
-	public void process(DatabaseSet db)
+	public void process(DBSet db)
 	{
 		//UPDATE OWNER
 		this.owner.setConfirmedBalance(this.owner.getConfirmedBalance(db).subtract(this.fee), db);
@@ -258,15 +258,15 @@ public class UpdateNameTransaction extends Transaction
 		this.owner.setLastReference(this.signature, db);
 		
 		//SET ORPHAN DATA
-		Name oldName = db.getNameDatabase().getName(this.name.getName());
-		db.getUpdateNameDatabase().setOrphanData(this, oldName);
+		Name oldName = db.getNameMap().get(this.name.getName());
+		db.getUpdateNameMap().set(this, oldName);
 		
 		//INSERT INTO DATABASE
-		db.getNameDatabase().addName(this.name);
+		db.getNameMap().add(this.name);
 	}
 
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UPDATE OWNER
 		this.owner.setConfirmedBalance(this.owner.getConfirmedBalance(db).add(this.fee), db);
@@ -275,11 +275,11 @@ public class UpdateNameTransaction extends Transaction
 		this.owner.setLastReference(this.reference, db);
 			
 		//RESTORE ORPHAN DATA
-		Name oldName = db.getUpdateNameDatabase().getOrphanData(this);
-		db.getNameDatabase().addName(oldName);
+		Name oldName = db.getUpdateNameMap().get(this);
+		db.getNameMap().add(oldName);
 		
 		//DELETE ORPHAN DATA
-		db.getUpdateNameDatabase().remove(this);
+		db.getUpdateNameMap().delete(this);
 	}
 
 	@Override
@@ -321,7 +321,7 @@ public class UpdateNameTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 
-	public static byte[] generateSignature(DatabaseSet db, PrivateKeyAccount owner, Name name, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount owner, Name name, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		

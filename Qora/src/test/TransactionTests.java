@@ -10,7 +10,7 @@ import ntp.NTP;
 
 import org.junit.Test;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
@@ -52,7 +52,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE MEMORYDB
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 		
 		//CHECK NORMAL VALID
 		Transaction transaction = new GenesisTransaction(new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g"), BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
@@ -122,7 +122,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 		
 		//PROCESS TRANSACTION
 		Account account = new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g");
@@ -142,7 +142,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//PROCESS TRANSACTION
 		Account account = new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g");
@@ -167,7 +167,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -202,7 +202,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -253,7 +253,7 @@ public class TransactionTests {
 	public void parsePaymentTransaction() 
 	{
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -329,7 +329,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 					
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -387,7 +387,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 					
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -451,7 +451,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -488,7 +488,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -573,7 +573,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -655,7 +655,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -682,7 +682,7 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(nameRegistration.getSignature(), sender.getLastReference(databaseSet)));
 		
 		//CHECK NAME EXISTS
-		assertEquals(true, databaseSet.getNameDatabase().containsName(name));
+		assertEquals(true, databaseSet.getNameMap().contains(name));
 	}
 	
 	@Test
@@ -691,7 +691,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -719,7 +719,7 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(transaction.getSignature(), sender.getLastReference(databaseSet)));
 		
 		//CHECK NAME EXISTS
-		assertEquals(false, databaseSet.getNameDatabase().containsName(name));
+		assertEquals(false, databaseSet.getNameMap().contains(name));
 	}
 
 	//UPDATE NAME
@@ -730,7 +730,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -768,7 +768,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -856,7 +856,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -941,7 +941,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -973,10 +973,10 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(nameUpdate.getSignature(), sender.getLastReference(databaseSet)));
 				
 		//CHECK NAME EXISTS
-		assertEquals(true, databaseSet.getNameDatabase().containsName(name));
+		assertEquals(true, databaseSet.getNameMap().contains(name));
 		
 		//CHECK NAME VALUE
-		name =  databaseSet.getNameDatabase().getName("test");
+		name =  databaseSet.getNameMap().get("test");
 		assertEquals("new value", name.getValue());
 		
 		//CHECK NAME OWNER
@@ -990,7 +990,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1023,10 +1023,10 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(nameRegistration.getSignature(), sender.getLastReference(databaseSet)));
 				
 		//CHECK NAME EXISTS
-		assertEquals(true, databaseSet.getNameDatabase().containsName(name));
+		assertEquals(true, databaseSet.getNameMap().contains(name));
 		
 		//CHECK NAME VALUE
-		name =  databaseSet.getNameDatabase().getName("test");
+		name =  databaseSet.getNameMap().get("test");
 		assertEquals("new value", name.getValue());
 		
 		//CHECK NAME OWNER
@@ -1041,7 +1041,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1078,7 +1078,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1174,7 +1174,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1256,7 +1256,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1291,10 +1291,10 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(nameSaleTransaction.getSignature(), sender.getLastReference(databaseSet)));
 				
 		//CHECK NAME SALE EXISTS
-		assertEquals(true, databaseSet.getNameExchangeDatabase().containsName("test"));
+		assertEquals(true, databaseSet.getNameExchangeMap().contains("test"));
 		
 		//CHECK NAME SALE AMOUNT
-		nameSale =  databaseSet.getNameExchangeDatabase().getNameSale("test");
+		nameSale =  databaseSet.getNameExchangeMap().getNameSale("test");
 		assertEquals(BigDecimal.ONE.setScale(8), nameSale.getAmount());
 	}
 
@@ -1304,7 +1304,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1340,7 +1340,7 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(nameRegistration.getSignature(), sender.getLastReference(databaseSet)));
 				
 		//CHECK NAME SALE EXISTS
-		assertEquals(false, databaseSet.getNameExchangeDatabase().containsName("test"));
+		assertEquals(false, databaseSet.getNameExchangeMap().contains("test"));
 	}
 	
 	
@@ -1352,7 +1352,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1386,7 +1386,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1490,7 +1490,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1568,7 +1568,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1610,7 +1610,7 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(cancelNameSaleTransaction.getSignature(), sender.getLastReference(databaseSet)));
 				
 		//CHECK NAME SALE EXISTS
-		assertEquals(false, databaseSet.getNameExchangeDatabase().containsName("test"));
+		assertEquals(false, databaseSet.getNameExchangeMap().contains("test"));
 	}
 
 	@Test
@@ -1619,7 +1619,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1662,10 +1662,10 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(nameSaleTransaction.getSignature(), sender.getLastReference(databaseSet)));
 				
 		//CHECK NAME SALE EXISTS
-		assertEquals(true, databaseSet.getNameExchangeDatabase().containsName("test"));
+		assertEquals(true, databaseSet.getNameExchangeMap().contains("test"));
 		
 		//CHECK NAME SALE AMOUNT
-		nameSale =  databaseSet.getNameExchangeDatabase().getNameSale("test");
+		nameSale =  databaseSet.getNameExchangeMap().getNameSale("test");
 		assertEquals(BigDecimal.ONE.setScale(8), nameSale.getAmount());
 	}
 	
@@ -1677,7 +1677,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1712,7 +1712,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1780,7 +1780,7 @@ public class TransactionTests {
 		
 		//CREATE INVALID NAME PURCHASE NAME NOT FOR SALE
 		Name test2 = new Name(sender, "test2", "oke");
-		databaseSet.getNameDatabase().addName(test2);
+		databaseSet.getNameMap().add(test2);
 		
 		//CHECK IF NAME UPDATE IS INVALID
 		assertEquals(Transaction.NAME_NOT_FOR_SALE, namePurchaseTransaction.isValid(databaseSet));
@@ -1819,7 +1819,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1898,7 +1898,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -1952,11 +1952,11 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(purchaseNameTransaction.getSignature(), buyer.getLastReference(databaseSet)));
 				
 		//CHECK NAME OWNER
-		name = databaseSet.getNameDatabase().getName("test");
+		name = databaseSet.getNameMap().get("test");
 		assertEquals(name.getOwner().getAddress(), buyer.getAddress());
 	
 		//CHECK NAME SALE EXISTS
-		assertEquals(false, databaseSet.getNameExchangeDatabase().containsName("test"));
+		assertEquals(false, databaseSet.getNameExchangeMap().contains("test"));
 	}
 
 	@Test
@@ -1965,7 +1965,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2020,11 +2020,11 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(transaction.getSignature(), buyer.getLastReference(databaseSet)));
 				
 		//CHECK NAME OWNER
-		name = databaseSet.getNameDatabase().getName("test");
+		name = databaseSet.getNameMap().get("test");
 		assertEquals(name.getOwner().getAddress(), sender.getAddress());
 	
 		//CHECK NAME SALE EXISTS
-		assertEquals(true, databaseSet.getNameExchangeDatabase().containsName("test"));
+		assertEquals(true, databaseSet.getNameExchangeMap().contains("test"));
 	}
 	
 	//CREATE POLL
@@ -2035,7 +2035,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2072,7 +2072,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2178,7 +2178,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2270,7 +2270,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2297,7 +2297,7 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(pollCreation.getSignature(), sender.getLastReference(databaseSet)));
 		
 		//CHECK POLL EXISTS
-		assertEquals(true, databaseSet.getPollDatabase().containsPoll(poll));
+		assertEquals(true, databaseSet.getPollMap().contains(poll));
 	}
 	
 	@Test
@@ -2306,7 +2306,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2334,7 +2334,7 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(transaction.getSignature(), sender.getLastReference(databaseSet)));
 		
 		//CHECK POLL EXISTS
-		assertEquals(false, databaseSet.getPollDatabase().containsPoll(poll));
+		assertEquals(false, databaseSet.getPollMap().contains(poll));
 	}
 	
 	//VOTE ON POLL
@@ -2345,7 +2345,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2379,7 +2379,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2475,7 +2475,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2557,7 +2557,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2588,7 +2588,7 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(pollVote.getSignature(), sender.getLastReference(databaseSet)));
 		
 		//CHECK POLL VOTER
-		assertEquals(true, databaseSet.getPollDatabase().getPoll(poll.getName()).getOptions().get(0).hasVoter(sender));
+		assertEquals(true, databaseSet.getPollMap().get(poll.getName()).getOptions().get(0).hasVoter(sender));
 		
 		//CREATE POLL VOTE
 		pollVote = new VoteOnPollTransaction(sender, poll.getName(), 1, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);			
@@ -2601,10 +2601,10 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(pollVote.getSignature(), sender.getLastReference(databaseSet)));
 				
 		//CHECK POLL VOTER
-		assertEquals(false, databaseSet.getPollDatabase().getPoll(poll.getName()).getOptions().get(0).hasVoter(sender));
+		assertEquals(false, databaseSet.getPollMap().get(poll.getName()).getOptions().get(0).hasVoter(sender));
 		
 		//CHECK POLL VOTER
-		assertEquals(true, databaseSet.getPollDatabase().getPoll(poll.getName()).getOptions().get(1).hasVoter(sender));
+		assertEquals(true, databaseSet.getPollMap().get(poll.getName()).getOptions().get(1).hasVoter(sender));
 	}
 	
 	@Test
@@ -2613,7 +2613,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2646,10 +2646,10 @@ public class TransactionTests {
 		assertEquals(true, Arrays.equals(pollCreation.getSignature(), sender.getLastReference(databaseSet)));
 		
 		//CHECK POLL VOTER
-		assertEquals(false, databaseSet.getPollDatabase().getPoll(poll.getName()).hasVotes());
+		assertEquals(false, databaseSet.getPollMap().get(poll.getName()).hasVotes());
 		
 		//CHECK POLL VOTER
-		assertEquals(false, databaseSet.getPollDatabase().getPoll(poll.getName()).getOptions().get(0).hasVoter(sender));
+		assertEquals(false, databaseSet.getPollMap().get(poll.getName()).getOptions().get(0).hasVoter(sender));
 
 	}
 	
@@ -2661,7 +2661,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 				
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2695,7 +2695,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2754,7 +2754,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2836,7 +2836,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -2868,7 +2868,7 @@ public class TransactionTests {
 		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
-		DatabaseSet databaseSet = DatabaseSet.createEmptyDatabaseSet();
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 								
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());

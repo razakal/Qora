@@ -3,8 +3,6 @@ package qora;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import network.Peer;
 import network.message.BlockMessage;
@@ -14,31 +12,31 @@ import network.message.SignaturesMessage;
 import network.message.TransactionMessage;
 import qora.block.Block;
 import qora.transaction.Transaction;
-import utils.ObserverMessage;
-import database.DatabaseSet;
 
-public class Synchronizer extends Observable
+import database.DBSet;
+
+public class Synchronizer
 {
 	private boolean run = true;
 	
-	public List<Transaction> synchronize(DatabaseSet db, Block lastCommonBlock, List<Block> newBlocks) throws Exception
+	public List<Transaction> synchronize(DBSet db, Block lastCommonBlock, List<Block> newBlocks) throws Exception
 	{
 		List<Transaction> orphanedTransactions = new ArrayList<Transaction>();
 		
 		//VERIFY ALL BLOCKS TO PREVENT ORPHANING INCORRECTLY
-		DatabaseSet fork = db.fork();	
+		DBSet fork = db.fork();	
 		
 		//ORPHAN BLOCK IN FORK TO VALIDATE THE NEW BLOCKS
 		if(lastCommonBlock != null)
 		{
 			//GET LAST BLOCK
-			Block lastBlock = fork.getBlockDatabase().getLastBlock();
+			Block lastBlock = fork.getBlockMap().getLastBlock();
 			
 			//ORPHAN LAST BLOCK UNTIL WE HAVE REACHED COMMON BLOCK
 			while(!Arrays.equals(lastBlock.getSignature(), lastCommonBlock.getSignature()))
 			{
 				lastBlock.orphan(fork);
-				lastBlock = fork.getBlockDatabase().getLastBlock();
+				lastBlock = fork.getBlockMap().getLastBlock();
 			}
 		}
 		
@@ -62,7 +60,7 @@ public class Synchronizer extends Observable
 		if(lastCommonBlock != null)
 		{
 			//GET LAST BLOCK
-			Block lastBlock = db.getBlockDatabase().getLastBlock();
+			Block lastBlock = db.getBlockMap().getLastBlock();
 			
 			//ORPHAN LAST BLOCK UNTIL WE HAVE REACHED COMMON BLOCK
 			while(!Arrays.equals(lastBlock.getSignature(), lastCommonBlock.getSignature()))
@@ -71,8 +69,7 @@ public class Synchronizer extends Observable
 				orphanedTransactions.addAll(lastBlock.getTransactions());
 				
 				lastBlock.orphan(db);
-				this.notifyOrphan(db, lastBlock);
-				lastBlock = db.getBlockDatabase().getLastBlock();
+				lastBlock = db.getBlockMap().getLastBlock();
 			}
 		}
 		
@@ -81,8 +78,6 @@ public class Synchronizer extends Observable
 		{
 			//SYNCHRONIZED PROCESSING
 			this.process(block);
-			//block.process(db);
-			//this.notifyProcess(db, block);
 		}	
 		
 		return orphanedTransactions;
@@ -95,7 +90,7 @@ public class Synchronizer extends Observable
 				
 		//CHECK COMMON BLOCK EXISTS
 		List<byte[]> signatures;
-		if(Arrays.equals(common.getSignature(), DatabaseSet.getInstance().getBlockDatabase().getLastBlockSignature()))
+		if(Arrays.equals(common.getSignature(), DBSet.getInstance().getBlockMap().getLastBlockSignature()))
 		{
 			//GET NEXT 500 SIGNATURES
 			signatures = this.getBlockSignatures(common, BlockChain.MAX_SIGNATURES, peer);
@@ -133,13 +128,13 @@ public class Synchronizer extends Observable
 		else
 		{
 			//GET SIGNATURES FROM COMMON HEIGHT UNTIL CURRENT HEIGHT
-			signatures = this.getBlockSignatures(common, DatabaseSet.getInstance().getBlockDatabase().getLastBlock().getHeight() - common.getHeight(), peer);	
+			signatures = this.getBlockSignatures(common, DBSet.getInstance().getBlockMap().getLastBlock().getHeight() - common.getHeight(), peer);	
 			
 			//GET THE BLOCKS FROM SIGNATURES
 			List<Block> blocks = this.getBlocks(signatures, peer);
 							
 			//SYNCHRONIZE BLOCKS
-			List<Transaction> orphanedTransactions = this.synchronize(DatabaseSet.getInstance(), common, blocks);
+			List<Transaction> orphanedTransactions = this.synchronize(DBSet.getInstance(), common, blocks);
 			
 			//SEND ORPHANED TRANSACTIONS TO PEER
 			for(Transaction transaction: orphanedTransactions)
@@ -181,7 +176,7 @@ public class Synchronizer extends Observable
 	
 	private Block findLastCommonBlock(Peer peer) throws Exception
 	{
-		Block block = DatabaseSet.getInstance().getBlockDatabase().getLastBlock();
+		Block block = DBSet.getInstance().getBlockMap().getLastBlock();
 		
 		//GET HEADERS UNTIL COMMON BLOCK IS FOUND OR ALL BLOCKS HAVE BEEN CHECKED
 		List<byte[]> headers = this.getBlockSignatures(block.getSignature(), peer);
@@ -206,9 +201,9 @@ public class Synchronizer extends Observable
 		for(int i=headers.size()-1; i>=0; i--)
 		{
 			//CHECK IF WE KNOW BLOCK
-			if(DatabaseSet.getInstance().getBlockDatabase().containsBlock(headers.get(i)))
+			if(DBSet.getInstance().getBlockMap().contains(headers.get(i)))
 			{
-				return DatabaseSet.getInstance().getBlockDatabase().getBlock(headers.get(i));
+				return DBSet.getInstance().getBlockMap().get(headers.get(i));
 			}
 		}
 		
@@ -253,14 +248,6 @@ public class Synchronizer extends Observable
 		return response.getBlock();
 	}
 	
-	private void notifyOrphan(DatabaseSet db, Block block)
-	{
-		//T NOTIFY
-		this.setChanged();
-		this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_BLOCK_TYPE, block));
-		this.setChanged();
-		this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks(db)));
-	}
 	
 	//SYNCHRONIZED DO NOT PROCCESS A BLOCK AT THE SAME TIME
 	public synchronized void process(Block block) 
@@ -270,49 +257,9 @@ public class Synchronizer extends Observable
 		{
 			//PROCESS
 			block.process();
-			
-			//NOTIFY
-			notifyProcess(DatabaseSet.getInstance(), block);
 		}
 	}
-
-	private void notifyProcess(DatabaseSet db, Block block) 
-	{	
-		//NOTIFY
-		this.setChanged();
-		this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_BLOCK_TYPE, block));
-		
-		this.setChanged();
-		this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks(db)));
-		
-		this.setChanged();
-		this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, DatabaseSet.getInstance().getTransactionsDatabase().getTransactions()));
-	}
 	
-	private List<Block> getLastBlocks(DatabaseSet db)
-	{
-		//GET 50 LAST BLOCKS
-		List<Block> blocks = new ArrayList<Block>();	
-		blocks.add(db.getBlockDatabase().getLastBlock());
-		
-		Block parent;
-		while(blocks.size() < 50 && (parent = blocks.get(blocks.size() - 1).getParent()) != null)
-		{
-			blocks.add(parent);
-		}
-	
-		return blocks;
-	}
-	
-	@Override
-	public void addObserver(Observer o)
-	{
-		super.addObserver(o);
-		
-		//SEND LAST BLOCKS ON REGISTER
-		o.update(this, new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks(DatabaseSet.getInstance())));
-	}
-
 	public void stop() {
 		this.run = false;
 	}

@@ -16,7 +16,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
@@ -191,7 +191,7 @@ public class CreatePollTransaction extends Transaction
 	}
 	
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{
 		//CHECK IF RELEASED
 		if(NTP.getTime() < VOTING_RELEASE)
@@ -220,7 +220,7 @@ public class CreatePollTransaction extends Transaction
 		}
 		
 		//CHECK POLL DOES NOT EXIST ALREADY
-		if(db.getPollDatabase().containsPoll(this.poll))
+		if(db.getPollMap().contains(this.poll))
 		{
 			return POLL_ALREADY_CREATED;
 		}
@@ -288,7 +288,7 @@ public class CreatePollTransaction extends Transaction
 	//PROCESS/ORPHAN
 
 	@Override
-	public void process(DatabaseSet db)
+	public void process(DBSet db)
 	{
 		//UPDATE CREATOR
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(db).subtract(this.fee), db);
@@ -297,12 +297,12 @@ public class CreatePollTransaction extends Transaction
 		this.creator.setLastReference(this.signature, db);
 		
 		//INSERT INTO DATABASE
-		db.getPollDatabase().addPoll(this.poll);
+		db.getPollMap().add(this.poll);
 	}
 
 
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UPDATE CREATOR
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(db).add(this.fee), db);
@@ -311,7 +311,7 @@ public class CreatePollTransaction extends Transaction
 		this.creator.setLastReference(this.reference, db);
 				
 		//DELETE FROM DATABASE
-		db.getPollDatabase().deletePoll(this.poll);		
+		db.getPollMap().delete(this.poll);		
 	}
 
 	@Override
@@ -356,7 +356,7 @@ public class CreatePollTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 
-	public static byte[] generateSignature(DatabaseSet db, PrivateKeyAccount creator, Poll poll, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Poll poll, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		

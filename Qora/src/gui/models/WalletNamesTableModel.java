@@ -1,35 +1,40 @@
 package gui.models;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
+import org.mapdb.Fun.Tuple2;
 
-import qora.account.Account;
 import qora.naming.Name;
 import utils.ObserverMessage;
-import utils.Pair;
 import controller.Controller;
+import database.SortableList;
+import database.wallet.NameMap;
 
 @SuppressWarnings("serial")
-public class NamingServiceTableModel extends AbstractTableModel implements Observer
+public class WalletNamesTableModel extends QoraTableModel<Tuple2<String, String>, Name> implements Observer
 {
-	private static final int COLUMN_NAME = 0;
-	private static final int COLUMN_ADDRESS = 1;
+	public static final int COLUMN_NAME = 0;
+	public static final int COLUMN_ADDRESS = 1;
 	private static final int COLUMN_CONFIRMED = 2;
 	
-	private String[] columnNames = {"Name", "Owner", "Confirmed"};
-	private List<Pair<Account, Name>> names;
+	private SortableList<Tuple2<String, String>, Name> names;
 	
-	public NamingServiceTableModel()
+	private String[] columnNames = {"Name", "Owner", "Confirmed"};
+	
+	public WalletNamesTableModel()
 	{
 		Controller.getInstance().addWalletListener(this);
 	}
 	
+	@Override
+	public SortableList<Tuple2<String, String>, Name> getSortableList() {
+		return this.names;
+	}
+	
 	public Name getName(int row)
 	{
-		return names.get(row).getB();
+		return this.names.get(row).getB();
 	}
 	
 	@Override
@@ -97,11 +102,23 @@ public class NamingServiceTableModel extends AbstractTableModel implements Obser
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_NAME_TYPE)
-		{			
-			this.names = (List<Pair<Account, Name>>) message.getValue();
-				
+		{
+			if(this.names == null)
+			{
+				this.names = (SortableList<Tuple2<String, String>, Name>) message.getValue();
+				this.names.registerObserver();
+				this.names.sort(NameMap.NAME_INDEX);
+			}
+			
 			this.fireTableDataChanged();
 		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_NAME_TYPE || message.getType() == ObserverMessage.REMOVE_NAME_TYPE)
+		{
+			this.fireTableDataChanged();
+		}	
 	}
 }

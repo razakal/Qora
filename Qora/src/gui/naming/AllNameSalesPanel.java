@@ -8,8 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Map;
+import java.util.TreeMap;
 
-import gui.Gui;
+import gui.QoraRowSorter;
 import gui.models.NameSalesTableModel;
 
 import javax.swing.JLabel;
@@ -19,20 +21,17 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableRowSorter;
 
+import database.NameExchangeMap;
 import qora.naming.NameSale;
-import utils.BigDecimalStringComparator;
 
 @SuppressWarnings("serial")
 public class AllNameSalesPanel extends JPanel {
 	private NameSalesTableModel nameSalesTableModel;
 
-	@SuppressWarnings("unchecked")
 	public AllNameSalesPanel() {
 		
 		//LAYOUT
@@ -74,11 +73,15 @@ public class AllNameSalesPanel extends JPanel {
 		
 		//CREATE TABLE
 		this.nameSalesTableModel = new NameSalesTableModel();
-		final JTable nameSalesTable = Gui.createSortableTable(this.nameSalesTableModel, 0);
+		final JTable nameSalesTable = new JTable(this.nameSalesTableModel);
 		
-		TableRowSorter<NameSalesTableModel> sorter =  (TableRowSorter<NameSalesTableModel>) nameSalesTable.getRowSorter();
-		sorter.setComparator(NameSalesTableModel.COLUMN_PRICE, new BigDecimalStringComparator());
-
+		//NAMESALES SORTER
+		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
+		indexes.put(NameSalesTableModel.COLUMN_NAME, NameExchangeMap.DEFAULT_INDEX);
+		indexes.put(NameSalesTableModel.COLUMN_PRICE, NameExchangeMap.AMOUNT_INDEX);
+		QoraRowSorter sorter = new QoraRowSorter(this.nameSalesTableModel, indexes);
+		nameSalesTable.setRowSorter(sorter);
+		
 		//CREATE SEARCH FIELD
 		final JTextField txtSearch = new JTextField();
 
@@ -101,16 +104,9 @@ public class AllNameSalesPanel extends JPanel {
 				// GET VALUE
 				String search = txtSearch.getText();
 
-				// FILTER
-				RowFilter<NameSalesTableModel, Object> rowFilter = RowFilter
-						.regexFilter(search, 0);
-
-				// GET ROW SORTER
-				TableRowSorter<NameSalesTableModel> rowSorter = (TableRowSorter<NameSalesTableModel>) nameSalesTable.getRowSorter();
-
-				// SET FILTER
-				rowSorter.setRowFilter(rowFilter);
-
+			 	// SET FILTER
+				nameSalesTableModel.getSortableList().setFilter(search);
+				nameSalesTableModel.fireTableDataChanged();
 			}
 		});
 

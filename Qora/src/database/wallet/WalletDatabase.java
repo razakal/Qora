@@ -6,10 +6,11 @@ import org.mapdb.Atomic.Var;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
+import database.IDB;
 import qora.account.Account;
 import settings.Settings;
 
-public class WalletDatabase 
+public class WalletDatabase implements IDB
 {
 	private static final File WALLET_FILE = new File(Settings.getInstance().getWalletDir(), "wallet.dat");
 	
@@ -17,12 +18,12 @@ public class WalletDatabase
 	private static final String LAST_BLOCK = "lastBlock";
 	
 	private DB database;	
-	private AccountsDatabase accountsDatabase;
-	private TransactionsDatabase transactionsDatabase;
-	private BlocksDatabase blocksDatabase;
-	private NamesDatabase namesDatabase;
-	private NameSalesDatabase nameSalesDatabase;
-	private PollDatabase pollDatabase;
+	private AccountMap accountMap;
+	private TransactionMap transactionMap;
+	private BlockMap blockMap;
+	private NameMap nameMap;
+	private NameSaleMap nameSaleMap;
+	private PollMap pollMap;
 	
 	public static boolean exists()
 	{
@@ -40,14 +41,15 @@ public class WalletDatabase
 		
 	    this.database = DBMaker.newFileDB(WALLET_FILE)
 	    		.closeOnJvmShutdown()
+	    		.cacheSize(2048)
 	            .make();
 	    
-	    this.accountsDatabase = new AccountsDatabase(this, this.database);
-	    this.transactionsDatabase = new TransactionsDatabase(this, this.database);
-	    this.blocksDatabase = new BlocksDatabase(this, this.database);
-	    this.namesDatabase = new NamesDatabase(this, this.database);
-	    this.nameSalesDatabase = new NameSalesDatabase(this, this.database);
-	    this.pollDatabase = new PollDatabase(this, this.database);
+	    this.accountMap = new AccountMap(this, this.database);
+	    this.transactionMap = new TransactionMap(this, this.database);
+	    this.blockMap = new BlockMap(this, this.database);
+	    this.nameMap = new NameMap(this, this.database);
+	    this.nameSaleMap = new NameSaleMap(this, this.database);
+	    this.pollMap = new PollMap(this, this.database);
 	}
 	
 	public void setVersion(int version)
@@ -72,44 +74,44 @@ public class WalletDatabase
 		return atomic.get();
 	}
 	
-	public AccountsDatabase getAccountsDatabase()
+	public AccountMap getAccountMap()
 	{
-		return this.accountsDatabase;
+		return this.accountMap;
 	}
 	
-	public TransactionsDatabase getTransactionsDatabase()
+	public TransactionMap getTransactionMap()
 	{
-		return this.transactionsDatabase;
+		return this.transactionMap;
 	}
 	
-	public BlocksDatabase getBlocksDatabase()
+	public BlockMap getBlockMap()
 	{
-		return this.blocksDatabase;
+		return this.blockMap;
 	}
 	
-	public NamesDatabase getNamesDatabase()
+	public NameMap getNameMap()
 	{
-		return this.namesDatabase;
+		return this.nameMap;
 	}
 	
-	public NameSalesDatabase getNameSalesDatabase()
+	public NameSaleMap getNameSaleMap()
 	{
-		return this.nameSalesDatabase;
+		return this.nameSaleMap;
 	}
 	
-	public PollDatabase getPollDatabase()
+	public PollMap getPollMap()
 	{
-		return this.pollDatabase;
+		return this.pollMap;
 	}
 	
 	public void delete(Account account)
 	{
-		this.accountsDatabase.delete(account);
-		this.blocksDatabase.delete(account);
-		this.transactionsDatabase.delete(account);
-		this.namesDatabase.delete(account);
-		this.nameSalesDatabase.delete(account);
-		this.pollDatabase.delete(account);
+		this.accountMap.delete(account);
+		this.blockMap.delete(account);
+		this.transactionMap.delete(account);
+		this.nameMap.delete(account);
+		this.nameSaleMap.delete(account);
+		this.pollMap.delete(account);
 	}
 	
 	public void commit()

@@ -50,6 +50,7 @@ public class MainFrame extends JFrame{
         {
             public void windowClosing(WindowEvent e)
             {
+            	setVisible(false);
             	Controller.getInstance().stopAll();
             	System.exit(0);
             }

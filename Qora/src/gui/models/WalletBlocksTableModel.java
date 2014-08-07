@@ -1,20 +1,19 @@
 package gui.models;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
+import org.mapdb.Fun.Tuple2;
 
 import controller.Controller;
-import qora.account.Account;
+import database.SortableList;
+import database.wallet.BlockMap;
 import qora.block.Block;
 import utils.ObserverMessage;
-import utils.Pair;
 
 @SuppressWarnings("serial")
-public class WalletBlocksTableModel extends AbstractTableModel implements Observer{
+public class WalletBlocksTableModel extends QoraTableModel<Tuple2<String, String>, Block> implements Observer{
 
 	public static final int COLUMN_HEIGHT = 0;
 	public static final int COLUMN_TIMESTAMP = 1;
@@ -23,13 +22,18 @@ public class WalletBlocksTableModel extends AbstractTableModel implements Observ
 	public static final int COLUMN_TRANSACTIONS = 4;
 	public static final int COLUMN_FEE = 5;
 	
-	private List<Pair<Account, Block>> blocks;
+	private SortableList<Tuple2<String, String>, Block> blocks;
 	
 	private String[] columnNames = {"Height", "Timestamp", "Generator", "Generating Balance", "Transactions", "Fee"};
 	
 	public WalletBlocksTableModel()
 	{
 		Controller.getInstance().addWalletListener(this);
+	}
+	
+	@Override
+	public SortableList<Tuple2<String, String>, Block> getSortableList() {
+		return this.blocks;
 	}
 	
 	@Override
@@ -63,35 +67,35 @@ public class WalletBlocksTableModel extends AbstractTableModel implements Observ
 			return null;
 		}
 		
-		Pair<Account, Block> pair = blocks.get(row);
+		Block block = this.blocks.get(row).getB();
 		
 		switch(column)
 		{
 		case COLUMN_HEIGHT:
 			
-			return pair.getB().getHeight();
+			return block.getHeight();
 			
 		case COLUMN_TIMESTAMP:
 			
-			Date date = new Date(pair.getB().getTimestamp());
+			Date date = new Date(block.getTimestamp());
 			DateFormat format = DateFormat.getDateTimeInstance();
 			return format.format(date);
 			
 		case COLUMN_GENERATOR:
 			
-			return pair.getB().getGenerator().getAddress();
+			return block.getGenerator().getAddress();
 			
 		case COLUMN_BASETARGET:
 			
-			return pair.getB().getGeneratingBalance();
+			return block.getGeneratingBalance();
 			
 		case COLUMN_TRANSACTIONS:
 			
-			return pair.getB().getTransactionCount();
+			return block.getTransactionCount();
 			
 		case COLUMN_FEE:	
 			
-			return pair.getB().getTotalFee().toPlainString();
+			return block.getTotalFee().toPlainString();
 			
 		}
 		
@@ -116,11 +120,23 @@ public class WalletBlocksTableModel extends AbstractTableModel implements Observ
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_BLOCK_TYPE)
-		{			
-			this.blocks = (List<Pair<Account, Block>>) message.getValue();
-				
+		{
+			if(this.blocks == null)
+			{
+				this.blocks = (SortableList<Tuple2<String, String>, Block>) message.getValue();
+				this.blocks.registerObserver();
+				this.blocks.sort(BlockMap.TIMESTAMP_INDEX, true);
+			}
+			
 			this.fireTableDataChanged();
 		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE)
+		{
+			this.fireTableDataChanged();
+		}	
 	}
 }

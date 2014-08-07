@@ -2,24 +2,24 @@ package gui.models;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
+
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
-
 import controller.Controller;
+import database.SortableList;
+import database.TransactionMap;
 import qora.transaction.Transaction;
 import utils.ObserverMessage;
 
 @SuppressWarnings("serial")
-public class TransactionsTableModel extends AbstractTableModel implements Observer {
+public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> implements Observer {
 	
 	public static final int COLUMN_TIMESTAMP = 0;
 	public static final int COLUMN_TYPE = 1;
 	public static final int COLUMN_FEE = 2;
 	
-	private List<Transaction> transactions;
+	private SortableList<byte[], Transaction> transactions;
 	
 	private String[] columnNames = {"Timestamp", "Type", "Fee"};
 	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name Purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction"};
@@ -29,9 +29,15 @@ public class TransactionsTableModel extends AbstractTableModel implements Observ
 		Controller.getInstance().addObserver(this);
 	}
 	
+	@Override
+	public SortableList<byte[], Transaction> getSortableList() 
+	{
+		return this.transactions;
+	}
+	
 	public Transaction getTransaction(int row)
 	{
-		return transactions.get(row);
+		return transactions.get(row).getB();
 	}
 	
 	@Override
@@ -65,7 +71,7 @@ public class TransactionsTableModel extends AbstractTableModel implements Observ
 			return null;
 		}
 		
-		Transaction transaction = this.transactions.get(row);
+		Transaction transaction = this.transactions.get(row).getB();
 		
 		switch(column)
 		{
@@ -106,16 +112,29 @@ public class TransactionsTableModel extends AbstractTableModel implements Observ
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_TRANSACTION_TYPE)
 		{
-			this.transactions = (List<Transaction>) message.getValue();
-			this.fireTableDataChanged();		
+			if(this.transactions == null)
+			{
+				this.transactions = (SortableList<byte[], Transaction>) message.getValue();
+				this.transactions.registerObserver();
+				this.transactions.sort(TransactionMap.TIMESTAMP_INDEX, true);
+			}
+			
+			this.fireTableDataChanged();
+		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE || message.getType() == ObserverMessage.REMOVE_TRANSACTION_TYPE)
+		{
+			this.fireTableDataChanged();
 		}	
 	}
 
 	public void removeObservers() 
 	{
+		this.transactions.removeObserver();
 		Controller.getInstance().deleteObserver(this);		
 	}
-	
 }

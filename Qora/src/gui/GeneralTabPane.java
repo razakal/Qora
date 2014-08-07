@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Map;
+import java.util.TreeMap;
 
 import gui.models.WalletBlocksTableModel;
 import gui.models.WalletTransactionsTableModel;
@@ -12,13 +14,10 @@ import gui.voting.VotingPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.table.TableRowSorter;
 
+import database.wallet.BlockMap;
+import database.wallet.TransactionMap;
 import qora.transaction.Transaction;
-import utils.BigDecimalStringComparator;
-import utils.DateStringComparator;
-import utils.IntegerComparator;
-import utils.LongComparator;
 
 public class GeneralTabPane extends JTabbedPane{
 
@@ -27,24 +26,30 @@ public class GeneralTabPane extends JTabbedPane{
 	private WalletTransactionsTableModel transactionsModel;
 	private JTable transactionsTable;
 	
-	@SuppressWarnings("unchecked")
 	public GeneralTabPane()
 	{
 		super();
 		
-		//ADD TABS
+		//ACCOUNTS
 		this.addTab("Accounts", new AccountsPanel());
         
+		//SEND
 		this.addTab("Send money", new SendMoneyPanel());
         
+		//TRANSACTIONS
 		this.transactionsModel = new WalletTransactionsTableModel();
-		this.transactionsTable = Gui.createSortableTable(this.transactionsModel, WalletTransactionsTableModel.COLUMN_TIMESTAMP);
+		this.transactionsTable = new JTable(this.transactionsModel);
 		
-		TableRowSorter<WalletTransactionsTableModel> transactionSorter =  (TableRowSorter<WalletTransactionsTableModel>) this.transactionsTable.getRowSorter();
-		transactionSorter.setComparator(WalletTransactionsTableModel.COLUMN_TIMESTAMP, new DateStringComparator());
-		transactionSorter.setComparator(WalletTransactionsTableModel.COLUMN_CONFIRMATIONS, new IntegerComparator());
-		transactionSorter.setComparator(WalletTransactionsTableModel.COLUMN_AMOUNT, new BigDecimalStringComparator());
+		//TRANSACTIONS SORTER
+		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
+		indexes.put(WalletTransactionsTableModel.COLUMN_CONFIRMATIONS, TransactionMap.TIMESTAMP_INDEX);
+		indexes.put(WalletTransactionsTableModel.COLUMN_TIMESTAMP, TransactionMap.TIMESTAMP_INDEX);
+		indexes.put(WalletTransactionsTableModel.COLUMN_ADDRESS, TransactionMap.ADDRESS_INDEX);
+		indexes.put(WalletTransactionsTableModel.COLUMN_AMOUNT, TransactionMap.AMOUNT_INDEX);
+		QoraRowSorter sorter = new QoraRowSorter(transactionsModel, indexes);
+		transactionsTable.setRowSorter(sorter);
 		
+		//TRANSACTION DETAILS
 		this.transactionsTable.addMouseListener(new MouseAdapter() 
 		{
 			public void mouseClicked(MouseEvent e) 
@@ -65,19 +70,27 @@ public class GeneralTabPane extends JTabbedPane{
 		});			
 		this.addTab("Transactions", new JScrollPane(this.transactionsTable));       
 		
-		JTable blocksTable = Gui.createSortableTable(new WalletBlocksTableModel(), WalletBlocksTableModel.COLUMN_HEIGHT);
-		
-		TableRowSorter<WalletBlocksTableModel> blockSorter =  (TableRowSorter<WalletBlocksTableModel>) blocksTable.getRowSorter();
-		blockSorter.setComparator(WalletBlocksTableModel.COLUMN_HEIGHT, new IntegerComparator());
-		blockSorter.setComparator(WalletBlocksTableModel.COLUMN_TIMESTAMP, new DateStringComparator());
-		blockSorter.setComparator(WalletBlocksTableModel.COLUMN_TRANSACTIONS, new IntegerComparator());
-		blockSorter.setComparator(WalletBlocksTableModel.COLUMN_BASETARGET, new LongComparator());
-		blockSorter.setComparator(WalletBlocksTableModel.COLUMN_FEE, new BigDecimalStringComparator());
+		//TRANSACTIONS
+		WalletBlocksTableModel blocksModel = new WalletBlocksTableModel();
+		JTable blocksTable = new JTable(blocksModel);
+				
+		//TRANSACTIONS SORTER
+		indexes = new TreeMap<Integer, Integer>();
+		indexes.put(WalletBlocksTableModel.COLUMN_HEIGHT, BlockMap.TIMESTAMP_INDEX);
+		indexes.put(WalletBlocksTableModel.COLUMN_TIMESTAMP, BlockMap.TIMESTAMP_INDEX);
+		indexes.put(WalletBlocksTableModel.COLUMN_GENERATOR, BlockMap.GENERATOR_INDEX);
+		indexes.put(WalletBlocksTableModel.COLUMN_BASETARGET, BlockMap.BALANCE_INDEX);
+		indexes.put(WalletBlocksTableModel.COLUMN_TRANSACTIONS, BlockMap.TRANSACTIONS_INDEX);
+		indexes.put(WalletBlocksTableModel.COLUMN_FEE, BlockMap.FEE_INDEX);
+		sorter = new QoraRowSorter(blocksModel, indexes);
+		blocksTable.setRowSorter(sorter);
 		
         this.addTab("Generated Blocks", new JScrollPane(blocksTable));
         
+        //NAMING
         this.addTab("Naming service", new NamingServicePanel());      
         
+        //VOTING
         this.addTab("Voting", new VotingPanel());       
 	}
 	

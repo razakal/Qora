@@ -1,6 +1,6 @@
 package gui.voting;
 
-import gui.Gui;
+import gui.QoraRowSorter;
 import gui.models.PollsTableModel;
 
 import java.awt.GridBagConstraints;
@@ -15,6 +15,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -22,21 +24,17 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableRowSorter;
-
+import database.PollMap;
 import qora.voting.Poll;
-import utils.BigDecimalStringComparator;
 
 @SuppressWarnings("serial")
 public class AllPollsFrame extends JFrame{
 
 	private PollsTableModel pollsTableModel;
 	
-	@SuppressWarnings("unchecked")
 	public AllPollsFrame() 
 	{
 		//CREATE FRAME
@@ -89,10 +87,13 @@ public class AllPollsFrame extends JFrame{
 		
 		//CREATE TABLE
 		this.pollsTableModel = new PollsTableModel();
-		final JTable pollsTable = Gui.createSortableTable(this.pollsTableModel, 0);
-		
-		TableRowSorter<PollsTableModel> sorter =  (TableRowSorter<PollsTableModel>) pollsTable.getRowSorter();
-		sorter.setComparator(PollsTableModel.COLUMN_VOTES, new BigDecimalStringComparator());
+		final JTable pollsTable = new JTable(this.pollsTableModel);
+				
+		//NAMESALES SORTER
+		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
+		indexes.put(PollsTableModel.COLUMN_NAME, PollMap.DEFAULT_INDEX);
+		QoraRowSorter sorter = new QoraRowSorter(this.pollsTableModel, indexes);
+		pollsTable.setRowSorter(sorter);
 
 		pollsTable.addMouseListener(new MouseAdapter() 
 		{
@@ -145,16 +146,9 @@ public class AllPollsFrame extends JFrame{
 				// GET VALUE
 				String search = txtSearch.getText();
 
-				// FILTER
-				RowFilter<PollsTableModel, Object> rowFilter = RowFilter
-						.regexFilter(search, 0);
-
-				// GET ROW SORTER
-				TableRowSorter<PollsTableModel> rowSorter = (TableRowSorter<PollsTableModel>) pollsTable.getRowSorter();
-
-				// SET FILTER
-				rowSorter.setRowFilter(rowFilter);
-
+			 	// SET FILTER
+				pollsTableModel.getSortableList().setFilter(search);
+				pollsTableModel.fireTableDataChanged();
 			}
 		});
 
@@ -162,7 +156,6 @@ public class AllPollsFrame extends JFrame{
 		this.add(txtSearch, searchGBC);
 		this.add(new JScrollPane(pollsTable), tableGBC);
 
-		
 		//ON CLOSE
 		this.addWindowListener(new WindowAdapter()
 		{

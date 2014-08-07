@@ -9,7 +9,7 @@ import org.mapdb.DB;
 
 import qora.account.Account;
 
-public class AccountsDatabase {
+public class AccountMap {
 
 	private static final String ADDRESSES = "addresses";
 	
@@ -17,7 +17,7 @@ public class AccountsDatabase {
 	
 	private List<Account> accounts;
 	
-	public AccountsDatabase(WalletDatabase walletDatabase, DB database) 
+	public AccountMap(WalletDatabase walletDatabase, DB database) 
 	{
 		//OPEN MAP
 		this.addressMap = database.getTreeMap(ADDRESSES);

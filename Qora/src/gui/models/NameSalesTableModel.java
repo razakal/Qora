@@ -1,33 +1,40 @@
 package gui.models;
 
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
-
+import controller.Controller;
 import qora.naming.NameSale;
 import utils.ObserverMessage;
-import database.DatabaseSet;
+import utils.Pair;
+import database.DBSet;
+import database.SortableList;
 
 @SuppressWarnings("serial")
-public class NameSalesTableModel extends AbstractTableModel implements Observer
+public class NameSalesTableModel extends QoraTableModel<String, BigDecimal> implements Observer
 {
-	private static final int COLUMN_NAME = 0;
+	public static final int COLUMN_NAME = 0;
 	private static final int COLUMN_OWNER = 1;
 	public static final int COLUMN_PRICE = 2;
 	
 	private String[] columnNames = {"Name", "Seller", "Price"};
-	private List<NameSale> nameSales;
+	private SortableList<String, BigDecimal> nameSales;
 	
 	public NameSalesTableModel()
 	{
-		DatabaseSet.getInstance().getNameExchangeDatabase().addObserver(this);
+		Controller.getInstance().addObserver(this);
+	}
+	
+	@Override
+	public SortableList<String, BigDecimal> getSortableList() {
+		return this.nameSales;
 	}
 	
 	public NameSale getNameSale(int row)
 	{
-		return this.nameSales.get(row);
+		Pair<String, BigDecimal> pair = this.nameSales.get(row);
+		return new NameSale(pair.getA(), pair.getB());
 	}
 	
 	@Override
@@ -45,7 +52,8 @@ public class NameSalesTableModel extends AbstractTableModel implements Observer
 	@Override
 	public int getRowCount() 
 	{
-		 return this.nameSales.size();
+		return this.nameSales.size();
+		
 	}
 
 	@Override
@@ -56,7 +64,7 @@ public class NameSalesTableModel extends AbstractTableModel implements Observer
 			return null;
 		}
 		
-		NameSale nameSale = this.nameSales.get(row);
+		NameSale nameSale = this.getNameSale(row);
 		
 		switch(column)
 		{
@@ -104,16 +112,28 @@ public class NameSalesTableModel extends AbstractTableModel implements Observer
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_NAME_SALE_TYPE)
 		{			
-			this.nameSales = (List<NameSale>) message.getValue();
-				
+			if(this.nameSales == null)
+			{
+				this.nameSales = (SortableList<String, BigDecimal>) message.getValue();
+				this.nameSales.registerObserver();
+			}	
+			
+			this.fireTableDataChanged();
+		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_NAME_SALE_TYPE || message.getType() == ObserverMessage.REMOVE_NAME_SALE_TYPE)
+		{
 			this.fireTableDataChanged();
 		}
 	}
 	
 	public void removeObservers() 
 	{
-		DatabaseSet.getInstance().getNameExchangeDatabase().deleteObserver(this);
+		this.nameSales.removeObserver();
+		DBSet.getInstance().getNameExchangeMap().deleteObserver(this);
 	}
 }

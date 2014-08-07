@@ -3,44 +3,66 @@ package database;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import network.Peer;
 
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.DB;
 
 import com.google.common.primitives.UnsignedBytes;
 
-import network.Peer;
+import database.DBSet;
 
-public class PeerDatabase {
-	
+public class PeerMap extends DBMap<byte[], byte[]> 
+{
 	private static final byte[] BYTE_WHITELISTED = new byte[]{0, 0};
 	private static final byte[] BYTE_BLACKLISTED = new byte[]{1, 1};
 	
-	private PeerDatabase parent;
-	private DatabaseSet databaseSet;	
-	private Map<byte[], byte[]> peersMap;
+	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 	
-	public PeerDatabase(DatabaseSet databaseSet, DB database)
+	public PeerMap(DBSet databaseSet, DB database)
 	{
-		this.databaseSet = databaseSet;
-		
+		super(databaseSet, database);
+	}
+
+	public PeerMap(PeerMap parent) 
+	{
+		super(parent);
+	}
+	
+	protected void createIndexes(DB database){}
+
+	@Override
+	protected Map<byte[], byte[]> getMap(DB database) 
+	{
 		//OPEN MAP
-		this.peersMap = database.createTreeMap("peers")
+		return database.createTreeMap("peers")
 				.keySerializer(BTreeKeySerializer.BASIC)
 				.comparator(UnsignedBytes.lexicographicalComparator())
 				.makeOrGet();
 	}
-	
-	public PeerDatabase(PeerDatabase parent)
+
+	@Override
+	protected Map<byte[], byte[]> getMemoryMap() 
 	{
-		this.parent = parent;
-	    
-	    //OPEN MAP
-	    this.peersMap = new TreeMap<byte[], byte[]>(UnsignedBytes.lexicographicalComparator());
+		return new TreeMap<byte[], byte[]>(UnsignedBytes.lexicographicalComparator());
+	}
+
+	@Override
+	protected byte[] getDefaultValue() 
+	{
+		return null;
+	}
+	
+	@Override
+	protected Map<Integer, Integer> getObservableData() 
+	{
+		return this.observableData;
 	}
 	
 	public List<Peer> getKnownPeers(int amount)
@@ -48,7 +70,7 @@ public class PeerDatabase {
 		try
 		{
 			//GET ITERATOR
-			Iterator<byte[]> iterator = this.peersMap.keySet().iterator();
+			Iterator<byte[]> iterator = this.getKeys().iterator();
 			
 			//PEERS
 			List<Peer> peers = new ArrayList<Peer>();
@@ -62,7 +84,7 @@ public class PeerDatabase {
 				byte[] addressBI = iterator.next();
 				
 				//CHECK IF ADDRESS IS WHITELISTED
-				if(Arrays.equals(this.peersMap.get(addressBI), BYTE_WHITELISTED))
+				if(Arrays.equals(this.get(addressBI), BYTE_WHITELISTED))
 				{
 					InetAddress address = InetAddress.getByAddress(addressBI);
 					
@@ -78,12 +100,6 @@ public class PeerDatabase {
 				}			
 			}
 			
-			//ADD PEERS FROM PARENT
-			if(parent != null)
-			{
-				peers.addAll(parent.getKnownPeers(amount - peers.size()));
-			}
-			
 			//RETURN
 			return peers;
 		}
@@ -97,21 +113,8 @@ public class PeerDatabase {
 	
 	public void addPeer(Peer peer)
 	{
-		try
-		{
-			//ADD PEER INTO DB
-			this.peersMap.put(peer.getAddress().getAddress(), BYTE_WHITELISTED);
-			
-			//COMMIT
-			if(this.databaseSet != null)
-			{
-				this.databaseSet.commit();
-			}
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}			
+		//ADD PEER INTO DB
+		this.map.put(peer.getAddress().getAddress(), BYTE_WHITELISTED);
 	}
 	
 	public void blacklistPeer(Peer peer)
@@ -138,28 +141,12 @@ public class PeerDatabase {
 	
 	public boolean isBlacklisted(InetAddress address)
 	{
-		try
+		//CHECK IF PEER IS BLACKLISTED
+		if(this.contains(address.getAddress()))
 		{
-			//CHECK IF PEER IS BLACKLISTED
-			if(this.peersMap.containsKey(address.getAddress()))
-			{
-				return Arrays.equals(this.peersMap.get(address.getAddress()), BYTE_BLACKLISTED);
-			}
-			else
-			{
-				if(this.parent != null)
-				{
-					return this.parent.isBlacklisted(address);
-				}
-			}
-			
-			return false;
+			return Arrays.equals(this.get(address.getAddress()), BYTE_BLACKLISTED);
 		}
-		catch(Exception e)
-		{
-			//e.printStackTrace();
-						
-			return false;
-		}		
+			
+		return false;
 	}
 }

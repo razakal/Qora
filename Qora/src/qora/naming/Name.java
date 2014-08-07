@@ -8,7 +8,7 @@ import org.json.simple.JSONObject;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.crypto.Base58;
 
@@ -58,7 +58,7 @@ public class Name {
 	
 	public boolean isConfirmed()
 	{
-		return DatabaseSet.getInstance().getNameDatabase().containsName(this);
+		return DBSet.getInstance().getNameMap().contains(this);
 	}
 	
 	//PARSE

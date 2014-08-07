@@ -15,7 +15,7 @@ import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.voting.Poll;
 import utils.Pair;
-import database.DatabaseSet;
+import database.DBSet;
 
 public class BlockChain
 {
@@ -25,7 +25,7 @@ public class BlockChain
 	{	
 		//CREATE GENESIS BLOCK
     	Block genesisBlock = new GenesisBlock();	
-        if(!DatabaseSet.getInstance().getBlockDatabase().containsBlock(genesisBlock.getSignature()))
+        if(!DBSet.getInstance().getBlockMap().contains(genesisBlock.getSignature()))
         {
         	//PROCESS
         	genesisBlock.process();
@@ -35,10 +35,10 @@ public class BlockChain
 	public int getHeight() {
 		
 		//GET LAST BLOCK
-		byte[] lastBlockSignature = DatabaseSet.getInstance().getBlockDatabase().getLastBlockSignature();
+		byte[] lastBlockSignature = DBSet.getInstance().getBlockMap().getLastBlockSignature();
 		
 		//RETURN HEIGHT
-		return DatabaseSet.getInstance().getHeightDatabase().getHeightBySignature(lastBlockSignature);
+		return DBSet.getInstance().getHeightMap().get(lastBlockSignature);
 	}
 
 	public List<byte[]> getSignatures(byte[] parent) {
@@ -46,9 +46,9 @@ public class BlockChain
 		List<byte[]> headers = new ArrayList<byte[]>();
 		
 		//CHECK IF BLOCK EXISTS
-		if(DatabaseSet.getInstance().getBlockDatabase().containsBlock(parent))
+		if(DBSet.getInstance().getBlockMap().contains(parent))
 		{
-			Block parentBlock = DatabaseSet.getInstance().getBlockDatabase().getBlock(parent).getChild();
+			Block parentBlock = DBSet.getInstance().getBlockMap().get(parent).getChild();
 			
 			int counter = 0;
 			while(parentBlock != null && counter < MAX_SIGNATURES)
@@ -66,7 +66,7 @@ public class BlockChain
 
 	public Block getBlock(byte[] header) {
 
-		return DatabaseSet.getInstance().getBlockDatabase().getBlock(header);
+		return DBSet.getInstance().getBlockMap().get(header);
 	}
 
 	public boolean isNewBlockValid(Block block) {
@@ -84,13 +84,13 @@ public class BlockChain
 		}
 		
 		//CHECK IF WE KNOW REFERENCE
-		if(!DatabaseSet.getInstance().getBlockDatabase().containsBlock(block.getReference()))
+		if(!DBSet.getInstance().getBlockMap().contains(block.getReference()))
 		{
 			return false;
 		}
 		
 		//CHECK IF REFERENCE IS LASTBLOCK
-		if(!Arrays.equals(DatabaseSet.getInstance().getBlockDatabase().getLastBlock().getSignature(), block.getReference()))
+		if(!Arrays.equals(DBSet.getInstance().getBlockMap().getLastBlockSignature(), block.getReference()))
 		{
 			return false;
 		}
@@ -249,7 +249,7 @@ public class BlockChain
 		}
 			
 		//SCAN ALL NAMES
-		for(Name name: DatabaseSet.getInstance().getNameDatabase().getNames())
+		for(Name name: DBSet.getInstance().getNameMap().getValues())
 		{
 			for(Account account: accounts)
 			{
@@ -275,7 +275,7 @@ public class BlockChain
 		}
 			
 		//SCAN ALL NAME SALES
-		for(NameSale nameSale: DatabaseSet.getInstance().getNameExchangeDatabase().getNameSales())
+		for(NameSale nameSale: DBSet.getInstance().getNameExchangeMap().getNameSales())
 		{
 			for(Account account: accounts)
 			{
@@ -301,7 +301,7 @@ public class BlockChain
 		}
 			
 		//SCAN ALL POLLS
-		for(Poll poll: DatabaseSet.getInstance().getPollDatabase().getPolls())
+		for(Poll poll: DBSet.getInstance().getPollMap().getValues())
 		{
 			for(Account account: accounts)
 			{
@@ -318,6 +318,6 @@ public class BlockChain
 	
 	public Block getLastBlock() 
 	{	
-		return DatabaseSet.getInstance().getBlockDatabase().getLastBlock();
+		return DBSet.getInstance().getBlockMap().getLastBlock();
 	}
 }

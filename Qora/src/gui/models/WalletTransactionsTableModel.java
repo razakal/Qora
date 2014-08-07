@@ -2,20 +2,21 @@ package gui.models;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
+import org.mapdb.Fun.Tuple2;
 
 import controller.Controller;
+import database.SortableList;
+import database.wallet.TransactionMap;
 import qora.account.Account;
 import qora.transaction.Transaction;
 import utils.ObserverMessage;
 import utils.Pair;
 
 @SuppressWarnings("serial")
-public class WalletTransactionsTableModel extends AbstractTableModel implements Observer {
+public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, String>, Transaction> implements Observer {
 	
 	public static final int COLUMN_CONFIRMATIONS = 0;
 	public static final int COLUMN_TIMESTAMP = 1;
@@ -23,7 +24,7 @@ public class WalletTransactionsTableModel extends AbstractTableModel implements 
 	public static final int COLUMN_ADDRESS = 3;
 	public static final int COLUMN_AMOUNT = 4;
 	
-	private List<Pair<Account, Transaction>> transactions;
+	private SortableList<Tuple2<String, String>, Transaction> transactions;
 	
 	private String[] columnNames = {"Confirmations", "Timestamp", "Type", "Address", "Amount"};
 	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction"};
@@ -31,6 +32,11 @@ public class WalletTransactionsTableModel extends AbstractTableModel implements 
 	public WalletTransactionsTableModel()
 	{
 		Controller.getInstance().addWalletListener(this);
+	}
+	
+	@Override
+	public SortableList<Tuple2<String, String>, Transaction> getSortableList() {
+		return this.transactions;
 	}
 	
 	public Transaction getTransaction(int row)
@@ -69,31 +75,33 @@ public class WalletTransactionsTableModel extends AbstractTableModel implements 
 			return null;
 		}
 		
-		Pair<Account, Transaction> transaction = this.transactions.get(row);
+		Pair<Tuple2<String, String>, Transaction> data = this.transactions.get(row);
+		Account account = new Account(data.getA().a);
+		Transaction transaction = data.getB();
 		
 		switch(column)
 		{
 		case COLUMN_CONFIRMATIONS:
 			
-			return transaction.getB().getConfirmations();
+			return transaction.getConfirmations();
 			
 		case COLUMN_TIMESTAMP:
 			
-			Date date = new Date(transaction.getB().getTimestamp());
+			Date date = new Date(transaction.getTimestamp());
 			DateFormat format = DateFormat.getDateTimeInstance();
 			return format.format(date);
 			
 		case COLUMN_TYPE:
 			
-			return this.transactionTypes[transaction.getB().getType()];
+			return this.transactionTypes[transaction.getType()];
 			
 		case COLUMN_ADDRESS:
 			
-			return transaction.getA().getAddress();
+			return account.getAddress();
 			
 		case COLUMN_AMOUNT:
 			
-			return transaction.getB().getAmount(transaction.getA()).toPlainString();			
+			return transaction.getAmount(account).toPlainString();			
 		}
 		
 		return null;
@@ -118,10 +126,23 @@ public class WalletTransactionsTableModel extends AbstractTableModel implements 
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_TRANSACTION_TYPE)
 		{
-			this.transactions = (List<Pair<Account, Transaction>>) message.getValue();
-			this.fireTableDataChanged();		
+			if(this.transactions == null)
+			{
+				this.transactions = (SortableList<Tuple2<String, String>, Transaction>) message.getValue();
+				this.transactions.registerObserver();
+				this.transactions.sort(TransactionMap.TIMESTAMP_INDEX, true);
+			}
+			
+			this.fireTableDataChanged();
+		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE || message.getType() == ObserverMessage.REMOVE_TRANSACTION_TYPE)
+		{
+			this.fireTableDataChanged();
 		}	
 	}
 }

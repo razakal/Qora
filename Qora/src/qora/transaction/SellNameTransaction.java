@@ -13,7 +13,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
@@ -185,7 +185,7 @@ public class SellNameTransaction extends Transaction
 	}
 
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{
 		//CHECK NAME LENGTH
 		int nameLength = this.nameSale.getKey().getBytes(StandardCharsets.UTF_8).length;
@@ -195,7 +195,7 @@ public class SellNameTransaction extends Transaction
 		}
 		
 		//CHECK IF NAME EXISTS
-		if(!db.getNameDatabase().containsName(this.nameSale.getName(db)))
+		if(!db.getNameMap().contains(this.nameSale.getName(db)))
 		{
 			return NAME_DOES_NOT_EXIST;
 		}
@@ -207,13 +207,13 @@ public class SellNameTransaction extends Transaction
 		}
 		
 		//CHECK IF OWNER IS OWNER
-		if(!db.getNameDatabase().getName(this.nameSale.getKey()).getOwner().getAddress().equals(this.owner.getAddress()))
+		if(!db.getNameMap().get(this.nameSale.getKey()).getOwner().getAddress().equals(this.owner.getAddress()))
 		{
 			return INVALID_NAME_OWNER;
 		}
 		
 		//CHECK IF NOT FOR SALE ALREADY
-		if(db.getNameExchangeDatabase().containsNameSale(this.nameSale))
+		if(db.getNameExchangeMap().contains(this.nameSale))
 		{
 			return NAME_ALREADY_FOR_SALE;
 		}
@@ -254,7 +254,7 @@ public class SellNameTransaction extends Transaction
 	//PROCESS/ORPHAN
 
 	@Override
-	public void process(DatabaseSet db)
+	public void process(DBSet db)
 	{
 		//UPDATE OWNER
 		this.owner.setConfirmedBalance(this.owner.getConfirmedBalance(db).subtract(this.fee), db);
@@ -263,11 +263,11 @@ public class SellNameTransaction extends Transaction
 		this.owner.setLastReference(this.signature, db);
 				
 		//INSERT INTO DATABASE
-		db.getNameExchangeDatabase().addNameSale(this.nameSale);
+		db.getNameExchangeMap().add(this.nameSale);
 	}
 
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UPDATE OWNER
 		this.owner.setConfirmedBalance(this.owner.getConfirmedBalance(db).add(this.fee), db);
@@ -276,7 +276,7 @@ public class SellNameTransaction extends Transaction
 		this.owner.setLastReference(this.reference, db);
 		
 		//DELETE FORM DATABASE
-		db.getNameExchangeDatabase().deleteNameSale(this.nameSale);
+		db.getNameExchangeMap().delete(this.nameSale);
 		
 	}
 
@@ -320,7 +320,7 @@ public class SellNameTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 	
-	public static byte[] generateSignature(DatabaseSet db, PrivateKeyAccount creator, NameSale nameSale, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, NameSale nameSale, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		

@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observer;
-
 import ntp.NTP;
 import qora.account.PrivateKeyAccount;
 import qora.block.Block;
@@ -17,14 +15,13 @@ import qora.block.BlockFactory;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import settings.Settings;
-import utils.ObserverMessage;
 import utils.TransactionFeeComparator;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 
 import controller.Controller;
-import database.DatabaseSet;
+import database.DBSet;
 
 public class BlockGenerator extends Thread
 {	
@@ -49,18 +46,18 @@ public class BlockGenerator extends Thread
 	
 	public void addUnconfirmedTransaction(Transaction transaction)
 	{
-		this.addUnconfirmedTransaction(DatabaseSet.getInstance(), transaction, true);
+		this.addUnconfirmedTransaction(DBSet.getInstance(), transaction, true);
 	}
 	
-	public void addUnconfirmedTransaction(DatabaseSet db, Transaction transaction, boolean process) 
+	public void addUnconfirmedTransaction(DBSet db, Transaction transaction, boolean process) 
 	{
 		//ADD TO TRANSACTION DATABASE 
-		db.getTransactionsDatabase().addTransaction(transaction);
+		db.getTransactionMap().add(transaction);
 	}
 	
 	public List<Transaction> getUnconfirmedTransactions()
 	{
-		return DatabaseSet.getInstance().getTransactionsDatabase().getTransactions();
+		return new ArrayList<Transaction>(DBSet.getInstance().getTransactionMap().getValues());
 	}
 	
 	private List<PrivateKeyAccount> getKnownAccounts()
@@ -101,13 +98,13 @@ public class BlockGenerator extends Thread
 			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
 			{
 				//GET LAST BLOCK
-				byte[] lastBlockSignature = DatabaseSet.getInstance().getBlockDatabase().getLastBlockSignature();
+				byte[] lastBlockSignature = DBSet.getInstance().getBlockMap().getLastBlockSignature();
 						
 				//CHECK IF DIFFERENT FOR CURRENT SOLVING BLOCK
 				if(this.solvingBlock == null || !Arrays.equals(this.solvingBlock.getSignature(), lastBlockSignature))
 				{
 					//SET NEW BLOCK TO SOLVE
-					this.solvingBlock = DatabaseSet.getInstance().getBlockDatabase().getLastBlock();
+					this.solvingBlock = DBSet.getInstance().getBlockMap().getLastBlock();
 					
 					//RESET BLOCKS
 					this.blocks = new HashMap<PrivateKeyAccount, Block>();
@@ -128,7 +125,7 @@ public class BlockGenerator extends Thread
 								if(!this.blocks.containsKey(account))
 								{	
 									//GENERATE NEW BLOCK FOR USER
-									this.blocks.put(account, this.generateNextBlock(DatabaseSet.getInstance(), account, this.solvingBlock));
+									this.blocks.put(account, this.generateNextBlock(DBSet.getInstance(), account, this.solvingBlock));
 								}
 							}
 						}
@@ -151,7 +148,7 @@ public class BlockGenerator extends Thread
 					if(block.getTimestamp() <= NTP.getTime() && !validBlockFound)
 					{
 						//ADD TRANSACTIONS
-						this.addUnconfirmedTransactions(DatabaseSet.getInstance(), block);
+						this.addUnconfirmedTransactions(DBSet.getInstance(), block);
 						
 						//ADD TRANSACTION SIGNATURE
 						block.setTransactionsSignature(this.calculateTransactionsSignature(block, account));
@@ -193,7 +190,7 @@ public class BlockGenerator extends Thread
 		}
 	}
 	
-	public Block generateNextBlock(DatabaseSet db, PrivateKeyAccount account, Block block)
+	public Block generateNextBlock(DBSet db, PrivateKeyAccount account, Block block)
 	{
 		//CHECK IF ACCOUNT HAS BALANCE
 		if(account.getGeneratingBalance(db) == BigDecimal.ZERO)
@@ -243,7 +240,7 @@ public class BlockGenerator extends Thread
 		return newBlock;
 	}
 	
-	private byte[] calculateSignature(DatabaseSet db, Block solvingBlock, PrivateKeyAccount account) 
+	private byte[] calculateSignature(DBSet db, Block solvingBlock, PrivateKeyAccount account) 
 	{	
 		byte[] data = new byte[0];
 		
@@ -279,16 +276,16 @@ public class BlockGenerator extends Thread
 		return Crypto.getInstance().sign(account, data);
 	}
 	
-	public void addUnconfirmedTransactions(DatabaseSet db, Block block)
+	public void addUnconfirmedTransactions(DBSet db, Block block)
 	{
 		long totalBytes = 0;
 		boolean transactionProcessed;
 			
 		//CREATE FORK OF GIVEN DATABASE
-		DatabaseSet newBlockDb = db.fork();
+		DBSet newBlockDb = db.fork();
 					
 		//ORDER TRANSACTIONS BY FEE PER BYTE
-		List<Transaction> orderedTransactions = new ArrayList<Transaction>(db.getTransactionsDatabase().getTransactions());
+		List<Transaction> orderedTransactions = new ArrayList<Transaction>(db.getTransactionMap().getValues());
 		Collections.sort(orderedTransactions, new TransactionFeeComparator());
 		//Collections.sort(orderedTransactions, Collections.reverseOrder());
 					
@@ -328,12 +325,12 @@ public class BlockGenerator extends Thread
 		while(transactionProcessed == true);
 	}
 	
-	public void addObserver(Observer o)
+	/*public void addObserver(Observer o)
 	{
-		o.update(null, new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, DatabaseSet.getInstance().getTransactionsDatabase().getTransactions()));
-	}
+		o.update(null, new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, DBSet.getInstance().getTransactionMap().getValues()));
+	}*/
 	
-	public static long getNextBlockGeneratingBalance(DatabaseSet db, Block block)
+	public static long getNextBlockGeneratingBalance(DBSet db, Block block)
 	{
 		int height = block.getHeight(db);
 		if(height % RETARGET == 0)

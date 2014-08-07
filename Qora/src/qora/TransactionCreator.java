@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Observable;
 
 import ntp.NTP;
 import controller.Controller;
@@ -26,14 +25,13 @@ import qora.transaction.Transaction;
 import qora.transaction.UpdateNameTransaction;
 import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
-import utils.ObserverMessage;
 import utils.Pair;
 import utils.TransactionTimestampComparator;
-import database.DatabaseSet;
+import database.DBSet;
 
-public class TransactionCreator extends Observable
+public class TransactionCreator
 {
-	private DatabaseSet fork;
+	private DBSet fork;
 	private Block lastBlock;
 	
 	private void checkUpdate()
@@ -56,13 +54,13 @@ public class TransactionCreator extends Observable
 	private void updateFork()
 	{
 		//CREATE NEW FORK
-		this.fork = DatabaseSet.getInstance().fork();
+		this.fork = DBSet.getInstance().fork();
 		
 		//UPDATE LAST BLOCK
 		this.lastBlock = Controller.getInstance().getLastBlock();
 			
 		//SCAN UNCONFIRMED TRANSACTIONS FOR TRANSACTIONS WHERE ACCOUNT IS CREATOR OF
-		List<Transaction> transactions = DatabaseSet.getInstance().getTransactionsDatabase().getTransactions();
+		List<Transaction> transactions = DBSet.getInstance().getTransactionMap().getTransactions();
 		List<Transaction> accountTransactions = new ArrayList<Transaction>();
 			
 		for(Transaction transaction: transactions)
@@ -86,11 +84,7 @@ public class TransactionCreator extends Observable
 			else
 			{
 				//THE TRANSACTION BECAME INVALID LET 
-				DatabaseSet.getInstance().getTransactionsDatabase().remove(transaction);
-				
-				//NOTIFY
-				this.setChanged();
-				this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_TRANSACTION_TYPE, transaction));
+				DBSet.getInstance().getTransactionMap().delete(transaction);
 			}
 		}
 	}

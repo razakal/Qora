@@ -13,7 +13,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 
 import controller.Controller;
-import database.DatabaseSet;
+import database.DBSet;
 import database.wallet.SecureWalletDatabase;
 import database.wallet.WalletDatabase;
 import qora.account.Account;
@@ -54,9 +54,6 @@ public class Wallet extends Observable implements Observer
 			
 			//ADD OBSERVER
 		    Controller.getInstance().addObserver(this);
-		    
-		    //ADD OBSERVER FOR UNCONFIRMED TRANSACTION REMOVAL
-			DatabaseSet.getInstance().getTransactionsDatabase().addObserver(this);
 		}
 	}
 	
@@ -74,22 +71,22 @@ public class Wallet extends Observable implements Observer
 	
 	public List<Account> getAccounts()
 	{
-		return this.database.getAccountsDatabase().getAccounts();
+		return this.database.getAccountMap().getAccounts();
 	}
 	
 	public boolean accountExists(String address)
 	{
-		return this.database.getAccountsDatabase().exists(address);
+		return this.database.getAccountMap().exists(address);
 	}
 	
 	public Account getAccount(String address)
 	{
-		return this.database.getAccountsDatabase().getAccount(address);
+		return this.database.getAccountMap().getAccount(address);
 	}
 	
 	public BigDecimal getUnconfirmedBalance(String address)
 	{
-		return this.database.getAccountsDatabase().getUnconfirmedBalance(address);
+		return this.database.getAccountMap().getUnconfirmedBalance(address);
 	}
 	
 	public List<PrivateKeyAccount> getprivateKeyAccounts()
@@ -99,7 +96,7 @@ public class Wallet extends Observable implements Observer
 			return new ArrayList<PrivateKeyAccount>();
 		}
 		
-		return this.secureDatabase.getAccountSeedsDatabase().getPrivateKeyAccounts();
+		return this.secureDatabase.getAccountSeedMap().getPrivateKeyAccounts();
 	}
 	
 	public PrivateKeyAccount getPrivateKeyAccount(String address)
@@ -109,7 +106,7 @@ public class Wallet extends Observable implements Observer
 			return null;
 		}
 		
-		return this.secureDatabase.getAccountSeedsDatabase().getPrivateKeyAccount(address);
+		return this.secureDatabase.getAccountSeedMap().getPrivateKeyAccount(address);
 	}
 	
 	public boolean exists()
@@ -125,7 +122,7 @@ public class Wallet extends Observable implements Observer
 		}
 
 		List<Account> accounts = this.getAccounts();
-		return this.database.getTransactionsDatabase().getLastTransactions(accounts, limit);
+		return this.database.getTransactionMap().get(accounts, limit);
 	}
 	
 	public List<Transaction> getLastTransactions(Account account, int limit)
@@ -135,7 +132,7 @@ public class Wallet extends Observable implements Observer
 			return new ArrayList<Transaction>();
 		}
 
-		return this.database.getTransactionsDatabase().getLastTransactions(account, limit);
+		return this.database.getTransactionMap().get(account, limit);
 	}
 	
 	public List<Pair<Account, Block>> getLastBlocks()
@@ -146,7 +143,7 @@ public class Wallet extends Observable implements Observer
 		}
 
 		List<Account> accounts = this.getAccounts();
-		return this.database.getBlocksDatabase().getLastBlocks(accounts);
+		return this.database.getBlockMap().get(accounts);
 	}
 
 	public List<Block> getLastBlocks(Account account)
@@ -156,7 +153,7 @@ public class Wallet extends Observable implements Observer
 			return new ArrayList<Block>();
 		}
 
-		return this.database.getBlocksDatabase().getLastBlocks(account);
+		return this.database.getBlockMap().get(account);
 	}
 		
 	public List<Pair<Account, Name>> getNames()
@@ -167,7 +164,7 @@ public class Wallet extends Observable implements Observer
 		}
 
 		List<Account> accounts = this.getAccounts();
-		return this.database.getNamesDatabase().getNames(accounts);
+		return this.database.getNameMap().get(accounts);
 	}
 	
 	public List<Name> getNames(Account account)
@@ -177,7 +174,7 @@ public class Wallet extends Observable implements Observer
 			return new ArrayList<Name>();
 		}
 
-		return this.database.getNamesDatabase().getNames(account);
+		return this.database.getNameMap().get(account);
 	}
 	
 	public List<Pair<Account, NameSale>> getNameSales()
@@ -188,7 +185,7 @@ public class Wallet extends Observable implements Observer
 		}
 
 		List<Account> accounts = this.getAccounts();
-		return this.database.getNameSalesDatabase().getNameSales(accounts);
+		return this.database.getNameSaleMap().get(accounts);
 	}
 	
 	public List<NameSale> getNameSales(Account account)
@@ -198,7 +195,7 @@ public class Wallet extends Observable implements Observer
 			return new ArrayList<NameSale>();
 		}
 
-		return this.database.getNameSalesDatabase().getNameSales(account);
+		return this.database.getNameSaleMap().get(account);
 	}
 	
 	public List<Pair<Account, Poll>> getPolls()
@@ -209,7 +206,7 @@ public class Wallet extends Observable implements Observer
 		}
 
 		List<Account> accounts = this.getAccounts();
-		return this.database.getPollDatabase().getPolls(accounts);
+		return this.database.getPollMap().get(accounts);
 	}
 	
 	public List<Poll> getPolls(Account account)
@@ -219,7 +216,7 @@ public class Wallet extends Observable implements Observer
 			return new ArrayList<Poll>();
 		}
 
-		return this.database.getPollDatabase().getPolls(account);
+		return this.database.getPollMap().get(account);
 	}
 	
 	//CREATE
@@ -297,8 +294,8 @@ public class Wallet extends Observable implements Observer
 	    if(!this.accountExists(account.getAddress()))
 	    {	    
 	    	//ADD TO DATABASE
-		    this.secureDatabase.getAccountSeedsDatabase().add(account);
-		    this.database.getAccountsDatabase().add(account);
+		    this.secureDatabase.getAccountSeedMap().add(account);
+		    this.database.getAccountMap().add(account);
 		    
 		    //NOTIFY
 		    this.setChanged();
@@ -333,12 +330,6 @@ public class Wallet extends Observable implements Observer
 	    this.setChanged();
 	    this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_ACCOUNT_TYPE, account));
 	    
-	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));
-	    
-	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
-	    
 	    //RETURN
 	    return true;
 	}
@@ -354,7 +345,7 @@ public class Wallet extends Observable implements Observer
 		{
 			for(Account account: accounts)
 			{
-				this.database.getAccountsDatabase().update(account, account.getConfirmedBalance());
+				this.database.getAccountMap().update(account, account.getConfirmedBalance());
 			}
 		}
 		
@@ -366,10 +357,10 @@ public class Wallet extends Observable implements Observer
 		}
 		
 		//DELETE TRANSACTIONS
-		this.database.getTransactionsDatabase().deleteAll(accounts);
+		this.database.getTransactionMap().deleteAll(accounts);
 		
 		//ADD TRANSACTIONS
-		this.database.getTransactionsDatabase().addAll(transactions);
+		this.database.getTransactionMap().addAll(transactions);
 	    	
 		//TODO SCAN UNCONFIRMED TRANSACTIONS    
 	    	    
@@ -381,10 +372,10 @@ public class Wallet extends Observable implements Observer
 		}
 	    
 	    //DELETE BLOCKS
-	  	this.database.getBlocksDatabase().deleteAll(accounts);
+	  	this.database.getBlockMap().deleteAll(accounts);
 	  	
 	  	//ADD BLOCKS
-	  	this.database.getBlocksDatabase().addAll(blocks);
+	  	this.database.getBlockMap().addAll(blocks);
 	    
 	    //SCAN NAMES
 	    Map<Account, List<Name>> names;
@@ -394,10 +385,10 @@ public class Wallet extends Observable implements Observer
 		}
 	    
 	    //DELETE NAMES
-	  	this.database.getNamesDatabase().deleteAll(accounts);
+	  	this.database.getNameMap().deleteAll(accounts);
 	  	
 	  	//ADD NAMES
-	  	this.database.getNamesDatabase().addAll(names);
+	  	this.database.getNameMap().addAll(names);
 	  	
 	  	//TODO SCAN UNCONFIRMED NAMES
 	    
@@ -409,10 +400,10 @@ public class Wallet extends Observable implements Observer
 		}
 	    
 	    //DELETE NAMESALES
-	  	this.database.getNameSalesDatabase().deleteAll(accounts);
+	  	this.database.getNameSaleMap().deleteAll(accounts);
 	  	
 	  	//ADD NAMES
-	  	this.database.getNameSalesDatabase().addAll(nameSales);
+	  	this.database.getNameSaleMap().addAll(nameSales);
 	  	
 	  	//SCAN POLLS
 	  	Map<Account, List<Poll>> polls;
@@ -422,29 +413,13 @@ public class Wallet extends Observable implements Observer
 	  	}
 	  	
 	  	//DELETE POLLS
-	  	this.database.getPollDatabase().deleteAll(accounts);
+	  	this.database.getPollMap().deleteAll(accounts);
 	  	
 	  	//ADD POLLS
-	  	this.database.getPollDatabase().addAll(polls);
+	  	this.database.getPollMap().addAll(polls);
 	  	
 	  	//SET LAST BLOCK
 	  	this.database.setLastBlockSignature(Controller.getInstance().getLastBlock().getSignature());
-	  	
-	  	//NOTIFY OBSERVERS
-	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
-	  		
-	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));   
-	    
-	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));   
-	    
-	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
-	    
-	    this.setChanged();
-	    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));     	
 	}
 	
 	//UNLOCK
@@ -521,18 +496,11 @@ public class Wallet extends Observable implements Observer
 	    if(!this.accountExists(account.getAddress()))
 	    {	
 	    	//ADD TO DATABASE
-		    this.secureDatabase.getAccountSeedsDatabase().add(account);
-		    this.database.getAccountsDatabase().add(account);
+		    this.secureDatabase.getAccountSeedMap().add(account);
+		    this.database.getAccountMap().add(account);
 		    
 		    //SYNCHRONIZE
 		    this.synchronize();
-		    
-		    //NOTIFY
-		    this.setChanged();
-		    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
-		    
-		    this.setChanged();
-		    this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));
 		    
 		    //RETURN
 		    return account.getAddress();
@@ -577,20 +545,20 @@ public class Wallet extends Observable implements Observer
 	{
 		super.addObserver(o);
 		
-		//SEND LAST TRANSACTIONS ON REGISTER
-		o.update(this, new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
+		//REGISTER ON TRANSACTIONS
+		this.database.getTransactionMap().addObserver(o);
 		
-		//SEND LAST BLOCKS ON REGISTER
-		o.update(this, new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));
+		//REGISTER ON BLOCKS
+		this.database.getBlockMap().addObserver(o);
 		
-		//SEND LAST NAMES ON REGISTER
-		o.update(this, new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+		//REGISTER ON NAMES
+		this.database.getNameMap().addObserver(o);
 		
-		//SEND LAST NAME SALES ON REGISTER
-		o.update(this, new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
+		//REGISTER ON NAME SALES
+		this.database.getNameSaleMap().addObserver(o);
 		
-		//SEND LAST POLLS ON REGISTER
-		o.update(this, new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
+		//REGISTER ON POLLS
+		this.database.getPollMap().addObserver(o);
 		
 		//SEND STATUS
 		int status = STATUS_LOCKED;
@@ -611,7 +579,6 @@ public class Wallet extends Observable implements Observer
 		}
 				
 		//FOR ALL ACCOUNTS
-		boolean involved = false;
 		List<Account> accounts = this.getAccounts();	
 		synchronized(accounts)
 		{		
@@ -620,24 +587,15 @@ public class Wallet extends Observable implements Observer
 				//CHECK IF INVOLVED
 				if(transaction.isInvolved(account))
 				{
-					involved = true;
-					
 					//ADD TO ACCOUNT TRANSACTIONS
-					if(this.database.getTransactionsDatabase().add(account, transaction))
+					if(!this.database.getTransactionMap().add(account, transaction))
 					{					
 						//UPDATE UNCONFIRMED BALANCE
 						BigDecimal unconfirmedBalance = this.getUnconfirmedBalance(account.getAddress()).add(transaction.getAmount(account));
-						this.database.getAccountsDatabase().update(account, unconfirmedBalance);
+						this.database.getAccountMap().update(account, unconfirmedBalance);
 					}
 				}
 			}
-		}
-		
-		if(involved)
-		{
-			//UPDATE OBSERVERS
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
 		}
 	}
 	
@@ -660,18 +618,14 @@ public class Wallet extends Observable implements Observer
 				if(transaction.isInvolved(account))
 				{
 					//DELETE FROM ACCOUNT TRANSACTIONS
-					this.database.getTransactionsDatabase().delete(account, transaction);
+					this.database.getTransactionMap().delete(account, transaction);
 					
 					//UPDATE UNCONFIRMED BALANCE
 					BigDecimal unconfirmedBalance = this.getUnconfirmedBalance(account.getAddress()).subtract(transaction.getAmount(account));
-					this.database.getAccountsDatabase().update(account, unconfirmedBalance);
+					this.database.getAccountMap().update(account, unconfirmedBalance);
 				}
 			}
 		}
-		
-		//UPDATE OBSERVERS
-		this.setChanged();
-		this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, this.getLastTransactions(50)));
 	}
 
 	private void processBlock(Block block)
@@ -697,15 +651,11 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(block.getGenerator().getAddress()))
 		{
 			//ADD BLOCK
-			this.database.getBlocksDatabase().add(block);
+			this.database.getBlockMap().add(block);
 				
 			//KEEP TRACK OF UNCONFIRMED BALANCE
 			BigDecimal unconfirmedBalance = this.getUnconfirmedBalance(block.getGenerator().getAddress()).add(block.getTotalFee());
-			this.database.getAccountsDatabase().update(block.getGenerator(), unconfirmedBalance);
-				
-			//UPDATE OBSERVERS
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));
+			this.database.getAccountMap().update(block.getGenerator(), unconfirmedBalance);
 		}
 	}
 
@@ -721,15 +671,11 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(block.getGenerator().getAddress()))
 		{
 			//DELETE BLOCK
-			this.database.getBlocksDatabase().delete(block);
+			this.database.getBlockMap().delete(block);
 			
 			//KEEP TRACK OF UNCONFIRMED BALANCE
 			BigDecimal unconfirmedBalance = this.getUnconfirmedBalance(block.getGenerator().getAddress()).subtract(block.getTotalFee());
-			this.database.getAccountsDatabase().update(block.getGenerator(), unconfirmedBalance);
-			
-			//UPDATE OBSERVERS
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_BLOCK_TYPE, this.getLastBlocks()));
+			this.database.getAccountMap().update(block.getGenerator(), unconfirmedBalance);
 		}
 	}
 	
@@ -745,14 +691,7 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(nameRegistration.getName().getOwner().getAddress()))
 		{
 			//ADD NAME
-			this.database.getNamesDatabase().add(nameRegistration.getName());
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_NAME_TYPE, nameRegistration.getName()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+			this.database.getNameMap().add(nameRegistration.getName());
 		}
 	}
 	
@@ -768,14 +707,7 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(nameRegistration.getName().getOwner().getAddress()))
 		{
 			//DELETE NAME
-			this.database.getNamesDatabase().delete(nameRegistration.getName());
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_TYPE, nameRegistration.getName()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+			this.database.getNameMap().delete(nameRegistration.getName());
 		}
 	}
 	
@@ -791,14 +723,7 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(pollCreation.getPoll().getCreator().getAddress()))
 		{
 			//ADD POLL
-			this.database.getPollDatabase().add(pollCreation.getPoll());
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_POLL_TYPE, pollCreation.getPoll()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
+			this.database.getPollMap().add(pollCreation.getPoll());
 		}
 	}
 	
@@ -814,14 +739,6 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(pollCreation.getPoll().getCreator().getAddress()))
 		{
 			//DELETE POLL
-			this.database.getPollDatabase().delete(pollCreation.getPoll());
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_POLL_TYPE, pollCreation.getPoll()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
 		}
 	}
 
@@ -834,16 +751,11 @@ public class Wallet extends Observable implements Observer
 		}
 		
 		//CHECK IF WE ARE OWNER
-		Poll poll = DatabaseSet.getInstance().getPollDatabase().getPoll(pollVote.getPoll());
+		Poll poll = DBSet.getInstance().getPollMap().get(pollVote.getPoll());
 		if(this.accountExists(poll.getCreator().getAddress()))
 		{
 			//UPDATE POLL
-			//this.database.getPollDatabase().delete(poll);
-			this.database.getPollDatabase().update(poll);
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
+			this.database.getPollMap().add(poll);
 		}
 	}
 	
@@ -856,16 +768,11 @@ public class Wallet extends Observable implements Observer
 		}
 				
 		//CHECK IF WE ARE OWNER
-		Poll poll = DatabaseSet.getInstance().getPollDatabase().getPoll(pollVote.getPoll());
+		Poll poll = DBSet.getInstance().getPollMap().get(pollVote.getPoll());
 		if(this.accountExists(poll.getCreator().getAddress()))
 		{
 			//UPDATE POLL
-			//this.database.getPollDatabase().delete(poll);
-			this.database.getPollDatabase().update(poll);
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_POLL_TYPE, this.getPolls()));
+			this.database.getPollMap().add(poll);
 		}
 	}	
 	
@@ -878,15 +785,8 @@ public class Wallet extends Observable implements Observer
 			if(!nameUpdate.getOwner().getAddress().equals(nameUpdate.getName().getOwner().getAddress()))
 			{
 				//DELETE PREVIOUS NAME
-				Name name = DatabaseSet.getInstance().getUpdateNameDatabase().getOrphanData(nameUpdate);
-				this.database.getNamesDatabase().delete(nameUpdate.getOwner(), name);
-				
-				//NOTIFY
-				this.setChanged();
-				this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_TYPE, nameUpdate.getName()));
-				
-				this.setChanged();
-				this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+				Name name = DBSet.getInstance().getUpdateNameMap().get(nameUpdate);
+				this.database.getNameMap().delete(nameUpdate.getOwner(), name);
 			}
 		}
 		
@@ -894,14 +794,7 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(nameUpdate.getName().getOwner().getAddress()))
 		{
 			//ADD NAME
-			this.database.getNamesDatabase().add(nameUpdate.getName());
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_NAME_TYPE, nameUpdate.getName()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+			this.database.getNameMap().add(nameUpdate.getName());
 		}
 	}
 	
@@ -914,15 +807,9 @@ public class Wallet extends Observable implements Observer
 			if(!nameUpdate.getOwner().getAddress().equals(nameUpdate.getName().getOwner().getAddress()))
 			{
 				//ADD PREVIOUS  NAME
-				Name name = DatabaseSet.getInstance().getNameDatabase().getName(nameUpdate.getName().getName());
-				this.database.getNamesDatabase().add(name);
-				
-				//NOTIFY
-				this.setChanged();
-				this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_NAME_TYPE, nameUpdate.getName()));
-				
-				this.setChanged();
-				this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+				Name name = DBSet.getInstance().getNameMap().get(nameUpdate.getName().getName());
+				this.database.getNameMap().add(name);
+
 			}
 		}
 		
@@ -930,14 +817,7 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(nameUpdate.getName().getOwner().getAddress()))
 		{
 			//ADD NAME
-			this.database.getNamesDatabase().delete(nameUpdate.getName());
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_TYPE, nameUpdate.getName()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+			this.database.getNameMap().delete(nameUpdate.getName());
 		}
 	}
 	
@@ -947,14 +827,7 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(nameSaleTransaction.getNameSale().getName().getOwner().getAddress()))
 		{
 			//ADD TO DATABASE
-			this.database.getNameSalesDatabase().add(nameSaleTransaction.getNameSale());
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_NAME_SALE_TYPE, nameSaleTransaction.getNameSale()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
+			this.database.getNameSaleMap().add(nameSaleTransaction.getNameSale());
 		}
 	}
 	
@@ -964,14 +837,7 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(nameSaleTransaction.getNameSale().getName().getOwner().getAddress()))
 		{
 			//REMOVE FROM DATABASE
-			this.database.getNameSalesDatabase().delete(nameSaleTransaction.getNameSale());
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_SALE_TYPE, nameSaleTransaction.getNameSale()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
+			this.database.getNameSaleMap().delete(nameSaleTransaction.getNameSale());
 		}
 	}
 
@@ -981,16 +847,9 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(cancelNameSaleTransaction.getOwner().getAddress()))
 		{
 			//REMOVE FROM DATABASE
-			BigDecimal amount = DatabaseSet.getInstance().getCancelSellNameDatabase().getOrphanData(cancelNameSaleTransaction);
+			BigDecimal amount = DBSet.getInstance().getCancelSellNameMap().get(cancelNameSaleTransaction);
 			NameSale nameSale = new NameSale(cancelNameSaleTransaction.getName(), amount);
-			this.database.getNameSalesDatabase().delete(nameSale);
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_SALE_TYPE, nameSale));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
+			this.database.getNameSaleMap().delete(nameSale);
 		}
 	}
 	
@@ -1000,15 +859,8 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(cancelNameSaleTransaction.getOwner().getAddress()))
 		{
 			//ADD TO DATABASE
-			NameSale nameSale = DatabaseSet.getInstance().getNameExchangeDatabase().getNameSale(cancelNameSaleTransaction.getName());
-			this.database.getNameSalesDatabase().add(nameSale);
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_NAME_SALE_TYPE, nameSale));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
+			NameSale nameSale = DBSet.getInstance().getNameExchangeMap().getNameSale(cancelNameSaleTransaction.getName());
+			this.database.getNameSaleMap().add(nameSale);
 		}
 	}
 	
@@ -1018,15 +870,8 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(namePurchase.getBuyer().getAddress()))
 		{
 			//ADD NAME
-			Name name = DatabaseSet.getInstance().getNameDatabase().getName(namePurchase.getNameSale().getKey());
-			this.database.getNamesDatabase().add(name);
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_NAME_TYPE, name.getName()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+			Name name = DBSet.getInstance().getNameMap().get(namePurchase.getNameSale().getKey());
+			this.database.getNameMap().add(name);
 		}
 		
 		//CHECK IF WE ARE SELLER
@@ -1034,25 +879,12 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(seller.getAddress()))
 		{
 			//DELETE NAMESALE
-			this.database.getNameSalesDatabase().delete(seller, namePurchase.getNameSale());
+			this.database.getNameSaleMap().delete(seller, namePurchase.getNameSale());
 			
 			//DELETE NAME
-			Name name = DatabaseSet.getInstance().getNameDatabase().getName(namePurchase.getNameSale().getKey());
+			Name name = DBSet.getInstance().getNameMap().get(namePurchase.getNameSale().getKey());
 			name.setOwner(seller);
-			this.database.getNamesDatabase().delete(seller, name);
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_SALE_TYPE, namePurchase.getNameSale()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_TYPE, name));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+			this.database.getNameMap().delete(seller, name);
 		}
 	}
 	
@@ -1064,14 +896,7 @@ public class Wallet extends Observable implements Observer
 			//DELETE NAME
 			Name name = namePurchase.getNameSale().getName();
 			name.setOwner(namePurchase.getBuyer());
-			this.database.getNamesDatabase().delete(namePurchase.getBuyer(), name);
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_TYPE, name.getName()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+			this.database.getNameMap().delete(namePurchase.getBuyer(), name);
 		}
 		
 		//CHECK IF WE WERE SELLER
@@ -1079,25 +904,11 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(seller.getAddress()))
 		{
 			//ADD NAMESALE
-			this.database.getNameSalesDatabase().add(namePurchase.getNameSale());
+			this.database.getNameSaleMap().add(namePurchase.getNameSale());
 			
 			//ADD NAME
 			Name name = namePurchase.getNameSale().getName();
-			this.database.getNamesDatabase().add(name);
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_NAME_SALE_TYPE, namePurchase.getNameSale()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_SALE_TYPE, this.getNameSales()));
-			
-			//NOTIFY
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_NAME_TYPE, name.getName()));
-			
-			this.setChanged();
-			this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_NAME_TYPE, this.getNames()));
+			this.database.getNameMap().add(name);
 		}
 
 	}

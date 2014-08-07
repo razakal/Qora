@@ -1,31 +1,36 @@
 package gui.models;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
+import org.mapdb.Fun.Tuple2;
 
-import qora.account.Account;
 import qora.voting.Poll;
 import utils.ObserverMessage;
-import utils.Pair;
 import controller.Controller;
+import database.SortableList;
+import database.wallet.PollMap;
 
 @SuppressWarnings("serial")
-public class WalletPollsTableModel extends AbstractTableModel implements Observer
+public class WalletPollsTableModel extends QoraTableModel<Tuple2<String, String>, Poll> implements Observer
 {
-	private static final int COLUMN_NAME = 0;
-	private static final int COLUMN_ADDRESS = 1;
+	public static final int COLUMN_NAME = 0;
+	public static final int COLUMN_ADDRESS = 1;
 	public static final int COLUMN_TOTAL_VOTES = 2;
 	private static final int COLUMN_CONFIRMED = 3;
 	
+	private SortableList<Tuple2<String, String>, Poll> polls;
+	
 	private String[] columnNames = {"Name", "Creator", "Total Votes", "Confirmed"};
-	private List<Pair<Account, Poll>> polls;
 	
 	public WalletPollsTableModel()
 	{
 		Controller.getInstance().addWalletListener(this);
+	}
+	
+	@Override
+	public SortableList<Tuple2<String, String>, Poll> getSortableList() {
+		return polls;
 	}
 	
 	public Poll getPoll(int row)
@@ -102,11 +107,23 @@ public class WalletPollsTableModel extends AbstractTableModel implements Observe
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_POLL_TYPE)
-		{			
-			this.polls = (List<Pair<Account, Poll>>) message.getValue();
-				
+		{
+			if(this.polls == null)
+			{
+				this.polls = (SortableList<Tuple2<String, String>, Poll>) message.getValue();
+				this.polls.registerObserver();
+				this.polls.sort(PollMap.NAME_INDEX);
+			}
+			
 			this.fireTableDataChanged();
 		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_POLL_TYPE || message.getType() == ObserverMessage.REMOVE_POLL_TYPE)
+		{
+			this.fireTableDataChanged();
+		}	
 	}
 }

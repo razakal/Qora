@@ -12,7 +12,7 @@ import org.json.simple.JSONObject;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 
-import database.DatabaseSet;
+import database.DBSet;
 import qora.account.Account;
 import qora.crypto.Base58;
 import utils.Pair;
@@ -57,7 +57,7 @@ public class Poll
 	
 	public boolean isConfirmed()
 	{
-		return DatabaseSet.getInstance().getPollDatabase().containsPoll(this);
+		return DBSet.getInstance().getPollMap().contains(this);
 	}
 	
 	public boolean hasVotes()
@@ -301,6 +301,20 @@ public class Poll
 	public void deleteVoter(Account voter, int optionIndex) 
 	{
 		this.options.get(optionIndex).removeVoter(voter);
-		
+	}
+	
+	//COPY
+	
+	public Poll copy()
+	{
+		try
+		{
+			byte[] bytes = this.toBytes();
+			return parse(bytes);
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
 	}
 }

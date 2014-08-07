@@ -7,19 +7,18 @@ import gui.transaction.TransactionDetailsFactory;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.table.TableRowSorter;
 
+import database.BlockMap;
+import database.TransactionMap;
 import qora.transaction.Transaction;
-import utils.BigDecimalStringComparator;
-import utils.DateStringComparator;
-import utils.IntegerComparator;
-import utils.LongComparator;
 
 public class DebugTabPane extends JTabbedPane{
 
@@ -31,7 +30,6 @@ public class DebugTabPane extends JTabbedPane{
 	private LoggerTextArea loggerTextArea;
 	private JTable transactionsTable;
 	
-	@SuppressWarnings("unchecked")
 	public DebugTabPane()
 	{
 		super();
@@ -42,13 +40,17 @@ public class DebugTabPane extends JTabbedPane{
         this.peersTableModel = new PeersTableModel();
 		this.addTab("Peers", new JScrollPane(Gui.createSortableTable(this.peersTableModel, 0)));
         
+		//TRANSACTIONS TABLE MODEL
 		this.transactionsTableModel = new TransactionsTableModel();
-		this.transactionsTable = Gui.createSortableTable(this.transactionsTableModel, TransactionsTableModel.COLUMN_TIMESTAMP);
+		this.transactionsTable = new JTable(this.transactionsTableModel);
 		
-		TableRowSorter<TransactionsTableModel> transactionSorter =  (TableRowSorter<TransactionsTableModel>) this.transactionsTable.getRowSorter();
-		transactionSorter.setComparator(TransactionsTableModel.COLUMN_TIMESTAMP, new DateStringComparator());
-		transactionSorter.setComparator(TransactionsTableModel.COLUMN_FEE, new BigDecimalStringComparator());
+		//TRANSACTIONS SORTER
+		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
+		indexes.put(TransactionsTableModel.COLUMN_TIMESTAMP, TransactionMap.TIMESTAMP_INDEX);
+		QoraRowSorter sorter = new QoraRowSorter(transactionsTableModel, indexes);
+		transactionsTable.setRowSorter(sorter);
 		
+		//TRANSACTION DETAILS
 		this.transactionsTable.addMouseListener(new MouseAdapter() 
 		{
 			public void mouseClicked(MouseEvent e) 
@@ -66,21 +68,23 @@ public class DebugTabPane extends JTabbedPane{
 			        TransactionDetailsFactory.getInstance().createTransactionDetail(transaction);
 			    }
 			}
-		});			
+		});
+		
+		//ADD TRANSACTIONS TABLE
 		this.addTab("Transactions", new JScrollPane(this.transactionsTable)); 
 	           
-		
+		//BLOCKS TABLE MODEL
 		this.blocksTableModel = new BlocksTableModel();
-		JTable blocksTable = Gui.createSortableTable(this.blocksTableModel, BlocksTableModel.COLUMN_HEIGHT);
+		JTable blocksTable = new JTable(this.blocksTableModel);
 		
-		TableRowSorter<BlocksTableModel> blockSorter =  (TableRowSorter<BlocksTableModel>) blocksTable.getRowSorter();
-		blockSorter.setComparator(BlocksTableModel.COLUMN_HEIGHT, new IntegerComparator());
-		blockSorter.setComparator(BlocksTableModel.COLUMN_TIMESTAMP, new DateStringComparator());
-		blockSorter.setComparator(BlocksTableModel.COLUMN_TRANSACTIONS, new IntegerComparator());
-		blockSorter.setComparator(BlocksTableModel.COLUMN_BASETARGET, new LongComparator());
-		blockSorter.setComparator(BlocksTableModel.COLUMN_FEE, new BigDecimalStringComparator());
+		//BLOCKS SORTER
+		indexes = new TreeMap<Integer, Integer>();
+		indexes.put(BlocksTableModel.COLUMN_HEIGHT, BlockMap.HEIGHT_INDEX);
+		sorter = new QoraRowSorter(blocksTableModel, indexes);
+		blocksTable.setRowSorter(sorter);
 		
-        this.addTab("Blocks", new JScrollPane(blocksTable));
+		//ADD BLOCK TABLE
+		this.addTab("Blocks", new JScrollPane(blocksTable));
 		
         this.loggerTextArea = new LoggerTextArea(Logger.getGlobal());
         JScrollPane scrollPane = new JScrollPane(this.loggerTextArea);

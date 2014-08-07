@@ -10,7 +10,7 @@ import org.json.simple.JSONObject;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 
-import database.DatabaseSet;
+import database.DBSet;
 
 public class NameSale 
 {
@@ -33,14 +33,14 @@ public class NameSale
 		return key;
 	}
 	
-	public Name getName(DatabaseSet db)
+	public Name getName(DBSet db)
 	{
-		return db.getNameDatabase().getName(this.key);
+		return db.getNameMap().get(this.key);
 	}
 	
 	public Name getName()
 	{
-		return this.getName(DatabaseSet.getInstance());
+		return this.getName(DBSet.getInstance());
 	}
 	
 	public BigDecimal getAmount()

@@ -19,7 +19,7 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
-import database.DatabaseSet;
+import database.DBSet;
 
 public class ArbitraryTransaction extends Transaction
 {
@@ -216,7 +216,7 @@ public class ArbitraryTransaction extends Transaction
 	}
 
 	@Override
-	public int isValid(DatabaseSet db) 
+	public int isValid(DBSet db) 
 	{
 		//CHECK IF RELEASED
 		if(NTP.getTime() < ARBITRARY_TRANSACTIONS_RELEASE)
@@ -254,7 +254,7 @@ public class ArbitraryTransaction extends Transaction
 	//PROCESS/ORPHAN
 
 	@Override
-	public void process(DatabaseSet db) 
+	public void process(DBSet db) 
 	{
 		//UPDATE CREATOR
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(db).subtract(this.fee), db);
@@ -264,7 +264,7 @@ public class ArbitraryTransaction extends Transaction
 	}
 
 	@Override
-	public void orphan(DatabaseSet db) 
+	public void orphan(DBSet db) 
 	{
 		//UPDATE CREATOR
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(db).add(this.fee), db);
@@ -315,7 +315,7 @@ public class ArbitraryTransaction extends Transaction
 		return BigDecimal.ZERO.setScale(8);
 	}
 	
-	public static byte[] generateSignature(DatabaseSet db, PrivateKeyAccount creator, int service, byte[] arbitraryData, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, int service, byte[] arbitraryData, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		

@@ -2,6 +2,7 @@ package controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import qora.wallet.Wallet;
 import settings.Settings;
 import utils.ObserverMessage;
 import utils.Pair;
-import database.DatabaseSet;
+import database.DBSet;
 import network.Network;
 import network.Peer;
 import network.message.BlockMessage;
@@ -107,7 +108,7 @@ public class Controller extends Observable {
 		this.transactionCreator = new TransactionCreator();
 
 		//OPENING DATABASES
-		DatabaseSet.getInstance();
+		DBSet.getInstance();
 		
 		//CREATE SYNCHRONIZOR
 		this.synchronizer = new Synchronizer();
@@ -144,24 +145,26 @@ public class Controller extends Observable {
 		});
       	
       	//REGISTER DATABASE OBSERVER
-      	addObserver(DatabaseSet.getInstance().getTransactionsDatabase());
-      	addObserver(DatabaseSet.getInstance());
-      	
-      	//LET WALLET KNOW WHEN TRANSACTIONCREATOR ORPHANS UNCONFIRMED TRANSACTION
-      	this.transactionCreator.addObserver(this.wallet);
+      	this.addObserver(DBSet.getInstance().getTransactionMap());
+      	this.addObserver(DBSet.getInstance());
     }
 	
 	@Override
 	public void addObserver(Observer o) 
 	{
 		//ADD OBSERVER TO SYNCHRONIZER
-		this.synchronizer.addObserver(o);
+		//this.synchronizer.addObserver(o);
+		DBSet.getInstance().getBlockMap().addObserver(o);
 		
 		//ADD OBSERVER TO BLOCKGENERATOR
-		this.blockGenerator.addObserver(o);
-		
+		//this.blockGenerator.addObserver(o);
+		DBSet.getInstance().getTransactionMap().addObserver(o);
+			
 		//ADD OBSERVER TO NAMESALES
-		DatabaseSet.getInstance().getNameExchangeDatabase().addObserver(o);
+		DBSet.getInstance().getNameExchangeMap().addObserver(o);
+		
+		//ADD OBSERVER TO POLLS
+		DBSet.getInstance().getPollMap().addObserver(o);
 		
 		//ADD OBSERVER TO CONTROLLER
 		super.addObserver(o);
@@ -171,7 +174,7 @@ public class Controller extends Observable {
 	@Override 
 	public void deleteObserver(Observer o)
 	{
-		this.synchronizer.deleteObserver(o);
+		DBSet.getInstance().getBlockMap().deleteObserver(o);
 		
 		super.deleteObserver(o);
 	}
@@ -211,7 +214,7 @@ public class Controller extends Observable {
 			
 			//CLOSE DATABABASE
 			Logger.getGlobal().info("Closing database");
-			DatabaseSet.getInstance().close();
+			DBSet.getInstance().close();
 			
 			//CLOSE WALLET
 			Logger.getGlobal().info("Closing wallet");
@@ -677,14 +680,14 @@ public class Controller extends Observable {
 	public Transaction getTransaction(byte[] signature) {
 		
 		//CHECK IF IN BLOCK
-		Block block = DatabaseSet.getInstance().getTransactionParentDatabase().getParent(signature);
+		Block block = DBSet.getInstance().getTransactionParentMap().getParent(signature);
 		if(block != null)
 		{
 			return block.getTransaction(signature);
 		}
 		
 		//CHECK IF IN TRANSACTION DATABASE
-		return DatabaseSet.getInstance().getTransactionsDatabase().getTransaction(signature);
+		return DBSet.getInstance().getTransactionMap().get(signature);
 	}
 	
 	public List<Transaction> getLastTransactions(Account account, int limit)
@@ -724,7 +727,7 @@ public class Controller extends Observable {
 	
 	public List<NameSale> getAllNameSales()
 	{
-		return DatabaseSet.getInstance().getNameExchangeDatabase().getNameSales();
+		return DBSet.getInstance().getNameExchangeMap().getNameSales();
 	}
 	
 	public List<Pair<Account, Poll>> getPolls()
@@ -737,9 +740,9 @@ public class Controller extends Observable {
 		return this.wallet.getPolls(account);
 	}
 	
-	public List<Poll> getAllPolls()
+	public Collection<Poll> getAllPolls()
 	{
-		return DatabaseSet.getInstance().getPollDatabase().getPolls();
+		return DBSet.getInstance().getPollMap().getValues();
 	}
 	
 	public void onDatabaseCommit()
@@ -796,12 +799,12 @@ public class Controller extends Observable {
 
 	public long getNextBlockGeneratingBalance()
 	{
-		return BlockGenerator.getNextBlockGeneratingBalance(DatabaseSet.getInstance(), DatabaseSet.getInstance().getBlockDatabase().getLastBlock());
+		return BlockGenerator.getNextBlockGeneratingBalance(DBSet.getInstance(), DBSet.getInstance().getBlockMap().getLastBlock());
 	}
 	
 	public long getNextBlockGeneratingBalance(Block parent)
 	{
-		return BlockGenerator.getNextBlockGeneratingBalance(DatabaseSet.getInstance(), parent);
+		return BlockGenerator.getNextBlockGeneratingBalance(DBSet.getInstance(), parent);
 	}
 	
 	//FORGE
@@ -824,19 +827,19 @@ public class Controller extends Observable {
 	
 	public Name getName(String nameName)
 	{
-		return DatabaseSet.getInstance().getNameDatabase().getName(nameName);
+		return DBSet.getInstance().getNameMap().get(nameName);
 	}
 
 	public NameSale getNameSale(String nameName)
 	{
-		return DatabaseSet.getInstance().getNameExchangeDatabase().getNameSale(nameName);
+		return DBSet.getInstance().getNameExchangeMap().getNameSale(nameName);
 	}
 	
 	//POLLS
 	
 	public Poll getPoll(String name)
 	{
-		return DatabaseSet.getInstance().getPollDatabase().getPoll(name);
+		return DBSet.getInstance().getPollMap().get(name);
 	}
 	
 	//TRANSACTIONS
@@ -848,7 +851,7 @@ public class Controller extends Observable {
 		
 		//NOTIFY OBSERVERS
 		this.setChanged();
-		this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, DatabaseSet.getInstance().getTransactionsDatabase().getTransactions()));
+		this.notifyObservers(new ObserverMessage(ObserverMessage.LIST_TRANSACTION_TYPE, DBSet.getInstance().getTransactionMap().getValues()));
 		
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_TRANSACTION_TYPE, transaction));

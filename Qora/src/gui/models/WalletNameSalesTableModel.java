@@ -1,35 +1,43 @@
 package gui.models;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.table.AbstractTableModel;
+import org.mapdb.Fun.Tuple2;
 
 import controller.Controller;
+import database.SortableList;
+import database.wallet.NameSaleMap;
 import qora.account.Account;
 import qora.naming.NameSale;
 import utils.ObserverMessage;
 import utils.Pair;
 
 @SuppressWarnings("serial")
-public class WalletNameSalesTableModel extends AbstractTableModel implements Observer{
+public class WalletNameSalesTableModel extends QoraTableModel<Tuple2<String, String>, BigDecimal> implements Observer{
 
-	private static final int COLUMN_NAME = 0;
-	private static final int COLUMN_OWNER = 1;
+	public static final int COLUMN_NAME = 0;
+	public static final int COLUMN_OWNER = 1;
 	public static final int COLUMN_PRICE = 2;
 	
 	private String[] columnNames = {"Name", "Seller", "Price"};
 	
-	private List<Pair<Account, NameSale>> nameSales;
+	private SortableList<Tuple2<String, String>, BigDecimal> nameSales;
 	
 	public WalletNameSalesTableModel()
 	{
 		Controller.getInstance().addWalletListener(this);
 	}
 	
+	@Override
+	public SortableList<Tuple2<String, String>, BigDecimal> getSortableList() {
+		return this.nameSales;
+	}
+	
 	public NameSale getNameSale(int row)
 	{
-		return nameSales.get(row).getB();
+		Pair<Tuple2<String, String>, BigDecimal> data = this.nameSales.get(row);
+		return new NameSale(data.getA().b, data.getB());
 	}
 	
 	@Override
@@ -63,21 +71,23 @@ public class WalletNameSalesTableModel extends AbstractTableModel implements Obs
 			return null;
 		}
 		
-		Pair<Account, NameSale> pair = nameSales.get(row);
+		Pair<Tuple2<String, String>, BigDecimal> data = this.nameSales.get(row);
+		NameSale nameSale = new NameSale(data.getA().b, data.getB());
+		Account account = new Account(data.getA().a);
 		
 		switch(column)
 		{
 		case COLUMN_NAME:
 			
-			return pair.getB().getKey();
+			return nameSale.getKey();
 			
 		case COLUMN_OWNER:
 			 
-			return pair.getA().getAddress();
+			return account.getAddress();
 			
 		case COLUMN_PRICE:
 			
-			return pair.getB().getAmount().toPlainString();
+			return nameSale.getAmount().toPlainString();
 			
 		}
 		
@@ -103,12 +113,24 @@ public class WalletNameSalesTableModel extends AbstractTableModel implements Obs
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
+		//CHECK IF NEW LIST
 		if(message.getType() == ObserverMessage.LIST_NAME_SALE_TYPE)
-		{			
-			this.nameSales = (List<Pair<Account, NameSale>>) message.getValue();
-				
+		{
+			if(this.nameSales == null)
+			{
+				this.nameSales = (SortableList<Tuple2<String, String>, BigDecimal>) message.getValue();
+				this.nameSales.registerObserver();
+				this.nameSales.sort(NameSaleMap.NAME_INDEX);
+			}
+			
 			this.fireTableDataChanged();
 		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_NAME_SALE_TYPE || message.getType() == ObserverMessage.REMOVE_NAME_SALE_TYPE)
+		{
+			this.fireTableDataChanged();
+		}	
 	}
 	
 	public void removeObservers() 
