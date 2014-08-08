@@ -67,6 +67,7 @@ public abstract class Transaction {
 	public static final int ARBITRARY_TRANSACTION = 10;
 	
 	public static final int ISSUE_ASSET_TRANSACTION = 11;
+	public static final int TRANSFER_ASSET_TRANSACTION = 12;
 	
 	//MINIMUM FEE
 	public static final BigDecimal MINIMUM_FEE = BigDecimal.ONE;

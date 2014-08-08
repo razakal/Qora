@@ -83,9 +83,13 @@ public class TransactionFactory {
 			
 		case Transaction.ISSUE_ASSET_TRANSACTION:
 			
-			//PARSE ISSUE_ASSET TRANSACTION
-			return IssueAssetTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));				
-		
+			//PARSE ISSUE ASSET TRANSACTION
+			return IssueAssetTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));
+			
+		case Transaction.TRANSFER_ASSET_TRANSACTION:
+			
+			//PARSE TRANSFER ASSET TRANSACTION
+			return TransferAssetTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));	
 		}
 		
 		throw new Exception("Invalid transaction type");
