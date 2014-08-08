@@ -31,6 +31,8 @@ public class DBSet implements Observer, IDB {
 	private CancelSellNameMap cancelSellNameMap;
 	private PollMap pollMap;
 	private VoteOnPollMap voteOnPollMap;
+	private AssetMap assetMap;
+	private IssueAssetMap issueAssetMap;
 	
 	private DB database;
 	private int actions;
@@ -90,6 +92,8 @@ public class DBSet implements Observer, IDB {
 		this.cancelSellNameMap = new CancelSellNameMap(this, database);
 		this.pollMap = new PollMap(this, database);
 		this.voteOnPollMap = new VoteOnPollMap(this, database);
+		this.assetMap = new AssetMap(this, database);
+		this.issueAssetMap = new IssueAssetMap(this, database);
 	}
 	
 	protected DBSet(DBSet parent)
@@ -108,6 +112,8 @@ public class DBSet implements Observer, IDB {
 		this.cancelSellNameMap = new CancelSellNameMap(parent.cancelSellNameMap);
 		this.pollMap = new PollMap(parent.pollMap);
 		this.voteOnPollMap = new VoteOnPollMap(parent.voteOnPollMap);
+		this.assetMap = new AssetMap(parent.assetMap);
+		this.issueAssetMap = new IssueAssetMap(parent.issueAssetMap);
 	}
 	
 	public BalanceMap getBalanceMap() 
@@ -178,6 +184,16 @@ public class DBSet implements Observer, IDB {
 	public VoteOnPollMap getVoteOnPollDatabase()
 	{
 		return this.voteOnPollMap;
+	}
+	
+	public AssetMap getAssetMap()
+	{
+		return this.assetMap;
+	}
+	
+	public IssueAssetMap getIssueAssetMap()
+	{
+		return this.issueAssetMap;
 	}
 	
 	public DBSet fork()

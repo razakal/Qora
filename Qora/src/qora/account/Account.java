@@ -54,6 +54,16 @@ public class Account {
 	{
 		return db.getBalanceMap().get(getAddress());
 	}
+	
+	public BigDecimal getConfirmedBalance(long key)
+	{
+		return this.getConfirmedBalance(DBSet.getInstance());
+	}
+	
+	public BigDecimal getConfirmedBalance(long key, DBSet db)
+	{
+		return db.getBalanceMap().get(getAddress(), key);
+	}
 
 	public void setConfirmedBalance(BigDecimal amount)
 	{
@@ -64,6 +74,17 @@ public class Account {
 	{
 		//UPDATE BALANCE IN DB
 		db.getBalanceMap().set(getAddress(), amount);
+	}
+	
+	public void setConfirmedBalance(long key, BigDecimal amount)
+	{
+		this.setConfirmedBalance(key, amount, DBSet.getInstance());
+	}
+	
+	public void setConfirmedBalance(long key, BigDecimal amount, DBSet db)
+	{
+		//UPDATE BALANCE IN DB
+		db.getBalanceMap().set(getAddress(), key, amount);
 	}
 	
 	public BigDecimal getBalance(int confirmations)

@@ -47,6 +47,8 @@ public abstract class Transaction {
 	public static final int ALREADY_VOTED_FOR_THAT_OPTION = 26;
 	public static final int INVALID_DATA_LENGTH = 27;
 	
+	public static final int INVALID_QUANTITY = 28;
+	
 	public static final int NOT_YET_RELEASED = 1000;
 	
 	//TYPES
@@ -63,6 +65,8 @@ public abstract class Transaction {
 	public static final int VOTE_ON_POLL_TRANSACTION = 9;
 	
 	public static final int ARBITRARY_TRANSACTION = 10;
+	
+	public static final int ISSUE_ASSET_TRANSACTION = 11;
 	
 	//MINIMUM FEE
 	public static final BigDecimal MINIMUM_FEE = BigDecimal.ONE;

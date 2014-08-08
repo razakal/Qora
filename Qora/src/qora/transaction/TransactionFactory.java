@@ -80,6 +80,11 @@ public class TransactionFactory {
 			
 			//PARSE ARBITRARY TRANSACTION
 			return ArbitraryTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));			
+			
+		case Transaction.ISSUE_ASSET_TRANSACTION:
+			
+			//PARSE ISSUE_ASSET TRANSACTION
+			return IssueAssetTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));				
 		
 		}
 		

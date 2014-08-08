@@ -13,6 +13,7 @@ import org.junit.Test;
 import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
+import qora.assets.Asset;
 import qora.crypto.Crypto;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
@@ -22,6 +23,7 @@ import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.GenesisTransaction;
+import qora.transaction.IssueAssetTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
@@ -2890,6 +2892,278 @@ public class TransactionTests {
 		
 		//CHECK BALANCE SENDER
 		assertEquals(BigDecimal.valueOf(1000).setScale(8), sender.getConfirmedBalance(databaseSet));
+				
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(transaction.getSignature(), sender.getLastReference(databaseSet)));
+	}
+	
+	//ISSUE ASSET TRANSACTION
+	
+	@Test
+	public void validateSignatureIssueAssetTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE ASSET
+		Asset asset = new Asset(sender, "test", "strontje", 50000l, false);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = IssueAssetTransaction.generateSignature(databaseSet, sender, asset, BigDecimal.valueOf(1).setScale(8), timestamp);
+		
+		//CREATE ISSUE ASSET TRANSACTION
+		Transaction issueAssetTransaction = new IssueAssetTransaction(sender, asset, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
+		
+		//CHECK IF ISSUE ASSET TRANSACTION IS VALID
+		assertEquals(true, issueAssetTransaction.isSignatureValid());
+		
+		//INVALID SIGNATURE
+		issueAssetTransaction = new IssueAssetTransaction(sender, asset, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), new byte[0]);
+		
+		//CHECK IF ISSUE ASSET IS INVALID
+		assertEquals(false, issueAssetTransaction.isSignatureValid());
+	}
+		
+	/*@Test
+	public void validateArbitraryTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] data = "test".getBytes();
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet, sender, 4776, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE ARBITRARY TRANSACTION
+		Transaction arbitraryTransaction = new ArbitraryTransaction(sender, 4776, data, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF ARBITRARY TRANSACTION IS VALID
+		assertEquals(Transaction.VALIDATE_OKE, arbitraryTransaction.isValid(databaseSet));
+		arbitraryTransaction.process(databaseSet);
+		
+		//CREATE INVALID ARBITRARY TRANSACTION INVALID data LENGTH
+		byte[] longData = new byte[5000];
+		arbitraryTransaction = new ArbitraryTransaction(sender, 4776, longData, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+
+		//CHECK IF ARBITRARY TRANSACTION IS INVALID
+		assertEquals(Transaction.INVALID_DATA_LENGTH, arbitraryTransaction.isValid(databaseSet));
+		
+		//CREATE INVALID ARBITRARY TRANSACTION NOT ENOUGH BALANCE
+		seed = Crypto.getInstance().digest("invalid".getBytes());
+		privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount invalidOwner = new PrivateKeyAccount(privateKey);
+		arbitraryTransaction = new ArbitraryTransaction(invalidOwner, 4776, data, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF ARBITRARY TRANSACTION IS INVALID
+		assertEquals(Transaction.NO_BALANCE, arbitraryTransaction.isValid(databaseSet));
+		
+		//CREATE ARBITRARY TRANSACTION INVALID REFERENCE
+		arbitraryTransaction = new ArbitraryTransaction(sender, 4776, data, BigDecimal.ONE.setScale(8), timestamp, invalidOwner.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF ARBITRARY TRANSACTION IS INVALID
+		assertEquals(Transaction.INVALID_REFERENCE, arbitraryTransaction.isValid(databaseSet));
+		
+		//CREATE ARBITRARY TRANSACTION INVALID FEE
+		arbitraryTransaction = new ArbitraryTransaction(sender, 4776, data, BigDecimal.ZERO.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CHECK IF ARBITRARY TRANSACTION IS INVALID
+		assertEquals(Transaction.NEGATIVE_FEE, arbitraryTransaction.isValid(databaseSet));
+	}*/
+
+	
+	@Test
+	public void parseIssueAssetTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		Asset asset = new Asset(sender, "test", "strontje", 50000l, false);
+		byte[] signature = IssueAssetTransaction.generateSignature(databaseSet, sender, asset, BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE ISSUE ASSET TRANSACTION
+		IssueAssetTransaction issueAssetTransaction = new IssueAssetTransaction(sender, asset, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
+		
+		//CONVERT TO BYTES
+		byte[] rawIssueAssetTransaction = issueAssetTransaction.toBytes();
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			IssueAssetTransaction parsedIssueAssetTransaction = (IssueAssetTransaction) TransactionFactory.getInstance().parse(rawIssueAssetTransaction);
+			
+			//CHECK INSTANCE
+			assertEquals(true, parsedIssueAssetTransaction instanceof IssueAssetTransaction);
+			
+			//CHECK SIGNATURE
+			assertEquals(true, Arrays.equals(issueAssetTransaction.getSignature(), parsedIssueAssetTransaction.getSignature()));
+			
+			//CHECK ISSUER
+			assertEquals(issueAssetTransaction.getIssuer().getAddress(), parsedIssueAssetTransaction.getIssuer().getAddress());
+			
+			//CHECK OWNER
+			assertEquals(issueAssetTransaction.getAsset().getOwner().getAddress(), parsedIssueAssetTransaction.getAsset().getOwner().getAddress());
+			
+			//CHECK NAME
+			assertEquals(issueAssetTransaction.getAsset().getName(), parsedIssueAssetTransaction.getAsset().getName());
+				
+			//CHECK DESCRIPTION
+			assertEquals(issueAssetTransaction.getAsset().getDescription(), parsedIssueAssetTransaction.getAsset().getDescription());
+				
+			//CHECK QUANTITY
+			assertEquals(issueAssetTransaction.getAsset().getQuantity(), parsedIssueAssetTransaction.getAsset().getQuantity());
+			
+			//DIVISIBLE
+			assertEquals(issueAssetTransaction.getAsset().isDivisible(), parsedIssueAssetTransaction.getAsset().isDivisible());
+			
+			//CHECK FEE
+			assertEquals(issueAssetTransaction.getFee(), parsedIssueAssetTransaction.getFee());	
+			
+			//CHECK REFERENCE
+			assertEquals(true, Arrays.equals(issueAssetTransaction.getReference(), parsedIssueAssetTransaction.getReference()));	
+			
+			//CHECK TIMESTAMP
+			assertEquals(issueAssetTransaction.getTimestamp(), parsedIssueAssetTransaction.getTimestamp());				
+		}
+		catch (Exception e) 
+		{
+			fail("Exception while parsing transaction.");
+		}
+		
+		//PARSE TRANSACTION FROM WRONG BYTES
+		rawIssueAssetTransaction = new byte[issueAssetTransaction.getDataLength()];
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			TransactionFactory.getInstance().parse(rawIssueAssetTransaction);
+			
+			//FAIL
+			fail("this should throw an exception");
+		}
+		catch (Exception e) 
+		{
+			//EXCEPTION IS THROWN OKE
+		}	
+	}
+
+	
+	@Test
+	public void processIssueAssetTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		Asset asset = new Asset(sender, "test", "strontje", 50000l, false);
+		byte[] signature = IssueAssetTransaction.generateSignature(databaseSet, sender, asset, BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE ISSUE ASSET TRANSACTION
+		IssueAssetTransaction issueAssetTransaction = new IssueAssetTransaction(sender, asset, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
+		issueAssetTransaction.process(databaseSet);
+		
+		//CHECK BALANCE ISSUER
+		assertEquals(BigDecimal.valueOf(999).setScale(8), sender.getConfirmedBalance(databaseSet));
+		
+		//CHECK ASSET EXISTS SENDER
+		long key = databaseSet.getIssueAssetMap().get(issueAssetTransaction);
+		assertEquals(true, databaseSet.getAssetMap().contains(key));
+		
+		//CHECK ASSET IS CORRECT
+		assertEquals(true, Arrays.equals(databaseSet.getAssetMap().get(key).toBytes(), asset.toBytes()));
+		
+		//CHECK ASSET BALANCE SENDER
+		assertEquals(true, databaseSet.getBalanceMap().get(sender.getAddress(), key).compareTo(new BigDecimal(asset.getQuantity())) == 0);
+				
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(issueAssetTransaction.getSignature(), sender.getLastReference(databaseSet)));
+	}
+	
+	
+	@Test
+	public void orphanIssueAssetTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		Asset asset = new Asset(sender, "test", "strontje", 50000l, false);
+		byte[] signature = IssueAssetTransaction.generateSignature(databaseSet, sender, asset, BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE ISSUE ASSET TRANSACTION
+		IssueAssetTransaction issueAssetTransaction = new IssueAssetTransaction(sender, asset, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
+		issueAssetTransaction.process(databaseSet);
+		long key = databaseSet.getIssueAssetMap().get(issueAssetTransaction);
+		issueAssetTransaction.orphan(databaseSet);
+		
+		//CHECK BALANCE ISSUER
+		assertEquals(BigDecimal.valueOf(1000).setScale(8), sender.getConfirmedBalance(databaseSet));
+		
+		//CHECK ASSET EXISTS SENDER
+		assertEquals(false, databaseSet.getAssetMap().contains(key));
+		
+		//CHECK ASSET BALANCE SENDER
+		assertEquals(0, databaseSet.getBalanceMap().get(sender.getAddress(), key).longValue());
 				
 		//CHECK REFERENCE SENDER
 		assertEquals(true, Arrays.equals(transaction.getSignature(), sender.getLastReference(databaseSet)));
