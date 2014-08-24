@@ -28,10 +28,10 @@ public abstract class DBMap<T, U> extends Observable {
 	
 	public static final int DEFAULT_INDEX = 0;
 	
-	private DBMap<T, U> parent;
+	protected DBMap<T, U> parent;
 	private IDB databaseSet;
 	protected Map<T, U> map;
-	private List<T> deleted;
+	protected List<T> deleted;
 	private Map<Integer, NavigableSet<Tuple2<?, T>>> indexes;
 
 	public DBMap(IDB databaseSet, DB database)

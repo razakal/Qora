@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import qora.account.Account;
+import qora.assets.Asset;
 import qora.block.Block;
 import qora.block.GenesisBlock;
 import qora.naming.Name;
@@ -29,6 +30,10 @@ public class BlockChain
         {
         	//PROCESS
         	genesisBlock.process();
+        	
+        	//ADD QORA ASSET
+        	Asset qoraAsset = new Asset(genesisBlock.getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+        	DBSet.getInstance().getAssetMap().set(0l, qoraAsset);
         }
 	}
 	

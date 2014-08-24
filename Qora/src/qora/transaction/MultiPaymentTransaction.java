@@ -2,16 +2,18 @@ package qora.transaction;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
-import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import qora.payment.Payment;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -20,30 +22,24 @@ import com.google.common.primitives.Longs;
 import database.BalanceMap;
 import database.DBSet;
 
-public class TransferAssetTransaction extends Transaction {
+public class MultiPaymentTransaction extends Transaction {
 
 	private static final int REFERENCE_LENGTH = 64;
 	private static final int SENDER_LENGTH = 32;
-	private static final int RECIPIENT_LENGTH = Account.ADDRESS_LENGTH;
-	private static final int KEY_LENGTH = 8;
-	private static final int AMOUNT_LENGTH = 12;
+	private static final int PAYMENTS_SIZE_LENGTH = 4;
 	private static final int FEE_LENGTH = 8;
 	private static final int SIGNATURE_LENGTH = 64;
-	private static final int BASE_LENGTH = TIMESTAMP_LENGTH + REFERENCE_LENGTH + SENDER_LENGTH + RECIPIENT_LENGTH + KEY_LENGTH + AMOUNT_LENGTH + FEE_LENGTH + SIGNATURE_LENGTH;
+	private static final int BASE_LENGTH = TIMESTAMP_LENGTH + REFERENCE_LENGTH + SENDER_LENGTH + PAYMENTS_SIZE_LENGTH + FEE_LENGTH + SIGNATURE_LENGTH;
 
 	private PublicKeyAccount sender;
-	private Account recipient;
-	private BigDecimal amount;
-	private long key;
+	private List<Payment> payments;
 	
-	public TransferAssetTransaction(PublicKeyAccount sender, Account recipient, long key, BigDecimal amount, BigDecimal fee, long timestamp, byte[] reference, byte[] signature) 
+	public MultiPaymentTransaction(PublicKeyAccount sender, List<Payment> payments, BigDecimal fee, long timestamp, byte[] reference, byte[] signature) 
 	{
-		super(TRANSFER_ASSET_TRANSACTION, fee, timestamp, reference, signature);
+		super(MULTI_PAYMENT_TRANSACTION, fee, timestamp, reference, signature);
 		
 		this.sender = sender;
-		this.recipient = recipient;
-		this.amount = amount;
-		this.key = key;
+		this.payments = payments;
 	}
 	
 	//GETTERS/SETTERS
@@ -53,19 +49,9 @@ public class TransferAssetTransaction extends Transaction {
 		return this.sender;
 	}
 	
-	public Account getRecipient()
+	public List<Payment> getPayments()
 	{
-		return this.recipient;
-	}
-	
-	public BigDecimal getAmount() 
-	{
-		return this.amount;
-	}
-	
-	public long getKey()
-	{
-		return this.key;
+		return this.payments;
 	}
 	
 	//PARSE/CONVERT
@@ -94,20 +80,25 @@ public class TransferAssetTransaction extends Transaction {
 		PublicKeyAccount sender = new PublicKeyAccount(senderBytes);
 		position += SENDER_LENGTH;
 		
-		//READ RECIPIENT
-		byte[] recipientBytes = Arrays.copyOfRange(data, position, position + RECIPIENT_LENGTH);
-		Account recipient = new Account(Base58.encode(recipientBytes));
-		position += RECIPIENT_LENGTH;
+		//READ PAYMENTS SIZE
+		byte[] paymentsLengthBytes = Arrays.copyOfRange(data, position, position + PAYMENTS_SIZE_LENGTH);
+		int paymentsLength = Ints.fromByteArray(paymentsLengthBytes);
+		position += PAYMENTS_SIZE_LENGTH;
 		
-		//READ KEY
-		byte[] keyBytes = Arrays.copyOfRange(data, position, position + KEY_LENGTH);
-		long key = Longs.fromByteArray(keyBytes);	
-		position += KEY_LENGTH;
+		if(paymentsLength < 1 || paymentsLength > 400)
+		{
+			throw new Exception("Invalid payments length");
+		}
 		
-		//READ AMOUNT
-		byte[] amountBytes = Arrays.copyOfRange(data, position, position + AMOUNT_LENGTH);
-		BigDecimal amount = new BigDecimal(new BigInteger(amountBytes), 8);
-		position += AMOUNT_LENGTH;
+		//READ PAYMENTS
+		List<Payment> payments = new ArrayList<Payment>();
+		for(int i=0; i<paymentsLength; i++)
+		{
+			Payment payment = Payment.parse(Arrays.copyOfRange(data, position, position + Payment.BASE_LENGTH));
+			payments.add(payment);
+			
+			position += Payment.BASE_LENGTH;
+		}
 		
 		//READ FEE
 		byte[] feeBytes = Arrays.copyOfRange(data, position, position + FEE_LENGTH);
@@ -117,7 +108,7 @@ public class TransferAssetTransaction extends Transaction {
 		//READ SIGNATURE
 		byte[] signatureBytes = Arrays.copyOfRange(data, position, position + SIGNATURE_LENGTH);
 		
-		return new TransferAssetTransaction(sender, recipient, key, amount, fee, timestamp, reference, signatureBytes);	
+		return new MultiPaymentTransaction(sender, payments, fee, timestamp, reference, signatureBytes);	
 	}	
 	
 	@SuppressWarnings("unchecked")
@@ -127,11 +118,15 @@ public class TransferAssetTransaction extends Transaction {
 		//GET BASE
 		JSONObject transaction = this.getJsonBase();
 				
-		//ADD SENDER/RECIPIENT/AMOUNT/ASSET
+		//ADD SENDER/PAYMENTS
 		transaction.put("sender", this.sender.getAddress());
-		transaction.put("recipient", this.recipient.getAddress());
-		transaction.put("asset", this.key);
-		transaction.put("amount", this.amount.toPlainString());
+		
+		JSONArray payments = new JSONArray();
+		for(Payment payment: this.payments)
+		{
+			payments.add(payment.toJson());
+		}
+		transaction.put("payments", payments);
 				
 		return transaction;	
 	}
@@ -142,7 +137,7 @@ public class TransferAssetTransaction extends Transaction {
 		byte[] data = new byte[0];
 		
 		//WRITE TYPE
-		byte[] typeBytes = Ints.toByteArray(TRANSFER_ASSET_TRANSACTION);
+		byte[] typeBytes = Ints.toByteArray(MULTI_PAYMENT_TRANSACTION);
 		typeBytes = Bytes.ensureCapacity(typeBytes, TYPE_LENGTH, 0);
 		data = Bytes.concat(data, typeBytes);
 		
@@ -156,24 +151,21 @@ public class TransferAssetTransaction extends Transaction {
 		
 		//WRITE SENDER
 		data = Bytes.concat(data , this.sender.getPublicKey());
+	
+		//WRITE PAYMENTS SIZE
+		int paymentsLength = this.payments.size();
+		byte[] paymentsLengthBytes = Ints.toByteArray(paymentsLength);
+		data = Bytes.concat(data, paymentsLengthBytes);
 		
-		//WRITE RECIPIENT
-		data = Bytes.concat(data, Base58.decode(this.recipient.getAddress()));
-		
-		//WRITE KEY
-		byte[] keyBytes = Longs.toByteArray(this.key);
-		keyBytes = Bytes.ensureCapacity(keyBytes, KEY_LENGTH, 0);
-		data = Bytes.concat(data, keyBytes);
-		
-		//WRITE AMOUNT
-		byte[] amountBytes = this.amount.unscaledValue().toByteArray();
-		byte[] fill = new byte[AMOUNT_LENGTH - amountBytes.length];
-		amountBytes = Bytes.concat(fill, amountBytes);
-		data = Bytes.concat(data, amountBytes);
+		//WRITE PAYMENTS
+		for(Payment payment: this.payments)
+		{
+			data = Bytes.concat(data, payment.toBytes());
+		}
 		
 		//WRITE FEE
 		byte[] feeBytes = this.fee.unscaledValue().toByteArray();
-		fill = new byte[FEE_LENGTH - feeBytes.length];
+		byte[] fill = new byte[FEE_LENGTH - feeBytes.length];
 		feeBytes = Bytes.concat(fill, feeBytes);
 		data = Bytes.concat(data, feeBytes);
 
@@ -186,7 +178,13 @@ public class TransferAssetTransaction extends Transaction {
 	@Override
 	public int getDataLength() 
 	{
-		return TYPE_LENGTH + BASE_LENGTH;
+		int paymentsLength = 0;
+		for(Payment payment: this.getPayments())
+		{
+			paymentsLength += payment.getDataLength();
+		}
+		
+		return TYPE_LENGTH + BASE_LENGTH + paymentsLength;
 	}
 	
 	//VALIDATE
@@ -196,7 +194,7 @@ public class TransferAssetTransaction extends Transaction {
 		byte[] data = new byte[0];
 		
 		//WRITE TYPE
-		byte[] typeBytes = Ints.toByteArray(TRANSFER_ASSET_TRANSACTION);
+		byte[] typeBytes = Ints.toByteArray(MULTI_PAYMENT_TRANSACTION);
 		typeBytes = Bytes.ensureCapacity(typeBytes, TYPE_LENGTH, 0);
 		data = Bytes.concat(data, typeBytes);
 		
@@ -210,24 +208,21 @@ public class TransferAssetTransaction extends Transaction {
 		
 		//WRITE SENDER
 		data = Bytes.concat(data , this.sender.getPublicKey());
+	
+		//WRITE PAYMENTS SIZE
+		int paymentsLength = this.payments.size();
+		byte[] paymentsLengthBytes = Ints.toByteArray(paymentsLength);
+		data = Bytes.concat(data, paymentsLengthBytes);
 		
-		//WRITE RECIPIENT
-		data = Bytes.concat(data, Base58.decode(this.recipient.getAddress()));
-		
-		//WRITE KEY
-		byte[] keyBytes = Longs.toByteArray(this.key);
-		keyBytes = Bytes.ensureCapacity(keyBytes, KEY_LENGTH, 0);
-		data = Bytes.concat(data, keyBytes);
-		
-		//WRITE AMOUNT
-		byte[] amountBytes = this.amount.unscaledValue().toByteArray();
-		byte[] fill = new byte[AMOUNT_LENGTH - amountBytes.length];
-		amountBytes = Bytes.concat(fill, amountBytes);
-		data = Bytes.concat(data, amountBytes);
+		//WRITE PAYMENTS
+		for(Payment payment: this.payments)
+		{
+			data = Bytes.concat(payment.toBytes());
+		}
 		
 		//WRITE FEE
 		byte[] feeBytes = this.fee.unscaledValue().toByteArray();
-		fill = new byte[FEE_LENGTH - feeBytes.length];
+		byte[] fill = new byte[FEE_LENGTH - feeBytes.length];
 		feeBytes = Bytes.concat(fill, feeBytes);
 		data = Bytes.concat(data, feeBytes);
 				
@@ -237,43 +232,56 @@ public class TransferAssetTransaction extends Transaction {
 	@Override
 	public int isValid(DBSet db) 
 	{
-		//CHECK IF RECIPIENT IS VALID ADDRESS
-		if(!Crypto.getInstance().isValidAddress(this.recipient.getAddress()))
+		//CHECK PAYMENTS SIZE
+		if(this.payments.size() < 1 || this.payments.size() > 400)
 		{
-			return INVALID_ADDRESS;
+			return INVALID_PAYMENTS_LENGTH;
 		}
 		
 		//REMOVE FEE
 		DBSet fork = db.fork();
 		this.sender.setConfirmedBalance(this.sender.getConfirmedBalance(fork).subtract(this.fee), fork);
-
-		//CHECK IF SENDER HAS ENOUGH ASSET BALANCE
-		if(this.sender.getConfirmedBalance(this.key, fork).compareTo(this.amount) == -1)
-		{
-			return NO_BALANCE;
-		}
 		
-		//CHECK IF AMOUNT IS DIVISIBLE
-		if(!db.getAssetMap().get(this.key).isDivisible())
-		{
-			//CHECK IF AMOUNT DOES NOT HAVE ANY DECIMALS
-			if(this.getAmount().stripTrailingZeros().scale() > 0)
+		//CHECK PAYMENTS
+		for(Payment payment: this.payments)
+		{	
+			//CHECK IF RECIPIENT IS VALID ADDRESS
+			if(!Crypto.getInstance().isValidAddress(payment.getRecipient().getAddress()))
 			{
-				//AMOUNT HAS DECIMALS
-				return INVALID_AMOUNT;
+				return INVALID_ADDRESS;
 			}
+			
+			//CHECK IF AMOUNT IS POSITIVE
+			if(payment.getAmount().compareTo(BigDecimal.ZERO) <= 0)
+			{
+				return NEGATIVE_AMOUNT;
+			}
+			
+			//CHECK IF SENDER HAS ENOUGH ASSET BALANCE
+			if(this.sender.getConfirmedBalance(payment.getAsset(), fork).compareTo(payment.getAmount()) == -1)
+			{
+				return NO_BALANCE;
+			}
+			
+			//CHECK IF AMOUNT IS DIVISIBLE
+			if(!db.getAssetMap().get(payment.getAsset()).isDivisible())
+			{
+				//CHECK IF AMOUNT DOES NOT HAVE ANY DECIMALS
+				if(payment.getAmount().stripTrailingZeros().scale() > 0)
+				{
+					//AMOUNT HAS DECIMALS
+					return INVALID_AMOUNT;
+				}
+			}
+			
+			//PROCESS PAYMENT IN FORK
+			payment.process(this.sender, fork);
 		}
 		
 		//CHECK IF REFERENCE IS OKE
 		if(!Arrays.equals(this.sender.getLastReference(db), this.reference))
 		{
 			return INVALID_REFERENCE;
-		}
-		
-		//CHECK IF AMOUNT IS POSITIVE
-		if(this.amount.compareTo(BigDecimal.ZERO) <= 0)
-		{
-			return NEGATIVE_AMOUNT;
 		}
 		
 		//CHECK IF FEE IS POSITIVE
@@ -292,21 +300,20 @@ public class TransferAssetTransaction extends Transaction {
 	{
 		//UPDATE SENDER
 		this.sender.setConfirmedBalance(this.sender.getConfirmedBalance(db).subtract(this.fee), db);
-		this.sender.setConfirmedBalance(this.key, this.sender.getConfirmedBalance(this.key, db).subtract(this.amount), db);
 						
-		//UPDATE RECIPIENT
-		this.recipient.setConfirmedBalance(this.key, this.recipient.getConfirmedBalance(this.key, db).add(this.amount), db);
-		
 		//UPDATE REFERENCE OF SENDER
 		this.sender.setLastReference(this.signature, db);
 		
-		//UPDATE REFERENCE OF RECIPIENT
-		if(this.key == BalanceMap.QORA_KEY)
+		//PROCESS PAYMENTS
+		for(Payment payment: this.payments)
 		{
-			if(Arrays.equals(this.recipient.getLastReference(db), new byte[0]))
+			payment.process(this.sender, db);
+			
+			//UPDATE REFERENCE OF RECIPIENT
+			if(Arrays.equals(payment.getRecipient().getLastReference(db), new byte[0]))
 			{
-				this.recipient.setLastReference(this.signature, db);
-			}
+				payment.getRecipient().setLastReference(this.signature, db);
+			}		
 		}
 	}
 
@@ -315,21 +322,20 @@ public class TransferAssetTransaction extends Transaction {
 	{
 		//UPDATE SENDER
 		this.sender.setConfirmedBalance(this.sender.getConfirmedBalance(db).add(this.fee), db);
-		this.sender.setConfirmedBalance(this.key, this.sender.getConfirmedBalance(this.key, db).add(this.amount), db);
 						
-		//UPDATE RECIPIENT
-		this.recipient.setConfirmedBalance(this.key, this.recipient.getConfirmedBalance(this.key, db).subtract(this.amount), db);
-		
 		//UPDATE REFERENCE OF SENDER
 		this.sender.setLastReference(this.reference, db);
 		
-		//UPDATE REFERENCE OF RECIPIENT
-		if(this.key == BalanceMap.QORA_KEY)
+		//ORPHAN PAYMENTS
+		for(Payment payment: this.payments)
 		{
-			if(Arrays.equals(this.recipient.getLastReference(db), this.signature))
+			payment.orphan(this.sender, db);
+								
+			//UPDATE REFERENCE OF RECIPIENT
+			if(Arrays.equals(payment.getRecipient().getLastReference(db), this.signature))
 			{
-				this.recipient.removeReference(db);
-			}	
+				payment.getRecipient().removeReference(db);
+			}
 		}
 	}
 
@@ -344,7 +350,15 @@ public class TransferAssetTransaction extends Transaction {
 	@Override
 	public List<Account> getInvolvedAccounts()
 	{
-		return Arrays.asList(this.sender, this.recipient);
+		List<Account> accounts = new ArrayList<Account>();
+		accounts.add(this.sender);
+		
+		for(Payment payment: this.payments)
+		{
+			accounts.add(payment.getRecipient());
+		}
+		
+		return accounts;
 	}
 	
 	@Override
@@ -352,9 +366,12 @@ public class TransferAssetTransaction extends Transaction {
 	{
 		String address = account.getAddress();
 		
-		if(address.equals(sender.getAddress()) || address.equals(recipient.getAddress()))
+		for(Account involved: this.getInvolvedAccounts())
 		{
-			return true;
+			if(address.equals(involved.getAddress()))
+			{
+				return true;
+			}
 		}
 		
 		return false;
@@ -372,36 +389,35 @@ public class TransferAssetTransaction extends Transaction {
 			amount = amount.subtract(this.fee);
 		}
 
-		//IF QORA ASSET
-		if(this.key == BalanceMap.QORA_KEY)
+		//CHECK PAYMENTS
+		for(Payment payment: this.payments)
 		{
-			//IF SENDER
-			if(address.equals(this.sender.getAddress()))
+			//IF QORA ASSET
+			if(payment.getAsset() == BalanceMap.QORA_KEY)
 			{
-				amount = amount.subtract(this.amount);
-			}
-			
-			//IF RECIPIENT
-			if(address.equals(this.recipient.getAddress()))
-			{
-				amount = amount.add(this.amount);
+				//IF SENDER
+				if(address.equals(this.sender.getAddress()))
+				{
+					amount = amount.subtract(payment.getAmount());
+				}
+				
+				//IF RECIPIENT
+				if(address.equals(payment.getRecipient().getAddress()))
+				{
+					amount = amount.add(payment.getAmount());
+				}
 			}
 		}
 		
 		return amount;
 	}
 	
-	public static byte[] generateSignature(PrivateKeyAccount sender, Account recipient, long key, BigDecimal amount, BigDecimal fee, long timestamp) 
-	{
-		return generateSignature(DBSet.getInstance(), sender, recipient, key, amount, fee, timestamp);
-	}
-	
-	public static byte[] generateSignature(DBSet db, PrivateKeyAccount sender, Account recipient, long key, BigDecimal amount, BigDecimal fee, long timestamp) 
+	public static byte[] generateSignature(DBSet db, PrivateKeyAccount sender, List<Payment> payments, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
 		
 		//WRITE TYPE
-		byte[] typeBytes = Ints.toByteArray(TRANSFER_ASSET_TRANSACTION);
+		byte[] typeBytes = Ints.toByteArray(MULTI_PAYMENT_TRANSACTION);
 		typeBytes = Bytes.ensureCapacity(typeBytes, TYPE_LENGTH, 0);
 		data = Bytes.concat(data, typeBytes);
 		
@@ -416,23 +432,20 @@ public class TransferAssetTransaction extends Transaction {
 		//WRITE SENDER
 		data = Bytes.concat(data , sender.getPublicKey());
 		
-		//WRITE RECIPIENT
-		data = Bytes.concat(data, Base58.decode(recipient.getAddress()));
+		//WRITE PAYMENTS SIZE
+		int paymentsLength = payments.size();
+		byte[] paymentsLengthBytes = Ints.toByteArray(paymentsLength);
+		data = Bytes.concat(data, paymentsLengthBytes);
 		
-		//WRITE KEY
-		byte[] keyBytes = Longs.toByteArray(key);
-		keyBytes = Bytes.ensureCapacity(keyBytes, KEY_LENGTH, 0);
-		data = Bytes.concat(data, keyBytes);
-		
-		//WRITE AMOUNT
-		byte[] amountBytes = amount.unscaledValue().toByteArray();
-		byte[] fill = new byte[AMOUNT_LENGTH - amountBytes.length];
-		amountBytes = Bytes.concat(fill, amountBytes);
-		data = Bytes.concat(data, amountBytes);
+		//WRITE PAYMENTS
+		for(Payment payment: payments)
+		{
+			data = Bytes.concat(payment.toBytes());
+		}
 		
 		//WRITE FEE
 		byte[] feeBytes = fee.unscaledValue().toByteArray();
-		fill = new byte[FEE_LENGTH - feeBytes.length];
+		byte[] fill = new byte[FEE_LENGTH - feeBytes.length];
 		feeBytes = Bytes.concat(fill, feeBytes);
 		data = Bytes.concat(data, feeBytes);
 		

@@ -3,8 +3,10 @@ package test;
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import ntp.NTP;
 
@@ -14,16 +16,21 @@ import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
+import qora.block.GenesisBlock;
 import qora.crypto.Crypto;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
+import qora.payment.Payment;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.BuyNameTransaction;
+import qora.transaction.CancelOrderTransaction;
 import qora.transaction.CancelSellNameTransaction;
+import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.IssueAssetTransaction;
+import qora.transaction.MultiPaymentTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
@@ -3214,6 +3221,10 @@ public class TransactionTests {
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+		
+		//ADD QORA ASSET
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+    	databaseSet.getAssetMap().set(0l, qoraAsset);
 						
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
@@ -3237,7 +3248,7 @@ public class TransactionTests {
 		
 		//CREATE VALID ASSET TRANSFER
 		sender.setConfirmedBalance(1, BigDecimal.valueOf(100).setScale(8), databaseSet);
-		assetTransfer = new TransferAssetTransaction(sender, recipient, 1, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
+		assetTransfer = new TransferAssetTransaction(sender, recipient, 0, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 
 		//CHECK IF ASSET TRANSFER IS VALID
 		assertEquals(Transaction.VALIDATE_OKE, assetTransfer.isValid(databaseSet));			
@@ -3435,5 +3446,574 @@ public class TransactionTests {
 		assertEquals(false, Arrays.equals(assetTransfer.getSignature(), recipient.getLastReference(databaseSet)));
 	}
 
+	//CANCEL ORDER
 	
+	@Test
+	public void validateSignatureCancelOrderTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = CancelOrderTransaction.generateSignature(databaseSet, sender, BigInteger.TEN, BigDecimal.ONE.setScale(8), timestamp);
+		
+		//CREATE ORDER CANCEL
+		Transaction cancelOrderTransaction = new CancelOrderTransaction(sender, BigInteger.TEN, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
+		
+		//CHECK IF ORDER CANCEL IS VALID
+		assertEquals(true, cancelOrderTransaction.isSignatureValid());
+		
+		//INVALID SIGNATURE
+		cancelOrderTransaction = new CancelOrderTransaction(sender, BigInteger.TEN, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), new byte[64]);
+		
+		//CHECK IF ORDER CANCEL
+		assertEquals(false, cancelOrderTransaction.isSignatureValid());
+	}
+	
+	@Test
+	public void validateCancelOrderTransaction() 
+	{
+		Ed25519.load();
+		DBSet dbSet = DBSet.createEmptyDatabaseSet();
+		
+		//CREATE ASSET A
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount account = new PrivateKeyAccount(privateKey);
+		
+		Transaction transaction = new GenesisTransaction(account, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(dbSet);
+		
+		//CREATE ASSET
+		Asset asset = new Asset(account, "a", "a", 50000l, true);
+		
+		//CREATE ISSUE ASSET TRANSACTION
+		Transaction issueAssetTransaction = new IssueAssetTransaction(account, asset, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[64]);
+		issueAssetTransaction.process(dbSet);
+		
+		//CREATE ORDER
+		CreateOrderTransaction createOrderTransaction = new CreateOrderTransaction(account, 1l, 0l, BigDecimal.valueOf(1000).setScale(8), BigDecimal.valueOf(0.1).setScale(8), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{5,6});
+		createOrderTransaction.process(dbSet);
+		
+		//CREATE CANCEL ORDER
+		CancelOrderTransaction cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,6}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});		
+
+		//CHECK IF CANCEL ORDER IS VALID
+		assertEquals(Transaction.VALIDATE_OKE, cancelOrderTransaction.isValid(dbSet));
+		
+		//CREATE INVALID CANCEL ORDER ORDER DOES NOT EXIST
+		cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,7}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});		
+		
+		//CHECK IF CANCEL ORDER IS INVALID
+		assertEquals(Transaction.ORDER_DOES_NOT_EXIST, cancelOrderTransaction.isValid(dbSet));
+		
+		//CREATE INVALID CANCEL ORDER INCORRECT CREATOR
+		seed = Crypto.getInstance().digest("invalid".getBytes());
+		privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount invalidCreator = new PrivateKeyAccount(privateKey);
+		cancelOrderTransaction = new CancelOrderTransaction(invalidCreator, new BigInteger(new byte[]{5,6}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});		
+		
+		//CHECK IF CANCEL ORDER IS INVALID
+		assertEquals(Transaction.INVALID_ORDER_CREATOR, cancelOrderTransaction.isValid(dbSet));
+				
+		//CREATE INVALID CANCEL ORDER NO BALANCE
+		DBSet fork = dbSet.fork();
+		cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,6}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});		
+		account.setConfirmedBalance(BigDecimal.ZERO, fork);		
+		
+		//CHECK IF CANCEL ORDER IS INVALID
+		assertEquals(Transaction.NO_BALANCE, cancelOrderTransaction.isValid(fork));
+				
+		//CREATE CANCEL ORDER INVALID REFERENCE
+		cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,6}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), new byte[64], new byte[]{1,2});		
+				
+		//CHECK IF NAME REGISTRATION IS INVALID
+		assertEquals(Transaction.INVALID_REFERENCE, cancelOrderTransaction.isValid(dbSet));
+		
+		//CREATE NAME REGISTRATION INVALID FEE
+		cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,6}), BigDecimal.ZERO.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});		
+				
+		//CHECK IF NAME REGISTRATION IS INVALID
+		assertEquals(Transaction.NEGATIVE_FEE, cancelOrderTransaction.isValid(dbSet));
+	}
+
+	@Test
+	public void parseCancelOrderTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
+						
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+				
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(databaseSet);
+		
+		//CREATE SIGNATURE
+		long timestamp = NTP.getTime();
+		byte[] signature = CancelOrderTransaction.generateSignature(databaseSet, sender, BigInteger.TEN, BigDecimal.valueOf(1).setScale(8), timestamp);
+				
+		//CREATE CANCEL ORDER
+		CancelOrderTransaction cancelOrderTransaction = new CancelOrderTransaction(sender, BigInteger.TEN, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
+		
+		//CONVERT TO BYTES
+		byte[] rawCancelOrder = cancelOrderTransaction.toBytes();
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			CancelOrderTransaction parsedCancelOrder = (CancelOrderTransaction) TransactionFactory.getInstance().parse(rawCancelOrder);
+			
+			//CHECK INSTANCE
+			assertEquals(true, parsedCancelOrder instanceof CancelOrderTransaction);
+			
+			//CHECK SIGNATURE
+			assertEquals(true, Arrays.equals(cancelOrderTransaction.getSignature(), parsedCancelOrder.getSignature()));
+			
+			//CHECK AMOUNT CREATOR
+			assertEquals(cancelOrderTransaction.getAmount(sender), parsedCancelOrder.getAmount(sender));	
+			
+			//CHECK OWNER
+			assertEquals(cancelOrderTransaction.getCreator().getAddress(), parsedCancelOrder.getCreator().getAddress());	
+			
+			//CHECK ORDER
+			assertEquals(0, cancelOrderTransaction.getOrder().compareTo(parsedCancelOrder.getOrder()));	
+			
+			//CHECK FEE
+			assertEquals(cancelOrderTransaction.getFee(), parsedCancelOrder.getFee());	
+			
+			//CHECK REFERENCE
+			assertEquals(true, Arrays.equals(cancelOrderTransaction.getReference(), parsedCancelOrder.getReference()));	
+			
+			//CHECK TIMESTAMP
+			assertEquals(cancelOrderTransaction.getTimestamp(), parsedCancelOrder.getTimestamp());				
+		}
+		catch (Exception e) 
+		{
+			fail("Exception while parsing transaction.");
+		}
+		
+		//PARSE TRANSACTION FROM WRONG BYTES
+		rawCancelOrder = new byte[cancelOrderTransaction.getDataLength()];
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			TransactionFactory.getInstance().parse(rawCancelOrder);
+			
+			//FAIL
+			fail("this should throw an exception");
+		}
+		catch (Exception e) 
+		{
+			//EXCEPTION IS THROWN OKE
+		}	
+	}
+	
+	@Test
+	public void processCancelOrderTransaction()
+	{
+		Ed25519.load();
+		DBSet dbSet = DBSet.createEmptyDatabaseSet();
+		
+		//CREATE ASSET A
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount account = new PrivateKeyAccount(privateKey);
+		
+		Transaction transaction = new GenesisTransaction(account, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(dbSet);
+		
+		//CREATE ASSET
+		Asset asset = new Asset(account, "a", "a", 50000l, true);
+		
+		//CREATE ISSUE ASSET TRANSACTION
+		Transaction issueAssetTransaction = new IssueAssetTransaction(account, asset, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[64]);
+		issueAssetTransaction.process(dbSet);
+		
+		//CREATE ORDER
+		CreateOrderTransaction createOrderTransaction = new CreateOrderTransaction(account, 1l, 0l, BigDecimal.valueOf(1000).setScale(8), BigDecimal.valueOf(0.1).setScale(8), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{5,6});
+		createOrderTransaction.process(dbSet);
+		
+		//CREATE CANCEL ORDER
+		CancelOrderTransaction cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,6}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});
+		cancelOrderTransaction.process(dbSet);
+		
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(997).setScale(8), account.getConfirmedBalance(dbSet));
+						
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(cancelOrderTransaction.getSignature(), account.getLastReference(dbSet)));
+				
+		//CHECK ORDER EXISTS
+		assertEquals(false, dbSet.getOrderMap().contains(new BigInteger(new byte[]{5,6})));
+	}
+
+	@Test
+	public void orphanCancelOrderTransaction()
+	{
+		Ed25519.load();
+		DBSet dbSet = DBSet.createEmptyDatabaseSet();
+		
+		//CREATE ASSET A
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount account = new PrivateKeyAccount(privateKey);
+		
+		Transaction transaction = new GenesisTransaction(account, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(dbSet);
+		
+		//CREATE ASSET
+		Asset asset = new Asset(account, "a", "a", 50000l, true);
+		
+		//CREATE ISSUE ASSET TRANSACTION
+		Transaction issueAssetTransaction = new IssueAssetTransaction(account, asset, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[64]);
+		issueAssetTransaction.process(dbSet);
+		
+		//CREATE ORDER
+		CreateOrderTransaction createOrderTransaction = new CreateOrderTransaction(account, 1l, 0l, BigDecimal.valueOf(1000).setScale(8), BigDecimal.valueOf(0.1).setScale(8), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{5,6});
+		createOrderTransaction.process(dbSet);
+		
+		//CREATE CANCEL ORDER
+		CancelOrderTransaction cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,6}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});
+		cancelOrderTransaction.process(dbSet);
+		cancelOrderTransaction.orphan(dbSet);
+		
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(998).setScale(8), account.getConfirmedBalance(dbSet));
+						
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(createOrderTransaction.getSignature(), account.getLastReference(dbSet)));
+				
+		//CHECK ORDER EXISTS
+		assertEquals(true, dbSet.getOrderMap().contains(new BigInteger(new byte[]{5,6})));
+	}
+	
+	//MULTI PAYMENT
+	
+	@Test
+	public void validateSignatureMultiPaymentTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet dbSet = DBSet.createEmptyDatabaseSet();
+		
+		//ADD QORA ASSET
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+    	dbSet.getAssetMap().set(0l, qoraAsset);
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(dbSet);
+		
+		//CREATE SIGNATURE
+		List<Payment> payments = new ArrayList<Payment>();
+		payments.add(new Payment(new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG"), 0l, BigDecimal.ZERO));
+		payments.add(new Payment(new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB"), 0l, BigDecimal.ZERO));
+		long timestamp = NTP.getTime();
+		byte[] signature = MultiPaymentTransaction.generateSignature(dbSet, sender, payments, BigDecimal.valueOf(1).setScale(8), timestamp);
+		
+		//CREATE MULTI PAYMENT
+		Transaction multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+		
+		//CHECK IF MULTI PAYMENT SIGNATURE IS VALID
+		assertEquals(true, multiPayment.isSignatureValid());
+		
+		//INVALID SIGNATURE
+		multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(dbSet), new byte[0]);
+		
+		//CHECK IF MULTI PAYMENT SIGNATURE IS INVALID
+		assertEquals(false, multiPayment.isSignatureValid());
+	}
+	
+	@Test
+	public void validateMultiPaymentTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet dbSet = DBSet.createEmptyDatabaseSet();
+		
+		//ADD QORA ASSET
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+    	dbSet.getAssetMap().set(0l, qoraAsset);
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(dbSet);
+		
+		//CREATE SIGNATURE
+		List<Payment> payments = new ArrayList<Payment>();
+		payments.add(new Payment(new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG"), 0l, BigDecimal.valueOf(100).setScale(8)));
+		payments.add(new Payment(new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB"), 0l, BigDecimal.valueOf(100).setScale(8)));
+		long timestamp = NTP.getTime();
+		byte[] signature = MultiPaymentTransaction.generateSignature(dbSet, sender, payments, BigDecimal.valueOf(1).setScale(8), timestamp);
+		
+		//CREATE VALID MULTI PAYMENT
+		Transaction multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+		
+		//CHECK IF ASSET TRANSFER IS VALID
+		assertEquals(Transaction.VALIDATE_OKE, multiPayment.isValid(dbSet));			
+		
+		//CREATE INVALID MULTI PAYMENT INVALID RECIPIENT ADDRESS
+		Payment invalidRecipientPayment = new Payment(new Account("test"), 0l, BigDecimal.ONE.setScale(8));
+		payments.add(invalidRecipientPayment);
+		multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+		
+		//CHECK IF MULTI PAYMENT IS INVALID
+		assertEquals(Transaction.INVALID_ADDRESS, multiPayment.isValid(dbSet));
+		payments.remove(invalidRecipientPayment);
+		
+		//CREATE INVALID MULTI PAYMENT NEGATIVE AMOUNT
+		Payment invalidAmountPayment = new Payment(new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB"), 0l, BigDecimal.ZERO.setScale(8));
+		payments.add(invalidAmountPayment);
+		multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+		
+		//CHECK IF MULTI PAYMENT IS INVALID
+		assertEquals(Transaction.NEGATIVE_AMOUNT, multiPayment.isValid(dbSet));
+		payments.remove(invalidAmountPayment);
+		
+		//CREATE INVALID MULTI PAYMENT NOT ENOUGH ASSET BALANCE
+		Payment noBalancePayment = new Payment(new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB"), 0l, BigDecimal.valueOf(800).setScale(8));
+		payments.add(noBalancePayment);
+		multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+		
+		//CHECK IF MULTI PAYMENT IS INVALID
+		assertEquals(Transaction.NO_BALANCE, multiPayment.isValid(dbSet));	
+		payments.remove(noBalancePayment);
+				
+		//CREATE INVALID MULTI PAYMENT NEGATIVE FEE
+		multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ZERO.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+				
+		//CHECK IF MULTI PAYMENT IS INVALID
+		assertEquals(Transaction.NEGATIVE_FEE, multiPayment.isValid(dbSet));	
+		
+		//CREATE INVALID MULTI PAYMENT WRONG REFERENCE
+		multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, new byte[0], signature);
+						
+		//CHECK IF MULTI PAYMENT IS INVALID
+		assertEquals(Transaction.INVALID_REFERENCE, multiPayment.isValid(dbSet));
+	}
+	
+	@Test
+	public void parseMultiPaymentTransaction() 
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet dbSet = DBSet.createEmptyDatabaseSet();
+		
+		//ADD QORA ASSET
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+    	dbSet.getAssetMap().set(0l, qoraAsset);
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(dbSet);
+		
+		//CREATE SIGNATURE
+		List<Payment> payments = new ArrayList<Payment>();
+		payments.add(new Payment(new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG"), 0l, BigDecimal.valueOf(100).setScale(8)));
+		payments.add(new Payment(new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB"), 0l, BigDecimal.valueOf(100).setScale(8)));
+		long timestamp = NTP.getTime();
+		byte[] signature = MultiPaymentTransaction.generateSignature(dbSet, sender, payments, BigDecimal.valueOf(1).setScale(8), timestamp);
+		
+		//CREATE VALID MULTI PAYMENT
+		MultiPaymentTransaction multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+		
+		//CONVERT TO BYTES
+		byte[] rawMultiPayment = multiPayment.toBytes();
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			MultiPaymentTransaction parsedMultiPayment = (MultiPaymentTransaction) TransactionFactory.getInstance().parse(rawMultiPayment);
+			
+			//CHECK INSTANCE
+			assertEquals(true, parsedMultiPayment instanceof MultiPaymentTransaction);
+			
+			//CHECK DATA LENGTH
+			assertEquals(rawMultiPayment.length, multiPayment.getDataLength());
+			
+			//CHECK SIGNATURE
+			assertEquals(true, Arrays.equals(multiPayment.getSignature(), parsedMultiPayment.getSignature()));
+			
+			//CHECK PAYMENTS LENGTH
+			assertEquals(multiPayment.getPayments().size(), parsedMultiPayment.getPayments().size());
+			
+			//CHECK PAYMENTS
+			for(int i=0; i<multiPayment.getPayments().size(); i++)
+			{
+				Payment payment = multiPayment.getPayments().get(i);
+				Payment parsedPayment = parsedMultiPayment.getPayments().get(i);
+				
+				//CHECK RECIPIENT
+				assertEquals(payment.getRecipient().getAddress(), parsedPayment.getRecipient().getAddress());	
+				
+				//CHECK KEY
+				assertEquals(payment.getAsset(), parsedPayment.getAsset());	
+				
+				//CHECK AMOUNT
+				assertEquals(payment.getAmount(), parsedPayment.getAmount());	
+			}
+			
+			//CHECK FEE
+			assertEquals(multiPayment.getFee(), parsedMultiPayment.getFee());	
+			
+			//CHECK REFERENCE
+			assertEquals(true, Arrays.equals(multiPayment.getReference(), parsedMultiPayment.getReference()));	
+			
+			//CHECK TIMESTAMP
+			assertEquals(multiPayment.getTimestamp(), parsedMultiPayment.getTimestamp());				
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			fail("Exception while parsing transaction.");
+		}
+		
+		//PARSE TRANSACTION FROM WRONG BYTES
+		rawMultiPayment = new byte[multiPayment.getDataLength()];
+		
+		try 
+		{	
+			//PARSE FROM BYTES
+			TransactionFactory.getInstance().parse(rawMultiPayment);
+			
+			//FAIL
+			fail("this should throw an exception");
+		}
+		catch (Exception e) 
+		{
+			//EXCEPTION IS THROWN OKE
+		}	
+	}
+	
+	@Test
+	public void processMultiPaymentTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet dbSet = DBSet.createEmptyDatabaseSet();
+		
+		//ADD QORA ASSET
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+    	dbSet.getAssetMap().set(0l, qoraAsset);
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(dbSet);
+		
+		//CREATE SIGNATURE
+		List<Payment> payments = new ArrayList<Payment>();
+		payments.add(new Payment(new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG"), 0l, BigDecimal.valueOf(100).setScale(8)));
+		payments.add(new Payment(new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB"), 0l, BigDecimal.valueOf(150).setScale(8)));
+		long timestamp = NTP.getTime();
+		byte[] signature = MultiPaymentTransaction.generateSignature(dbSet, sender, payments, BigDecimal.valueOf(1).setScale(8), timestamp);
+		
+		//CREATE VALID MULTI PAYMENT
+		MultiPaymentTransaction multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+		multiPayment.process(dbSet);
+		
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(749).setScale(8), sender.getConfirmedBalance(dbSet));
+				
+		//CHECK BALANCE RECIPIENTS
+		assertEquals(BigDecimal.valueOf(100).setScale(8), new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG").getConfirmedBalance(dbSet));
+		assertEquals(BigDecimal.valueOf(150).setScale(8), new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB").getConfirmedBalance(dbSet));
+		
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(multiPayment.getSignature(), sender.getLastReference(dbSet)));
+		
+		//CHECK REFERENCE RECIPIENTS
+		assertEquals(true, Arrays.equals(multiPayment.getSignature(), new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG").getLastReference(dbSet)));
+		assertEquals(true, Arrays.equals(multiPayment.getSignature(), new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB").getLastReference(dbSet)));
+	}
+	
+	@Test
+	public void orphanMultiPaymentTransaction()
+	{
+		Ed25519.load();
+		
+		//CREATE EMPTY MEMORY DATABASE
+		DBSet dbSet = DBSet.createEmptyDatabaseSet();
+		
+		//ADD QORA ASSET
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+    	dbSet.getAssetMap().set(0l, qoraAsset);
+				
+		//CREATE KNOWN ACCOUNT
+		byte[] seed = Crypto.getInstance().digest("test".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		PrivateKeyAccount sender = new PrivateKeyAccount(privateKey);
+		
+		//PROCESS GENESIS TRANSACTION TO MAKE SURE SENDER HAS FUNDS
+		Transaction transaction = new GenesisTransaction(sender, BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
+		transaction.process(dbSet);
+		
+		//CREATE SIGNATURE
+		List<Payment> payments = new ArrayList<Payment>();
+		payments.add(new Payment(new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG"), 0l, BigDecimal.valueOf(100).setScale(8)));
+		payments.add(new Payment(new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB"), 0l, BigDecimal.valueOf(150).setScale(8)));
+		long timestamp = NTP.getTime();
+		byte[] signature = MultiPaymentTransaction.generateSignature(dbSet, sender, payments, BigDecimal.valueOf(1).setScale(8), timestamp);
+		
+		//CREATE VALID MULTI PAYMENT
+		MultiPaymentTransaction multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
+		multiPayment.process(dbSet);
+		multiPayment.orphan(dbSet);
+		
+		//CHECK BALANCE SENDER
+		assertEquals(BigDecimal.valueOf(1000).setScale(8), sender.getConfirmedBalance(dbSet));
+				
+		//CHECK BALANCE RECIPIENTS
+		assertEquals(BigDecimal.valueOf(0).setScale(8), new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG").getConfirmedBalance(dbSet));
+		assertEquals(BigDecimal.valueOf(0).setScale(8), new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB").getConfirmedBalance(dbSet));
+		
+		//CHECK REFERENCE SENDER
+		assertEquals(true, Arrays.equals(transaction.getSignature(), sender.getLastReference(dbSet)));
+		
+		//CHECK REFERENCE RECIPIENTS
+		assertEquals(false, Arrays.equals(multiPayment.getSignature(), new Account("Qc454HfRSVbrdLmhD1d9nmmMe45NbQmRnG").getLastReference(dbSet)));
+		assertEquals(false, Arrays.equals(multiPayment.getSignature(), new Account("QXNz5kBknsgNYtRKit4jCDNVm7YYoXLZdB").getLastReference(dbSet)));
+	}
 }

@@ -48,6 +48,12 @@ public abstract class Transaction {
 	public static final int INVALID_DATA_LENGTH = 27;
 	
 	public static final int INVALID_QUANTITY = 28;
+	public static final int ASSET_DOES_NOT_EXIST = 29;
+	public static final int INVALID_RETURN = 30;
+	public static final int HAVE_EQUALS_WANT = 31;
+	public static final int ORDER_DOES_NOT_EXIST = 32;
+	public static final int INVALID_ORDER_CREATOR = 33;
+	public static final int INVALID_PAYMENTS_LENGTH = 34;
 	
 	public static final int NOT_YET_RELEASED = 1000;
 	
@@ -68,6 +74,9 @@ public abstract class Transaction {
 	
 	public static final int ISSUE_ASSET_TRANSACTION = 11;
 	public static final int TRANSFER_ASSET_TRANSACTION = 12;
+	public static final int CREATE_ORDER_TRANSACTION = 13;
+	public static final int CANCEL_ORDER_TRANSACTION = 14;
+	public static final int MULTI_PAYMENT_TRANSACTION = 15;
 	
 	//MINIMUM FEE
 	public static final BigDecimal MINIMUM_FEE = BigDecimal.ONE;

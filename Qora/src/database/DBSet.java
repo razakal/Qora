@@ -33,6 +33,10 @@ public class DBSet implements Observer, IDB {
 	private VoteOnPollMap voteOnPollMap;
 	private AssetMap assetMap;
 	private IssueAssetMap issueAssetMap;
+	private OrderMap orderMap;
+	private CompletedOrderMap completedOrderMap;
+	private TradeMap tradeMap;
+	private CancelOrderMap cancelOrderMap;
 	
 	private DB database;
 	private int actions;
@@ -94,6 +98,10 @@ public class DBSet implements Observer, IDB {
 		this.voteOnPollMap = new VoteOnPollMap(this, database);
 		this.assetMap = new AssetMap(this, database);
 		this.issueAssetMap = new IssueAssetMap(this, database);
+		this.orderMap = new OrderMap(this, database);
+		this.completedOrderMap = new CompletedOrderMap(this, database);
+		this.tradeMap = new TradeMap(this, database);
+		this.cancelOrderMap = new CancelOrderMap(this, database);
 	}
 	
 	protected DBSet(DBSet parent)
@@ -114,6 +122,10 @@ public class DBSet implements Observer, IDB {
 		this.voteOnPollMap = new VoteOnPollMap(parent.voteOnPollMap);
 		this.assetMap = new AssetMap(parent.assetMap);
 		this.issueAssetMap = new IssueAssetMap(parent.issueAssetMap);
+		this.orderMap = new OrderMap(parent.orderMap);
+		this.completedOrderMap = new CompletedOrderMap(parent.completedOrderMap);
+		this.tradeMap = new TradeMap(parent.tradeMap);
+		this.cancelOrderMap = new CancelOrderMap(parent.cancelOrderMap);
 	}
 	
 	public BalanceMap getBalanceMap() 
@@ -194,6 +206,26 @@ public class DBSet implements Observer, IDB {
 	public IssueAssetMap getIssueAssetMap()
 	{
 		return this.issueAssetMap;
+	}
+	
+	public OrderMap getOrderMap()
+	{
+		return this.orderMap;
+	}
+	
+	public CompletedOrderMap getCompletedOrderMap()
+	{
+		return this.completedOrderMap;
+	}
+	
+	public TradeMap getTradeMap()
+	{
+		return this.tradeMap;
+	}
+	
+	public CancelOrderMap getCancelOrderMap()
+	{
+		return this.cancelOrderMap;
 	}
 	
 	public DBSet fork()

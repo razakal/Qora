@@ -90,7 +90,22 @@ public class TransactionFactory {
 			
 			//PARSE TRANSFER ASSET TRANSACTION
 			return TransferAssetTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));	
-		}
+		
+		case Transaction.CREATE_ORDER_TRANSACTION:
+			
+			//PARSE ORDER CREATION TRANSACTION
+			return CreateOrderTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));	
+			
+		case Transaction.CANCEL_ORDER_TRANSACTION:
+			
+			//PARSE ORDER CANCEL
+			return CancelOrderTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));	
+			
+		case Transaction.MULTI_PAYMENT_TRANSACTION:
+			
+			//PARSE MULTI PAYMENT
+			return MultiPaymentTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));		
+		}	
 		
 		throw new Exception("Invalid transaction type");
 	}
