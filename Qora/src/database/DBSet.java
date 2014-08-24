@@ -50,16 +50,14 @@ public class DBSet implements Observer, IDB {
 			dbFile.getParentFile().mkdirs();
 			
 			//DELETE TRANSACTIONS
-			File transactionFile = new File(Settings.getInstance().getDataDir(), "data.dat.t");
-			transactionFile.delete();	
+			//File transactionFile = new File(Settings.getInstance().getDataDir(), "data.dat.t");
+			//transactionFile.delete();	
 			
 			//CREATE DATABASE	
 			DB database = DBMaker.newFileDB(dbFile)
 					.closeOnJvmShutdown()
 					.cacheSize(2048)
-					//.asyncWriteEnable()
-					//.transactionDisable()
-					//.cacheDisable()
+					.checksumEnable()
 					.make();
 			
 			//CREATE INSTANCE

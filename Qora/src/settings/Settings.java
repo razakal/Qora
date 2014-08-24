@@ -173,7 +173,11 @@ public class Settings {
 				JSONArray allowedArray = (JSONArray) this.settingsJSON.get("rpcallowed");
 				
 				//CREATE LIST WITH PEERS
-				String[] allowed = (String[]) allowedArray.toArray();
+				String[] allowed = new String[allowedArray.size()];
+				for(int i=0; i<allowedArray.size(); i++)
+				{
+					allowed[i] = (String) allowedArray.get(i);
+				}
 				
 				//RETURN
 				return allowed;	

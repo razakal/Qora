@@ -21,6 +21,7 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 	private Iterator<T> iterator;
 	private Pattern pattern;
 	private int size;
+	private Pair<T, U> lastValue;
 	
 	public SortableList(DBMap<T, U> db)
 	{
@@ -48,6 +49,12 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 	@Override
 	public Pair<T, U> get(int i) {
 		
+		//CHECK IF LAST VALUE
+		if(this.position-1 == i && this.lastValue != null)
+		{
+			return this.lastValue;
+		}
+		
 		if(i < this.position)
 		{
 			//RESET ITERATOR
@@ -63,10 +70,11 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		}
 		
 		//RETURN
-		T key = iterator.next();
+		T key = this.iterator.next();
+		U value = this.db.get(key);
 		this.position++;
-		U value = db.get(key);
-		return new Pair<T, U>(key, value);
+		this.lastValue = new Pair<T, U>(key, value);
+		return this.lastValue;
 		
 	}
 
@@ -87,6 +95,7 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		this.size = db.size();
 		this.iterator = this.filter(this.db.getIterator(index, descending));
 		this.position = 0;
+		this.lastValue = null;
 	}
 
 	@Override

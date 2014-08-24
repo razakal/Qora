@@ -36,12 +36,13 @@ public class WalletDatabase implements IDB
 		WALLET_FILE.getParentFile().mkdirs();
 		
 		//DELETE TRANSACTIONS
-		File transactionFile = new File(Settings.getInstance().getWalletDir(), "wallet.dat.t");
-		transactionFile.delete();	
+		//File transactionFile = new File(Settings.getInstance().getWalletDir(), "wallet.dat.t");
+		//transactionFile.delete();	
 		
 	    this.database = DBMaker.newFileDB(WALLET_FILE)
 	    		.closeOnJvmShutdown()
 	    		.cacheSize(2048)
+	    		.checksumEnable()
 	            .make();
 	    
 	    this.accountMap = new AccountMap(this, this.database);

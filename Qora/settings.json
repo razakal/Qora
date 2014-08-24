@@ -9,5 +9,9 @@
 		"113.250.226.131"
 	],
 	"minconnections": 10,
-	"generatorkeycaching": true
+	"generatorkeycaching": true,
+	"rpcallowed":[
+		"127.0.0.1",
+		"123.123.123.123"
+	]
 }

@@ -31,12 +31,14 @@ public class SecureWalletDatabase
 		SECURE_WALLET_FILE.getParentFile().mkdirs();
 				
 		//DELETE TRANSACTIONS
-		File transactionFile = new File(Settings.getInstance().getWalletDir(), "wallet.s.dat.t");
-		transactionFile.delete();	
+		//File transactionFile = new File(Settings.getInstance().getWalletDir(), "wallet.s.dat.t");
+		//transactionFile.delete();	
 		
 		this.database = DBMaker.newFileDB(SECURE_WALLET_FILE)
 						.encryptionEnable(password)
 			    		.closeOnJvmShutdown()
+			    		.cacheSize(2048)
+			    		.checksumEnable()
 			            .make();
 			    
 		this.accountSeedMap = new AccountSeedMap(this, this.database);
