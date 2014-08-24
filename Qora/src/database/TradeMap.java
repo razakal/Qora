@@ -89,7 +89,7 @@ public class TradeMap extends DBMap<Tuple2<BigInteger, BigInteger>, Trade>
 		//FILTER ALL KEYS
 		Collection<Tuple2> keys = ((BTreeMap<Tuple2, Order>) uncastedMap).subMap(
 				Fun.t2(order.getId(), null),
-				Fun.t2(order.getId(), Fun.HI)).keySet();
+				Fun.t2(order.getId(), Fun.HI())).keySet();
 		
 		//IF THIS IS A FORK
 		if(this.parent != null)

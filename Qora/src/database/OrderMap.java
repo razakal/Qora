@@ -105,7 +105,7 @@ public class OrderMap extends DBMap<BigInteger, Order>
 		//FILTER ALL KEYS
 		Collection<BigInteger> keys = ((BTreeMap<Tuple4, BigInteger>) this.haveWantKeyMap).subMap(
 				Fun.t4(have, want, null, null),
-				Fun.t4(have, want, Fun.HI, Fun.HI)).values();
+				Fun.t4(have, want, Fun.HI(), Fun.HI())).values();
 		
 		//IF THIS IS A FORK
 		if(this.parent != null)
