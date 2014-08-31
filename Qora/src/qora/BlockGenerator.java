@@ -95,7 +95,9 @@ public class BlockGenerator extends Thread
 			}
 			
 			//CHECK IF WE HAVE CONNECTIONS
-			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			//if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			//TODO REMOVE
+			if(true)
 			{
 				//GET LAST BLOCK
 				byte[] lastBlockSignature = DBSet.getInstance().getBlockMap().getLastBlockSignature();

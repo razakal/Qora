@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.Map;
 import java.util.TreeMap;
 
+import gui.assets.AssetsPanel;
 import gui.models.WalletBlocksTableModel;
 import gui.models.WalletTransactionsTableModel;
 import gui.naming.NamingServicePanel;
@@ -92,6 +93,9 @@ public class GeneralTabPane extends JTabbedPane{
         
         //VOTING
         this.addTab("Voting", new VotingPanel());       
+        
+        //ASSETS
+        this.addTab("Assets", new AssetsPanel());
 	}
 	
 }

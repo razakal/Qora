@@ -24,6 +24,7 @@ public class WalletDatabase implements IDB
 	private NameMap nameMap;
 	private NameSaleMap nameSaleMap;
 	private PollMap pollMap;
+	private AssetMap assetMap;
 	
 	public static boolean exists()
 	{
@@ -51,6 +52,7 @@ public class WalletDatabase implements IDB
 	    this.nameMap = new NameMap(this, this.database);
 	    this.nameSaleMap = new NameSaleMap(this, this.database);
 	    this.pollMap = new PollMap(this, this.database);
+	    this.assetMap = new AssetMap(this, this.database);
 	}
 	
 	public void setVersion(int version)
@@ -105,6 +107,11 @@ public class WalletDatabase implements IDB
 		return this.pollMap;
 	}
 	
+	public AssetMap getAssetMap()
+	{
+		return this.assetMap;
+	}
+	
 	public void delete(Account account)
 	{
 		this.accountMap.delete(account);
@@ -113,6 +120,7 @@ public class WalletDatabase implements IDB
 		this.nameMap.delete(account);
 		this.nameSaleMap.delete(account);
 		this.pollMap.delete(account);
+		this.assetMap.delete(account);
 	}
 	
 	public void commit()

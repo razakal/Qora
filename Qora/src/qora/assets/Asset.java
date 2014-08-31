@@ -7,6 +7,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
+import database.DBSet;
 import qora.account.Account;
 import qora.crypto.Base58;
 
@@ -17,20 +18,23 @@ public class Asset {
 	private static final int DESCRIPTION_SIZE_LENGTH = 4;
 	private static final int QUANTITY_LENGTH = 8;
 	private static final int DIVISIBLE_LENGTH = 1;
+	private static final int REFERENCE_LENGTH = 64;
 	
 	private Account owner;
 	private String name;
 	private String description;
 	private long quantity;
 	private boolean divisible;
+	private byte[] reference;
 	
-	public Asset(Account owner, String name, String description, long quantity, boolean divisible)
+	public Asset(Account owner, String name, String description, long quantity, boolean divisible, byte[] reference)
 	{
 		this.owner = owner;
 		this.name = name;
 		this.description = description;
 		this.quantity = quantity;
 		this.divisible = divisible;
+		this.reference = reference;
 	}
 	
 	//GETTERS/SETTERS
@@ -53,6 +57,18 @@ public class Asset {
 	
 	public boolean isDivisible() {
 		return this.divisible;
+	}
+	
+	public byte[] getReference() {
+		return this.reference;
+	}
+	
+	public long getKey() {
+		return DBSet.getInstance().getIssueAssetMap().get(this.reference);
+	}
+	
+	public boolean isConfirmed() {
+		return DBSet.getInstance().getIssueAssetMap().contains(this.reference);
 	}
 	
 	//PARSE
@@ -102,9 +118,13 @@ public class Asset {
 		//READ DIVISABLE
 		byte[] divisibleBytes = Arrays.copyOfRange(data, position, position + DIVISIBLE_LENGTH);
 		boolean divisable = divisibleBytes[0] == 1;
+		position += DIVISIBLE_LENGTH;
+		
+		//READ REFERENCE
+		byte[] reference = Arrays.copyOfRange(data, position, position + REFERENCE_LENGTH);
 		
 		//RETURN
-		return new Asset(owner, name, description, quantity, divisable);
+		return new Asset(owner, name, description, quantity, divisable, reference);
 	}
 	
 	/*@SuppressWarnings("unchecked")
@@ -162,11 +182,14 @@ public class Asset {
 		divisibleBytes[0] = (byte) (this.divisible == true ? 1 : 0);
 		data = Bytes.concat(data, divisibleBytes);
 		
+		//WRITE REFERENCE
+		data = Bytes.concat(data, this.reference);
+		
 		return data;
 	}
 
 	public int getDataLength() 
 	{
-		return OWNER_LENGTH + NAME_SIZE_LENGTH + this.name.getBytes(StandardCharsets.UTF_8).length + DESCRIPTION_SIZE_LENGTH + this.description.getBytes(StandardCharsets.UTF_8).length + QUANTITY_LENGTH + DIVISIBLE_LENGTH;
+		return OWNER_LENGTH + NAME_SIZE_LENGTH + this.name.getBytes(StandardCharsets.UTF_8).length + DESCRIPTION_SIZE_LENGTH + this.description.getBytes(StandardCharsets.UTF_8).length + QUANTITY_LENGTH + DIVISIBLE_LENGTH + REFERENCE_LENGTH;
 	}	
 }

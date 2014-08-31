@@ -7,6 +7,7 @@ import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.GenesisTransaction;
+import qora.transaction.IssueAssetTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
@@ -81,6 +82,11 @@ public class TransactionDetailsFactory
 			
 			ArbitraryTransaction arbitraryTransaction = (ArbitraryTransaction) transaction;
 			return new ArbitraryTransactionDetailsFrame(arbitraryTransaction);	
+			
+		case Transaction.ISSUE_ASSET_TRANSACTION:
+			
+			IssueAssetTransaction issueAssetTransaction = (IssueAssetTransaction) transaction;
+			return new IssueAssetDetailsFrame(issueAssetTransaction);	
 		}
 		
 		return null;

@@ -2925,7 +2925,7 @@ public class TransactionTests {
 		transaction.process(databaseSet);
 		
 		//CREATE ASSET
-		Asset asset = new Asset(sender, "test", "strontje", 50000l, false);
+		Asset asset = new Asset(sender, "test", "strontje", 50000l, false, new byte[64]);
 		
 		//CREATE SIGNATURE
 		long timestamp = NTP.getTime();
@@ -3022,7 +3022,7 @@ public class TransactionTests {
 		
 		//CREATE SIGNATURE
 		long timestamp = NTP.getTime();
-		Asset asset = new Asset(sender, "test", "strontje", 50000l, false);
+		Asset asset = new Asset(sender, "test", "strontje", 50000l, false, new byte[64]);
 		byte[] signature = IssueAssetTransaction.generateSignature(databaseSet, sender, asset, BigDecimal.valueOf(1).setScale(8), timestamp);
 				
 		//CREATE ISSUE ASSET TRANSACTION
@@ -3111,7 +3111,7 @@ public class TransactionTests {
 		
 		//CREATE SIGNATURE
 		long timestamp = NTP.getTime();
-		Asset asset = new Asset(sender, "test", "strontje", 50000l, false);
+		Asset asset = new Asset(sender, "test", "strontje", 50000l, false, new byte[64]);
 		byte[] signature = IssueAssetTransaction.generateSignature(databaseSet, sender, asset, BigDecimal.valueOf(1).setScale(8), timestamp);
 				
 		//CREATE ISSUE ASSET TRANSACTION
@@ -3155,7 +3155,7 @@ public class TransactionTests {
 		
 		//CREATE SIGNATURE
 		long timestamp = NTP.getTime();
-		Asset asset = new Asset(sender, "test", "strontje", 50000l, false);
+		Asset asset = new Asset(sender, "test", "strontje", 50000l, false, new byte[64]);
 		byte[] signature = IssueAssetTransaction.generateSignature(databaseSet, sender, asset, BigDecimal.valueOf(1).setScale(8), timestamp);
 				
 		//CREATE ISSUE ASSET TRANSACTION
@@ -3223,7 +3223,7 @@ public class TransactionTests {
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 		
 		//ADD QORA ASSET
-		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, new byte[64]);
     	databaseSet.getAssetMap().set(0l, qoraAsset);
 						
 		//CREATE KNOWN ACCOUNT
@@ -3497,7 +3497,7 @@ public class TransactionTests {
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset asset = new Asset(account, "a", "a", 50000l, true);
+		Asset asset = new Asset(account, "a", "a", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(account, asset, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[64]);
@@ -3642,7 +3642,7 @@ public class TransactionTests {
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset asset = new Asset(account, "a", "a", 50000l, true);
+		Asset asset = new Asset(account, "a", "a", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(account, asset, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[64]);
@@ -3681,7 +3681,7 @@ public class TransactionTests {
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset asset = new Asset(account, "a", "a", 50000l, true);
+		Asset asset = new Asset(account, "a", "a", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(account, asset, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[64]);
@@ -3717,7 +3717,7 @@ public class TransactionTests {
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//ADD QORA ASSET
-		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, new byte[64]);
     	dbSet.getAssetMap().set(0l, qoraAsset);
 				
 		//CREATE KNOWN ACCOUNT
@@ -3758,7 +3758,7 @@ public class TransactionTests {
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//ADD QORA ASSET
-		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, new byte[64]);
     	dbSet.getAssetMap().set(0l, qoraAsset);
 				
 		//CREATE KNOWN ACCOUNT
@@ -3832,7 +3832,7 @@ public class TransactionTests {
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//ADD QORA ASSET
-		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, new byte[64]);
     	dbSet.getAssetMap().set(0l, qoraAsset);
 				
 		//CREATE KNOWN ACCOUNT
@@ -3931,7 +3931,7 @@ public class TransactionTests {
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//ADD QORA ASSET
-		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, new byte[64]);
     	dbSet.getAssetMap().set(0l, qoraAsset);
 				
 		//CREATE KNOWN ACCOUNT
@@ -3978,7 +3978,7 @@ public class TransactionTests {
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//ADD QORA ASSET
-		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, new byte[64]);
     	dbSet.getAssetMap().set(0l, qoraAsset);
 				
 		//CREATE KNOWN ACCOUNT

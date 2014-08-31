@@ -27,11 +27,14 @@ public class ObserverMessage {
 	public static final int ADD_NAME_SALE_TYPE = 17;
 	public static final int REMOVE_NAME_SALE_TYPE = 18;
 	public static final int LIST_NAME_SALE_TYPE = 19;
-	
 
 	public static final int ADD_POLL_TYPE = 20;
 	public static final int REMOVE_POLL_TYPE = 21;
 	public static final int LIST_POLL_TYPE = 22;
+	
+	public static final int ADD_ASSET_TYPE = 23;
+	public static final int REMOVE_ASSET_TYPE = 24;
+	public static final int LIST_ASSET_TYPE = 25;
 	
 	private int type;
 	private Object value;

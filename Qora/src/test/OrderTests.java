@@ -69,7 +69,7 @@ public class OrderTests
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//ADD QORA ASSET
-    	Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+    	Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, new byte[64]);
     	dbSet.getAssetMap().set(0l, qoraAsset);
 		
 		//CREATE ASSET A
@@ -81,7 +81,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset asset = new Asset(account, "a", "a", 50000l, false);
+		Asset asset = new Asset(account, "a", "a", 50000l, false, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(account, asset, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[64]);
@@ -224,7 +224,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetA = new Asset(accountA, "a", "a", 50000l, false);
+		Asset assetA = new Asset(accountA, "a", "a", 50000l, false, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(accountA, assetA, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountA.getLastReference(dbSet), new byte[64]);
@@ -239,7 +239,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetB = new Asset(accountB, "b", "b", 50000l, false);
+		Asset assetB = new Asset(accountB, "b", "b", 50000l, false, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		issueAssetTransaction = new IssueAssetTransaction(accountB, assetB, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountB.getLastReference(dbSet), new byte[64]);
@@ -332,7 +332,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetA = new Asset(accountA, "a", "a", 50000l, false);
+		Asset assetA = new Asset(accountA, "a", "a", 50000l, false, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(accountA, assetA, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountA.getLastReference(dbSet), new byte[64]);
@@ -347,7 +347,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetB = new Asset(accountB, "b", "b", 50000l, true);
+		Asset assetB = new Asset(accountB, "b", "b", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		issueAssetTransaction = new IssueAssetTransaction(accountB, assetB, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountB.getLastReference(dbSet), new byte[64]);
@@ -434,7 +434,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetA = new Asset(accountA, "a", "a", 50000l, true);
+		Asset assetA = new Asset(accountA, "a", "a", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(accountA, assetA, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountA.getLastReference(dbSet), new byte[64]);
@@ -449,7 +449,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetB = new Asset(accountB, "b", "b", 50000l, false);
+		Asset assetB = new Asset(accountB, "b", "b", 50000l, false, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		issueAssetTransaction = new IssueAssetTransaction(accountB, assetB, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountB.getLastReference(dbSet), new byte[64]);
@@ -542,7 +542,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetA = new Asset(accountA, "a", "a", 50000l, true);
+		Asset assetA = new Asset(accountA, "a", "a", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(accountA, assetA, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountA.getLastReference(dbSet), new byte[64]);
@@ -557,7 +557,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetB = new Asset(accountB, "b", "b", 50000l, true);
+		Asset assetB = new Asset(accountB, "b", "b", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		issueAssetTransaction = new IssueAssetTransaction(accountB, assetB, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountB.getLastReference(dbSet), new byte[64]);
@@ -649,7 +649,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetA = new Asset(accountA, "a", "a", 50000l, true);
+		Asset assetA = new Asset(accountA, "a", "a", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(accountA, assetA, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountA.getLastReference(dbSet), new byte[64]);
@@ -664,7 +664,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetB = new Asset(accountB, "b", "b", 50000l, true);
+		Asset assetB = new Asset(accountB, "b", "b", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		issueAssetTransaction = new IssueAssetTransaction(accountB, assetB, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountB.getLastReference(dbSet), new byte[64]);
@@ -757,7 +757,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetA = new Asset(accountA, "a", "a", 50000l, true);
+		Asset assetA = new Asset(accountA, "a", "a", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		Transaction issueAssetTransaction = new IssueAssetTransaction(accountA, assetA, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountA.getLastReference(dbSet), new byte[64]);
@@ -772,7 +772,7 @@ public class OrderTests
 		transaction.process(dbSet);
 		
 		//CREATE ASSET
-		Asset assetB = new Asset(accountB, "b", "b", 50000l, true);
+		Asset assetB = new Asset(accountB, "b", "b", 50000l, true, new byte[64]);
 		
 		//CREATE ISSUE ASSET TRANSACTION
 		issueAssetTransaction = new IssueAssetTransaction(accountB, assetB, BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountB.getLastReference(dbSet), new byte[64]);

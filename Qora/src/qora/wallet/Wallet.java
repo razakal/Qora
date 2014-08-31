@@ -18,6 +18,7 @@ import database.wallet.SecureWalletDatabase;
 import database.wallet.WalletDatabase;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
+import qora.assets.Asset;
 import qora.block.Block;
 import qora.crypto.Crypto;
 import qora.naming.Name;
@@ -25,6 +26,7 @@ import qora.naming.NameSale;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreatePollTransaction;
+import qora.transaction.IssueAssetTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
@@ -415,6 +417,16 @@ public class Wallet extends Observable implements Observer
 	  	//DELETE POLLS
 	  	this.database.getPollMap().deleteAll(accounts);
 	  	
+	  	//TODO SCAN ASSETS
+		Map<Account, List<Asset>> assets;
+	  	synchronized(accounts)
+	  	{
+	  		assets = Controller.getInstance().scanAssets(accounts);
+	  	}
+	  	
+	  	//ADD ASSETS
+	  	this.database.getAssetMap().addAll(assets);
+	  	
 	  	//ADD POLLS
 	  	this.database.getPollMap().addAll(polls);
 	  	
@@ -559,6 +571,9 @@ public class Wallet extends Observable implements Observer
 		
 		//REGISTER ON POLLS
 		this.database.getPollMap().addObserver(o);
+		
+		//REGISTER ON ASSETS
+		this.database.getAssetMap().addObserver(o);
 		
 		//SEND STATUS
 		int status = STATUS_LOCKED;
@@ -739,6 +754,7 @@ public class Wallet extends Observable implements Observer
 		if(this.accountExists(pollCreation.getPoll().getCreator().getAddress()))
 		{
 			//DELETE POLL
+			this.database.getPollMap().delete(pollCreation.getPoll());
 		}
 	}
 
@@ -910,7 +926,38 @@ public class Wallet extends Observable implements Observer
 			Name name = namePurchase.getNameSale().getName();
 			this.database.getNameMap().add(name);
 		}
-
+	}
+	
+	private void processAssetIssue(IssueAssetTransaction assetIssue)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		//CHECK IF WE ARE OWNER
+		if(this.accountExists(assetIssue.getAsset().getOwner().getAddress()))
+		{
+			//ADD POLL
+			this.database.getAssetMap().add(assetIssue.getAsset());
+		}
+	}
+	
+	private void orphanAssetIssue(IssueAssetTransaction assetIssue)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		//CHECK IF WE ARE OWNER
+		if(this.accountExists(assetIssue.getAsset().getOwner().getAddress()))
+		{
+			//DELETE ASSET
+			this.database.getAssetMap().delete(assetIssue.getAsset());
+		}
 	}
 	
 	@Override
@@ -971,6 +1018,12 @@ public class Wallet extends Observable implements Observer
 				{
 					this.processPollVote((VoteOnPollTransaction) transaction);
 				}
+				
+				//CHECK IF ASSET ISSUE
+				if(transaction instanceof IssueAssetTransaction)
+				{
+					this.processAssetIssue((IssueAssetTransaction) transaction);
+				}
 			}
 		}
 		
@@ -990,6 +1043,12 @@ public class Wallet extends Observable implements Observer
 			if(transaction instanceof CreatePollTransaction)
 			{
 				this.processPollCreation((CreatePollTransaction) transaction);
+			}
+			
+			//CHECK IF ASSET ISSUE
+			if(transaction instanceof IssueAssetTransaction)
+			{
+				this.processAssetIssue((IssueAssetTransaction) transaction);
 			}
 		}
 		
@@ -1046,6 +1105,12 @@ public class Wallet extends Observable implements Observer
 				{
 					this.orphanPollVote((VoteOnPollTransaction) transaction);
 				}
+				
+				//CHECK IF ASSET ISSUE
+				if(transaction instanceof IssueAssetTransaction)
+				{
+					this.orphanAssetIssue((IssueAssetTransaction) transaction);
+				}
 			}
 		}
 		
@@ -1065,6 +1130,12 @@ public class Wallet extends Observable implements Observer
 			if(transaction instanceof CreatePollTransaction)
 			{
 				this.orphanPollCreation((CreatePollTransaction) transaction);
+			}
+			
+			//CHECK IF ASSET ISSUE
+			if(transaction instanceof IssueAssetTransaction)
+			{
+				this.orphanAssetIssue((IssueAssetTransaction) transaction);
 			}
 		}
 	}

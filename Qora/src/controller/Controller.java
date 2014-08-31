@@ -17,6 +17,7 @@ import qora.Synchronizer;
 import qora.TransactionCreator;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
+import qora.assets.Asset;
 import qora.block.Block;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
@@ -796,6 +797,11 @@ public class Controller extends Observable {
 	{
 		return this.blockChain.scanPolls(accounts);
 	}
+	
+	public Map<Account, List<Asset>> scanAssets(List<Account> accounts)
+	{
+		return this.blockChain.scanAssets(accounts);
+	}
 
 	public long getNextBlockGeneratingBalance()
 	{
@@ -954,4 +960,12 @@ public class Controller extends Observable {
 		}
 	}
 	
+	public Pair<Transaction, Integer> issueAsset(PrivateKeyAccount creator, String name, String description, long quantity, boolean divisible, BigDecimal fee) 
+	{
+		//CREATE ONLY ONE TRANSACTION AT A TIME
+		synchronized(this.transactionCreator)
+		{
+			return this.transactionCreator.createIssueAssetransaction(creator, name, description, quantity, divisible, fee);
+		}
+	}
 }

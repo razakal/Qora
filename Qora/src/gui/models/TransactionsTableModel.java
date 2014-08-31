@@ -22,7 +22,7 @@ public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> 
 	private SortableList<byte[], Transaction> transactions;
 	
 	private String[] columnNames = {"Timestamp", "Type", "Fee"};
-	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name Purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction"};
+	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name Purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction", "Asset Issue"};
 
 	public TransactionsTableModel()
 	{

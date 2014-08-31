@@ -7,6 +7,7 @@ import org.mapdb.Atomic;
 import org.mapdb.DB;
 
 import qora.assets.Asset;
+import utils.ObserverMessage;
 import database.DBSet;
 import database.serializer.AssetSerializer;
 
@@ -23,6 +24,10 @@ public class AssetMap extends DBMap<Long, Asset>
 		
 		this.atomicKey = database.getAtomicLong("assets_key");
 		this.key = this.atomicKey.get();
+		
+		this.observableData.put(DBMap.NOTIFY_ADD, ObserverMessage.ADD_ASSET_TYPE);
+		this.observableData.put(DBMap.NOTIFY_REMOVE, ObserverMessage.REMOVE_ASSET_TYPE);
+		this.observableData.put(DBMap.NOTIFY_LIST, ObserverMessage.LIST_ASSET_TYPE);
 	}
 
 	public AssetMap(AssetMap parent) 

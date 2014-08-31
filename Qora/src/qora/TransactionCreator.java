@@ -11,6 +11,7 @@ import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
+import qora.assets.Asset;
 import qora.block.Block;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -18,6 +19,7 @@ import qora.transaction.ArbitraryTransaction;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreatePollTransaction;
+import qora.transaction.IssueAssetTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
@@ -249,6 +251,26 @@ public class TransactionCreator
 								
 		//VALIDATE AND PROCESS
 		return this.afterCreate(arbitraryTransaction);
+	}
+	
+	public Pair<Transaction, Integer> createIssueAssetransaction(PrivateKeyAccount creator, String name, String description, long quantity, boolean divisible, BigDecimal fee) 
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+								
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		Asset asset = new Asset(creator, name, description, quantity, divisible, new byte[64]);
+		byte[] signature = IssueAssetTransaction.generateSignature(this.fork, creator, asset, fee, time);
+							
+		//CREATE ISSUE ASSET TRANSACTION
+		asset = new Asset(creator, name, description, quantity, divisible, signature);
+		IssueAssetTransaction issueAssetTransaction = new IssueAssetTransaction(creator, asset, fee, time, creator.getLastReference(this.fork), signature);
+								
+		//VALIDATE AND PROCESS
+		return this.afterCreate(issueAssetTransaction);
 	}
 	
 	private Pair<Transaction, Integer> afterCreate(Transaction transaction)

@@ -32,7 +32,7 @@ public class BlockChain
         	genesisBlock.process();
         	
         	//ADD QORA ASSET
-        	Asset qoraAsset = new Asset(genesisBlock.getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true);
+        	Asset qoraAsset = new Asset(genesisBlock.getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, genesisBlock.getGeneratorSignature());
         	DBSet.getInstance().getAssetMap().set(0l, qoraAsset);
         }
 	}
@@ -319,6 +319,32 @@ public class BlockChain
 		
 		//RETURN
 		return polls;		
+	}
+	
+	public Map<Account, List<Asset>> scanAssets(List<Account> accounts)
+	{
+		//CREATE MAP
+		Map<Account, List<Asset>> assets = new HashMap<Account, List<Asset>>();
+		
+		for(Account account: accounts)
+		{
+			assets.put(account, new ArrayList<Asset>());
+		}
+			
+		//SCAN ALL ASSETS
+		for(Asset asset: DBSet.getInstance().getAssetMap().getValues())
+		{
+			for(Account account: accounts)
+			{
+				if(account.getAddress().equals(asset.getOwner().getAddress()))
+				{
+					assets.get(account).add(asset);
+				}
+			}
+		}
+		
+		//RETURN
+		return assets;		
 	}
 	
 	public Block getLastBlock() 
