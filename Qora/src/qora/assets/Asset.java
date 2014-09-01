@@ -9,6 +9,7 @@ import com.google.common.primitives.Longs;
 
 import database.DBSet;
 import qora.account.Account;
+import qora.block.GenesisBlock;
 import qora.crypto.Base58;
 
 public class Asset {
@@ -64,6 +65,13 @@ public class Asset {
 	}
 	
 	public long getKey() {
+		
+		//CHECK IF QORA ASSET
+		if(this.getOwner().getAddress().equals(new GenesisBlock().getGenerator().getAddress()))
+		{
+			return 0;
+		}
+		
 		return DBSet.getInstance().getIssueAssetMap().get(this.reference);
 	}
 	

@@ -167,6 +167,9 @@ public class Controller extends Observable {
 		//ADD OBSERVER TO POLLS
 		DBSet.getInstance().getPollMap().addObserver(o);
 		
+		//ADD OBSERVER TO NAMES
+		DBSet.getInstance().getAssetMap().addObserver(o);
+		
 		//ADD OBSERVER TO CONTROLLER
 		super.addObserver(o);
 		o.update(this, new ObserverMessage(ObserverMessage.NETWORK_STATUS, this.status));

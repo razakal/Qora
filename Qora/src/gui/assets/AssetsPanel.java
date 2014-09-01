@@ -95,7 +95,7 @@ public class AssetsPanel extends JPanel
 				{
 					row = table.convertRowIndexToModel(row);
 					Asset asset = assetsModel.getPoll(row);
-					//new PollFrame(poll);
+					new AssetDetailsFrame(asset);
 				}
 		     }
 		});
@@ -136,6 +136,6 @@ public class AssetsPanel extends JPanel
 	
 	public void onAllClick()
 	{
-		//new AllAssetsFrame();
+		new AllAssetsFrame();
 	}
 }

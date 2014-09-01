@@ -110,18 +110,18 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Iterator<T> filter(Iterator<T> iterator)
 	{
 		if(this.pattern != null)
 		{
-			List<String> keys = new ArrayList<String>();
+			List<T> keys = new ArrayList<T>();
 			
 			while(iterator.hasNext())
 			{
-				String key = (String) iterator.next();
+				T key = iterator.next();
+				String keyString = key.toString();
 				
-				Matcher matcher = this.pattern.matcher(key);
+				Matcher matcher = this.pattern.matcher(keyString);
 				if(matcher.find())
 				{
 					keys.add(key);
