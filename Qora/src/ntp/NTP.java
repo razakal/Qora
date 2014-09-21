@@ -6,8 +6,6 @@ import java.util.logging.Logger;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
 
-import settings.Settings;
-
 public final class NTP
 {
 	private static final long TIME_TILL_UPDATE = 1000*60*10;
@@ -38,7 +36,7 @@ public final class NTP
 		NTPUDPClient client = new NTPUDPClient();
 	   
 		//SET TIMEOUT
-		client.setDefaultTimeout(Settings.getInstance().getConnectionTimeout());
+		client.setDefaultTimeout(10000);
 		try 
 		{
 			//OPEN CLIENT

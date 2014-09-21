@@ -272,9 +272,9 @@ public class OrderTests
 		Assert.assertEquals(false, orderB.isFulfilled());	
 		
 		//CHECK TRADES
-		Assert.assertEquals(1, orderB.getTrades(dbSet).size());
+		Assert.assertEquals(1, orderB.getInitiatedTrades(dbSet).size());
 		
-		Trade trade = orderB.getTrades(dbSet).get(0);
+		Trade trade = orderB.getInitiatedTrades(dbSet).get(0);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{5, 6})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[64])));
 		Assert.assertEquals(0, trade.getAmount().compareTo(BigDecimal.valueOf(1000)));
@@ -308,9 +308,9 @@ public class OrderTests
 		Assert.assertEquals(false, orderC.isFulfilled());
 		
 		//CHECK TRADES
-		Assert.assertEquals(1, orderC.getTrades(dbSet).size());
+		Assert.assertEquals(1, orderC.getInitiatedTrades(dbSet).size());
 		
-		trade = orderC.getTrades(dbSet).get(0);
+		trade = orderC.getInitiatedTrades(dbSet).get(0);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{1, 2})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[]{5, 6})));
 		Assert.assertEquals(0, trade.getAmount().compareTo(BigDecimal.valueOf(4)));
@@ -380,9 +380,9 @@ public class OrderTests
 		Assert.assertEquals(true, orderB.isFulfilled());	
 		
 		//CHECK TRADES
-		Assert.assertEquals(1, orderB.getTrades(dbSet).size());
+		Assert.assertEquals(1, orderB.getInitiatedTrades(dbSet).size());
 		
-		Trade trade = orderB.getTrades(dbSet).get(0);
+		Trade trade = orderB.getInitiatedTrades(dbSet).get(0);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{5, 6})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[64])));
 		Assert.assertEquals(0, trade.getAmount().compareTo(BigDecimal.valueOf(999)));
@@ -416,7 +416,7 @@ public class OrderTests
 		Assert.assertEquals(false, orderC.isFulfilled());
 		
 		//CHECK TRADES
-		Assert.assertEquals(0, orderC.getTrades(dbSet).size());
+		Assert.assertEquals(0, orderC.getInitiatedTrades(dbSet).size());
 	}
 	
 	@Test
@@ -482,9 +482,9 @@ public class OrderTests
 		Assert.assertEquals(false, orderB.isFulfilled());	
 		
 		//CHECK TRADES
-		Assert.assertEquals(1, orderB.getTrades(dbSet).size());
+		Assert.assertEquals(1, orderB.getInitiatedTrades(dbSet).size());
 		
-		Trade trade = orderB.getTrades(dbSet).get(0);
+		Trade trade = orderB.getInitiatedTrades(dbSet).get(0);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{5, 6})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[64])));
 		Assert.assertEquals(0, trade.getAmount().compareTo(BigDecimal.valueOf(1000)));
@@ -518,9 +518,9 @@ public class OrderTests
 		Assert.assertEquals(false, orderC.isFulfilled());
 		
 		//CHECK TRADES
-		Assert.assertEquals(1, orderB.getTrades(dbSet).size());
+		Assert.assertEquals(1, orderB.getInitiatedTrades(dbSet).size());
 		
-		trade = orderC.getTrades(dbSet).get(0);
+		trade = orderC.getInitiatedTrades(dbSet).get(0);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{1, 2})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[]{5, 6})));
 		Assert.assertEquals(0, trade.getAmount().compareTo(BigDecimal.valueOf(19)));
@@ -590,9 +590,9 @@ public class OrderTests
 		Assert.assertEquals(false, orderB.isFulfilled());	
 		
 		//CHECK TRADES
-		Assert.assertEquals(1, orderB.getTrades(dbSet).size());
+		Assert.assertEquals(1, orderB.getInitiatedTrades(dbSet).size());
 		
-		Trade trade = orderB.getTrades(dbSet).get(0);
+		Trade trade = orderB.getInitiatedTrades(dbSet).get(0);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{5, 6})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[64])));
 		Assert.assertEquals(0, trade.getAmount().compareTo(BigDecimal.valueOf(1000)));
@@ -625,9 +625,9 @@ public class OrderTests
 		Assert.assertEquals(false, orderC.isFulfilled());	
 		
 		//CHECK TRADES
-		Assert.assertEquals(1, orderB.getTrades(dbSet).size());
+		Assert.assertEquals(1, orderB.getInitiatedTrades(dbSet).size());
 		
-		trade = orderC.getTrades(dbSet).get(0);
+		trade = orderC.getInitiatedTrades(dbSet).get(0);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{1, 2})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[]{5, 6})));
 		Assert.assertEquals(0, trade.getAmount().compareTo(new BigDecimal("19.99999999")));
@@ -696,7 +696,7 @@ public class OrderTests
 		Assert.assertEquals(false, orderB.isFulfilled());	
 		
 		//CHECK TRADES
-		Assert.assertEquals(0, orderB.getTrades(dbSet).size());
+		Assert.assertEquals(0, orderB.getInitiatedTrades(dbSet).size());
 		
 		//CREATE ORDER THREE (SELLING 150 B FOR A AT A PRICE OF 5)
 		createOrderTransaction = new CreateOrderTransaction(accountB, 2l, 1l, BigDecimal.valueOf(150).setScale(8), BigDecimal.valueOf(5).setScale(8), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountA.getLastReference(dbSet), new byte[]{3, 4});
@@ -725,17 +725,17 @@ public class OrderTests
 		Assert.assertEquals(true, orderC.isFulfilled());
 		
 		//CHECK TRADES
-		Assert.assertEquals(0, orderA.getTrades(dbSet).size());
-		Assert.assertEquals(0, orderB.getTrades(dbSet).size());
-		Assert.assertEquals(2, orderC.getTrades(dbSet).size());
+		Assert.assertEquals(0, orderA.getInitiatedTrades(dbSet).size());
+		Assert.assertEquals(0, orderB.getInitiatedTrades(dbSet).size());
+		Assert.assertEquals(2, orderC.getInitiatedTrades(dbSet).size());
 		
-		Trade trade = orderC.getTrades(dbSet).get(1);
+		Trade trade = orderC.getInitiatedTrades(dbSet).get(1);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{3, 4})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[]{5, 6})));
 		Assert.assertEquals(0, trade.getAmount().compareTo(new BigDecimal("1000")));
 		Assert.assertEquals(0, trade.getPrice().compareTo(new BigDecimal("100")));
 		
-		trade = orderC.getTrades(dbSet).get(0);
+		trade = orderC.getInitiatedTrades(dbSet).get(0);
 		Assert.assertEquals(0, trade.getInitiator().compareTo(new BigInteger(new byte[]{3, 4})));
 		Assert.assertEquals(0, trade.getTarget().compareTo(new BigInteger(new byte[]{1, 2})));
 		Assert.assertEquals(0, trade.getAmount().compareTo(new BigDecimal("250")));
@@ -814,7 +814,7 @@ public class OrderTests
 		Assert.assertEquals(false, orderB.isFulfilled());	
 		
 		//CHECK TRADES
-		Assert.assertEquals(0, orderB.getTrades(fork3).size());
+		Assert.assertEquals(0, orderB.getInitiatedTrades(fork3).size());
 		
 		//ORPHAN ORDER TWO
 		createOrderTransaction = new CreateOrderTransaction(accountA, 1l, 2l, BigDecimal.valueOf(1000).setScale(8), BigDecimal.valueOf(0.2).setScale(8), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), accountA.getLastReference(fork2), new byte[]{1, 2});

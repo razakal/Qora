@@ -1,6 +1,7 @@
 package gui;
 
 import gui.models.AccountsTableModel;
+import gui.models.AssetsComboBoxModel;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -12,10 +13,13 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -29,12 +33,16 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableRowSorter;
 
 import qora.account.Account;
+import qora.assets.Asset;
 import utils.BigDecimalStringComparator;
 import controller.Controller;
 
 @SuppressWarnings("serial")
-public class AccountsPanel extends JPanel
+public class AccountsPanel extends JPanel implements ItemListener
 {
+	private JComboBox<Asset> cbxFavorites;
+	private AccountsTableModel tableModel;
+
 	@SuppressWarnings("unchecked")
 	public AccountsPanel()
 	{
@@ -49,19 +57,32 @@ public class AccountsPanel extends JPanel
 		tableGBC.anchor = GridBagConstraints.NORTHWEST;
 		tableGBC.weightx = 1;
 		tableGBC.weighty = 1;
-		tableGBC.gridx = 0;	
-		tableGBC.gridy= 0;	
+		tableGBC.gridx = 1;	
+		tableGBC.gridy= 1;	
 		
 		//BUTTON GBC
 		GridBagConstraints buttonGBC = new GridBagConstraints();
 		buttonGBC.insets = new Insets(10, 0, 0, 0);
 		buttonGBC.fill = GridBagConstraints.NONE;  
 		buttonGBC.anchor = GridBagConstraints.NORTHWEST;
-		buttonGBC.gridx = 0;	
-		buttonGBC.gridy = 1;	
+		buttonGBC.gridx = 1;	
+		buttonGBC.gridy = 2;	
+		
+		//FAVORITES GBC
+		GridBagConstraints favoritesGBC = new GridBagConstraints();
+		favoritesGBC.insets = new Insets(10, 0, 10, 0);
+		favoritesGBC.fill = GridBagConstraints.BOTH;  
+		favoritesGBC.anchor = GridBagConstraints.NORTHWEST;
+		favoritesGBC.weightx = 1;
+		favoritesGBC.gridx = 1;	
+		favoritesGBC.gridy = 0;	
+		
+		//ASSET FAVORITES
+		cbxFavorites = new JComboBox<Asset>(new AssetsComboBoxModel());
+		this.add(cbxFavorites, favoritesGBC);
 		
 		//TABLE
-		final AccountsTableModel tableModel = new AccountsTableModel();
+		tableModel = new AccountsTableModel();
 		final JTable table = Gui.createSortableTable(tableModel, 1);
 		
 		TableRowSorter<AccountsTableModel> sorter =  (TableRowSorter<AccountsTableModel>) table.getRowSorter();
@@ -69,6 +90,8 @@ public class AccountsPanel extends JPanel
 		sorter.setComparator(AccountsTableModel.COLUMN_CONFIRMED_BALANCE, new BigDecimalStringComparator());
 		sorter.setComparator(AccountsTableModel.COLUMN_CONFIRMED_BALANCE, new BigDecimalStringComparator());
 		
+		//ON FAVORITES CHANGE
+		cbxFavorites.addItemListener(this);
 		
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
@@ -200,5 +223,15 @@ public class AccountsPanel extends JPanel
 		
 		//GENERATE NEW ACCOUNT
 		Controller.getInstance().generateNewAccount();
+	}
+	
+	@Override
+	public void itemStateChanged(ItemEvent e) 
+	{
+		if(e.getStateChange() == ItemEvent.SELECTED) 
+		{		
+			Asset asset = (Asset) cbxFavorites.getSelectedItem();
+        	tableModel.setAsset(asset);  
+		} 
 	}
 }

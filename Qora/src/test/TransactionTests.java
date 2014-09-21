@@ -3031,6 +3031,9 @@ public class TransactionTests {
 		//CONVERT TO BYTES
 		byte[] rawIssueAssetTransaction = issueAssetTransaction.toBytes();
 		
+		//CHECK DATA LENGTH
+		assertEquals(rawIssueAssetTransaction.length, issueAssetTransaction.getDataLength());
+		
 		try 
 		{	
 			//PARSE FROM BYTES
@@ -3126,7 +3129,7 @@ public class TransactionTests {
 		assertEquals(true, databaseSet.getAssetMap().contains(key));
 		
 		//CHECK ASSET IS CORRECT
-		assertEquals(true, Arrays.equals(databaseSet.getAssetMap().get(key).toBytes(), asset.toBytes()));
+		assertEquals(true, Arrays.equals(databaseSet.getAssetMap().get(key).toBytes(true), asset.toBytes(true)));
 		
 		//CHECK ASSET BALANCE SENDER
 		assertEquals(true, databaseSet.getBalanceMap().get(sender.getAddress(), key).compareTo(new BigDecimal(asset.getQuantity())) == 0);
@@ -3309,6 +3312,9 @@ public class TransactionTests {
 
 		//CONVERT TO BYTES
 		byte[] rawAssetTransfer = assetTransfer.toBytes();
+		
+		//CHECK DATALENGTH
+		assertEquals(rawAssetTransfer.length, assetTransfer.getDataLength());
 		
 		try 
 		{	
@@ -3575,6 +3581,9 @@ public class TransactionTests {
 		
 		//CONVERT TO BYTES
 		byte[] rawCancelOrder = cancelOrderTransaction.toBytes();
+		
+		//CHECK DATALENGTH
+		assertEquals(rawCancelOrder.length, cancelOrderTransaction.getDataLength());
 		
 		try 
 		{	
@@ -3856,6 +3865,9 @@ public class TransactionTests {
 		
 		//CONVERT TO BYTES
 		byte[] rawMultiPayment = multiPayment.toBytes();
+		
+		//CHECK DATALENGTH
+		assertEquals(rawMultiPayment.length, multiPayment.getDataLength());
 		
 		try 
 		{	

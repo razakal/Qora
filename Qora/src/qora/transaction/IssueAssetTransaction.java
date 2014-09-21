@@ -94,17 +94,19 @@ public class IssueAssetTransaction extends Transaction
 		return new IssueAssetTransaction(issuer, asset, fee, timestamp, reference, signatureBytes);
 	}	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJson() 
 	{
 		//GET BASE
 		JSONObject transaction = this.getJsonBase();
 				
-		//ADD REGISTRANT/NAME/VALUE
-		/*transaction.put("registrant", this.registrant.getAddress());
-		transaction.put("owner", this.name.getOwner().getAddress());
-		transaction.put("name", this.name.getName());
-		transaction.put("value", this.name.getValue());*/
+		//ADD CREATOR/NAME/DISCRIPTION/QUANTITY/DIVISIBLE
+		transaction.put("creator", this.getAsset().getOwner().getAddress());
+		transaction.put("name", this.getAsset().getName());
+		transaction.put("description", this.getAsset().getDescription());
+		transaction.put("quantity", this.getAsset().getQuantity());
+		transaction.put("divisible", this.getAsset().isDivisible());
 				
 		return transaction;	
 	}
@@ -131,7 +133,7 @@ public class IssueAssetTransaction extends Transaction
 		data = Bytes.concat(data, this.issuer.getPublicKey());
 		
 		//WRITE ASSET
-		data = Bytes.concat(data , this.asset.toBytes());
+		data = Bytes.concat(data , this.asset.toBytes(true));
 		
 		//WRITE FEE
 		byte[] feeBytes = this.fee.unscaledValue().toByteArray();
@@ -174,7 +176,7 @@ public class IssueAssetTransaction extends Transaction
 		data = Bytes.concat(data, this.issuer.getPublicKey());
 		
 		//WRITE ASSET
-		data = Bytes.concat(data , this.asset.toBytes());
+		data = Bytes.concat(data , this.asset.toBytes(false));
 		
 		//WRITE FEE
 		byte[] feeBytes = this.fee.unscaledValue().toByteArray();
@@ -347,7 +349,7 @@ public class IssueAssetTransaction extends Transaction
 		data = Bytes.concat(data, creator.getPublicKey());
 		
 		//WRITE ASSET
-		data = Bytes.concat(data , asset.toBytes());
+		data = Bytes.concat(data , asset.toBytes(false));
 		
 		//WRITE FEE
 		byte[] feeBytes = fee.unscaledValue().toByteArray();

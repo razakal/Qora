@@ -9,7 +9,6 @@ import com.google.common.primitives.Longs;
 
 import database.DBSet;
 import qora.account.Account;
-import qora.block.GenesisBlock;
 import qora.crypto.Base58;
 
 public class Asset {
@@ -65,12 +64,6 @@ public class Asset {
 	}
 	
 	public long getKey() {
-		
-		//CHECK IF QORA ASSET
-		if(this.getOwner().getAddress().equals(new GenesisBlock().getGenerator().getAddress()))
-		{
-			return 0;
-		}
 		
 		return DBSet.getInstance().getIssueAssetMap().get(this.reference);
 	}
@@ -149,7 +142,7 @@ public class Asset {
 		return name;	
 	}*/
 	
-	public byte[] toBytes()
+	public byte[] toBytes(boolean includeReference)
 	{
 		byte[] data = new byte[0];
 		
@@ -190,8 +183,16 @@ public class Asset {
 		divisibleBytes[0] = (byte) (this.divisible == true ? 1 : 0);
 		data = Bytes.concat(data, divisibleBytes);
 		
-		//WRITE REFERENCE
-		data = Bytes.concat(data, this.reference);
+		if(includeReference)
+		{
+			//WRITE REFERENCE
+			data = Bytes.concat(data, this.reference);
+		}
+		else
+		{
+			//WRITE EMPTY REFERENCE
+			data = Bytes.concat(data, new byte[64]);
+		}
 		
 		return data;
 	}
@@ -200,4 +201,18 @@ public class Asset {
 	{
 		return OWNER_LENGTH + NAME_SIZE_LENGTH + this.name.getBytes(StandardCharsets.UTF_8).length + DESCRIPTION_SIZE_LENGTH + this.description.getBytes(StandardCharsets.UTF_8).length + QUANTITY_LENGTH + DIVISIBLE_LENGTH + REFERENCE_LENGTH;
 	}	
+	
+	//OTHER
+	
+	public String toString()
+	{
+		if(this.getKey() == 0)
+		{
+			return "Qora";
+		}
+		else
+		{
+			return "(" + this.getKey() + ") " + this.getName();
+		}
+	}
 }

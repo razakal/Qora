@@ -10,13 +10,16 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.mapdb.BTreeMap;
+import org.mapdb.Bind;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
+import org.mapdb.Fun.Tuple3;
 
 import qora.assets.Order;
 import qora.assets.Trade;
+import utils.ObserverMessage;
 import database.DBSet;
 import database.serializer.TradeSerializer;
 
@@ -24,9 +27,18 @@ public class TradeMap extends DBMap<Tuple2<BigInteger, BigInteger>, Trade>
 {
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 	
+	@SuppressWarnings("rawtypes")
+	private BTreeMap pairKeyMap;
+	@SuppressWarnings("rawtypes")
+	private BTreeMap reverseKeyMap;
+	
 	public TradeMap(DBSet databaseSet, DB database)
 	{
 		super(databaseSet, database);
+		
+		this.observableData.put(DBMap.NOTIFY_ADD, ObserverMessage.ADD_TRADE_TYPE);
+		this.observableData.put(DBMap.NOTIFY_REMOVE, ObserverMessage.REMOVE_TRADE_TYPE);
+		//this.observableData.put(DBMap.NOTIFY_LIST, ObserverMessage.LIST_ORDER_TYPE);
 	}
 
 	public TradeMap(TradeMap parent) 
@@ -53,12 +65,69 @@ public class TradeMap extends DBMap<Tuple2<BigInteger, BigInteger>, Trade>
 		return this.openMap(database);
 	}
 	
-	private Map<Tuple2<BigInteger, BigInteger>, Trade> openMap(DB database)
+	@SuppressWarnings("unchecked")
+	private Map<Tuple2<BigInteger, BigInteger>, Trade> openMap(final DB database)
 	{
 		//OPEN MAP
 		BTreeMap<Tuple2<BigInteger, BigInteger>, Trade> map = database.createTreeMap("trades")
 				.valueSerializer(new TradeSerializer())
 				.makeOrGet();
+		
+		//CHECK IF NOT MEMORY DATABASE
+		if(databaseSet != null)
+		{
+			//PAIR KEY
+			this.pairKeyMap = database.createTreeMap("trades_key_pair")
+					.comparator(Fun.COMPARATOR)
+					.makeOrGet();
+			
+			//BIND PAIR KEY
+			Bind.secondaryKey(map, this.pairKeyMap, new Fun.Function2<Tuple3<String, Long, Tuple2<BigInteger, BigInteger>>, Tuple2<BigInteger, BigInteger>, Trade>() 
+			{
+				@Override
+				public Tuple3<String, Long, Tuple2<BigInteger, BigInteger>> run(Tuple2<BigInteger, BigInteger> key, Trade value) 
+				{
+					Order order = value.getInitiatorOrder((DBSet) databaseSet);
+					long have = order.getHave();
+					long want = order.getWant();	
+					String pairKey;
+					if(have > want)
+					{
+						pairKey = have + "/" + want;
+					}
+					else
+					{
+						pairKey = want + "/" + have;
+					}
+					
+					return new Tuple3<String, Long, Tuple2<BigInteger, BigInteger>>(pairKey, Long.MAX_VALUE - value.getTimestamp(), key);
+				}	
+			});
+			
+			//REVERSE KEY
+			this.reverseKeyMap = database.createTreeMap("trades_key_reverse")
+					.comparator(Fun.COMPARATOR)
+					.makeOrGet();
+			
+			//BIND REVERSE KEY
+			Bind.secondaryKey(map, this.reverseKeyMap, new Fun.Function2<Tuple2<BigInteger, BigInteger>, Tuple2<BigInteger, BigInteger>, Trade>() 
+			{
+				@Override
+				public Tuple2<BigInteger, BigInteger> run(Tuple2<BigInteger, BigInteger> key, Trade value) 
+				{
+					
+					return new Tuple2<BigInteger, BigInteger>(key.b, key.a);
+				}	
+			});
+			Bind.secondaryKey(map, this.reverseKeyMap, new Fun.Function2<Tuple2<BigInteger, BigInteger>, Tuple2<BigInteger, BigInteger>, Trade>() 
+			{
+				@Override
+				public Tuple2<BigInteger, BigInteger> run(Tuple2<BigInteger, BigInteger> key, Trade value) 
+				{				
+					return new Tuple2<BigInteger, BigInteger>(key.a, key.b);
+				}	
+			});
+		}
 		
 		//RETURN
 		return map;
@@ -115,7 +184,7 @@ public class TradeMap extends DBMap<Tuple2<BigInteger, BigInteger>, Trade>
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<Trade> getTrades(Order order) 
+	public List<Trade> getInitiatedTrades(Order order) 
 	{
 		//FILTER ALL TRADES
 		Collection<Tuple2> keys = this.getKeys(order);
@@ -129,6 +198,40 @@ public class TradeMap extends DBMap<Tuple2<BigInteger, BigInteger>, Trade>
 		
 		//RETURN
 		return trades;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public SortableList<Tuple2<BigInteger, BigInteger>, Trade> getTrades(Order order) 
+	{
+		//ADD REVERSE KEYS
+		Collection<Tuple2<BigInteger, BigInteger>> keys = ((BTreeMap<Tuple2, Tuple2<BigInteger, BigInteger>>) this.reverseKeyMap).subMap(
+				Fun.t2(order.getId(), null),
+				Fun.t2(order.getId(), Fun.HI())).values();
+		
+		//RETURN
+		return new SortableList<Tuple2<BigInteger, BigInteger>, Trade>(this, keys);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public SortableList<Tuple2<BigInteger, BigInteger>, Trade> getTradesSortableList(long have, long want)
+	{
+		String pairKey;
+		if(have > want)
+		{
+			pairKey = have + "/" + want;
+		}
+		else
+		{
+			pairKey = want + "/" + have;
+		}
+		
+		//FILTER ALL KEYS
+		Collection<Tuple2<BigInteger, BigInteger>> keys = ((BTreeMap<Tuple3, Tuple2<BigInteger, BigInteger>>) this.pairKeyMap).subMap(
+				Fun.t3(pairKey, null, null),
+				Fun.t3(pairKey, Fun.HI(), Fun.HI())).values();
+		
+		//RETURN
+		return new SortableList<Tuple2<BigInteger, BigInteger>, Trade>(this, keys);
 	}
 
 	public void delete(Trade trade) 

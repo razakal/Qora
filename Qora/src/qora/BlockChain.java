@@ -33,6 +33,7 @@ public class BlockChain
         	
         	//ADD QORA ASSET
         	Asset qoraAsset = new Asset(genesisBlock.getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, genesisBlock.getGeneratorSignature());
+        	DBSet.getInstance().getIssueAssetMap().set(genesisBlock.getGeneratorSignature(), 0l);
         	DBSet.getInstance().getAssetMap().set(0l, qoraAsset);
         }
 	}

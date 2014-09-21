@@ -24,8 +24,7 @@ public class GenesisBlock extends Block{
 	
 	private static int genesisVersion = 1;
 	private static byte[] genesisReference =  new byte[]{1,1,1,1,1,1,1,1};
-	//TODO REMOVE private static long genesisTimestamp = 1400247274336L;
-	private static long genesisTimestamp = 1409508519816L;
+	private static long genesisTimestamp = 1400247274336L;
 	private static long genesisGeneratingBalance = 10000000L;
 	private static PublicKeyAccount genesisGenerator = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
 	

@@ -8,6 +8,8 @@ import java.util.Observer;
 import javax.swing.table.AbstractTableModel;
 
 import qora.account.Account;
+import qora.assets.Asset;
+import utils.ObserverMessage;
 import controller.Controller;
 
 @SuppressWarnings("serial")
@@ -20,15 +22,24 @@ public class AccountsTableModel extends AbstractTableModel implements Observer
 	
 	private String[] columnNames = {"Address", "Balance", "Confirmed Balance", "Generating Balance"};
 	private List<Account> accounts;
+	private Asset asset = null;
 	
 	public AccountsTableModel()
 	{
+		this.accounts = Controller.getInstance().getAccounts();
 		Controller.getInstance().addWalletListener(this);
+		Controller.getInstance().addObserver(this);
 	}
 	
 	public Account getAccount(int row)
 	{
 		return accounts.get(row);
+	}
+	
+	public void setAsset(Asset asset) 
+	{
+		this.asset = asset;
+		this.fireTableDataChanged();
 	}
 	
 	@Override
@@ -67,15 +78,36 @@ public class AccountsTableModel extends AbstractTableModel implements Observer
 			
 		case COLUMN_BALANCE:
 			
-			return account.getBalance(0).toPlainString();
+			if(this.asset == null || this.asset.getKey() == 0l)
+			{
+				return account.getBalance(0).toPlainString();
+			}
+			else
+			{
+				return account.getConfirmedBalance(this.asset.getKey()).toPlainString();
+			}
 			
 		case COLUMN_CONFIRMED_BALANCE:
 			
-			return account.getConfirmedBalance().toPlainString();	
+			if(this.asset == null || this.asset.getKey() == 0l)
+			{
+				return account.getConfirmedBalance().toPlainString();	
+			}
+			else
+			{
+				return account.getConfirmedBalance(this.asset.getKey()).toPlainString();
+			}
 			
 		case COLUMN_GENERATING_BALANCE:
 			
-			return account.getGeneratingBalance().toPlainString();	
+			if(this.asset == null || this.asset.getKey() == 0l)
+			{
+				return account.getGeneratingBalance().toPlainString();	
+			}
+			else
+			{
+				return BigDecimal.ZERO.setScale(8).toPlainString();
+			}
 			
 		}
 		
@@ -97,8 +129,15 @@ public class AccountsTableModel extends AbstractTableModel implements Observer
 	
 	public synchronized void syncUpdate(Observable o, Object arg)
 	{
-		this.accounts = Controller.getInstance().getAccounts();
-		this.fireTableDataChanged();	
+		ObserverMessage message = (ObserverMessage) arg;
+		
+		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE || message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE || message.getType() == ObserverMessage.REMOVE_TRANSACTION_TYPE || message.getType() == ObserverMessage.ADD_ACCOUNT_TYPE || message.getType() == ObserverMessage.REMOVE_ACCOUNT_TYPE)
+		{
+			this.accounts = Controller.getInstance().getAccounts();	
+			
+			this.fireTableDataChanged();	
+
+		}
 	}
 
 	public BigDecimal getTotalBalance() 
@@ -107,7 +146,14 @@ public class AccountsTableModel extends AbstractTableModel implements Observer
 		
 		for(Account account: this.accounts)
 		{
-			totalBalance = totalBalance.add(account.getConfirmedBalance());
+			if(this.asset == null || this.asset.getKey() == 0l)
+			{
+				totalBalance = totalBalance.add(account.getConfirmedBalance());
+			}
+			else
+			{
+				totalBalance = totalBalance.add(account.getConfirmedBalance(this.asset.getKey()));
+			}
 		}
 		
 		return totalBalance;

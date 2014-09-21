@@ -1,6 +1,7 @@
 package gui;
 
 import gui.models.AccountsComboBoxModel;
+import gui.models.AssetsComboBoxModel;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -14,6 +15,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import qora.account.Account;
+import qora.assets.Asset;
 import qora.transaction.Transaction;
 import utils.Pair;
 import controller.Controller;
@@ -26,6 +28,8 @@ public class SendMoneyPanel extends JPanel
 	private JTextField txtAmount;
 	private JTextField txtFee;
 	private JButton sendButton;
+	private AccountsComboBoxModel accountsModel;
+	private JComboBox<Asset> cbxFavorites;
 	
 	public SendMoneyPanel()
 	{
@@ -57,7 +61,21 @@ public class SendMoneyPanel extends JPanel
 		txtGBC.anchor = GridBagConstraints.NORTHWEST;
 		txtGBC.weightx = 1;	
 		txtGBC.gridwidth = 2;
-		txtGBC.gridx = 1;		
+		txtGBC.gridx = 1;	
+		
+		//FAVORITES GBC
+		GridBagConstraints favoritesGBC = new GridBagConstraints();
+		favoritesGBC.insets = new Insets(5, 5, 5, 5);
+		favoritesGBC.fill = GridBagConstraints.BOTH;  
+		favoritesGBC.anchor = GridBagConstraints.NORTHWEST;
+		favoritesGBC.weightx = 1;
+		favoritesGBC.gridwidth = 2;
+		favoritesGBC.gridx = 0;	
+		favoritesGBC.gridy = 0;	
+		
+		//ASSET FAVORITES
+		cbxFavorites = new JComboBox<Asset>(new AssetsComboBoxModel());
+		this.add(cbxFavorites, favoritesGBC);
 		
 		//BUTTON GBC
 		GridBagConstraints buttonGBC = new GridBagConstraints();
@@ -68,48 +86,70 @@ public class SendMoneyPanel extends JPanel
 		buttonGBC.gridx = 0;		
 		
 		//LABEL FROM
-		labelGBC.gridy = 0;
+		labelGBC.gridy = 1;
 		JLabel fromLabel = new JLabel("From:");
 		this.add(fromLabel, labelGBC);
 		
 		//COMBOBOX FROM
-		txtGBC.gridy = 0;
-		this.cbxFrom = new JComboBox<Account>(new AccountsComboBoxModel());
+		txtGBC.gridy = 1;
+		this.accountsModel = new AccountsComboBoxModel();
+		this.cbxFrom = new JComboBox<Account>(accountsModel);
         this.add(this.cbxFrom, txtGBC);
         
+		//ON FAVORITES CHANGE
+		cbxFavorites.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+		    	
+		    	Asset asset = ((Asset) cbxFavorites.getSelectedItem());
+		    	if(asset != null)
+		    	{
+		    		//REMOVE ITEMS
+			    	cbxFrom.removeAllItems();
+			    	
+			    	//SET RENDERER
+			    	cbxFrom.setRenderer(new AccountRenderer(asset.getKey()));
+			    	
+			    	//UPDATE MODEL
+			    	accountsModel.removeObservers();
+			    	accountsModel = new AccountsComboBoxModel();
+			    	cbxFrom.setModel(accountsModel);
+		    	}
+		    }
+		});
+        
         //LABEL TO
-      	labelGBC.gridy = 1;
+      	labelGBC.gridy = 2;
       	JLabel toLabel = new JLabel("To:");
       	this.add(toLabel, labelGBC);
       		
       	//TXT TO
-      	txtGBC.gridy = 1;
+      	txtGBC.gridy = 2;
       	txtTo = new JTextField();
         this.add(txtTo, txtGBC);
         
         //LABEL AMOUNT
-      	labelGBC.gridy = 2;
+      	labelGBC.gridy = 3;
       	JLabel amountLabel = new JLabel("Amount:");
       	this.add(amountLabel, labelGBC);
       		
       	//TXT AMOUNT
-      	txtGBC.gridy = 2;
+      	txtGBC.gridy = 3;
       	txtAmount = new JTextField();
         this.add(txtAmount, txtGBC);
         
         //LABEL FEE
-      	labelGBC.gridy = 3;
+      	labelGBC.gridy = 4;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
       		
       	//TXT AMOUNT
-      	txtGBC.gridy = 3;
+      	txtGBC.gridy = 4;
       	txtFee = new JTextField();
       	txtFee.setText("1");
         this.add(txtFee, txtGBC);
         
         //BUTTON SEND
-        buttonGBC.gridy = 4;
+        buttonGBC.gridy = 5;
         sendButton = new JButton("Send");
         sendButton.setPreferredSize(new Dimension(80, 25));
     	sendButton.addActionListener(new ActionListener()
@@ -190,8 +230,19 @@ public class SendMoneyPanel extends JPanel
 				return;
 			}
 		
-			//CREATE PAYMENT
-			Pair<Transaction, Integer> result = Controller.getInstance().sendPayment(Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress()), recipient, amount, fee);
+			//CHECK IF PAYMENT OR ASSET TRANSFER
+			Asset asset = (Asset) this.cbxFavorites.getSelectedItem();
+			Pair<Transaction, Integer> result;
+			if(asset.getKey() == 0l)
+			{
+				//CREATE PAYMENT
+				result = Controller.getInstance().sendPayment(Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress()), recipient, amount, fee);
+			}
+			else
+			{
+				//CREATE ASSET TRANSFER
+				result = Controller.getInstance().transferAsset(Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress()), recipient, asset, amount, fee);
+			}
 			
 			//CHECK VALIDATE MESSAGE
 			switch(result.getB())

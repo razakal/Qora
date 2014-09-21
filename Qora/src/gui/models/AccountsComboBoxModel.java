@@ -7,6 +7,7 @@ import java.util.Observer;
 import javax.swing.DefaultComboBoxModel;
 
 import qora.account.Account;
+import utils.ObserverMessage;
 import controller.Controller;
 
 @SuppressWarnings("serial")
@@ -14,14 +15,25 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 
 	public AccountsComboBoxModel()
 	{
+		//INSERT ALL ACCOUNTS
+		List<Account> accounts = Controller.getInstance().getAccounts();
+		synchronized(accounts)
+		{
+	 		for(Account account: Controller.getInstance().getAccounts())
+			{
+				this.addElement(account);
+			}
+		}
+		
 		Controller.getInstance().addWalletListener(this);
+		Controller.getInstance().addObserver(this);
 	}
 	
 	@Override
 	public void update(Observable o, Object arg) 
 	{
 		try
-		{
+		{			
 			this.syncUpdate(o, arg);
 		}
 		catch(Exception e)
@@ -32,26 +44,37 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 	
 	public synchronized void syncUpdate(Observable o, Object arg)
 	{
-		//GET SELECTED ITEM
-		Account selected = (Account) this.getSelectedItem();
-					
-		//EMPTY LIST
-		this.removeAllElements();
-			
-		//INSERT ALL ACCOUNTS
-		List<Account> accounts = Controller.getInstance().getAccounts();
-		synchronized(accounts)
+		ObserverMessage message = (ObserverMessage) arg;
+		
+		if(message.getType() == ObserverMessage.ADD_BALANCE_TYPE || message.getType() == ObserverMessage.REMOVE_BALANCE_TYPE || message.getType() == ObserverMessage.ADD_ACCOUNT_TYPE || message.getType() == ObserverMessage.REMOVE_ACCOUNT_TYPE)
 		{
-	 		for(Account account: Controller.getInstance().getAccounts())
+			//GET SELECTED ITEM
+			Account selected = (Account) this.getSelectedItem();
+						
+			//EMPTY LIST
+			this.removeAllElements();
+				
+			//INSERT ALL ACCOUNTS
+			List<Account> accounts = Controller.getInstance().getAccounts();
+			synchronized(accounts)
 			{
-				this.addElement(account);
+		 		for(Account account: Controller.getInstance().getAccounts())
+				{
+					this.addElement(account);
+				}
+			}
+				
+			//RESET SELECTED ITEM
+			if(this.getIndexOf(selected) != -1)
+			{
+				this.setSelectedItem(selected);
 			}
 		}
-			
-		//RESET SELECTED ITEM
-		if(this.getIndexOf(selected) != -1)
-		{
-			this.setSelectedItem(selected);
-		}
+	}
+	
+	public void removeObservers()
+	{
+		Controller.getInstance().deleteWalletObserver(this);
+		Controller.getInstance().deleteObserver(this);
 	}
 }

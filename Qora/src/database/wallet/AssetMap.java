@@ -40,7 +40,7 @@ public class AssetMap extends DBMap<Tuple2<String, String>, Asset>
 		super(parent);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	//@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void createIndexes(DB database)
 	{
 		//NAME INDEX

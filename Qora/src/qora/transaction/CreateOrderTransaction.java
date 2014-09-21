@@ -40,7 +40,7 @@ public class CreateOrderTransaction extends Transaction
 		super(CREATE_ORDER_TRANSACTION, fee, timestamp, reference, signature);
 		
 		this.creator = creator;
-		this.order = new Order(new BigInteger(this.signature), creator, have, want, amount, price);
+		this.order = new Order(new BigInteger(this.signature), creator, have, want, amount, price, timestamp);
 	}
 
 	//GETTERS/SETTERS
@@ -251,10 +251,22 @@ public class CreateOrderTransaction extends Transaction
 			return HAVE_EQUALS_WANT;
 		}
 		
+		//CHECK IF AMOUNT POSITIVE
+		if(this.order.getAmount().compareTo(BigDecimal.ZERO) <= 0)
+		{
+			return NEGATIVE_AMOUNT;
+		}
+		
+		//CHECCK IF PRICE POSITIVE
+		if(this.order.getPrice().compareTo(BigDecimal.ZERO) <= 0)
+		{
+			return NEGATIVE_PRICE;
+		}
+		
 		//REMOVE FEE
 		DBSet fork = db.fork();
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(fork).subtract(this.fee), fork);
-
+		
 		//CHECK IF SENDER HAS ENOUGH ASSET BALANCE
 		if(this.creator.getConfirmedBalance(this.order.getHave(), fork).compareTo(this.order.getAmount()) == -1)
 		{
@@ -317,7 +329,7 @@ public class CreateOrderTransaction extends Transaction
 		this.creator.setLastReference(this.signature, db);
 		
 		//PROCESS ORDER
-		this.order.process(db);
+		this.order.copy().process(db, this);
 	}
 
 
@@ -331,7 +343,7 @@ public class CreateOrderTransaction extends Transaction
 		this.creator.setLastReference(this.reference, db);
 				
 		//ORPHAN ORDER
-		this.order.orphan(db);
+		this.order.copy().orphan(db);
 	}
 
 	@Override
@@ -379,7 +391,7 @@ public class CreateOrderTransaction extends Transaction
 	{
 		byte[] data = new byte[0];
 		
-		Order order = new Order(null, creator, have, want, amount, price);
+		Order order = new Order(null, creator, have, want, amount, price, timestamp);
 		
 		//WRITE TYPE
 		byte[] typeBytes = Ints.toByteArray(CREATE_ORDER_TRANSACTION);

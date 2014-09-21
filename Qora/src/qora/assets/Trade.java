@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Longs;
 
 import database.DBSet;
 
@@ -13,19 +14,22 @@ public class Trade {
 	private static final int ORDER_LENGTH = 64;
 	private static final int AMOUNT_LENGTH = 12;
 	private static final int PRICE_LENGTH = 12;
-	private static final int BASE_LENGTH = ORDER_LENGTH + ORDER_LENGTH + AMOUNT_LENGTH + PRICE_LENGTH;
+	private static final int TIMESTAMP_LENGTH = 8;
+	private static final int BASE_LENGTH = ORDER_LENGTH + ORDER_LENGTH + AMOUNT_LENGTH + PRICE_LENGTH + TIMESTAMP_LENGTH;
 	
 	private BigInteger initiator;
 	private BigInteger target;
 	private BigDecimal amount;
 	private BigDecimal price;
+	private long timestamp;
 	
-	public Trade(BigInteger initiator, BigInteger target, BigDecimal amount, BigDecimal price)
+	public Trade(BigInteger initiator, BigInteger target, BigDecimal amount, BigDecimal price, long timestamp)
 	{
 		this.initiator = initiator;
 		this.target = target;
 		this.amount = amount;
 		this.price = price;
+		this.timestamp = timestamp;
 	}
 
 	public BigInteger getInitiator() 
@@ -68,6 +72,11 @@ public class Trade {
 		return this.price;
 	}
 	
+	public long getTimestamp()
+	{
+		return this.timestamp;
+	}
+	
 	//PARSE/CONVERT
 	
 	public static Trade parse(byte[] data) throws Exception
@@ -100,7 +109,12 @@ public class Trade {
 		BigDecimal price = new BigDecimal(new BigInteger(priceBytes), 8);
 		position += PRICE_LENGTH;		
 		
-		return new Trade(initiator, target, amount, price);
+		//READ TIMESTAMP
+		byte[] timestampBytes = Arrays.copyOfRange(data, position, position + TIMESTAMP_LENGTH);
+		long timestamp = Longs.fromByteArray(timestampBytes);
+		position += TIMESTAMP_LENGTH;	
+		
+		return new Trade(initiator, target, amount, price, timestamp);
 	}	
 	
 	public byte[] toBytes()
@@ -131,6 +145,10 @@ public class Trade {
 		priceBytes = Bytes.concat(fill, priceBytes);
 		data = Bytes.concat(data, priceBytes);
 		
+		//WRITE TIMESTAMP
+		byte[] timestampBytes = Longs.toByteArray(this.timestamp);
+		data = Bytes.concat(data, timestampBytes);
+		
 		return data;
 	}
 	
@@ -143,8 +161,8 @@ public class Trade {
 	
 	public void process(DBSet db)
 	{
-		Order initiator = this.getInitiatorOrder(db);
-		Order target = this.getTargetOrder(db);
+		Order initiator = this.getInitiatorOrder(db).copy();
+		Order target = this.getTargetOrder(db).copy();
 			
 		//ADD TRADE TO DATABASE
 		db.getTradeMap().add(this);
@@ -157,7 +175,7 @@ public class Trade {
 		if(initiator.isFulfilled())
 		{
 			//REMOVE FROM ORDERS
-			db.getOrderMap().delete(this.initiator);
+			db.getOrderMap().delete(initiator);
 			
 			//ADD TO COMPLETED ORDERS
 			db.getCompletedOrderMap().add(initiator);
@@ -171,7 +189,7 @@ public class Trade {
 		if(target.isFulfilled())
 		{
 			//REMOVE FROM ORDERS
-			db.getOrderMap().delete(this.target);
+			db.getOrderMap().delete(target);
 			
 			//ADD TO COMPLETED ORDERS
 			db.getCompletedOrderMap().add(target);
@@ -189,8 +207,8 @@ public class Trade {
 
 	public void orphan(DBSet db) 
 	{
-		Order initiator = this.getInitiatorOrder(db);
-		Order target = this.getTargetOrder(db);
+		Order initiator = this.getInitiatorOrder(db).copy();
+		Order target = this.getTargetOrder(db).copy();
 		
 		//REVERSE FUNDS
 		initiator.getCreator().setConfirmedBalance(initiator.getWant(), initiator.getCreator().getConfirmedBalance(initiator.getWant(), db).subtract(this.amount), db);

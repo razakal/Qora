@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
+import ntp.NTP;
+
 import org.json.simple.JSONObject;
 
 import qora.account.Account;
@@ -237,6 +239,12 @@ public class TransferAssetTransaction extends Transaction {
 	@Override
 	public int isValid(DBSet db) 
 	{
+		//CHECK IF RELEASED
+		if(NTP.getTime() < ASSETS_RELEASE)
+		{
+			return NOT_YET_RELEASED;
+		}
+		
 		//CHECK IF RECIPIENT IS VALID ADDRESS
 		if(!Crypto.getInstance().isValidAddress(this.recipient.getAddress()))
 		{

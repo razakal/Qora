@@ -17,7 +17,7 @@ public class AssetSerializer implements Serializer<Asset>, Serializable
 	public void serialize(DataOutput out, Asset value) throws IOException 
 	{
 		out.writeInt(value.getDataLength());
-        out.write(value.toBytes());
+        out.write(value.toBytes(true));
     }
 
     @Override

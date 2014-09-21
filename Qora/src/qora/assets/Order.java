@@ -2,6 +2,7 @@ package qora.assets;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.google.common.primitives.Longs;
 import database.DBSet;
 import qora.account.Account;
 import qora.crypto.Base58;
+import qora.transaction.Transaction;
 
 public class Order implements Comparable<Order> {
 	
@@ -21,7 +23,8 @@ public class Order implements Comparable<Order> {
 	private static final int AMOUNT_LENGTH = 12;
 	private static final int FULFILLED_LENGTH = 12;
 	private static final int PRICE_LENGTH = 12;
-	private static final int BASE_LENGTH = ID_LENGTH + CREATOR_LENGTH + HAVE_LENGTH + WANT_LENGTH + AMOUNT_LENGTH + FULFILLED_LENGTH + PRICE_LENGTH;
+	private static final int TIMESTAMP_LENGTH = 8;
+	private static final int BASE_LENGTH = ID_LENGTH + CREATOR_LENGTH + HAVE_LENGTH + WANT_LENGTH + AMOUNT_LENGTH + FULFILLED_LENGTH + PRICE_LENGTH + TIMESTAMP_LENGTH;
 	
 	private BigInteger id;
 	private Account creator;
@@ -30,8 +33,9 @@ public class Order implements Comparable<Order> {
 	private BigDecimal amount;
 	private BigDecimal fulfilled;
 	private BigDecimal price;
+	private long timestamp;
 	
-	public Order(BigInteger id, Account creator, long have, long want, BigDecimal amount, BigDecimal price)
+	public Order(BigInteger id, Account creator, long have, long want, BigDecimal amount, BigDecimal price, long timestamp)
 	{
 		this.id = id;
 		this.creator = creator;
@@ -40,9 +44,10 @@ public class Order implements Comparable<Order> {
 		this.amount = amount;
 		this.fulfilled = BigDecimal.ZERO.setScale(8);
 		this.price = price;
+		this.timestamp = timestamp;
 	}
 	
-	public Order(BigInteger id, Account creator, long have, long want, BigDecimal amount, BigDecimal fulfilled, BigDecimal price)
+	public Order(BigInteger id, Account creator, long have, long want, BigDecimal amount, BigDecimal fulfilled, BigDecimal price, long timestamp)
 	{
 		this.id = id;
 		this.creator = creator;
@@ -51,6 +56,7 @@ public class Order implements Comparable<Order> {
 		this.amount = amount;
 		this.fulfilled = fulfilled;
 		this.price = price;
+		this.timestamp = timestamp;
 	}
 	
 	//GETTERS/SETTERS
@@ -115,6 +121,11 @@ public class Order implements Comparable<Order> {
 		return this.fulfilled;
 	}
 	
+	public long getTimestamp() 
+	{
+		return this.timestamp;
+	}
+	
 	public void setFulfilled(BigDecimal fulfilled)
 	{
 		this.fulfilled = fulfilled;
@@ -125,14 +136,19 @@ public class Order implements Comparable<Order> {
 		return this.fulfilled.compareTo(this.amount) == 0;
 	}
 	
-	public List<Trade> getTrades()
+	public List<Trade> getInitiatedTrades()
 	{
-		return this.getTrades(DBSet.getInstance());
+		return this.getInitiatedTrades(DBSet.getInstance());
 	}
 	
-	public List<Trade> getTrades(DBSet db)
+	public List<Trade> getInitiatedTrades(DBSet db)
 	{
-		return db.getTradeMap().getTrades(this);
+		return db.getTradeMap().getInitiatedTrades(this);
+	}
+	
+	public boolean isConfirmed() 
+	{
+		return DBSet.getInstance().getOrderMap().contains(this.id) || DBSet.getInstance().getCompletedOrderMap().contains(this.id);
 	}
 	
 	//PARSE/CONVERT
@@ -180,9 +196,14 @@ public class Order implements Comparable<Order> {
 		//READ PRICE
 		byte[] priceBytes = Arrays.copyOfRange(data, position, position + PRICE_LENGTH);
 		BigDecimal price = new BigDecimal(new BigInteger(priceBytes), 8);
-		position += PRICE_LENGTH;		
+		position += PRICE_LENGTH;	
 		
-		return new Order(id, creator, have, want, amount, fulfilled, price);
+		//READ TIMESTAMP
+		byte[] timestampBytes = Arrays.copyOfRange(data, position, position + TIMESTAMP_LENGTH);
+		long timestamp = Longs.fromByteArray(timestampBytes);	
+		position += TIMESTAMP_LENGTH;
+		
+		return new Order(id, creator, have, want, amount, fulfilled, price, timestamp);
 	}
 	
 	public byte[] toBytes()
@@ -233,6 +254,11 @@ public class Order implements Comparable<Order> {
 		priceBytes = Bytes.concat(fill, priceBytes);
 		data = Bytes.concat(data, priceBytes);
 		
+		//WRITE TIMESTAMP
+		byte[] timestampBytes = Longs.toByteArray(this.timestamp);
+		timestampBytes = Bytes.ensureCapacity(timestampBytes, TIMESTAMP_LENGTH, 0);
+		data = Bytes.concat(data, timestampBytes);
+		
 		return data;
 	}
 	
@@ -243,7 +269,7 @@ public class Order implements Comparable<Order> {
 	
 	//PROCESS/ORPHAN
 
-	public void process(DBSet db) 
+	public void process(DBSet db, Transaction transaction) 
 	{
 		//REMOVE HAVE
 		this.creator.setConfirmedBalance(this.have, this.creator.getConfirmedBalance(this.have, db).subtract(this.amount), db);
@@ -266,40 +292,44 @@ public class Order implements Comparable<Order> {
 			Order order = orders.get(i);
 			
 			//CALCULATE BUYING PRICE
-			BigDecimal buyingPrice = BigDecimal.ONE.divide(order.getPrice());
+			BigDecimal buyingPrice = BigDecimal.ONE.setScale(8).divide(order.getPrice(), RoundingMode.DOWN);
 			
-			//CHECK IF BUYING PRICE IS HIGHER OR EQUAL THEN OUR SELLING PRICE
-			if(buyingPrice.compareTo(this.price) >= 0)
-			{
-				//CALCULATE THE MAXIMUM AMOUNT WE COULD BUY
-				BigDecimal amount = order.getAmountLeft();
-				amount = amount.min(this.getAmountLeft().multiply(BigDecimal.ONE.divide(order.getPrice())));
-								
-				//CHECK IF WE CAN BUY ANYTHING
-				if(amount.compareTo(BigDecimal.ZERO) > 0)
+			//CHECK IF OWNERS OF BOTH ORDER ARE NOT THE SAME
+			/*if(!this.getCreator().getAddress().equals(order.getCreator().getAddress()))
+			{*/		
+				//CHECK IF BUYING PRICE IS HIGHER OR EQUAL THEN OUR SELLING PRICE
+				if(buyingPrice.compareTo(this.price) >= 0)
 				{
-					//CALCULATE THE INCREMENTS AT WHICH WE HAVE TO BUY
-					BigDecimal increment = this.calculateBuyIncrement(order, db);
-					
-					//CALCULATE THE AMOUNT WE CAN BUY
-					amount = amount.subtract(amount.remainder(increment));
-					
-					//CALCULATE THE PRICE WE HAVE TO PAY
-					BigDecimal price = amount.multiply(order.getPrice());
-					
-					//WE CAN BUY AMOUNT (WANT) for PRICE (HAVE)
-					/*BigDecimal normalPrice = amount.divide(this.getPrice());
-					BigDecimal profit = normalPrice.subtract(price);*/
-					
-					//CREATE TRADE
-					Trade trade = new Trade(this.getId(), order.getId(), amount, price);
-					trade.process(db);
-					this.fulfilled = this.fulfilled.add(price);
-					
-					//COMPLETED ORDER
-					completedOrder = true;
+					//CALCULATE THE MAXIMUM AMOUNT WE COULD BUY
+					BigDecimal amount = order.getAmountLeft();
+					amount = amount.min(this.getAmountLeft().multiply(BigDecimal.ONE.setScale(8).divide(order.getPrice(), RoundingMode.DOWN)).setScale(8, RoundingMode.DOWN));
+									
+					//CHECK IF WE CAN BUY ANYTHING
+					if(amount.compareTo(BigDecimal.ZERO) > 0)
+					{
+						//CALCULATE THE INCREMENTS AT WHICH WE HAVE TO BUY
+						BigDecimal increment = this.calculateBuyIncrement(order, db);
+						
+						//CALCULATE THE AMOUNT WE CAN BUY
+						amount = amount.subtract(amount.remainder(increment));
+						
+						//CALCULATE THE PRICE WE HAVE TO PAY
+						BigDecimal price = amount.multiply(order.getPrice()).setScale(8);
+						
+						//WE CAN BUY AMOUNT (WANT) for PRICE (HAVE)
+						/*BigDecimal normalPrice = amount.divide(this.getPrice());
+						BigDecimal profit = normalPrice.subtract(price);*/
+						
+						//CREATE TRADE
+						Trade trade = new Trade(this.getId(), order.getId(), amount, price, transaction.getTimestamp());
+						trade.process(db);
+						this.fulfilled = this.fulfilled.add(price);
+						
+						//COMPLETED ORDER
+						completedOrder = true;
+					}
 				}
-			}
+			//}
 			
 			//INCREMENT I
 			i++;
@@ -309,7 +339,7 @@ public class Order implements Comparable<Order> {
 	public void orphan(DBSet db) {
 		
 		//ORPHAN TRADES
-		for(Trade trade: this.getTrades(db))
+		for(Trade trade: this.getInitiatedTrades(db))
 		{
 			trade.orphan(db);
 		}

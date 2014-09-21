@@ -34,7 +34,7 @@ public class WalletAssetsTableModel extends QoraTableModel<Tuple2<String, String
 		return this.assets;
 	}
 	
-	public Asset getPoll(int row)
+	public Asset getAsset(int row)
 	{
 		return this.assets.get(row).getB();
 	}

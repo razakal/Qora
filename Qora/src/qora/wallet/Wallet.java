@@ -1,6 +1,7 @@
 package qora.wallet;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
+
+import org.mapdb.Fun.Tuple2;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -19,12 +22,15 @@ import database.wallet.WalletDatabase;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
+import qora.assets.Order;
 import qora.block.Block;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.transaction.BuyNameTransaction;
+import qora.transaction.CancelOrderTransaction;
 import qora.transaction.CancelSellNameTransaction;
+import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.IssueAssetTransaction;
 import qora.transaction.RegisterNameTransaction;
@@ -56,6 +62,7 @@ public class Wallet extends Observable implements Observer
 			
 			//ADD OBSERVER
 		    Controller.getInstance().addObserver(this);
+		    DBSet.getInstance().getCompletedOrderMap().addObserver(this);
 		}
 	}
 	
@@ -219,6 +226,36 @@ public class Wallet extends Observable implements Observer
 		}
 
 		return this.database.getPollMap().get(account);
+	}
+	
+	public void addAssetFavorite(Asset asset)
+	{
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		this.database.getAssetFavoritesSet().add(asset.getKey());
+	}
+	
+	public void removeAssetFavorite(Asset asset)
+	{
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		this.database.getAssetFavoritesSet().delete(asset.getKey());
+	}
+	
+	public boolean isAssetFavorite(Asset asset)
+	{
+		if(!this.exists())
+		{
+			return false;
+		}
+		
+		return this.database.getAssetFavoritesSet().contains(asset.getKey());
 	}
 	
 	//CREATE
@@ -417,18 +454,22 @@ public class Wallet extends Observable implements Observer
 	  	//DELETE POLLS
 	  	this.database.getPollMap().deleteAll(accounts);
 	  	
-	  	//TODO SCAN ASSETS
+	  	//ADD POLLS
+	  	this.database.getPollMap().addAll(polls);
+	  	
+	  	//SCAN ASSETS
 		Map<Account, List<Asset>> assets;
 	  	synchronized(accounts)
 	  	{
 	  		assets = Controller.getInstance().scanAssets(accounts);
 	  	}
 	  	
+	  	//DELETE ASSETS
+	  	this.database.getAssetMap().deleteAll(accounts);
+	  	
 	  	//ADD ASSETS
 	  	this.database.getAssetMap().addAll(assets);
-	  	
-	  	//ADD POLLS
-	  	this.database.getPollMap().addAll(polls);
+
 	  	
 	  	//SET LAST BLOCK
 	  	this.database.setLastBlockSignature(Controller.getInstance().getLastBlock().getSignature());
@@ -557,6 +598,9 @@ public class Wallet extends Observable implements Observer
 	{
 		super.addObserver(o);
 		
+		//REGISTER ON ACCOUNTS
+		this.database.getAccountMap().addObserver(o);
+		
 		//REGISTER ON TRANSACTIONS
 		this.database.getTransactionMap().addObserver(o);
 		
@@ -574,6 +618,12 @@ public class Wallet extends Observable implements Observer
 		
 		//REGISTER ON ASSETS
 		this.database.getAssetMap().addObserver(o);
+
+		//REGISTER ON ORDERS
+		this.database.getOrderMap().addObserver(o);
+		
+		//REGISTER ON ASSET FAVORITES
+		this.database.getAssetFavoritesSet().addObserver(o);
 		
 		//SEND STATUS
 		int status = STATUS_LOCKED;
@@ -960,6 +1010,77 @@ public class Wallet extends Observable implements Observer
 		}
 	}
 	
+	private void processOrderCreation(CreateOrderTransaction orderCreation)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		//ADD ORDER
+		this.addOrder(orderCreation.getOrder());
+	}
+	
+	private void addOrder(Order order)
+	{
+		//CHECK IF WE ARE CREATOR
+		if(this.accountExists(order.getCreator().getAddress()))
+		{
+			//ADD ORDER
+			this.database.getOrderMap().add(order);
+		}
+	}
+	
+	private void orphanOrderCreation(CreateOrderTransaction orderCreation)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		//CHECK IF WE ARE CREATOR
+		if(this.accountExists(orderCreation.getOrder().getCreator().getAddress()))
+		{
+			//DELETE ORDER
+			//this.database.getOrderMap().delete(orderCreation.getOrder());
+		}
+	}
+	
+	private void processOrderCancel(CancelOrderTransaction orderCancel)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+				
+		//CHECK IF WE ARE CREATOR
+		if(this.accountExists(orderCancel.getCreator().getAddress()))
+		{
+			//DELETE ORDER
+			this.database.getOrderMap().delete(new Tuple2<String, BigInteger>(orderCancel.getCreator().getAddress(), orderCancel.getOrder()));
+		}
+	}
+	
+	private void orphanOrderCancel(CancelOrderTransaction orderCancel)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+				
+		//CHECK IF WE ARE CREATOR
+		if(this.accountExists(orderCancel.getCreator().getAddress()))
+		{
+			//DELETE ORDER
+			Order order = DBSet.getInstance().getOrderMap().get(orderCancel.getOrder());
+			this.database.getOrderMap().add(order);
+		}
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) 
 	{
@@ -1024,6 +1145,18 @@ public class Wallet extends Observable implements Observer
 				{
 					this.processAssetIssue((IssueAssetTransaction) transaction);
 				}
+				
+				//CHECK IF ORDER CREATION
+				/*if(transaction instanceof CreateOrderTransaction)
+				{
+					this.processOrderCreation((CreateOrderTransaction) transaction);
+				}*/
+				
+				//CHECK IF ORDER CANCEL
+				if(transaction instanceof CancelOrderTransaction)
+				{
+					this.processOrderCancel((CancelOrderTransaction) transaction);
+				}
 			}
 		}
 		
@@ -1049,6 +1182,12 @@ public class Wallet extends Observable implements Observer
 			if(transaction instanceof IssueAssetTransaction)
 			{
 				this.processAssetIssue((IssueAssetTransaction) transaction);
+			}
+			
+			//CHECK IF ORDER CREATION
+			if(transaction instanceof CreateOrderTransaction)
+			{
+				this.processOrderCreation((CreateOrderTransaction) transaction);
 			}
 		}
 		
@@ -1111,6 +1250,18 @@ public class Wallet extends Observable implements Observer
 				{
 					this.orphanAssetIssue((IssueAssetTransaction) transaction);
 				}
+				
+				//CHECK IF ORDER CREATION
+				if(transaction instanceof CreateOrderTransaction)
+				{
+					this.orphanOrderCreation((CreateOrderTransaction) transaction);
+				}
+				
+				//CHECK IF ORDER CANCEL
+				if(transaction instanceof CancelOrderTransaction)
+				{
+					this.orphanOrderCancel((CancelOrderTransaction) transaction);
+				}
 			}
 		}
 		
@@ -1137,6 +1288,18 @@ public class Wallet extends Observable implements Observer
 			{
 				this.orphanAssetIssue((IssueAssetTransaction) transaction);
 			}
+			
+			//CHECK IF ORDER CREATION
+			if(transaction instanceof CreateOrderTransaction)
+			{
+				this.orphanOrderCreation((CreateOrderTransaction) transaction);
+			}
+		}
+		
+		//ADD ORDER
+		if(message.getType() == ObserverMessage.ADD_ORDER_TYPE || message.getType() == ObserverMessage.REMOVE_ORDER_TYPE)
+		{
+			this.addOrder((Order) message.getValue());
 		}
 	}
 

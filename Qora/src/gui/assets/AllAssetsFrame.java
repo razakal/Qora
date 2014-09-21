@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableColumn;
 
 import qora.assets.Asset;
 
@@ -39,7 +40,7 @@ public class AllAssetsFrame extends JFrame{
 
 	public AllAssetsFrame() {
 		
-		super("Qora - Asset Details");
+		super("Qora - All Assets");
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -93,6 +94,10 @@ public class AllAssetsFrame extends JFrame{
 		this.assetsTableModel = new AssetsTableModel();
 		final JTable assetsTable = new JTable(this.assetsTableModel);
 		
+		//CHECKBOX FOR DIVISIBLE
+		TableColumn divisibleColumn = assetsTable.getColumnModel().getColumn(AssetsTableModel.COLUMN_DIVISIBLE);
+		divisibleColumn.setCellRenderer(assetsTable.getDefaultRenderer(Boolean.class));
+		
 		//ASSETS SORTER
 		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
 		QoraRowSorter sorter = new QoraRowSorter(this.assetsTableModel, indexes);
@@ -135,7 +140,7 @@ public class AllAssetsFrame extends JFrame{
 				row = assetsTable.convertRowIndexToModel(row);
 
 				Asset asset = assetsTableModel.getAsset(row);
-				new AssetDetailsFrame(asset);
+				new AssetFrame(asset);
 			}
 		});
 		nameSalesMenu.add(details);
@@ -152,7 +157,7 @@ public class AllAssetsFrame extends JFrame{
 				{
 					row = assetsTable.convertRowIndexToModel(row);
 					Asset asset = assetsTableModel.getAsset(row);
-					new AssetDetailsFrame(asset);
+					new AssetFrame(asset);
 				}
 			}
 		});

@@ -54,6 +54,7 @@ public abstract class Transaction {
 	public static final int ORDER_DOES_NOT_EXIST = 32;
 	public static final int INVALID_ORDER_CREATOR = 33;
 	public static final int INVALID_PAYMENTS_LENGTH = 34;
+	public static final int NEGATIVE_PRICE = 35;
 	
 	public static final int NOT_YET_RELEASED = 1000;
 	
@@ -84,8 +85,7 @@ public abstract class Transaction {
 	//RELEASES
 	public static final long VOTING_RELEASE = 1403715600000l;
 	public static final long ARBITRARY_TRANSACTIONS_RELEASE = 1405702800000l;
-	//TODO REMOVE public static final long ASSETS_RELEASE = 1410195600000l;
-	public static final long ASSETS_RELEASE = 0l;
+	public static final long ASSETS_RELEASE = 1411308000000l;
 	
 	//PROPERTIES LENGTH
 	protected static final int TYPE_LENGTH = 4;

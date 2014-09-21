@@ -425,7 +425,7 @@ public class Block {
 	}
 	
 	public boolean isValid(DBSet db)
-	{				
+	{		
 		//CHECK IF PARENT EXISTS
 		if(this.reference == null || this.getParent(db) == null)
 		{
@@ -565,7 +565,7 @@ public class Block {
 		db.getBlockMap().add(this);
 				
 		//UPDATE LAST BLOCK
-		db.getBlockMap().setLastBlock(this);		
+		db.getBlockMap().setLastBlock(this);	
 	}
 	
 	public void orphan()

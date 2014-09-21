@@ -16,6 +16,7 @@ import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.assets.Order;
+import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import database.DBSet;
 
@@ -96,7 +97,7 @@ public class CancelOrderTransaction extends Transaction
 								
 		//ADD CREATOR/ORDER
 		transaction.put("creator", this.creator.getAddress());
-		transaction.put("order", this.order.toString());
+		transaction.put("order", Base58.encode(this.order.toByteArray()));
 								
 		return transaction;	
 	}

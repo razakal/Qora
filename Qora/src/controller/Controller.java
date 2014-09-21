@@ -1,6 +1,7 @@
 package controller;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -10,6 +11,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
 
+import org.mapdb.Fun.Tuple2;
+
 import api.ApiService;
 import qora.BlockChain;
 import qora.BlockGenerator;
@@ -18,10 +21,13 @@ import qora.TransactionCreator;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
+import qora.assets.Order;
+import qora.assets.Trade;
 import qora.block.Block;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
+import qora.payment.Payment;
 import qora.transaction.Transaction;
 import qora.voting.Poll;
 import qora.voting.PollOption;
@@ -30,6 +36,7 @@ import settings.Settings;
 import utils.ObserverMessage;
 import utils.Pair;
 import database.DBSet;
+import database.SortableList;
 import network.Network;
 import network.Peer;
 import network.message.BlockMessage;
@@ -167,8 +174,17 @@ public class Controller extends Observable {
 		//ADD OBSERVER TO POLLS
 		DBSet.getInstance().getPollMap().addObserver(o);
 		
-		//ADD OBSERVER TO NAMES
+		//ADD OBSERVER TO ASSETS
 		DBSet.getInstance().getAssetMap().addObserver(o);
+		
+		//ADD OBSERVER TO ORDERS
+		DBSet.getInstance().getOrderMap().addObserver(o);
+				
+		//ADD OBSERVER TO TRADES
+		DBSet.getInstance().getTradeMap().addObserver(o);
+		
+		//ADD OBSERVER TO BALANCES
+		DBSet.getInstance().getBalanceMap().addObserver(o);
 		
 		//ADD OBSERVER TO CONTROLLER
 		super.addObserver(o);
@@ -744,6 +760,21 @@ public class Controller extends Observable {
 		return this.wallet.getPolls(account);
 	}
 	
+	public void addAssetFavorite(Asset asset) 
+	{
+		this.wallet.addAssetFavorite(asset);
+	}
+	
+	public void removeAssetFavorite(Asset asset) 
+	{
+		this.wallet.removeAssetFavorite(asset);
+	}
+	
+	public boolean isAssetFavorite(Asset asset) 
+	{
+		return this.wallet.isAssetFavorite(asset);
+	}
+	
 	public Collection<Poll> getAllPolls()
 	{
 		return DBSet.getInstance().getPollMap().getValues();
@@ -832,6 +863,18 @@ public class Controller extends Observable {
 		return this.blockGenerator.getUnconfirmedTransactions();
 	}
 	
+	//BALANCES
+	
+	public SortableList<Tuple2<String, Long>, BigDecimal> getBalances(long key)
+	{
+		return DBSet.getInstance().getBalanceMap().getBalancesSortableList(key);
+	}
+	
+	public SortableList<Tuple2<String, Long>, BigDecimal> getBalances(Account account)
+	{
+		return DBSet.getInstance().getBalanceMap().getBalancesSortableList(account);
+	}
+	
 	//NAMES
 	
 	public Name getName(String nameName)
@@ -849,6 +892,33 @@ public class Controller extends Observable {
 	public Poll getPoll(String name)
 	{
 		return DBSet.getInstance().getPollMap().get(name);
+	}
+	
+	//ASSETS
+	
+	public Asset getQoraAsset()
+	{
+		return DBSet.getInstance().getAssetMap().get(0l);
+	}
+	
+	public Asset getAsset(long key) 
+	{
+		return DBSet.getInstance().getAssetMap().get(key);
+	}
+	
+	public SortableList<BigInteger, Order> getOrders(Asset have, Asset want)
+	{
+		return DBSet.getInstance().getOrderMap().getOrdersSortableList(have.getKey(), want.getKey());
+	}
+	
+	public SortableList<Tuple2<BigInteger, BigInteger>, Trade> getTrades(Asset have, Asset want)
+	{
+		return DBSet.getInstance().getTradeMap().getTradesSortableList(have.getKey(), want.getKey());
+	}
+	
+	public SortableList<Tuple2<BigInteger, BigInteger>, Trade> getTrades(Order order)
+	{
+		return DBSet.getInstance().getTradeMap().getTrades(order);
 	}
 	
 	//TRANSACTIONS
@@ -968,7 +1038,43 @@ public class Controller extends Observable {
 		//CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized(this.transactionCreator)
 		{
-			return this.transactionCreator.createIssueAssetransaction(creator, name, description, quantity, divisible, fee);
+			return this.transactionCreator.createIssueAssetTransaction(creator, name, description, quantity, divisible, fee);
+		}
+	}
+	
+	public Pair<Transaction, Integer> createOrder(PrivateKeyAccount creator, Asset have, Asset want, BigDecimal amount, BigDecimal price, BigDecimal fee) 
+	{
+		//CREATE ONLY ONE TRANSACTION AT A TIME
+		synchronized(this.transactionCreator)
+		{
+			return this.transactionCreator.createOrderTransaction(creator, have, want, amount, price, fee);
+		}
+	}
+	
+	public Pair<Transaction, Integer> cancelOrder(PrivateKeyAccount creator, Order order, BigDecimal fee) 
+	{
+		//CREATE ONLY ONE TRANSACTION AT A TIME
+		synchronized(this.transactionCreator)
+		{
+			return this.transactionCreator.createCancelOrderTransaction(creator, order, fee);
+		}
+	}
+	
+	public Pair<Transaction, Integer> transferAsset(PrivateKeyAccount sender, Account recipient, Asset asset, BigDecimal amount, BigDecimal fee)
+	{
+		//CREATE ONLY ONE TRANSACTION AT A TIME
+		synchronized(this.transactionCreator)
+		{		
+			return this.transactionCreator.createAssetTransfer(sender, recipient, asset, amount, fee);
+		}
+	}
+	
+	public Pair<Transaction, Integer> sendMultiPayment(PrivateKeyAccount sender, List<Payment> payments, BigDecimal fee)
+	{
+		//CREATE ONLY ONE TRANSACTION AT A TIME
+		synchronized(this.transactionCreator)
+		{		
+			return this.transactionCreator.sendMultiPayment(sender, payments, fee);
 		}
 	}
 }

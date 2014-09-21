@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 
 import org.mapdb.DB;
 
 import qora.account.Account;
+import utils.ObserverMessage;
 
-public class AccountMap {
+public class AccountMap extends Observable {
 
 	private static final String ADDRESSES = "addresses";
 	
@@ -102,6 +104,8 @@ public class AccountMap {
 			if(!this.accounts.contains(account))
 			{
 				this.accounts.add(account);
+				
+				this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_ACCOUNT_TYPE, account));
 			}
 		}
 	}
@@ -109,6 +113,8 @@ public class AccountMap {
 	public void update(Account account, BigDecimal unconfirmedBalance) 
 	{		
 		this.addressMap.put(account.getAddress(), unconfirmedBalance);	
+		
+		this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_ACCOUNT_TYPE, account));
 		
 	}
 	
@@ -124,6 +130,8 @@ public class AccountMap {
 		synchronized(this.accounts)
 		{
 			this.accounts.remove(account);
+			
+			this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_ACCOUNT_TYPE, account));
 		}
 	}
 

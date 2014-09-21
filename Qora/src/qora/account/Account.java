@@ -57,7 +57,7 @@ public class Account {
 	
 	public BigDecimal getConfirmedBalance(long key)
 	{
-		return this.getConfirmedBalance(DBSet.getInstance());
+		return this.getConfirmedBalance(key, DBSet.getInstance());
 	}
 	
 	public BigDecimal getConfirmedBalance(long key, DBSet db)
@@ -230,6 +230,11 @@ public class Account {
 	public String toString()
 	{
 		return this.getBalance(0).toPlainString() + " - " + this.getAddress();
+	}
+	
+	public String toString(long key)
+	{
+		return this.getConfirmedBalance(key).toPlainString() + " - " + this.getAddress();
 	}
 	
 	//EQUALS

@@ -16,7 +16,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
@@ -58,8 +60,6 @@ public class AssetsPanel extends JPanel
 		
 		//POLLS SORTER
 		Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
-		//indexes.put(WalletPollsTableModel.COLUMN_NAME, PollMap.NAME_INDEX);
-		//indexes.put(WalletPollsTableModel.COLUMN_ADDRESS, PollMap.CREATOR_INDEX);
 		QoraRowSorter sorter = new QoraRowSorter(assetsModel, indexes);
 		table.setRowSorter(sorter);
 				
@@ -70,7 +70,34 @@ public class AssetsPanel extends JPanel
 		//CHECKBOX FOR CONFIRMED
 		TableColumn confirmedColumn = table.getColumnModel().getColumn(WalletAssetsTableModel.COLUMN_CONFIRMED);
 		confirmedColumn.setCellRenderer(table.getDefaultRenderer(Boolean.class));
-				
+		
+		//MENU
+		JPopupMenu assetsMenu = new JPopupMenu();
+		JMenuItem details = new JMenuItem("Details");
+		details.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int row = table.getSelectedRow();
+				row = table.convertRowIndexToModel(row);
+
+				Asset asset = assetsModel.getAsset(row);
+				new AssetFrame(asset);
+			}
+		});
+		assetsMenu.add(details);
+		JMenuItem dividend = new JMenuItem("Pay dividend");
+		dividend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int row = table.getSelectedRow();
+				row = table.convertRowIndexToModel(row);
+
+				Asset asset = assetsModel.getAsset(row);	
+				new PayDividendFrame(asset);
+			}
+		});
+		assetsMenu.add(dividend);
+		table.setComponentPopupMenu(assetsMenu);
+		
+		//MOUSE ADAPTER
 		table.addMouseListener(new MouseAdapter() 
 		{
 			@Override
@@ -94,8 +121,8 @@ public class AssetsPanel extends JPanel
 				if(e.getClickCount() == 2)
 				{
 					row = table.convertRowIndexToModel(row);
-					Asset asset = assetsModel.getPoll(row);
-					new AssetDetailsFrame(asset);
+					Asset asset = assetsModel.getAsset(row);
+					new AssetFrame(asset);
 				}
 		     }
 		});
@@ -115,7 +142,7 @@ public class AssetsPanel extends JPanel
 		});	
 		this.add(issueButton, buttonGBC);
 		
-		//ADD EXCHANGE BUTTON
+		//ADD ALL BUTTON
 		buttonGBC.gridx = 1;
 		JButton allButton = new JButton("All Assets");
 		allButton.setPreferredSize(new Dimension(100, 25));
@@ -127,6 +154,19 @@ public class AssetsPanel extends JPanel
 			}
 		});	
 		this.add(allButton, buttonGBC);
+		
+		//ADD MY ORDERS BUTTON
+		buttonGBC.gridx = 2;
+		JButton myOrdersButton = new JButton("My Orders");
+		myOrdersButton.setPreferredSize(new Dimension(100, 25));
+		myOrdersButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				onMyOrdersClick();
+			}
+		});	
+		this.add(myOrdersButton, buttonGBC);
 	}
 	
 	public void onIssueClick()
@@ -137,5 +177,10 @@ public class AssetsPanel extends JPanel
 	public void onAllClick()
 	{
 		new AllAssetsFrame();
+	}
+	
+	public void onMyOrdersClick()
+	{
+		new MyOrdersFrame();
 	}
 }

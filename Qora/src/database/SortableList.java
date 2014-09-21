@@ -2,6 +2,7 @@ package database;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -22,6 +23,7 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 	private Pattern pattern;
 	private int size;
 	private Pair<T, U> lastValue;
+	private Collection<T> keys;
 	
 	public SortableList(DBMap<T, U> db)
 	{
@@ -32,6 +34,19 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		this.size = db.size();
 		this.descending = false;
 		this.iterator = this.filter(db.getIterator(DBMap.DEFAULT_INDEX, this.descending));
+		this.position = 0;
+	}
+	
+	public SortableList(DBMap<T, U> db, Collection<T> keys)
+	{
+		this.db = db;
+		this.keys = keys;
+		
+		//LOAD DEFAULT ITERATOR
+		this.index = DBMap.DEFAULT_INDEX;
+		this.size = keys.size();
+		this.descending = false;
+		this.iterator = keys.iterator();
 		this.position = 0;
 	}
 	
@@ -58,7 +73,15 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		if(i < this.position)
 		{
 			//RESET ITERATOR
-			this.iterator = this.filter(this.db.getIterator(this.index, this.descending));
+			if(this.keys != null)
+			{
+				this.iterator = this.filter(this.keys.iterator());
+			}
+			else
+			{
+				this.iterator = this.filter(this.db.getIterator(this.index, this.descending));
+			}
+			
 			this.position = 0;
 		}
 		
@@ -92,8 +115,18 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 	{
 		this.index = index;
 		this.descending = descending;
-		this.size = db.size();
-		this.iterator = this.filter(this.db.getIterator(index, descending));
+		
+		if(this.keys != null)
+		{
+			this.size = this.keys.size();
+			this.iterator = this.keys.iterator();
+		}
+		else
+		{
+			this.size = db.size();
+			this.iterator = this.filter(this.db.getIterator(index, descending));
+		}
+		
 		this.position = 0;
 		this.lastValue = null;
 	}

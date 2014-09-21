@@ -19,6 +19,7 @@ import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple4;
 
 import qora.assets.Order;
+import utils.ObserverMessage;
 import database.DBSet;
 import database.serializer.OrderSerializer;
 
@@ -32,6 +33,10 @@ public class OrderMap extends DBMap<BigInteger, Order>
 	public OrderMap(DBSet databaseSet, DB database)
 	{
 		super(databaseSet, database);
+		
+		this.observableData.put(DBMap.NOTIFY_ADD, ObserverMessage.ADD_ORDER_TYPE);
+		this.observableData.put(DBMap.NOTIFY_REMOVE, ObserverMessage.REMOVE_ORDER_TYPE);
+		//this.observableData.put(DBMap.NOTIFY_LIST, ObserverMessage.LIST_ORDER_TYPE);
 	}
 
 	public OrderMap(OrderMap parent) 
@@ -151,6 +156,18 @@ public class OrderMap extends DBMap<BigInteger, Order>
 		
 		//RETURN
 		return orders;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public SortableList<BigInteger, Order> getOrdersSortableList(long have, long want)
+	{
+		//FILTER ALL KEYS
+		Collection<BigInteger> keys = ((BTreeMap<Tuple4, BigInteger>) this.haveWantKeyMap).subMap(
+				Fun.t4(have, want, null, null),
+				Fun.t4(have, want, Fun.HI(), Fun.HI())).values();
+		
+		//RETURN
+		return new SortableList<BigInteger, Order>(this, keys);
 	}
 
 	public void delete(Order order) 

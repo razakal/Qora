@@ -12,18 +12,24 @@ import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.assets.Asset;
+import qora.assets.Order;
 import qora.block.Block;
 import qora.naming.Name;
 import qora.naming.NameSale;
+import qora.payment.Payment;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.BuyNameTransaction;
+import qora.transaction.CancelOrderTransaction;
 import qora.transaction.CancelSellNameTransaction;
+import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.IssueAssetTransaction;
+import qora.transaction.MultiPaymentTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
+import qora.transaction.TransferAssetTransaction;
 import qora.transaction.UpdateNameTransaction;
 import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
@@ -79,7 +85,7 @@ public class TransactionCreator
 		//VALIDATE AND PROCESS THOSE TRANSACTIONS IN FORK
 		for(Transaction transaction: accountTransactions)
 		{
-			if(transaction.isValid(this.fork) == Transaction.VALIDATE_OKE)
+			if(transaction.isValid(this.fork) == Transaction.VALIDATE_OKE && transaction.isSignatureValid())
 			{
 				transaction.process(this.fork);
 			}
@@ -253,7 +259,7 @@ public class TransactionCreator
 		return this.afterCreate(arbitraryTransaction);
 	}
 	
-	public Pair<Transaction, Integer> createIssueAssetransaction(PrivateKeyAccount creator, String name, String description, long quantity, boolean divisible, BigDecimal fee) 
+	public Pair<Transaction, Integer> createIssueAssetTransaction(PrivateKeyAccount creator, String name, String description, long quantity, boolean divisible, BigDecimal fee) 
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
@@ -271,6 +277,78 @@ public class TransactionCreator
 								
 		//VALIDATE AND PROCESS
 		return this.afterCreate(issueAssetTransaction);
+	}
+	
+	public Pair<Transaction, Integer> createOrderTransaction(PrivateKeyAccount creator, Asset have, Asset want, BigDecimal amount, BigDecimal price, BigDecimal fee)
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+								
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		byte[] signature = CreateOrderTransaction.generateSignature(this.fork, creator, have.getKey(), want.getKey(), amount, price, fee, time);
+							
+		//CREATE PRDER TRANSACTION
+		CreateOrderTransaction createOrderTransaction = new CreateOrderTransaction(creator, have.getKey(), want.getKey(), amount, price, fee, time, creator.getLastReference(this.fork), signature);
+								
+		//VALIDATE AND PROCESS
+		return this.afterCreate(createOrderTransaction);
+	}
+	
+	public Pair<Transaction, Integer> createCancelOrderTransaction(PrivateKeyAccount creator, Order order, BigDecimal fee)
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+								
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		byte[] signature = CancelOrderTransaction.generateSignature(this.fork, creator, order.getId(), fee, time);
+							
+		//CREATE PRDER TRANSACTION
+		CancelOrderTransaction cancelOrderTransaction = new CancelOrderTransaction(creator, order.getId(), fee, time, creator.getLastReference(this.fork), signature);
+								
+		//VALIDATE AND PROCESS
+		return this.afterCreate(cancelOrderTransaction);
+	}
+	
+	public Pair<Transaction, Integer> createAssetTransfer(PrivateKeyAccount sender, Account recipient, Asset asset, BigDecimal amount, BigDecimal fee)
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+		
+		//TIME
+		long time = NTP.getTime();
+		
+		//CREATE SIGNATURE
+		byte[] signature = TransferAssetTransaction.generateSignature(this.fork, sender, recipient, asset.getKey(), amount, fee, time);
+		
+		//CREATE ASSET TRANSFER
+		TransferAssetTransaction assetTransfer = new TransferAssetTransaction(sender, recipient, asset.getKey(), amount, fee, time, sender.getLastReference(this.fork), signature);
+		
+		//VALIDATE AND PROCESS
+		return this.afterCreate(assetTransfer);
+	}
+	
+	public Pair<Transaction, Integer> sendMultiPayment(PrivateKeyAccount sender, List<Payment> payments, BigDecimal fee)
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+		
+		//TIME
+		long time = NTP.getTime();
+		
+		//CREATE SIGNATURE
+		byte[] signature = MultiPaymentTransaction.generateSignature(this.fork, sender, payments, fee, time);
+		
+		//CREATE MULTI PAYMENTS
+		MultiPaymentTransaction multiPayment = new MultiPaymentTransaction(sender, payments, fee, time, sender.getLastReference(this.fork), signature);
+		
+		//VALIDATE AND PROCESS
+		return this.afterCreate(multiPayment);
 	}
 	
 	private Pair<Transaction, Integer> afterCreate(Transaction transaction)

@@ -4,14 +4,18 @@ import javax.swing.JFrame;
 
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.BuyNameTransaction;
+import qora.transaction.CancelOrderTransaction;
 import qora.transaction.CancelSellNameTransaction;
+import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.IssueAssetTransaction;
+import qora.transaction.MultiPaymentTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
+import qora.transaction.TransferAssetTransaction;
 import qora.transaction.UpdateNameTransaction;
 import qora.transaction.VoteOnPollTransaction;
 
@@ -87,6 +91,27 @@ public class TransactionDetailsFactory
 			
 			IssueAssetTransaction issueAssetTransaction = (IssueAssetTransaction) transaction;
 			return new IssueAssetDetailsFrame(issueAssetTransaction);	
+			
+		case Transaction.TRANSFER_ASSET_TRANSACTION:
+			
+			TransferAssetTransaction transferAssetTransaction = (TransferAssetTransaction) transaction;
+			return new TransferAssetDetailsFrame(transferAssetTransaction);		
+			
+		case Transaction.CREATE_ORDER_TRANSACTION:
+			
+			CreateOrderTransaction createOrderTransaction = (CreateOrderTransaction) transaction;
+			return new CreateOrderDetailsFrame(createOrderTransaction);	
+		
+		case Transaction.CANCEL_ORDER_TRANSACTION:
+			
+			CancelOrderTransaction cancelOrderTransaction = (CancelOrderTransaction) transaction;
+			return new CancelOrderDetailsFrame(cancelOrderTransaction);		
+			
+		case Transaction.MULTI_PAYMENT_TRANSACTION:
+			
+			MultiPaymentTransaction MultiPaymentTransaction = (MultiPaymentTransaction) transaction;
+			return new MultiPaymentDetailsFrame(MultiPaymentTransaction);			
+			
 		}
 		
 		return null;

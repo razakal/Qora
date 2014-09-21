@@ -9,6 +9,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import qora.assets.Order;
+import utils.ObserverMessage;
 import database.DBSet;
 import database.serializer.OrderSerializer;
 
@@ -19,12 +20,15 @@ public class CompletedOrderMap extends DBMap<BigInteger, Order>
 	public CompletedOrderMap(DBSet databaseSet, DB database)
 	{
 		super(databaseSet, database);
+		
+		this.observableData.put(DBMap.NOTIFY_ADD, ObserverMessage.ADD_ORDER_TYPE);
+		this.observableData.put(DBMap.NOTIFY_REMOVE, ObserverMessage.REMOVE_ORDER_TYPE);
+		//this.observableData.put(DBMap.NOTIFY_LIST, ObserverMessage.LIST_ORDER_TYPE);
 	}
 
 	public CompletedOrderMap(CompletedOrderMap parent) 
 	{
 		super(parent);
-
 	}
 
 	protected void createIndexes(DB database){}

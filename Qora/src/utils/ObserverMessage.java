@@ -36,6 +36,20 @@ public class ObserverMessage {
 	public static final int REMOVE_ASSET_TYPE = 24;
 	public static final int LIST_ASSET_TYPE = 25;
 	
+	public static final int ADD_ORDER_TYPE = 26;
+	public static final int REMOVE_ORDER_TYPE = 27;
+	public static final int LIST_ORDER_TYPE = 28;
+	
+	public static final int ADD_TRADE_TYPE = 29;
+	public static final int REMOVE_TRADE_TYPE = 30;
+	public static final int LIST_TRADE_TYPE = 31;
+	
+	public static final int ADD_BALANCE_TYPE = 32;
+	public static final int REMOVE_BALANCE_TYPE = 33;
+	public static final int LIST_BALANCE_TYPE = 34;
+	
+	public static final int LIST_ASSET_FAVORITES_TYPE = 35;
+	
 	private int type;
 	private Object value;
 	

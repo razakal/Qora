@@ -181,8 +181,7 @@ public class IssueAssetFrame extends JFrame
 		this.issueButton.setEnabled(false);
 	
 		//CHECK IF NETWORK OKE
-		//TODO REMOVE
-		/*if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
+		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
 		{
 			//NETWORK NOT OKE
 			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -191,7 +190,7 @@ public class IssueAssetFrame extends JFrame
 			this.issueButton.setEnabled(true);
 			
 			return;
-		}*/
+		}
 		
 		//CHECK IF WALLET UNLOCKED
 		if(!Controller.getInstance().isWalletUnlocked())
@@ -253,6 +252,11 @@ public class IssueAssetFrame extends JFrame
 				DateFormat format = DateFormat.getDateTimeInstance();
 				JOptionPane.showMessageDialog(new JFrame(), "Assets will be enabled at " + format.format(release) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
+				
+			case Transaction.INVALID_QUANTITY:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Invalid quantity!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;	
 				
 			case Transaction.NEGATIVE_FEE:
 				
