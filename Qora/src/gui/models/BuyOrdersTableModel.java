@@ -75,7 +75,7 @@ public class BuyOrdersTableModel extends QoraTableModel<BigInteger, Order> imple
 		{
 		case COLUMN_BUYING_PRICE:
 			
-			return BigDecimal.ONE.setScale(8).divide(order.getPrice(), RoundingMode.FLOOR).toPlainString();
+			return BigDecimal.ONE.setScale(8).divide(order.getPrice(), 8, RoundingMode.DOWN).toPlainString();
 			
 		case COLUMN_BUYING_AMOUNT:
 			

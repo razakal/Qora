@@ -8,6 +8,7 @@ import java.util.Map;
 
 import qora.account.Account;
 import qora.assets.Asset;
+import qora.assets.Order;
 import qora.block.Block;
 import qora.block.GenesisBlock;
 import qora.naming.Name;
@@ -346,6 +347,42 @@ public class BlockChain
 		
 		//RETURN
 		return assets;		
+	}
+	
+	public Map<Account, List<Order>> scanOrders(List<Account> accounts)
+	{
+		//CREATE MAP
+		Map<Account, List<Order>> orders = new HashMap<Account, List<Order>>();
+		
+		for(Account account: accounts)
+		{
+			orders.put(account, new ArrayList<Order>());
+		}
+			
+		//SCAN ALL ORDERS
+		for(Order order: DBSet.getInstance().getOrderMap().getValues())
+		{
+			for(Account account: accounts)
+			{
+				if(account.getAddress().equals(order.getCreator().getAddress()))
+				{
+					orders.get(account).add(order);
+				}
+			}
+		}
+		for(Order order: DBSet.getInstance().getCompletedOrderMap().getValues())
+		{
+			for(Account account: accounts)
+			{
+				if(account.getAddress().equals(order.getCreator().getAddress()))
+				{
+					orders.get(account).add(order);
+				}
+			}
+		}
+		
+		//RETURN
+		return orders;		
 	}
 	
 	public Block getLastBlock() 

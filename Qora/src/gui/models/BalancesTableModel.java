@@ -80,11 +80,7 @@ public class BalancesTableModel extends AbstractTableModel implements Observer
 	{
 		try
 		{
-			long start = System.currentTimeMillis();
-			
 			this.syncUpdate(o, arg);
-			
-			System.out.println("BalancesTableModel:" + (System.currentTimeMillis() - start));
 		}
 		catch(Exception e)
 		{

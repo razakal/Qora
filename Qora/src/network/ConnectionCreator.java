@@ -40,7 +40,8 @@ public class ConnectionCreator extends Thread {
 							if(!callback.isConnectedTo(peer.getAddress()))
 							{							
 								//CHECK IF SOCKET IS NOT LOCALHOST
-								if(!peer.getAddress().isSiteLocalAddress() && !peer.getAddress().isLoopbackAddress() && !peer.getAddress().isAnyLocalAddress())
+								if(true)
+								//if(!peer.getAddress().isSiteLocalAddress() && !peer.getAddress().isLoopbackAddress() && !peer.getAddress().isAnyLocalAddress())
 								{
 									//CONNECT
 									Logger.getGlobal().info("Connecting to peer : " + peer.getAddress());

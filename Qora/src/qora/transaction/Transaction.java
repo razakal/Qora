@@ -85,7 +85,8 @@ public abstract class Transaction {
 	//RELEASES
 	public static final long VOTING_RELEASE = 1403715600000l;
 	public static final long ARBITRARY_TRANSACTIONS_RELEASE = 1405702800000l;
-	public static final long ASSETS_RELEASE = 1411308000000l;
+	//public static final long ASSETS_RELEASE = 1411308000000l;
+	public static final long ASSETS_RELEASE = 0l;
 	
 	//PROPERTIES LENGTH
 	protected static final int TYPE_LENGTH = 4;

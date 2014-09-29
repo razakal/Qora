@@ -207,7 +207,7 @@ public class PayDividendFrame extends JFrame
 			for(Account account: accounts)
 			{
 				//CALCULATE PERCENTAGE OF TOTAL
-				BigDecimal percentage = account.getConfirmedBalance(this.asset.getKey()).divide(total);
+				BigDecimal percentage = account.getConfirmedBalance(this.asset.getKey()).divide(total, 8, RoundingMode.DOWN);
 				
 				//CALCULATE AMOUNT
 				BigDecimal accountAmount = amount.multiply(percentage);

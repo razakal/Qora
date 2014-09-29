@@ -306,7 +306,7 @@ public class Wallet extends Observable implements Observer
 	    
 	    //ADD OBSERVER
 	    Controller.getInstance().addObserver(this);
-	      
+	    DBSet.getInstance().getCompletedOrderMap().addObserver(this);
 	    
 	    return true;
 	}
@@ -470,6 +470,18 @@ public class Wallet extends Observable implements Observer
 	  	//ADD ASSETS
 	  	this.database.getAssetMap().addAll(assets);
 
+	  	//SCAN ORDERS
+	  	Map<Account, List<Order>> orders;
+	  	synchronized(accounts)
+	  	{
+	  		orders = Controller.getInstance().scanOrders(accounts);
+	  	}
+	  	
+	  	//DELETE ASSETS
+	  	this.database.getOrderMap().deleteAll(accounts);
+	  	
+	  	//ADD ASSETS
+	  	this.database.getOrderMap().addAll(orders);
 	  	
 	  	//SET LAST BLOCK
 	  	this.database.setLastBlockSignature(Controller.getInstance().getLastBlock().getSignature());

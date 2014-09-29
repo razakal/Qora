@@ -836,6 +836,11 @@ public class Controller extends Observable {
 	{
 		return this.blockChain.scanAssets(accounts);
 	}
+	
+	public Map<Account, List<Order>> scanOrders(List<Account> accounts)
+	{
+		return this.blockChain.scanOrders(accounts);
+	}
 
 	public long getNextBlockGeneratingBalance()
 	{

@@ -243,6 +243,9 @@ public class CancelOrderTransaction extends Transaction
 		Order order = db.getOrderMap().get(this.order);
 		db.getCancelOrderMap().set(this, order);
 		
+		//UPDATE BALANCE OF CREATOR
+		this.creator.setConfirmedBalance(order.getHave(), this.creator.getConfirmedBalance(order.getHave(), db).add(order.getAmountLeft()), db);
+		
 		//DELETE FROM DATABASE
 		db.getOrderMap().delete(this.order);	
 	}
@@ -259,6 +262,9 @@ public class CancelOrderTransaction extends Transaction
 		//ADD TO DATABASE
 		Order order = db.getCancelOrderMap().get(this);
 		db.getOrderMap().add(order);	
+		
+		//REMOVE BALANCE OF CREATOR
+		this.creator.setConfirmedBalance(order.getHave(), this.creator.getConfirmedBalance(order.getHave(), db).subtract(order.getAmountLeft()), db);
 		
 		//DELETE ORPHAN DATA
 		db.getCancelOrderMap().delete(this);

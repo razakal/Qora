@@ -2,6 +2,7 @@ package database.wallet;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mapdb.BTreeMap;
@@ -100,5 +101,26 @@ public class OrderMap extends DBMap<Tuple2<String, BigInteger>, Order>
 	public void delete(Order order) 
 	{
 		this.delete(new Tuple2<String, BigInteger>(order.getCreator().getAddress(), order.getId()));
+	}
+	
+	public void deleteAll(List<Account> accounts)
+	{
+		for(Account account: accounts)
+		{
+			this.delete(account);
+		}
+	}
+	
+	public void addAll(Map<Account, List<Order>> orders)
+	{
+		//FOR EACH ACCOUNT
+	    for(Account account: orders.keySet())
+	    {
+	    	//FOR EACH TRANSACTION
+	    	for(Order order: orders.get(account))
+	    	{
+	    		this.add(order);
+	    	}
+	    }
 	}
 }
