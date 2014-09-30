@@ -1,5 +1,6 @@
 package gui.models;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -93,7 +94,10 @@ public class TradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteg
 		
 		case COLUMN_PRICE:
 			
-			return trade.getPrice().divide(trade.getAmount(), RoundingMode.FLOOR).setScale(8).toPlainString();
+			if(trade.getAmount().compareTo(BigDecimal.ZERO) != 0)
+				return trade.getPrice().divide(trade.getAmount(), 8, RoundingMode.FLOOR).toPlainString();
+			else
+				return BigDecimal.ZERO.setScale(8).toPlainString();
 		
 		case COLUMN_AMOUNT:
 			

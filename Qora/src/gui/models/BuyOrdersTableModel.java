@@ -79,7 +79,7 @@ public class BuyOrdersTableModel extends QoraTableModel<BigInteger, Order> imple
 			
 		case COLUMN_BUYING_AMOUNT:
 			
-			return order.getPrice().multiply(order.getAmountLeft()).setScale(8).toPlainString();
+			return order.getPrice().multiply(order.getAmountLeft()).setScale(8, RoundingMode.DOWN).toPlainString();
 		
 		case COLUMN_PRICE:
 			
