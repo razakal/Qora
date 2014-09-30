@@ -291,26 +291,4 @@ public class Network extends Observable implements ConnectionCallback {
 		    return false;
 		}
 	}
-
-	public void stop() 
-	{
-		//STOP CONNECTION ACCEPTOR
-		Logger.getGlobal().info("Stopping connection acceptor");
-		this.acceptor.stopThread();
-		
-		//STOP CONNECTION CREATOR
-		Logger.getGlobal().info("Stopping connection creator");	
-		this.creator.stopThread();
-		
-		//CLOSE ALL CONNECTIONS
-		Logger.getGlobal().info("Closing connections with peers");				
-		synchronized(this.connectedPeers)
-		{
-			for(Peer peer: this.connectedPeers)
-			{
-				peer.close();
-			}
-		}	
-	}
-	
 }

@@ -17,8 +17,6 @@ import database.DBSet;
 
 public class Synchronizer
 {
-	private boolean run = true;
-	
 	public List<Transaction> synchronize(DBSet db, Block lastCommonBlock, List<Block> newBlocks) throws Exception
 	{
 		List<Transaction> orphanedTransactions = new ArrayList<Transaction>();
@@ -101,12 +99,6 @@ public class Synchronizer
 			//GET AND PROCESS BLOCK BY BLOCK
 			for(byte[] signature: signatures)
 			{
-				//INTERRUPT
-				if(!this.run)
-				{
-					return;
-				}
-				
 				//GET BLOCK
 				Block block = blockBuffer.getBlock(signature);
 				
@@ -258,9 +250,5 @@ public class Synchronizer
 			//PROCESS
 			block.process();
 		}
-	}
-	
-	public void stop() {
-		this.run = false;
 	}
 }
