@@ -31,7 +31,6 @@ public class BlockGenerator extends Thread
 	public static final int MIN_BLOCK_TIME = 1 * 60;
 	public static final int MAX_BLOCK_TIME = 5 * 60;
 	
-	private boolean run = true;
 	private Map<PrivateKeyAccount, Block> blocks;
 	private Block solvingBlock;
 	private List<PrivateKeyAccount> cachedAccounts;
@@ -86,7 +85,7 @@ public class BlockGenerator extends Thread
 	
 	public void run()
 	{
-		while(this.run)
+		while(true)
 		{
 			//CHECK IF WE ARE UPTODATE
 			if(!Controller.getInstance().isUpToDate())
@@ -394,18 +393,5 @@ public class BlockGenerator extends Thread
 		}
 		
 		return generatingBalance;
-	}
-	
-	public void stopThread()
-	{
-		try 
-		{
-			this.run = false;
-			this.join();
-		} 
-		catch (InterruptedException e) 
-		{
-			//INTERRUPTED
-		}
 	}
 }

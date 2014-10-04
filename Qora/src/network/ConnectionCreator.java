@@ -10,7 +10,6 @@ import settings.Settings;
 
 public class ConnectionCreator extends Thread {
 
-	private boolean run = true;
 	private ConnectionCallback callback;
 	
 	public ConnectionCreator(ConnectionCallback callback)
@@ -22,7 +21,7 @@ public class ConnectionCreator extends Thread {
 	{
 		try
 		{	
-			while(this.run)
+			while(true)
 			{
 				//CHECK IF WE NEED NEW CONNECTIONS
 				if(Settings.getInstance().getMinConnections() >= callback.getActiveConnections().size())
@@ -102,6 +101,7 @@ public class ConnectionCreator extends Thread {
 				//SLEEP
 				Thread.sleep(60 * 1000);	
 			}
+			
 		}
 		catch(Exception e)
 		{
@@ -109,11 +109,6 @@ public class ConnectionCreator extends Thread {
 			
 			Logger.getGlobal().info("Error creating new connection");			
 		}					
-	}
-	
-	public void stopThread()
-	{
-		this.run = false;
 	}
 	
 }

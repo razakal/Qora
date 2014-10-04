@@ -149,7 +149,7 @@ public class Peer extends Thread{
 		} 
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			
 			//DISCONNECT
 			callback.onDisconnect(this);
@@ -170,8 +170,6 @@ public class Peer extends Thread{
 				return false;
 			}
 			
-			//Logger.getGlobal().info("Sending message " + message.getType() + " to " + this.address.toString());
-			
 			//SEND MESSAGE
 			synchronized(this.out)
 			{
@@ -179,15 +177,11 @@ public class Peer extends Thread{
 				this.out.flush();
 			}
 			
-			//Logger.getGlobal().info("Sent message " + message.getType() + " to " + this.address.toString());
-			
 			//RETURN
 			return true;
 		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
-			
 			//ERROR
 			callback.onError(this);
 			
@@ -223,7 +217,6 @@ public class Peer extends Thread{
 		} 
 		catch (InterruptedException e)
 		{
-			e.printStackTrace();
 			//NO MESSAGE RECEIVED WITHIN TIME;
 			return null;
 		}

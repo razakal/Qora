@@ -66,8 +66,6 @@ public class Controller extends Observable {
 	
 	private static Controller instance;
 	
-	private boolean run = true;
-	
 	public Map<Peer, Integer> getPeerHeights()
 	{
 		return peerHeight;
@@ -213,25 +211,14 @@ public class Controller extends Observable {
 		{
 			this.isStopping = true;
 			
-			//STOP SYNCHRONIZER
-			synchronized(this.peerHeight)
-			{
-				this.peerHeight.clear();
-			}
-			
-			//STOP SYNCHRONIZER
-			Logger.getGlobal().info("Stopping synchronizer");
-			this.run = false;
-			this.synchronizer.stop();
-			
-			//STOP GENERATOR
-			Logger.getGlobal().info("Stopping block generator");
-			this.blockGenerator.stopThread();
-			
-			//STOP NETWORK
-			Logger.getGlobal().info("Stopping network");
+			//STOP MESSAGE PROCESSOR
+			Logger.getGlobal().info("Stopping message processor");
 			this.network.stop();
 			
+			//STOP BLOCK PROCESSOR
+			Logger.getGlobal().info("Stopping block processor");
+			this.synchronizer.stop();
+
 			//CLOSE DATABABASE
 			Logger.getGlobal().info("Closing database");
 			DBSet.getInstance().close();
@@ -499,7 +486,7 @@ public class Controller extends Observable {
 		try 
 		{
 			//WHILE NOT UPTODATE
-			while(!this.isUpToDate() && this.run)
+			while(!this.isUpToDate())
 			{						
 				//START UPDATE FROM HIGHEST HEIGHT PEER
 				peer = this.getMaxHeightPeer();

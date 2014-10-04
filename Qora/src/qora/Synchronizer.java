@@ -19,6 +19,11 @@ public class Synchronizer
 {
 	private boolean run = true;
 	
+	public Synchronizer()
+	{
+		this.run = true;
+	}
+	
 	public List<Transaction> synchronize(DBSet db, Block lastCommonBlock, List<Block> newBlocks) throws Exception
 	{
 		List<Transaction> orphanedTransactions = new ArrayList<Transaction>();
@@ -101,12 +106,6 @@ public class Synchronizer
 			//GET AND PROCESS BLOCK BY BLOCK
 			for(byte[] signature: signatures)
 			{
-				//INTERRUPT
-				if(!this.run)
-				{
-					return;
-				}
-				
 				//GET BLOCK
 				Block block = blockBuffer.getBlock(signature);
 				
@@ -252,6 +251,12 @@ public class Synchronizer
 	//SYNCHRONIZED DO NOT PROCCESS A BLOCK AT THE SAME TIME
 	public synchronized void process(Block block) 
 	{
+		//CHECK IF WE ARE STILL PROCESSING BLOCKS
+		if(!this.run)
+		{
+			return;
+		}
+		
 		//SYNCHRONIZED MIGHT HAVE BEEN PROCESSING PREVIOUS BLOCK
 		if(block.isValid())
 		{
@@ -259,8 +264,10 @@ public class Synchronizer
 			block.process();
 		}
 	}
-	
+
 	public void stop() {
+		
 		this.run = false;
+		this.process(null);
 	}
 }

@@ -8,7 +8,6 @@ import settings.Settings;
 
 public class ConnectionAcceptor extends Thread{
 
-	private boolean run = true;
 	private ConnectionCallback callback;
 	
 	private ServerSocket socket;
@@ -20,7 +19,7 @@ public class ConnectionAcceptor extends Thread{
 	
 	public void run()
 	{
-		while(this.run)
+		while(true)
 		{
 			try
 			{	
@@ -72,29 +71,5 @@ public class ConnectionAcceptor extends Thread{
 				Logger.getGlobal().warning("Error accepting new connection");			
 			}
 		}
-		
 	}
-	
-	public void stopThread()
-	{
-		try 
-		{
-			this.run = false;
-			if(!this.socket.isClosed())
-			{
-				this.socket.close();
-			}
-			
-			this.join();
-			if(!this.socket.isClosed())
-			{
-				this.socket.close();
-			}
-		} 
-		catch (Exception e) 
-		{
-			//INTERRUPTED
-		}
-	}
-	
 }

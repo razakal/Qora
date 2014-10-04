@@ -30,9 +30,12 @@ public class Network extends Observable implements ConnectionCallback {
 	
 	private SortedSet<String> handledMessages;
 	
+	private boolean run;
+	
 	public Network()
 	{	
-		connectedPeers = new ArrayList<Peer>();
+		this.connectedPeers = new ArrayList<Peer>();
+		this.run = true;
 		
 		this.start();
 	}
@@ -192,6 +195,12 @@ public class Network extends Observable implements ConnectionCallback {
 	@Override
 	public void onMessage(Message message) {
 	
+		//CHECK IF WE ARE STILL PROCESSING MESSAGES
+		if(!this.run)
+		{
+			return;
+		}
+		
 		//ONLY HANDLE BLOCK AND TRANSACTION MESSAGES ONCE
 		if(message.getType() == Message.TRANSACTION_TYPE || message.getType() == Message.BLOCK_TYPE)
 		{
@@ -294,23 +303,7 @@ public class Network extends Observable implements ConnectionCallback {
 
 	public void stop() 
 	{
-		//STOP CONNECTION ACCEPTOR
-		Logger.getGlobal().info("Stopping connection acceptor");
-		this.acceptor.stopThread();
-		
-		//STOP CONNECTION CREATOR
-		Logger.getGlobal().info("Stopping connection creator");	
-		this.creator.stopThread();
-		
-		//CLOSE ALL CONNECTIONS
-		Logger.getGlobal().info("Closing connections with peers");				
-		synchronized(this.connectedPeers)
-		{
-			for(Peer peer: this.connectedPeers)
-			{
-				peer.close();
-			}
-		}	
+		this.run = false;
+		this.onMessage(null);
 	}
-	
 }
