@@ -85,6 +85,8 @@ public class BlockGenerator extends Thread
 	
 	public void run()
 	{
+		while(true)
+		{
 			//CHECK IF WE ARE UPTODATE
 			if(!Controller.getInstance().isUpToDate())
 			{
@@ -184,6 +186,7 @@ public class BlockGenerator extends Thread
 					e.printStackTrace();
 				}
 			}
+		}
 	}
 	
 	public Block generateNextBlock(DBSet db, PrivateKeyAccount account, Block block)

@@ -17,6 +17,13 @@ import database.DBSet;
 
 public class Synchronizer
 {
+	private boolean run;
+	
+	public Synchronizer()
+	{
+		this.run = true;
+	}
+	
 	public List<Transaction> synchronize(DBSet db, Block lastCommonBlock, List<Block> newBlocks) throws Exception
 	{
 		List<Transaction> orphanedTransactions = new ArrayList<Transaction>();
@@ -244,11 +251,23 @@ public class Synchronizer
 	//SYNCHRONIZED DO NOT PROCCESS A BLOCK AT THE SAME TIME
 	public synchronized void process(Block block) 
 	{
+		//CHECK IF WE ARE STILL PROCESSING BLOCKS
+		if(!this.run)
+		{
+			return;
+		}
+		
 		//SYNCHRONIZED MIGHT HAVE BEEN PROCESSING PREVIOUS BLOCK
 		if(block.isValid())
 		{
 			//PROCESS
 			block.process();
 		}
+	}
+
+	public void stop() {
+		
+		this.run = false;
+		this.process(null);
 	}
 }

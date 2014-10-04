@@ -19,6 +19,8 @@ public class ConnectionAcceptor extends Thread{
 	
 	public void run()
 	{
+		while(true)
+		{
 			try
 			{	
 				if(socket == null)
@@ -68,7 +70,6 @@ public class ConnectionAcceptor extends Thread{
 				e.printStackTrace();
 				Logger.getGlobal().warning("Error accepting new connection");			
 			}
-		
-		
+		}
 	}
 }

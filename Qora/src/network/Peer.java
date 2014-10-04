@@ -149,7 +149,7 @@ public class Peer extends Thread{
 		} 
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			
 			//DISCONNECT
 			callback.onDisconnect(this);
@@ -223,7 +223,7 @@ public class Peer extends Thread{
 		} 
 		catch (InterruptedException e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			//NO MESSAGE RECEIVED WITHIN TIME;
 			return null;
 		}

@@ -211,10 +211,14 @@ public class Controller extends Observable {
 		{
 			this.isStopping = true;
 			
-			//TODO STOP BLOCK PROCESSOR
+			//STOP MESSAGE PROCESSOR
+			Logger.getGlobal().info("Stopping message processor");
+			this.network.stop();
 			
-			//TODO STOP MESSAGE PROCESSOR
-			
+			//STOP BLOCK PROCESSOR
+			Logger.getGlobal().info("Stopping block processor");
+			this.synchronizer.stop();
+
 			//CLOSE DATABABASE
 			Logger.getGlobal().info("Closing database");
 			DBSet.getInstance().close();

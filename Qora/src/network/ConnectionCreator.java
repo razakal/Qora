@@ -21,7 +21,8 @@ public class ConnectionCreator extends Thread {
 	{
 		try
 		{	
-			
+			while(true)
+			{
 				//CHECK IF WE NEED NEW CONNECTIONS
 				if(Settings.getInstance().getMinConnections() >= callback.getActiveConnections().size())
 				{			
@@ -99,6 +100,7 @@ public class ConnectionCreator extends Thread {
 				}			
 				//SLEEP
 				Thread.sleep(60 * 1000);	
+			}
 			
 		}
 		catch(Exception e)
