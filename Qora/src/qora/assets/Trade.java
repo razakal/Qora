@@ -59,7 +59,12 @@ public class Trade {
 			return db.getOrderMap().get(key);
 		}
 		
-		return db.getCompletedOrderMap().get(key);
+		if(db.getCompletedOrderMap().contains(key))
+		{
+			return db.getCompletedOrderMap().get(key);
+		}
+		
+		return db.getCancelOrderMap().get(key.toByteArray());
 	}
 
 	public BigDecimal getAmount() 

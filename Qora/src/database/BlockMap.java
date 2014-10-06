@@ -29,6 +29,9 @@ public class BlockMap extends DBMap<byte[], Block>
 	private Var<byte[]> lastBlockVar;
 	private byte[] lastBlockSignature;
 	
+	private Var<Boolean> processingVar;
+	private Boolean processing;
+	
 	public BlockMap(DBSet databaseSet, DB database)
 	{
 		super(databaseSet, database);
@@ -37,8 +40,13 @@ public class BlockMap extends DBMap<byte[], Block>
 		this.observableData.put(DBMap.NOTIFY_REMOVE, ObserverMessage.REMOVE_BLOCK_TYPE);
 		this.observableData.put(DBMap.NOTIFY_LIST, ObserverMessage.LIST_BLOCK_TYPE);
 		
+		//LAST BLOCK
 		this.lastBlockVar = database.getAtomicVar("lastBlock");
 		this.lastBlockSignature = lastBlockVar.get();
+		
+		//PROCESSING
+		this.processingVar = database.getAtomicVar("processingBlock");
+		this.processing = processingVar.get();
 	}
 
 	public BlockMap(BlockMap parent) 
@@ -46,6 +54,7 @@ public class BlockMap extends DBMap<byte[], Block>
 		super(parent);
 		
 		this.lastBlockSignature = parent.getLastBlockSignature();
+		this.processing = parent.isProcessing();
 	}
 	
 	@SuppressWarnings({"unchecked", "rawtypes"})
@@ -118,6 +127,26 @@ public class BlockMap extends DBMap<byte[], Block>
 	public byte[] getLastBlockSignature()
 	{
 		return this.lastBlockSignature;
+	}
+	
+	public boolean isProcessing() 
+	{
+		if(this.processing != null)
+		{
+			return this.processing.booleanValue();
+		}
+		
+		return false;
+	}
+	
+	public void setProcessing(boolean processing)
+	{
+		if(this.processingVar != null)
+		{
+			this.processingVar.set(processing);
+		}
+		
+		this.processing = processing;
 	}
 	
 	public void add(Block block)

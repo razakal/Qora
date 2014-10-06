@@ -90,6 +90,7 @@ public class TradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteg
 			
 		case COLUMN_TYPE:
 			
+			//Order order = trade.getInitiatorOrder(DBSet.getInstance());
 			return trade.getInitiatorOrder(DBSet.getInstance()).getHave() == this.have.getKey() ? "Sell" : "Buy";
 		
 		case COLUMN_PRICE:

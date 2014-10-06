@@ -261,7 +261,9 @@ public class Synchronizer
 		if(block.isValid())
 		{
 			//PROCESS
-			block.process();
+			DBSet.getInstance().getBlockMap().setProcessing(true);
+			block.process();		
+			DBSet.getInstance().getBlockMap().setProcessing(false);
 		}
 	}
 

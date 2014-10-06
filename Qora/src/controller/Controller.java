@@ -115,6 +115,10 @@ public class Controller extends Observable {
 
 		//OPENING DATABASES
 		DBSet.getInstance();
+		if(DBSet.getInstance().getBlockMap().isProcessing())
+		{
+			throw new Exception("The application was not closed correctly!");
+		}
 		
 		//CREATE SYNCHRONIZOR
 		this.synchronizer = new Synchronizer();

@@ -122,6 +122,28 @@ public class DBSet implements Observer, IDB {
 		this.cancelOrderMap = new CancelOrderMap(parent.cancelOrderMap);
 	}
 	
+	public void reset() {
+		
+		this.balanceMap.reset();
+		this.heightMap.reset();
+		this.referenceMap.reset();
+		this.peerMap.reset();
+		this.transactionMap.reset();
+		this.nameMap.reset();
+		this.transactionParentMap.reset();
+		this.nameExchangeMap.reset();
+		this.updateNameMap.reset();
+		this.cancelSellNameMap.reset();
+		this.pollMap.reset();
+		this.voteOnPollMap.reset();
+		this.assetMap.reset();
+		this.issueAssetMap.reset();
+		this.orderMap.reset();
+		this.completedOrderMap.reset();
+		this.tradeMap.reset();
+		this.cancelOrderMap.reset();
+	}
+	
 	public BalanceMap getBalanceMap() 
 	{
 		return this.balanceMap;
@@ -258,7 +280,7 @@ public class DBSet implements Observer, IDB {
 			if(this.actions >= ACTIONS_BEFORE_COMMIT)
 			{
 				this.database.commit();
-				this.database.compact();
+				//this.database.compact();
 				this.actions = 0;
 				
 				//NOTIFY CONTROLLER SO HE CAN NOTIFY WALLET

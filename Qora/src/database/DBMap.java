@@ -268,4 +268,9 @@ public abstract class DBMap<T, U> extends Observable {
 			return new IndexIterator<T>(this.indexes.get(index));
 		}
 	}
+	
+	public void reset() 
+	{
+		((NavigableMap<T, U>) this.map).clear();
+	}
 }

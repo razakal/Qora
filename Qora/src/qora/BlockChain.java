@@ -37,6 +37,23 @@ public class BlockChain
         	DBSet.getInstance().getIssueAssetMap().set(genesisBlock.getGeneratorSignature(), 0l);
         	DBSet.getInstance().getAssetMap().set(0l, qoraAsset);
         }
+        
+        /*if(DBSet.getInstance().getBlockMap().isProcessing()) 
+        {	
+        	//RESET DATABASES
+        	DBSet.getInstance().reset();
+        	
+        	//RECOVER BLOCKS
+        	Block block = genesisBlock;
+        	do
+        	{
+        		block.process();
+        		
+        		block = block.getChild();
+        	}
+        	while(block != null);
+        }*/
+        
 	}
 	
 	public int getHeight() {
