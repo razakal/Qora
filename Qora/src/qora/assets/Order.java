@@ -295,8 +295,7 @@ public class Order implements Comparable<Order> {
 			BigDecimal buyingPrice = BigDecimal.ONE.setScale(8).divide(order.getPrice(), RoundingMode.DOWN);
 			
 			//CHECK IF OWNERS OF BOTH ORDER ARE NOT THE SAME
-			/*if(!this.getCreator().getAddress().equals(order.getCreator().getAddress()))
-			{*/		
+	
 				//CHECK IF BUYING PRICE IS HIGHER OR EQUAL THEN OUR SELLING PRICE
 				if(buyingPrice.compareTo(this.price) >= 0)
 				{
@@ -316,20 +315,19 @@ public class Order implements Comparable<Order> {
 						//CALCULATE THE PRICE WE HAVE TO PAY
 						BigDecimal price = amount.multiply(order.getPrice()).setScale(8);
 						
-						//WE CAN BUY AMOUNT (WANT) for PRICE (HAVE)
-						/*BigDecimal normalPrice = amount.divide(this.getPrice());
-						BigDecimal profit = normalPrice.subtract(price);*/
-						
-						//CREATE TRADE
-						Trade trade = new Trade(this.getId(), order.getId(), amount, price, transaction.getTimestamp());
-						trade.process(db);
-						this.fulfilled = this.fulfilled.add(price);
+						//CHECK IF AMOUNT AFTER ROUNDING IS NOT ZERO
+						if(amount.compareTo(BigDecimal.ZERO) > 0)
+						{
+							//CREATE TRADE
+							Trade trade = new Trade(this.getId(), order.getId(), amount, price, transaction.getTimestamp());
+							trade.process(db);
+							this.fulfilled = this.fulfilled.add(price);
+						}
 						
 						//COMPLETED ORDER
 						completedOrder = true;
 					}
 				}
-			//}
 			
 			//INCREMENT I
 			i++;
