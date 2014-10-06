@@ -36,7 +36,6 @@ public class DBSet implements Observer, IDB {
 	private OrderMap orderMap;
 	private CompletedOrderMap completedOrderMap;
 	private TradeMap tradeMap;
-	private CancelOrderMap cancelOrderMap;
 	
 	private DB database;
 	private int actions;
@@ -95,7 +94,6 @@ public class DBSet implements Observer, IDB {
 		this.orderMap = new OrderMap(this, database);
 		this.completedOrderMap = new CompletedOrderMap(this, database);
 		this.tradeMap = new TradeMap(this, database);
-		this.cancelOrderMap = new CancelOrderMap(this, database);
 	}
 	
 	protected DBSet(DBSet parent)
@@ -119,7 +117,6 @@ public class DBSet implements Observer, IDB {
 		this.orderMap = new OrderMap(parent.orderMap);
 		this.completedOrderMap = new CompletedOrderMap(parent.completedOrderMap);
 		this.tradeMap = new TradeMap(parent.tradeMap);
-		this.cancelOrderMap = new CancelOrderMap(parent.cancelOrderMap);
 	}
 	
 	public void reset() {
@@ -141,7 +138,6 @@ public class DBSet implements Observer, IDB {
 		this.orderMap.reset();
 		this.completedOrderMap.reset();
 		this.tradeMap.reset();
-		this.cancelOrderMap.reset();
 	}
 	
 	public BalanceMap getBalanceMap() 
@@ -237,11 +233,6 @@ public class DBSet implements Observer, IDB {
 	public TradeMap getTradeMap()
 	{
 		return this.tradeMap;
-	}
-	
-	public CancelOrderMap getCancelOrderMap()
-	{
-		return this.cancelOrderMap;
 	}
 	
 	public DBSet fork()
