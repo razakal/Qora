@@ -256,7 +256,6 @@ public class DBSet implements Observer, IDB {
 			if(!this.database.isClosed())
 			{
 				this.database.commit();
-				this.database.compact();
 				this.database.close();
 			}
 		}
@@ -280,7 +279,6 @@ public class DBSet implements Observer, IDB {
 			if(this.actions >= ACTIONS_BEFORE_COMMIT)
 			{
 				this.database.commit();
-				//this.database.compact();
 				this.actions = 0;
 				
 				//NOTIFY CONTROLLER SO HE CAN NOTIFY WALLET
