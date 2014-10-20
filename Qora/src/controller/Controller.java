@@ -547,10 +547,21 @@ public class Controller extends Observable {
 					}
 					else
 					{
+						//IF HEIGHT IS BIGGER
 						if(height < this.peerHeight.get(peer))
 						{
 							highestPeer = peer;
 							height = this.peerHeight.get(peer);
+						}
+						
+						//IF HEIGHT IS SAME
+						if(height == this.peerHeight.get(peer))
+						{
+							//CHECK IF PING OF PEER IS BETTER
+							if(peer.getPing() < highestPeer.getPing())
+							{
+								highestPeer = peer;
+							}
 						}
 					}
 				}
@@ -793,44 +804,9 @@ public class Controller extends Observable {
 		return this.blockChain.getBlock(header);		
 	}
 	
-	public Map<Account, List<Transaction>> scanTransactions(List<Account> accounts) 
-	{
-		return this.blockChain.scanTransactions(accounts);
-	}
-	
 	public Pair<Block, List<Transaction>> scanTransactions(Block block, int blockLimit, int transactionLimit, int type, int service, Account account) {
 		return this.blockChain.scanTransactions(block, blockLimit, transactionLimit, type, service, account);
 		
-	}
-	
-	public Map<Account, List<Block>> scanBlocks(List<Account> accounts) 
-	{
-		return this.blockChain.scanBlocks(accounts);
-	}
-	
-	public Map<Account, List<Name>> scanNames(List<Account> accounts) 
-	{
-		return this.blockChain.scanNames(accounts);
-	}
-	
-	public Map<Account, List<NameSale>> scanNameSales(List<Account> accounts) 
-	{
-		return this.blockChain.scanNameSales(accounts);
-	}
-	
-	public Map<Account, List<Poll>> scanPolls(List<Account> accounts) 
-	{
-		return this.blockChain.scanPolls(accounts);
-	}
-	
-	public Map<Account, List<Asset>> scanAssets(List<Account> accounts)
-	{
-		return this.blockChain.scanAssets(accounts);
-	}
-	
-	public Map<Account, List<Order>> scanOrders(List<Account> accounts)
-	{
-		return this.blockChain.scanOrders(accounts);
 	}
 
 	public long getNextBlockGeneratingBalance()

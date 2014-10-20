@@ -3,6 +3,7 @@ package qora;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import network.Peer;
 import network.message.BlockMessage;
@@ -12,7 +13,6 @@ import network.message.SignaturesMessage;
 import network.message.TransactionMessage;
 import qora.block.Block;
 import qora.transaction.Transaction;
-
 import database.DBSet;
 
 public class Synchronizer
@@ -90,6 +90,8 @@ public class Synchronizer
 	
 	public void synchronize(Peer peer) throws Exception
 	{
+		Logger.getGlobal().info("Synchronizing: " + peer.getAddress().getHostAddress() + " - " + peer.getPing());
+		
 		//FIND LAST COMMON BLOCK
 		Block common =  this.findLastCommonBlock(peer);
 				
@@ -109,12 +111,8 @@ public class Synchronizer
 				//GET BLOCK
 				Block block = blockBuffer.getBlock(signature);
 				
-				if(block.isValid())
-				{
-					//PROCESS BLOCK
-					this.process(block);
-				}
-				else
+				//PROCESS BLOCK
+				if(!this.process(block))
 				{
 					//INVALID BLOCK THROW EXCEPTION
 					throw new Exception("Dishonest peer");
@@ -249,22 +247,24 @@ public class Synchronizer
 	
 	
 	//SYNCHRONIZED DO NOT PROCCESS A BLOCK AT THE SAME TIME
-	public synchronized void process(Block block) 
+	public synchronized boolean process(Block block) 
 	{
 		//CHECK IF WE ARE STILL PROCESSING BLOCKS
-		if(!this.run)
+		if(this.run)
 		{
-			return;
+			//SYNCHRONIZED MIGHT HAVE BEEN PROCESSING PREVIOUS BLOCK
+			if(block.isValid())
+			{
+				//PROCESS
+				DBSet.getInstance().getBlockMap().setProcessing(true);
+				block.process();		
+				DBSet.getInstance().getBlockMap().setProcessing(false);
+				
+				return true;
+			}
 		}
 		
-		//SYNCHRONIZED MIGHT HAVE BEEN PROCESSING PREVIOUS BLOCK
-		if(block.isValid())
-		{
-			//PROCESS
-			DBSet.getInstance().getBlockMap().setProcessing(true);
-			block.process();		
-			DBSet.getInstance().getBlockMap().setProcessing(false);
-		}
+		return false;
 	}
 
 	public void stop() {

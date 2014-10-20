@@ -72,6 +72,11 @@ public class Peer extends Thread{
 		return address;
 	}
 	
+	public long getPing()
+	{
+		return this.pinger.getPing();
+	}
+	
 	public void connect(ConnectionCallback callback)
 	{
 		this.callback = callback;

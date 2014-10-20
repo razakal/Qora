@@ -271,6 +271,24 @@ public abstract class DBMap<T, U> extends Observable {
 	
 	public void reset() 
 	{
-		((NavigableMap<T, U>) this.map).clear();
+		//RESET MAP
+		this.map.clear();
+		
+		//RESET INDEXES
+		for(Set<Tuple2<?, T>> set: this.indexes.values())
+		{
+			set.clear();
+		}
+		
+		//NOTIFY LIST
+		if(this.getObservableData().containsKey(NOTIFY_LIST))
+		{
+			//CREATE LIST
+			SortableList<T, U> list = new SortableList<T, U>(this);
+			
+			//UPDATE
+			this.setChanged();
+			this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_LIST), list));
+		}
 	}
 }

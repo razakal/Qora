@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
@@ -24,6 +23,7 @@ import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
 import qora.assets.Order;
 import qora.block.Block;
+import qora.block.GenesisBlock;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -379,6 +379,33 @@ public class Wallet extends Observable implements Observer
 	{
 		List<Account> accounts = this.getAccounts();
 		
+		//RESET MAPS
+		this.database.getTransactionMap().reset();
+		this.database.getBlockMap().reset();
+		this.database.getNameMap().reset();
+		this.database.getNameSaleMap().reset();
+		this.database.getPollMap().reset();
+		this.database.getAssetMap().reset();
+		this.database.getOrderMap().reset();
+		Logger.getGlobal().info("Resetted maps");
+		
+		//REPROCESS BLOCKS
+		Block block = new GenesisBlock();
+		this.database.setLastBlockSignature(new byte[]{1,1,1,1,1,1,1,1});
+		do
+		{
+			//UPDATE
+			this.update(this, new ObserverMessage(ObserverMessage.ADD_BLOCK_TYPE, block));
+			
+			if(block.getHeight() % 2000 == 0) {
+				Logger.getGlobal().info("Synchronize wallet: " + block.getHeight());
+			}
+			
+			//LOAD NEXT
+			block = block.getChild();
+		}
+		while(block != null);
+		
 		//RESET UNCONFIRMED BALANCE
 		synchronized(accounts)
 		{
@@ -387,8 +414,11 @@ public class Wallet extends Observable implements Observer
 				this.database.getAccountMap().update(account, account.getConfirmedBalance());
 			}
 		}
+		Logger.getGlobal().info("Resetted balances");
 		
-		//SCAN TRANSACTIONS
+		//SET LAST BLOCK
+		
+		/*//SCAN TRANSACTIONS
 		Map<Account, List<Transaction>> transactions;
 		synchronized(accounts)
 		{
@@ -484,7 +514,7 @@ public class Wallet extends Observable implements Observer
 	  	this.database.getOrderMap().addAll(orders);
 	  	
 	  	//SET LAST BLOCK
-	  	this.database.setLastBlockSignature(Controller.getInstance().getLastBlock().getSignature());
+	  	this.database.setLastBlockSignature(Controller.getInstance().getLastBlock().getSignature());*/
 	}
 	
 	//UNLOCK
