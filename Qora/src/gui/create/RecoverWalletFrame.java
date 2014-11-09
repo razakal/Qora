@@ -218,7 +218,7 @@ public class RecoverWalletFrame extends JFrame
 			return;
 		}
 		
-		if(amount < 1 || amount > 100)
+		if(amount < 1 /*|| amount > 100*/)
 		{
 			//INVALID AMOUNT
 			String message = "Amount must be between 1-100!";

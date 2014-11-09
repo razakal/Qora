@@ -39,6 +39,7 @@ public class SecureWalletDatabase
 			    		.closeOnJvmShutdown()
 			    		.cacheSize(2048)
 			    		.checksumEnable()
+			    		.mmapFileEnableIfSupported()
 			            .make();
 			    
 		this.accountSeedMap = new AccountSeedMap(this, this.database);

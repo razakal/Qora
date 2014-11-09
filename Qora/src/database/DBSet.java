@@ -53,6 +53,7 @@ public class DBSet implements Observer, IDB {
 					.closeOnJvmShutdown()
 					.cacheSize(2048)
 					.checksumEnable()
+					.mmapFileEnableIfSupported()
 					.make();
 			
 			//CREATE INSTANCE

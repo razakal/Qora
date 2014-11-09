@@ -335,6 +335,10 @@ public class Wallet extends Observable implements Observer
 	    	//ADD TO DATABASE
 		    this.secureDatabase.getAccountSeedMap().add(account);
 		    this.database.getAccountMap().add(account);
+		    Logger.getGlobal().info("Added account #" + nonce);
+		    
+		    this.secureDatabase.commit();
+		    this.database.commit();
 		    
 		    //NOTIFY
 		    this.setChanged();
@@ -397,8 +401,10 @@ public class Wallet extends Observable implements Observer
 			//UPDATE
 			this.update(this, new ObserverMessage(ObserverMessage.ADD_BLOCK_TYPE, block));
 			
-			if(block.getHeight() % 2000 == 0) {
+			if(block.getHeight() % 2000 == 0) 
+			{
 				Logger.getGlobal().info("Synchronize wallet: " + block.getHeight());
+				this.database.commit();
 			}
 			
 			//LOAD NEXT

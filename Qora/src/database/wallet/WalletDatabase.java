@@ -46,6 +46,7 @@ public class WalletDatabase implements IDB
 	    		.closeOnJvmShutdown()
 	    		.cacheSize(2048)
 	    		.checksumEnable()
+	    		.mmapFileEnableIfSupported()
 	            .make();
 	    
 	    this.accountMap = new AccountMap(this, this.database);
