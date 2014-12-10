@@ -8,8 +8,7 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 import org.json.simple.JSONValue;
 
 import settings.Settings;
@@ -19,7 +18,7 @@ public class ApiClient {
 
 	public String executeCommand(String command)
 	{
-		if(command.equalsIgnoreCase("help"))
+		if("help".equalsIgnoreCase(command))
 		{
 			String help =  "<method> <url> <data> \n" +
 					"Type quit to stop.";	
@@ -58,7 +57,7 @@ public class ApiClient {
 				 try( OutputStream outputStream = connection.getOutputStream();)
 				 {
 					 outputStream.write(content.getBytes());
-					 connection.getOutputStream().flush();
+					 outputStream.flush();
 				 }
 			}
 			
@@ -76,14 +75,10 @@ public class ApiClient {
 				{
 					Object jsonResult = JSONValue.parse(result);
 					
-					if(jsonResult instanceof JSONArray)
+					if(jsonResult instanceof JSONStreamAware)
 					{
-						((JSONArray) jsonResult).writeJSONString(writer);
-						return writer.toString();
-					}
-					if(jsonResult instanceof JSONObject)
-					{
-						((JSONObject) jsonResult).writeJSONString(writer);
+						
+						((JSONStreamAware) jsonResult).writeJSONString(writer);
 						return writer.toString();
 					}
 					
