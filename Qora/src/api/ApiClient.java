@@ -1,15 +1,14 @@
 package api;
 
 import java.io.BufferedReader;
-import java.io.IOError;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 import org.json.simple.JSONValue;
 
 import settings.Settings;
@@ -19,7 +18,7 @@ public class ApiClient {
 
 	public String executeCommand(String command)
 	{
-		if(command.equals("help"))
+		if("help".equalsIgnoreCase(command))
 		{
 			String help =  "<method> <url> <data> \n" +
 					"Type quit to stop.";	
@@ -55,62 +54,49 @@ public class ApiClient {
 			if(method.equals("POST"))
 			{
 				connection.setDoOutput(true);
-				connection.getOutputStream().write(content.getBytes());
-				connection.getOutputStream().flush();
-				connection.getOutputStream().close();
+				 try( OutputStream outputStream = connection.getOutputStream();)
+				 {
+					 outputStream.write(content.getBytes());
+					 outputStream.flush();
+				 }
 			}
+			
 			
 			//READ RESULT
-			InputStream stream;
-			if(connection.getResponseCode() == 400)
+			String result;
+			try(InputStream stream = connection.getResponseCode() == 400? connection.getErrorStream() : connection.getInputStream(); InputStreamReader isReader = new InputStreamReader(stream);BufferedReader br = new BufferedReader(isReader);)
 			{
-				stream = connection.getErrorStream();
+				result = br.readLine(); //TODO READ ALL OR HARDCODE HELP
 			}
-			else
-			{
-				stream = connection.getInputStream();
-			}
-			
-			InputStreamReader isReader = new InputStreamReader(stream); 
-			BufferedReader br = new BufferedReader(isReader);
-			String result = br.readLine(); //TODO READ ALL OR HARDCODE HELP
 			
 			try
 			{
-				Writer writer = new JSonWriter();
-				Object jsonResult = JSONValue.parse(result);
-				
-				if(jsonResult instanceof JSONArray)
+				try(Writer writer = new JSonWriter();)
 				{
-					((JSONArray) jsonResult).writeJSONString(writer);
-					return writer.toString();
+					Object jsonResult = JSONValue.parse(result);
+					
+					if(jsonResult instanceof JSONStreamAware)
+					{
+						
+						((JSONStreamAware) jsonResult).writeJSONString(writer);
+						return writer.toString();
+					}
+					
 				}
-				if(jsonResult instanceof JSONObject)
-				{
-					((JSONObject) jsonResult).writeJSONString(writer);
-					return writer.toString();
-				}
-				
-				writer.close();
 				return result;
 			}
 			catch(Exception e)
 			{
+//				swallowing the exception Ok or sysout?
 				return result;
 			}
 			
-		}
-		catch(IOError ioe)
-		{
-			//ioe.printStackTrace();	
-			return "Invalid command! \n" +
-				"Type help to get a list of commands.";
 		}
 		catch(Exception e)
 		{
 			//e.printStackTrace();	
 			return "Invalid command! \n" +
-				"Type help to get a list of commands.";
+			"Type help to get a list of commands.";
 		}
 	}
 	
