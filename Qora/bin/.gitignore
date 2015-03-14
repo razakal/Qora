@@ -1,12 +1,1 @@
-/api
-/controller
-/database
-/gui
-/network
-/ntp
-/qora
-/settings
-/test
-/utils
-/Orders.class
-/Start.class
+/qora/
