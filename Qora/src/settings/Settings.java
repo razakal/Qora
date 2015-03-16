@@ -27,7 +27,6 @@ public class Settings {
 	
 	//DATA
 	private static final String DEFAULT_DATA_DIR = "data";
-	private static final String BAK_DATA_DIR = "dataOLD";
 	private static final String DEFAULT_WALLET_DIR = "wallet";
 	
 	private static final boolean DEFAULT_GENERATOR_KEY_CACHING = false;
@@ -212,11 +211,6 @@ public class Settings {
 		}
 		
 		return DEFAULT_DATA_DIR;
-	}
-	
-	public String getDataDirBak()
-	{
-		return BAK_DATA_DIR;
 	}
 	
 	public int getPingInterval()
