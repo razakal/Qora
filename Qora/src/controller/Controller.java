@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.Observer;
 import java.util.logging.Logger;
 
 import org.mapdb.Fun.Tuple2;
+
+import com.google.common.io.Files;
 
 import api.ApiService;
 import qora.BlockChain;
@@ -35,6 +38,7 @@ import qora.wallet.Wallet;
 import settings.Settings;
 import utils.ObserverMessage;
 import utils.Pair;
+import utils.SimpleFileVisitorForRecusiveFolderDeletion;
 import database.DBSet;
 import database.SortableList;
 import network.Network;
@@ -114,11 +118,36 @@ public class Controller extends Observable {
 		this.transactionCreator = new TransactionCreator();
 
 		//OPENING DATABASES
-		DBSet.getInstance();
 		if(DBSet.getInstance().getBlockMap().isProcessing())
 		{
-			throw new Exception("The application was not closed correctly!");
+			
+			DBSet.getInstance().close();
+			
+			File dataDir = new File(Settings.getInstance().getDataDir());
+			if(dataDir.exists())
+			{
+				File dataDirBak = new File(Settings.getInstance().getDataDirBak());
+				
+				if(dataDirBak.exists())
+				{
+//					delete bak folder
+					java.nio.file.Files.walkFileTree(dataDirBak.toPath(), new SimpleFileVisitorForRecusiveFolderDeletion());
+				}
+				
+				Files.move(dataDir, dataDirBak);
+				
+				DBSet.reCreateDatabase();
+				
+				
+			}
+			
+			if(DBSet.getInstance().getBlockMap().isProcessing())
+			{
+				throw new Exception("The application was not closed correctly! Delete the folder " + dataDir.getAbsolutePath() + " and start the application again.");
+			}
 		}
+		
+		
 		
 		//CREATE SYNCHRONIZOR
 		this.synchronizer = new Synchronizer();

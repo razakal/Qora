@@ -44,23 +44,29 @@ public class DBSet implements Observer, IDB {
 	{
 		if(instance == null)
 		{
-			//OPEN DB
-			File dbFile = new File(Settings.getInstance().getDataDir(), "data.dat");
-			dbFile.getParentFile().mkdirs();
-			
-			//CREATE DATABASE	
-			DB database = DBMaker.newFileDB(dbFile)
-					.closeOnJvmShutdown()
-					.cacheSize(2048)
-					.checksumEnable()
-					.mmapFileEnableIfSupported()
-					.make();
-			
-			//CREATE INSTANCE
-			instance = new DBSet(database);
+			reCreateDatabase();
 		}
 		
 		return instance;
+	}
+	
+
+	public static void reCreateDatabase() {
+		//OPEN DB
+		File dbFile = new File(Settings.getInstance().getDataDir(), "data.dat");
+		dbFile.getParentFile().mkdirs();
+		
+		//CREATE DATABASE	
+		DB database = DBMaker.newFileDB(dbFile)
+				.closeOnJvmShutdown()
+				.cacheSize(2048)
+				.checksumEnable()
+				.mmapFileEnableIfSupported()
+				.make();
+		
+		
+		//CREATE INSTANCE
+		instance = new DBSet(database);
 	}	
 	
 	public static DBSet createEmptyDatabaseSet()
