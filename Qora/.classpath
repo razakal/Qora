@@ -63,6 +63,6 @@
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-server.jar"/>
 	<classpathentry kind="lib" path="libs/javax.ws.rs-api-2.0-rc3.jar"/>
-	<classpathentry kind="lib" path="libs/mapdb-1.0.6.jar"/>
+	<classpathentry kind="lib" path="libs/mapdb-1.0.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
