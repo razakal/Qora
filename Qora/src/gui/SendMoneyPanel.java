@@ -16,9 +16,12 @@ import javax.swing.border.EmptyBorder;
 
 import qora.account.Account;
 import qora.assets.Asset;
+import qora.naming.Name;
 import qora.transaction.Transaction;
 import utils.Pair;
 import controller.Controller;
+import database.DBSet;
+import database.NameMap;
 
 @SuppressWarnings("serial")
 public class SendMoneyPanel extends JPanel 
@@ -30,6 +33,13 @@ public class SendMoneyPanel extends JPanel
 	private JButton sendButton;
 	private AccountsComboBoxModel accountsModel;
 	private JComboBox<Asset> cbxFavorites;
+	private JComboBox<String> cbxPaymentSolution;
+	
+	private final String ORDINARY_PAYMENT = "Ordinary payment";
+	private final String NAME_PAYMENT = "Name payment";
+	
+	
+	
 	
 	public SendMoneyPanel()
 	{
@@ -73,9 +83,28 @@ public class SendMoneyPanel extends JPanel
 		favoritesGBC.gridx = 0;	
 		favoritesGBC.gridy = 0;	
 		
+		//PAYMENT SOLUTION GBC
+		GridBagConstraints paymentGBC = new GridBagConstraints();
+		paymentGBC.insets = new Insets(5, 5, 5, 5);
+		paymentGBC.fill = GridBagConstraints.HORIZONTAL;  
+		paymentGBC.anchor = GridBagConstraints.NORTHWEST;
+		paymentGBC.weightx = 1;
+		paymentGBC.gridwidth = 2;
+		paymentGBC.gridx = 0;	
+		paymentGBC.gridy = 1;	
+		
 		//ASSET FAVORITES
 		cbxFavorites = new JComboBox<Asset>(new AssetsComboBoxModel());
 		this.add(cbxFavorites, favoritesGBC);
+		
+		//PAYMENT SOLUTION
+		cbxPaymentSolution = new JComboBox<String>();
+		cbxPaymentSolution.addItem(ORDINARY_PAYMENT);
+		cbxPaymentSolution.addItem(NAME_PAYMENT);
+		this.add(cbxPaymentSolution, paymentGBC);
+		
+		
+		
 		
 		//BUTTON GBC
 		GridBagConstraints buttonGBC = new GridBagConstraints();
@@ -86,12 +115,12 @@ public class SendMoneyPanel extends JPanel
 		buttonGBC.gridx = 0;		
 		
 		//LABEL FROM
-		labelGBC.gridy = 1;
+		labelGBC.gridy = 2;
 		JLabel fromLabel = new JLabel("From:");
 		this.add(fromLabel, labelGBC);
 		
 		//COMBOBOX FROM
-		txtGBC.gridy = 1;
+		txtGBC.gridy = 2;
 		this.accountsModel = new AccountsComboBoxModel();
 		this.cbxFrom = new JComboBox<Account>(accountsModel);
         this.add(this.cbxFrom, txtGBC);
@@ -118,38 +147,38 @@ public class SendMoneyPanel extends JPanel
 		});
         
         //LABEL TO
-      	labelGBC.gridy = 2;
+      	labelGBC.gridy = 3;
       	JLabel toLabel = new JLabel("To:");
       	this.add(toLabel, labelGBC);
       		
       	//TXT TO
-      	txtGBC.gridy = 2;
+      	txtGBC.gridy = 3;
       	txtTo = new JTextField();
         this.add(txtTo, txtGBC);
         
         //LABEL AMOUNT
-      	labelGBC.gridy = 3;
+      	labelGBC.gridy = 4;
       	JLabel amountLabel = new JLabel("Amount:");
       	this.add(amountLabel, labelGBC);
       		
       	//TXT AMOUNT
-      	txtGBC.gridy = 3;
+      	txtGBC.gridy = 4;
       	txtAmount = new JTextField();
         this.add(txtAmount, txtGBC);
         
         //LABEL FEE
-      	labelGBC.gridy = 4;
+      	labelGBC.gridy = 5;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
       		
       	//TXT AMOUNT
-      	txtGBC.gridy = 4;
+      	txtGBC.gridy = 5;
       	txtFee = new JTextField();
       	txtFee.setText("1");
         this.add(txtFee, txtGBC);
         
         //BUTTON SEND
-        buttonGBC.gridy = 5;
+        buttonGBC.gridy = 6;
         sendButton = new JButton("Send");
         sendButton.setPreferredSize(new Dimension(80, 25));
     	sendButton.addActionListener(new ActionListener()
@@ -162,7 +191,7 @@ public class SendMoneyPanel extends JPanel
 		this.add(sendButton, buttonGBC);
         
         //ADD BOTTOM SO IT PUSHES TO TOP
-        labelGBC.gridy = 4;
+        labelGBC.gridy = 5;
         labelGBC.weighty = 1;
       	this.add(new JPanel(), labelGBC);
 	}
@@ -204,9 +233,49 @@ public class SendMoneyPanel extends JPanel
 		//READ SENDER
 		Account sender = (Account) cbxFrom.getSelectedItem();
 		
-		//READ RECIPIENT
+		//READ RECIPIENT (NAME OR QORA ADRESS)
 		String recipientAddress = txtTo.getText();
-		Account recipient = new Account(recipientAddress);
+		
+		
+		Account recipient;
+		
+		//ORDINARY PAYMENT
+		if(cbxPaymentSolution.getSelectedItem().equals(ORDINARY_PAYMENT))
+		{
+			recipient = new Account(recipientAddress);
+		//NAME PAYMENT
+		}else if(cbxPaymentSolution.getSelectedItem().equals(NAME_PAYMENT))
+		{
+			NameMap names = DBSet.getInstance().getNameMap();
+			if( !names.contains(recipientAddress))
+			{
+				//NAME NOT REGISTERED!
+				JOptionPane.showMessageDialog(null, "The name is not registered" , "Error", JOptionPane.ERROR_MESSAGE);
+				
+				//ENABLE
+				this.sendButton.setEnabled(true);
+				
+				return;
+				
+			}else
+			{
+				//LOOKUP ADDRESS FOR NAME
+				Name name = names.get(recipientAddress);
+				recipientAddress = name.getOwner().getAddress();
+				recipient = new Account(recipientAddress);
+				
+			}
+		}else
+		{
+			
+			//THIS ONLY HAPPENS IF WE MADE A MISTAKE ;)
+			JOptionPane.showMessageDialog(null, "An Internal Error occured! " + cbxPaymentSolution.getSelectedItem() + " is not known!" , "Error", JOptionPane.ERROR_MESSAGE);
+			
+			//ENABLE
+			this.sendButton.setEnabled(true);
+			
+			return;
+		}
 		
 		int parsing = 0;
 		try
