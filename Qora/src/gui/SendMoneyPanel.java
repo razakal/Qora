@@ -257,14 +257,38 @@ public class SendMoneyPanel extends JPanel
 				
 				return;
 				
-			}else
-			{
+			}
+				
+				//NAME STARTS OR ENDS WITH SPACE?
+				if(recipientAddress.startsWith(" ") || recipientAddress.endsWith(" "))
+				{
+					
+					JOptionPane.showMessageDialog(null, "For security purposes sending payments to a name that starts or ends with spaces is forbidden." , "Error", JOptionPane.ERROR_MESSAGE);
+					
+					//ENABLE
+					this.sendButton.setEnabled(true);
+					
+					return;
+				}
+				
+				//NAME FOR SALE?
+				if(	DBSet.getInstance().getNameExchangeMap().contains(recipientAddress))
+				{
+					JOptionPane.showMessageDialog(null, "For security purposes sending payments to a name that can be purchased through name exchange is disabled." , "Error", JOptionPane.ERROR_MESSAGE);
+					
+					//ENABLE
+					this.sendButton.setEnabled(true);
+					
+					return;
+				}
+				
+				
 				//LOOKUP ADDRESS FOR NAME
 				Name name = names.get(recipientAddress);
 				recipientAddress = name.getOwner().getAddress();
 				recipient = new Account(recipientAddress);
 				
-			}
+			
 		}else
 		{
 			
