@@ -7,8 +7,6 @@ Public GIT for the Qora cryptocurrency project.
 
 I do not want to abandon this project but at the moment I simply have no choice.
 
-My social and professional life have been damaged too much and I need to recover this while I still can.
-
 Hopefully I can come back soon to continue the development of this project.
 
 71ecef2545d3eb457e65df92c7320aee502adb0befb0f97fc0c4779fde8c7782
