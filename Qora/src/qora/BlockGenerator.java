@@ -102,6 +102,7 @@ public class BlockGenerator extends Thread implements Observer
 				}
 				
 				Controller.getInstance().addWalletListener(BlockGenerator.this);
+				syncForgingStatus();
 			}
 		}.start();
 		Controller.getInstance().addObserver(this);
@@ -481,22 +482,32 @@ public class BlockGenerator extends Thread implements Observer
 				walletOnceUnlocked = true;
 			}
 			
-				// WALLET UNLOCKED OR GENERATORCACHING TRUE
-				if(walletOnceUnlocked && getKnownAccounts().size() > 0)
+			
+				if(walletOnceUnlocked)
 				{
-					//CONNECTIONS OKE? -> FORGING
-					if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
-					{
-						setForgingStatus(ForgingStatus.FORGING);
-					}else
-					{
-						setForgingStatus(ForgingStatus.FORGING_ENABLED);
-					}
-				}else
-				{
-					setForgingStatus(ForgingStatus.FORGING_DISABLED);
+					// WALLET UNLOCKED OR GENERATORCACHING TRUE
+					syncForgingStatus();
 				}
 		}
 		
 	}
+	
+	public void syncForgingStatus()
+	{
+		if(getKnownAccounts().size() > 0)
+		{
+			//CONNECTIONS OKE? -> FORGING
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			{
+				setForgingStatus(ForgingStatus.FORGING);
+			}else
+			{
+				setForgingStatus(ForgingStatus.FORGING_ENABLED);
+			}
+		}else
+		{
+			setForgingStatus(ForgingStatus.FORGING_DISABLED);
+		}
+	}
+	
 }
