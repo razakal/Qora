@@ -76,19 +76,6 @@ public class WalletResource {
 		return String.valueOf(Controller.getInstance().lockWallet());
 	}
 	
-	@GET
-	@Path("/forge")
-	public String forge()
-	{
-		//CHECK IF WALLET EXISTS
-		if(!Controller.getInstance().doesWalletExists())
-		{
-			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_NO_EXISTS);
-		}
-				
-		return String.valueOf(Controller.getInstance().getForgingStatus().getStatuscode()); 
-	}
-
 	@POST 
 	@Consumes(MediaType.WILDCARD)
 	public String createWallet(String x)
