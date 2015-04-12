@@ -25,6 +25,7 @@ public class WalletResource {
 		
 		jsonObject.put("exists", Controller.getInstance().doesWalletExists());
 		jsonObject.put("isunlocked", Controller.getInstance().isWalletUnlocked());
+		jsonObject.put("forging", Controller.getInstance().getForgingStatus().getStatuscode());
 		
 		return jsonObject.toJSONString();
 	}
