@@ -50,6 +50,8 @@ public class ObserverMessage {
 	
 	public static final int LIST_ASSET_FAVORITES_TYPE = 35;
 	
+	public static final int FORGING_STATUS = 36;
+	
 	private int type;
 	private Object value;
 	

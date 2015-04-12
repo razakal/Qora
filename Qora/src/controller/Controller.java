@@ -12,13 +12,21 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
 
+import network.Network;
+import network.Peer;
+import network.message.BlockMessage;
+import network.message.GetBlockMessage;
+import network.message.GetSignaturesMessage;
+import network.message.Message;
+import network.message.MessageFactory;
+import network.message.TransactionMessage;
+import network.message.VersionMessage;
+
 import org.mapdb.Fun.Tuple2;
 
-import com.google.common.io.Files;
-
-import api.ApiService;
 import qora.BlockChain;
 import qora.BlockGenerator;
+import qora.BlockGenerator.ForgingStatus;
 import qora.Synchronizer;
 import qora.TransactionCreator;
 import qora.account.Account;
@@ -39,17 +47,12 @@ import settings.Settings;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
+import api.ApiService;
+
+import com.google.common.io.Files;
+
 import database.DBSet;
 import database.SortableList;
-import network.Network;
-import network.Peer;
-import network.message.BlockMessage;
-import network.message.GetBlockMessage;
-import network.message.GetSignaturesMessage;
-import network.message.Message;
-import network.message.MessageFactory;
-import network.message.TransactionMessage;
-import network.message.VersionMessage;
 
 public class Controller extends Observable {
 
@@ -154,8 +157,6 @@ public class Controller extends Observable {
 		//CREATE BLOCKCHAIN
         this.blockChain = new BlockChain();
          
-        //CREATE BLOCKGENERATOR
-        this.blockGenerator = new BlockGenerator();
         
         if(!disableRpc)
         {
@@ -166,6 +167,8 @@ public class Controller extends Observable {
         //CREATE WALLET
         this.wallet = new Wallet(); 
         
+        //CREATE BLOCKGENERATOR
+        this.blockGenerator = new BlockGenerator();
         //START BLOCKGENERATOR
         this.blockGenerator.start();
         
@@ -289,6 +292,13 @@ public class Controller extends Observable {
 			this.setChanged();
 			this.notifyObservers(new ObserverMessage(ObserverMessage.NETWORK_STATUS, this.status));
 		}
+	}
+	
+	
+	public void forgingStatusChanged(ForgingStatus status)
+	{
+		this.setChanged();
+		this.notifyObservers(new ObserverMessage(ObserverMessage.FORGING_STATUS, status));
 	}
 	
 	public void onDisconnect(Peer peer) 

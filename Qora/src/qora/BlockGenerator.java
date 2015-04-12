@@ -1,5 +1,6 @@
 package qora;
 
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -8,6 +9,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
 import ntp.NTP;
 import qora.account.PrivateKeyAccount;
 import qora.block.Block;
@@ -15,6 +19,7 @@ import qora.block.BlockFactory;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import settings.Settings;
+import utils.ObserverMessage;
 import utils.TransactionFeeComparator;
 
 import com.google.common.primitives.Bytes;
@@ -23,7 +28,7 @@ import com.google.common.primitives.Longs;
 import controller.Controller;
 import database.DBSet;
 
-public class BlockGenerator extends Thread
+public class BlockGenerator extends Thread implements Observer
 {	
 	public static final int RETARGET = 10;
 	public static final long MIN_BALANCE = 1l;
@@ -31,9 +36,33 @@ public class BlockGenerator extends Thread
 	public static final int MIN_BLOCK_TIME = 1 * 60;
 	public static final int MAX_BLOCK_TIME = 5 * 60;
 	
+	
+	public enum ForgingStatus {
+	    
+		FORGING_DISABLED(0),
+		FORGING_ENABLED(1),
+		FORGING(2);
+		
+		 private final int statuscode;
+
+		 ForgingStatus(int status) {
+			 statuscode = status;
+		  }
+
+		public int getStatuscode() {
+			return statuscode;
+		}
+
+	    
+	}
+	
 	private Map<PrivateKeyAccount, Block> blocks;
 	private Block solvingBlock;
 	private List<PrivateKeyAccount> cachedAccounts;
+	
+	private ForgingStatus forgingStatus = ForgingStatus.FORGING_DISABLED;
+	private boolean walletOnceUnlocked = false;;
+	
 	
 	public BlockGenerator()
 	{
@@ -41,6 +70,9 @@ public class BlockGenerator extends Thread
 		{
 			this.cachedAccounts = new ArrayList<PrivateKeyAccount>();
 		}
+		
+		Controller.getInstance().addWalletListener(this);
+		Controller.getInstance().addObserver(this);
 	}
 	
 	public void addUnconfirmedTransaction(Transaction transaction)
@@ -83,6 +115,16 @@ public class BlockGenerator extends Thread
 		}
 	}
 	
+	private void setForgingStatus(ForgingStatus status)
+	{
+		if(forgingStatus != status)
+		{
+			forgingStatus = status;
+			Controller.getInstance().forgingStatusChanged(forgingStatus);
+		}
+	}
+	
+	
 	public void run()
 	{
 		while(true)
@@ -113,7 +155,7 @@ public class BlockGenerator extends Thread
 				if(Controller.getInstance().doesWalletExists() /*&& Controller.getInstance().isWalletUnlocked()*/)
 				{
 					//PREVENT CONCURRENT MODIFY EXCEPTION
-					List<PrivateKeyAccount> knownAccounts = this.getKnownAccounts();							
+					List<PrivateKeyAccount> knownAccounts = this.getKnownAccounts();
 					synchronized(knownAccounts)
 					{
 						for(PrivateKeyAccount account: knownAccounts)
@@ -393,5 +435,36 @@ public class BlockGenerator extends Thread
 		}
 		
 		return generatingBalance;
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+	ObserverMessage message = (ObserverMessage) arg1;
+		
+		if(message.getType() == ObserverMessage.WALLET_STATUS || message.getType() == ObserverMessage.NETWORK_STATUS)
+		{
+			//WALLET ONCE UNLOCKED? WITHOUT UNLOCKING FORGING DISABLED 
+			if(!walletOnceUnlocked &&  message.getType() == ObserverMessage.WALLET_STATUS)
+			{
+				walletOnceUnlocked = true;
+			}
+			
+				// WALLET UNLOCKED OR GENERATORCACHING TRUE
+				if(walletOnceUnlocked && getKnownAccounts().size() > 0)
+				{
+					//CONNECTIONS OKE? -> FORGING
+					if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+					{
+						setForgingStatus(ForgingStatus.FORGING);
+					}else
+					{
+						setForgingStatus(ForgingStatus.FORGING_ENABLED);
+					}
+				}else
+				{
+					setForgingStatus(ForgingStatus.FORGING_DISABLED);
+				}
+		}
+		
 	}
 }

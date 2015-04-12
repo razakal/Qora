@@ -44,5 +44,7 @@ public class StatusPanel extends JPanel
 		});
 		
 		this.add(walletStatus, BorderLayout.EAST);
+		this.add(new ForgingStatus(), BorderLayout.EAST);
+		
 	}
 }
