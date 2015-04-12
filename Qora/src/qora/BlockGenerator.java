@@ -56,6 +56,11 @@ public class BlockGenerator extends Thread implements Observer
 	    
 	}
 	
+    public ForgingStatus getForgingStatus()
+    {
+        return forgingStatus;
+    }
+    
 	private Map<PrivateKeyAccount, Block> blocks;
 	private Block solvingBlock;
 	private List<PrivateKeyAccount> cachedAccounts;
