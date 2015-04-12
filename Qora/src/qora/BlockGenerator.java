@@ -71,7 +71,34 @@ public class BlockGenerator extends Thread implements Observer
 			this.cachedAccounts = new ArrayList<PrivateKeyAccount>();
 		}
 		
-		Controller.getInstance().addWalletListener(this);
+		addObserver();
+	}
+
+	public void addObserver() {
+		new Thread()
+		{
+			@Override
+			public void run() {
+				
+				//WE HAVE TO WAIT FOR THE WALLET TO ADD THAT LISTENER.
+				while(!Controller.getInstance().doesWalletExists())
+				{
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+//						does not matter
+					}
+				}
+				//SECURITY MARGIN TO MAKE SURE WE CAN ADD THAT LISTENER
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+//					does not matter
+				}
+				
+				Controller.getInstance().addWalletListener(BlockGenerator.this);
+			}
+		}.start();
 		Controller.getInstance().addObserver(this);
 	}
 	
