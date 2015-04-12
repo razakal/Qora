@@ -825,6 +825,11 @@ public class Controller extends Observable {
 		this.wallet.commit();
 	}
 	
+    public ForgingStatus getForgingStatus()
+    {
+        return this.blockGenerator.getForgingStatus();
+    } 
+    
 	//BLOCKCHAIN
 	
 	public int getHeight() 
