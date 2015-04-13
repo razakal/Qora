@@ -32,8 +32,8 @@ public class ForgingStatus extends JLabel implements Observer {
 		this.forgingIcon = this.createIcon(Color.GREEN);
 
 		//LISTEN ON STATUS
-		Controller.getInstance().addObserver(this);		
-		forgingDisabled();
+		Controller.getInstance().addObserver(this);	
+		setIconAndText(Controller.getInstance().getForgingStatus());
 	}
 	
 	private ImageIcon createIcon(Color color)
@@ -51,21 +51,25 @@ public class ForgingStatus extends JLabel implements Observer {
 		{
 			BlockGenerator.ForgingStatus status = (BlockGenerator.ForgingStatus) message.getValue();
 			
-			if(status == BlockGenerator.ForgingStatus.FORGING_DISABLED)
-			{
-				forgingDisabled();
-			}
-			if(status ==BlockGenerator.ForgingStatus.FORGING_ENABLED)
-			{
-				this.setIcon(forgingEnabledIcon);
-				this.setText("Forging enabled");
-			}
-			if(status == BlockGenerator.ForgingStatus.FORGING)
-			{
-				this.setIcon(forgingIcon);
-				this.setText("Forging");
-			}
+			setIconAndText(status);
 		}		
+	}
+
+	private void setIconAndText(BlockGenerator.ForgingStatus status) {
+		if(status == BlockGenerator.ForgingStatus.FORGING_DISABLED)
+		{
+			forgingDisabled();
+		}
+		if(status ==BlockGenerator.ForgingStatus.FORGING_ENABLED)
+		{
+			this.setIcon(forgingEnabledIcon);
+			this.setText("Forging enabled");
+		}
+		if(status == BlockGenerator.ForgingStatus.FORGING)
+		{
+			this.setIcon(forgingIcon);
+			this.setText("Forging");
+		}
 	}
 
 	public void forgingDisabled() {
