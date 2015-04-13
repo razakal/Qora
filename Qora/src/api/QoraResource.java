@@ -31,6 +31,13 @@ public class QoraResource
 	}
 	
 	@GET 
+	@Path("/status/forging")
+	public String getForgingStatus() 
+	{ 
+		return String.valueOf(Controller.getInstance().getForgingStatus().getStatuscode());
+	}
+	
+	@GET 
 	@Path("/isuptodate")
 	public String isUpToDate() 
 	{ 
