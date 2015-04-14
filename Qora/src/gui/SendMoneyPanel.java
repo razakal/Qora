@@ -16,12 +16,11 @@ import javax.swing.border.EmptyBorder;
 
 import qora.account.Account;
 import qora.assets.Asset;
-import qora.naming.Name;
 import qora.transaction.Transaction;
+import utils.NameUtils;
+import utils.NameUtils.NameResult;
 import utils.Pair;
 import controller.Controller;
-import database.DBSet;
-import database.NameMap;
 
 @SuppressWarnings("serial")
 public class SendMoneyPanel extends JPanel 
@@ -246,48 +245,21 @@ public class SendMoneyPanel extends JPanel
 		//NAME PAYMENT
 		}else if(cbxPaymentSolution.getSelectedItem().equals(NAME_PAYMENT))
 		{
-			NameMap names = DBSet.getInstance().getNameMap();
-			if( !names.contains(recipientAddress))
+			
+			Pair<Account, NameResult> result = NameUtils.nameToAdress(recipientAddress);
+			
+			if(result.getB() == NameResult.OK)
 			{
-				//NAME NOT REGISTERED!
-				JOptionPane.showMessageDialog(null, "The name is not registered" , "Error", JOptionPane.ERROR_MESSAGE);
+				recipient = result.getA();
+			}else
+			{
+				JOptionPane.showMessageDialog(null, result.getB().getStatusMessage() , "Error", JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.sendButton.setEnabled(true);
 				
 				return;
-				
 			}
-				
-				//NAME STARTS OR ENDS WITH SPACE?
-				if(recipientAddress.startsWith(" ") || recipientAddress.endsWith(" "))
-				{
-					
-					JOptionPane.showMessageDialog(null, "For security purposes sending payments to a name that starts or ends with spaces is forbidden." , "Error", JOptionPane.ERROR_MESSAGE);
-					
-					//ENABLE
-					this.sendButton.setEnabled(true);
-					
-					return;
-				}
-				
-				//NAME FOR SALE?
-				if(	DBSet.getInstance().getNameExchangeMap().contains(recipientAddress))
-				{
-					JOptionPane.showMessageDialog(null, "For security purposes sending payments to a name that can be purchased through name exchange is disabled." , "Error", JOptionPane.ERROR_MESSAGE);
-					
-					//ENABLE
-					this.sendButton.setEnabled(true);
-					
-					return;
-				}
-				
-				
-				//LOOKUP ADDRESS FOR NAME
-				Name name = names.get(recipientAddress);
-				recipientAddress = name.getOwner().getAddress();
-				recipient = new Account(recipientAddress);
-				
 			
 		}else
 		{
