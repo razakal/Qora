@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.math.BigDecimal;
 
 import javax.swing.*;
@@ -16,6 +18,7 @@ import javax.swing.border.EmptyBorder;
 
 import qora.account.Account;
 import qora.assets.Asset;
+import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import utils.NameUtils;
 import utils.NameUtils.NameResult;
@@ -29,6 +32,7 @@ public class SendMoneyPanel extends JPanel
 	private JTextField txtTo;
 	private JTextField txtAmount;
 	private JTextField txtFee;
+	private JTextField txtRecDetails;
 	private JButton sendButton;
 	private AccountsComboBoxModel accountsModel;
 	private JComboBox<Asset> cbxFavorites;
@@ -102,6 +106,14 @@ public class SendMoneyPanel extends JPanel
 		cbxPaymentSolution.addItem(NAME_PAYMENT);
 		this.add(cbxPaymentSolution, paymentGBC);
 		
+		cbxPaymentSolution.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				refreshReceiverDetails();
+				
+			}
+		});
 		
 		
 		
@@ -155,6 +167,23 @@ public class SendMoneyPanel extends JPanel
       	txtTo = new JTextField();
         this.add(txtTo, txtGBC);
         
+        txtTo.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				refreshReceiverDetails();
+				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				// does not matter
+				
+			}
+			
+		
+		});
+        
         //LABEL AMOUNT
       	labelGBC.gridy = 4;
       	JLabel amountLabel = new JLabel("Amount:");
@@ -176,8 +205,19 @@ public class SendMoneyPanel extends JPanel
       	txtFee.setText("1");
         this.add(txtFee, txtGBC);
         
+        //LABEL RECEIVER DETAILS 
+      	labelGBC.gridy = 6;
+      	JLabel recDetailsLabel = new JLabel("Receiver details:");
+      	this.add(recDetailsLabel, labelGBC);
+      		
+      	//RECEIVER DETAILS 
+      	txtGBC.gridy = 6;
+      	txtRecDetails = new JTextField();
+      	txtRecDetails.setEditable(false);
+        this.add(txtRecDetails, txtGBC);
+        
         //BUTTON SEND
-        buttonGBC.gridy = 6;
+        buttonGBC.gridy = 7;
         sendButton = new JButton("Send");
         sendButton.setPreferredSize(new Dimension(80, 25));
     	sendButton.addActionListener(new ActionListener()
@@ -190,9 +230,54 @@ public class SendMoneyPanel extends JPanel
 		this.add(sendButton, buttonGBC);
         
         //ADD BOTTOM SO IT PUSHES TO TOP
-        labelGBC.gridy = 5;
+        labelGBC.gridy = 6;
         labelGBC.weighty = 1;
       	this.add(new JPanel(), labelGBC);
+	}
+	
+	
+	private void refreshReceiverDetails()
+	{
+		String toValue = txtTo.getText();
+		
+		if(toValue.isEmpty())
+		{
+			txtRecDetails.setText("");
+			return;
+		}
+		
+		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
+		{
+			txtRecDetails.setText("Status must be OK to show receiver details.");
+			return;
+		}
+		
+			if(cbxPaymentSolution.getSelectedItem() == NAME_PAYMENT)
+			{
+				Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(toValue);
+				
+				if(nameToAdress.getB() == NameResult.OK)
+				{
+					Account acct = nameToAdress.getA();
+					txtRecDetails.setText(acct.getBalance(1).toPlainString() + " - " + acct.getAddress());
+					
+				}else
+				{
+					
+					txtRecDetails.setText(nameToAdress.getB().getStatusMessage());
+				}
+			}else
+			{
+					//CHECK IF RECIPIENT IS VALID ADDRESS
+					if(!Crypto.getInstance().isValidAddress(toValue))
+					{
+						txtRecDetails.setText("Invalid address!");
+					}else
+					{
+						Account account = new Account(toValue);
+						txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+					}
+			}
 	}
 	
 	public void onSendClick()
