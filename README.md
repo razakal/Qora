@@ -1,4 +1,4 @@
-# Qora [![release](https://img.shields.io/github/release/Qoracoin/Qora.svg)(https://img.shields.io/github/release/Qoracoin/Qora.svg)
+# Qora [!release(https://img.shields.io/github/release/Qoracoin/Qora.svg)](https://img.shields.io/github/release/Qoracoin/Qora.svg)
 Public GIT for the Qora cryptocurrency project.
 
 * Website: http://qora.org
