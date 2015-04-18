@@ -1,5 +1,7 @@
 package gui.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -7,6 +9,7 @@ import java.util.Observer;
 import javax.swing.DefaultComboBoxModel;
 
 import qora.account.Account;
+import utils.AccountBalanceComparator;
 import utils.ObserverMessage;
 import controller.Controller;
 
@@ -19,10 +22,7 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 		List<Account> accounts = Controller.getInstance().getAccounts();
 		synchronized(accounts)
 		{
-	 		for(Account account: Controller.getInstance().getAccounts())
-			{
-				this.addElement(account);
-			}
+	 		sortAndAdd();
 		}
 		
 		Controller.getInstance().addWalletListener(this);
@@ -58,10 +58,7 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 			List<Account> accounts = Controller.getInstance().getAccounts();
 			synchronized(accounts)
 			{
-		 		for(Account account: Controller.getInstance().getAccounts())
-				{
-					this.addElement(account);
-				}
+				sortAndAdd();
 			}
 				
 			//RESET SELECTED ITEM
@@ -69,6 +66,18 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 			{
 				this.setSelectedItem(selected);
 			}
+		}
+	}
+
+	//SORTING BY BALANCE (BIGGEST BALANCE FIRST)
+	private void sortAndAdd() {
+		//TO AVOID PROBLEMS WE DON'T WANT TO SORT THE ORIGINAL LIST!
+		ArrayList<Account> accoountsToSort = new ArrayList<Account>( Controller.getInstance().getAccounts());
+		Collections.sort(accoountsToSort, new AccountBalanceComparator() );
+		Collections.reverse(accoountsToSort);
+		for(Account account: accoountsToSort)
+		{
+			this.addElement(account);
 		}
 	}
 	
