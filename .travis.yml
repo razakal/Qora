@@ -1,0 +1,12 @@
+language: java
+sudo: true
+os:
+- linux
+jdk:
+- oraclejdk8
+- oraclejdk7
+- openjdk8
+- openjdk7
+notifications:
+  slack:
+    secure: ZdJyySkQETyJJDWuuF8hfRg42MVffKpkacEP7gTebQ95RTPUapgFquU//lY1z25/1tOAS3+FStgGjfwz7/Y0l/l1vKE7h6YYqUpL0pKR5bvX4H6DV8OFgxXMXB+zSk7Qm1VdWfLDo/h4j7t1ZNk+NF5s2NYM7YVXsd6bFx4KAJk=
