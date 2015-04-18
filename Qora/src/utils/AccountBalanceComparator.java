@@ -4,7 +4,11 @@ import java.util.Comparator;
 
 import qora.account.Account;
 
-
+/**
+ * Sorts Accounts by balance.
+ * @author Skerberus
+ *
+ */
 public class AccountBalanceComparator implements Comparator<Account> {
 
 	@Override

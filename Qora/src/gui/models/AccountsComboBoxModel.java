@@ -71,7 +71,7 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 
 	//SORTING BY BALANCE (BIGGEST BALANCE FIRST)
 	private void sortAndAdd() {
-		//TO AVOID PROBLEMS WE DON'T WANT TO SORT THE ORIGINAL LIST!
+		//TO AVOID PROBLEMS WE DON'T WANT TO SORT THE ORIGINAL LIST! 
 		ArrayList<Account> accoountsToSort = new ArrayList<Account>( Controller.getInstance().getAccounts());
 		Collections.sort(accoountsToSort, new AccountBalanceComparator() );
 		Collections.reverse(accoountsToSort);
