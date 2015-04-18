@@ -49,7 +49,6 @@ import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import api.ApiService;
 
-import com.google.common.io.Files;
 
 import database.DBSet;
 import database.SortableList;
@@ -129,18 +128,9 @@ public class Controller extends Observable {
 			File dataDir = new File(Settings.getInstance().getDataDir());
 			if(dataDir.exists())
 			{
-				File dataDirBak = new File(Settings.getInstance().getDataDirBak());
-				
-				if(dataDirBak.exists())
-				{
-//					delete bak folder
-					java.nio.file.Files.walkFileTree(dataDirBak.toPath(), new SimpleFileVisitorForRecursiveFolderDeletion());
-				}
-				
-				Files.move(dataDir, dataDirBak);
-				
+				//delete data folder
+				java.nio.file.Files.walkFileTree(dataDir.toPath(), new SimpleFileVisitorForRecursiveFolderDeletion());
 				DBSet.reCreateDatabase();
-				
 				
 			}
 			
