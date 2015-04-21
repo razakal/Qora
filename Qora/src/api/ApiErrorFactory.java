@@ -61,6 +61,10 @@ public class ApiErrorFactory
 	public static final int ERROR_POLL_OPTION_NO_EXISTS = 504;
 	public static final int ERROR_ALREADY_VOTED_FOR_THAT_OPTION = 505;
 	
+	//ASSET
+	public static final int ERROR_INVALID_ASSET_ID = 601;
+	
+	
 	private static ApiErrorFactory  instance;
 	
 	public static ApiErrorFactory  getInstance()
@@ -129,6 +133,9 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_DUPLICATE_OPTION, "not all options are unique");
 		this.errorMessages.put(ERROR_POLL_OPTION_NO_EXISTS, "option does not exist");
 		this.errorMessages.put(ERROR_ALREADY_VOTED_FOR_THAT_OPTION, "already voted for that option");
+		
+		//ASSETS
+		this.errorMessages.put(ERROR_INVALID_ASSET_ID, "invalid asset id");
 	}
 	
 	@SuppressWarnings("unchecked")

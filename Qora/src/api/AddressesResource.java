@@ -22,6 +22,7 @@ import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import controller.Controller;
+import database.DBSet;
 
 @Path("addresses")
 @Produces(MediaType.APPLICATION_JSON)
@@ -216,6 +217,28 @@ public class AddressesResource
 	public String getGeneratingBalance(@PathParam("address") String address)
 	{
 		return this.getGeneratingBalance(address, 1);
+	}
+	
+	@GET
+	@Path("assetbalance/{assetid}/{address}")
+	public String getAssetBalance(@PathParam("assetid") String assetid,  @PathParam("address") String address)
+	{
+		//CHECK IF VALID ADDRESS
+		if(!Crypto.getInstance().isValidAddress(address))
+		{
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_ADDRESS);
+		}
+		
+		Long assetAsLong = null;
+		
+		try {
+			assetAsLong = Long.valueOf(assetid);
+			
+		} catch (NumberFormatException e) {
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_ASSET_ID);
+		}
+		
+		return DBSet.getInstance().getBalanceMap().get(address, assetAsLong).toPlainString();
 	}
 	
 	@GET
