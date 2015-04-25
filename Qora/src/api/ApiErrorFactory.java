@@ -8,6 +8,8 @@ import javax.ws.rs.core.Response;
 
 import org.json.simple.JSONObject;
 
+import utils.NameUtils.NameResult;
+
 public class ApiErrorFactory 
 {
 	//COMMON
@@ -63,6 +65,11 @@ public class ApiErrorFactory
 	
 	//ASSET
 	public static final int ERROR_INVALID_ASSET_ID = 601;
+	
+	//NAME PAYMENTS
+	public static final int ERROR_NAME_NOT_REGISTERED = 701;
+	public static final int ERROR_NAME_FOR_SALE = 702;
+	public static final int ERROR_NAME_WITH_SPACE = 703;
 	
 	
 	private static ApiErrorFactory  instance;
@@ -136,6 +143,12 @@ public class ApiErrorFactory
 		
 		//ASSETS
 		this.errorMessages.put(ERROR_INVALID_ASSET_ID, "invalid asset id");
+		
+		//NAME PAYMENTS
+		this.errorMessages.put(ERROR_NAME_NOT_REGISTERED, NameResult.NAME_NOT_REGISTERED.getStatusMessage());
+		this.errorMessages.put(ERROR_NAME_FOR_SALE, NameResult.NAME_FOR_SALE.getStatusMessage());
+		this.errorMessages.put(ERROR_NAME_WITH_SPACE, NameResult.NAME_WITH_SPACE.getStatusMessage());
+		
 	}
 	
 	@SuppressWarnings("unchecked")
