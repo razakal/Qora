@@ -231,12 +231,20 @@ public class AddressesResource
 		
 		Long assetAsLong = null;
 		
+		//HAS ASSET NUMBERFORMAT
 		try {
 			assetAsLong = Long.valueOf(assetid);
 			
 		} catch (NumberFormatException e) {
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_ASSET_ID);
 		}
+		
+		//DOES ASSETID EXIST
+		if(!DBSet.getInstance().getAssetMap().contains(assetAsLong))
+		{
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_ASSET_ID);
+		}
+		
 		
 		return DBSet.getInstance().getBalanceMap().get(address, assetAsLong).toPlainString();
 	}
