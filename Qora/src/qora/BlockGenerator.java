@@ -21,6 +21,9 @@ import qora.transaction.Transaction;
 import settings.Settings;
 import utils.ObserverMessage;
 import utils.TransactionFeeComparator;
+import at.AT_Block;
+import at.AT_Constants;
+import at.AT_Controller;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
@@ -308,9 +311,18 @@ public class BlockGenerator extends Thread implements Observer
 		}
 		
 		//CREATE NEW BLOCK
-		int version = 1;
-		Block newBlock = BlockFactory.getInstance().create(version, block.getSignature(), timestamp.longValue(), getNextBlockGeneratingBalance(db, block), account, signature);
-		
+		Block newBlock;
+		int version = (block.getHeight(db) + 1 > Transaction.AT_BLOCK_HEIGHT_RELEASE) ? 2 : 1 ;
+		if ( version > 1 )
+		{
+			AT_Block atBlock = AT_Controller.getCurrentBlockATs( AT_Constants.getInstance().MAX_PAYLOAD_FOR_BLOCK( block.getHeight() ) , block.getHeight() + 1 );
+			byte[] atBytes = atBlock.getBytesForBlock();
+			newBlock = BlockFactory.getInstance().create(version, block.getSignature(), timestamp.longValue(), getNextBlockGeneratingBalance(db, block), account, signature, atBytes, atBlock.getTotalFees());
+		}
+		else
+		{
+			newBlock = BlockFactory.getInstance().create(version, block.getSignature(), timestamp.longValue(), getNextBlockGeneratingBalance(db, block), account, signature);
+		}
 		return newBlock;
 	}
 	

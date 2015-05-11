@@ -9,12 +9,14 @@ import java.util.List;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import utils.Pair;
+import at.AT;
 
 import com.google.common.primitives.Bytes;
 
 public class Crypto {
 
 	public static final byte ADDRESS_VERSION = 58;
+	public static final byte AT_ADDRESS_VERSION = 23;
 	
 	private static Crypto instance;
 	
@@ -100,6 +102,39 @@ public class Crypto {
 		return address;
 	}
 	
+	public String getATAddress(byte[] signature)
+	{
+		//SHA256 SIGNATURE TO CONVERT IT TO 32BYTE
+		byte[] publicKeyHash = this.digest(signature);
+		
+		//RIPEMD160 TO CREATE A SHORTER ADDRESS
+		RIPEMD160 ripEmd160 = new RIPEMD160();
+		publicKeyHash = ripEmd160.digest(publicKeyHash);
+		
+		//CONVERT TO LIST
+		List<Byte> addressList = new ArrayList<Byte>();
+		
+		//ADD VERSION BYTE
+		Byte versionByte = Byte.valueOf(AT_ADDRESS_VERSION);
+		addressList.add(versionByte);
+		
+		addressList.addAll(Bytes.asList(publicKeyHash));
+		
+		//GENERATE CHECKSUM
+		byte[] checkSum = this.doubleDigest(Bytes.toArray(addressList));
+		
+		//ADD FIRST 4 BYTES OF CHECKSUM TO ADDRESS
+		addressList.add(checkSum[0]);
+		addressList.add(checkSum[1]);
+		addressList.add(checkSum[2]);
+		addressList.add(checkSum[3]);
+		
+		//BASE58 ENCODE ADDRESS
+		String address = Base58.encode(Bytes.toArray(addressList));
+		
+		return address;
+	}
+	
 	public boolean isValidAddress(String address)
 	{
 		try
@@ -114,32 +149,61 @@ public class Crypto {
 			}
 			
 			//CHECK VERSION
-			if(addressBytes[0] != ADDRESS_VERSION)
+			if(addressBytes[0] == ADDRESS_VERSION)
+			{	
+				//CONVERT TO LIST
+				List<Byte> addressList = new ArrayList<Byte>();
+				addressList.addAll(Bytes.asList(addressBytes));
+				
+				//REMOVE CHECKSUM
+				byte[] checkSum = new byte[4];
+				checkSum[3] = addressList.remove(addressList.size() - 1);
+				checkSum[2] = addressList.remove(addressList.size() - 1);
+				checkSum[1] = addressList.remove(addressList.size() - 1);
+				checkSum[0] = addressList.remove(addressList.size() - 1);
+				
+				//GENERATE ADDRESS CHECKSUM
+				byte[] digest = this.doubleDigest(Bytes.toArray(addressList));
+				byte[] checkSumTwo = new byte[4];
+				checkSumTwo[0] = digest[0];
+				checkSumTwo[1] = digest[1];
+				checkSumTwo[2] = digest[2];
+				checkSumTwo[3] = digest[3];
+				
+				//CHECK IF CHECKSUMS ARE THE SAME
+				return Arrays.equals(checkSum, checkSumTwo);
+			}
+			if(addressBytes[0] == AT_ADDRESS_VERSION)
 			{
-				return false;
+				//TODO CHECK IF AT WITH THAT ID EXISTS
+				//if (AT.getAT(addressBytes) != null)
+				//{
+					List<Byte> addressList = new ArrayList<Byte>();
+					
+					
+					addressList.addAll(Bytes.asList(addressBytes));
+					
+					//REMOVE CHECKSUM
+					byte[] checkSum = new byte[4];
+					checkSum[3] = addressList.remove(addressList.size() - 1);
+					checkSum[2] = addressList.remove(addressList.size() - 1);
+					checkSum[1] = addressList.remove(addressList.size() - 1);
+					checkSum[0] = addressList.remove(addressList.size() - 1);
+					
+					//GENERATE ADDRESS CHECKSUM
+					byte[] digest = this.doubleDigest(Bytes.toArray(addressList));
+					byte[] checkSumTwo = new byte[4];
+					checkSumTwo[0] = digest[0];
+					checkSumTwo[1] = digest[1];
+					checkSumTwo[2] = digest[2];
+					checkSumTwo[3] = digest[3];
+					
+					
+					return Arrays.equals(checkSum, checkSumTwo);
+				//}
 			}
 			
-			//CONVERT TO LIST
-			List<Byte> addressList = new ArrayList<Byte>();
-			addressList.addAll(Bytes.asList(addressBytes));
-			
-			//REMOVE CHECKSUM
-			byte[] checkSum = new byte[4];
-			checkSum[3] = addressList.remove(addressList.size() - 1);
-			checkSum[2] = addressList.remove(addressList.size() - 1);
-			checkSum[1] = addressList.remove(addressList.size() - 1);
-			checkSum[0] = addressList.remove(addressList.size() - 1);
-			
-			//GENERATE ADDRESS CHECKSUM
-			byte[] digest = this.doubleDigest(Bytes.toArray(addressList));
-			byte[] checkSumTwo = new byte[4];
-			checkSumTwo[0] = digest[0];
-			checkSumTwo[1] = digest[1];
-			checkSumTwo[2] = digest[2];
-			checkSumTwo[3] = digest[3];
-			
-			//CHECK IF CHECKSUMS ARE THE SAME
-			return Arrays.equals(checkSum, checkSumTwo);
+			return false;
 		}
 		catch(Exception e)
 		{

@@ -48,7 +48,9 @@ import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import api.ApiService;
+import at.AT;
 
+import com.google.common.io.Files;
 
 import database.DBSet;
 import database.SortableList;
@@ -208,6 +210,12 @@ public class Controller extends Observable {
 		
 		//ADD OBSERVER TO BALANCES
 		DBSet.getInstance().getBalanceMap().addObserver(o);
+		
+		//ADD OBSERVER TO ATMAP
+		DBSet.getInstance().getATMap().addObserver(o);
+
+		//ADD OBSERVER TO ATTRANSACTION MAP
+		DBSet.getInstance().getATTransactionMap().addObserver(o);
 		
 		//ADD OBSERVER TO CONTROLLER
 		super.addObserver(o);
@@ -389,12 +397,12 @@ public class Controller extends Observable {
 			block = blockMessage.getBlock();
 			
 			//CHECK IF VALID
-			if(this.blockChain.isNewBlockValid(block))
+			if(this.blockChain.isNewBlockValid(block) && this.synchronizer.process(block))
 			{
 				Logger.getGlobal().info("received new valid block");
 				
 				//PROCESS
-				this.synchronizer.process(block);
+				//this.synchronizer.process(block);
 				
 				//BROADCAST
 				List<Peer> excludes = new ArrayList<Peer>();
@@ -857,7 +865,10 @@ public class Controller extends Observable {
 	public void newBlockGenerated(Block newBlock) {
 		
 		//ADD TO BLOCKCHAIN
-		this.synchronizer.process(newBlock);
+		//if (newBlock.isValid())
+		//{
+			this.synchronizer.process(newBlock);
+		//}
 		
 		//BROADCAST
 		this.broadcastBlock(newBlock);		
@@ -924,6 +935,13 @@ public class Controller extends Observable {
 	public SortableList<Tuple2<BigInteger, BigInteger>, Trade> getTrades(Order order)
 	{
 		return DBSet.getInstance().getTradeMap().getTrades(order);
+	}
+	
+	//ATs
+	
+	public SortableList<String, AT> getAcctATs(String type, boolean initiators)
+	{
+		return DBSet.getInstance().getATMap().getAcctATs(type, initiators);
 	}
 	
 	//TRANSACTIONS
@@ -1073,6 +1091,15 @@ public class Controller extends Observable {
 			return this.transactionCreator.createAssetTransfer(sender, recipient, asset, amount, fee);
 		}
 	}
+
+	public Pair<Transaction, Integer> deployAT(PrivateKeyAccount creator, String name, String description, String type , String tags ,  byte[] creationBytes, BigDecimal quantity, BigDecimal fee)
+	{
+		
+		synchronized(this.transactionCreator)
+		{
+			return this.transactionCreator.deployATTransaction(creator, name, description, type, tags, creationBytes, quantity, fee);
+		}
+	}
 	
 	public Pair<Transaction, Integer> sendMultiPayment(PrivateKeyAccount sender, List<Payment> payments, BigDecimal fee)
 	{
@@ -1081,5 +1108,16 @@ public class Controller extends Observable {
 		{		
 			return this.transactionCreator.sendMultiPayment(sender, payments, fee);
 		}
+	}
+	
+	public Pair<Transaction, Integer> sendMessage(
+			PrivateKeyAccount sender, Account recipient,
+			BigDecimal amount, BigDecimal fee, byte[] isText, byte[] message,
+			byte[] encryptMessage) {
+		synchronized ( this.transactionCreator )
+		{
+			return this.transactionCreator.createMessage(sender, recipient, amount, fee, message, isText, encryptMessage);
+		}
+		
 	}
 }

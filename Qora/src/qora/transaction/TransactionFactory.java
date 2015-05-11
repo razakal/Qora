@@ -105,8 +105,14 @@ public class TransactionFactory {
 			
 			//PARSE MULTI PAYMENT
 			return MultiPaymentTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));		
-		}	
 		
+		case Transaction.DEPLOY_AT_TRANSACTION:
+			return DeployATTransaction.Parse( Arrays.copyOfRange(data, 4 , data.length));
+
+		case Transaction.MESSAGE_TRANSACTION:
+			return MessageTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));
+		}
+
 		throw new Exception("Invalid transaction type");
 	}
 	

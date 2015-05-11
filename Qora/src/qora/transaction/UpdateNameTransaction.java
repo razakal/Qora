@@ -283,7 +283,7 @@ public class UpdateNameTransaction extends Transaction
 	}
 
 	@Override
-	public Account getCreator() 
+	public PublicKeyAccount getCreator() 
 	{
 		return this.owner;
 	}

@@ -36,6 +36,9 @@ public class DBSet implements Observer, IDB {
 	private OrderMap orderMap;
 	private CompletedOrderMap completedOrderMap;
 	private TradeMap tradeMap;
+	private ATMap atMap;
+	private ATStateMap atStateMap;
+	private ATTransactionMap atTransactionMap;
 	
 	private DB database;
 	private int actions;
@@ -99,6 +102,9 @@ public class DBSet implements Observer, IDB {
 		this.orderMap = new OrderMap(this, database);
 		this.completedOrderMap = new CompletedOrderMap(this, database);
 		this.tradeMap = new TradeMap(this, database);
+		this.atMap = new ATMap(this,database);
+		this.atStateMap = new ATStateMap(this,database);
+		this.atTransactionMap = new ATTransactionMap(this,database);
 	}
 	
 	protected DBSet(DBSet parent)
@@ -122,6 +128,9 @@ public class DBSet implements Observer, IDB {
 		this.orderMap = new OrderMap(parent.orderMap);
 		this.completedOrderMap = new CompletedOrderMap(parent.completedOrderMap);
 		this.tradeMap = new TradeMap(parent.tradeMap);
+		this.atMap = new ATMap(parent.atMap);
+		this.atStateMap = new ATStateMap(parent.atStateMap);
+		this.atTransactionMap = new ATTransactionMap(parent.atTransactionMap);
 	}
 	
 	public void reset() {
@@ -143,6 +152,9 @@ public class DBSet implements Observer, IDB {
 		this.orderMap.reset();
 		this.completedOrderMap.reset();
 		this.tradeMap.reset();
+		this.atMap.reset();
+		this.atStateMap.reset();
+		this.atTransactionMap.reset();
 	}
 	
 	public BalanceMap getBalanceMap() 
@@ -238,6 +250,21 @@ public class DBSet implements Observer, IDB {
 	public TradeMap getTradeMap()
 	{
 		return this.tradeMap;
+	}
+
+	public ATMap getATMap()
+	{
+		return this.atMap;
+	}
+	
+	public ATStateMap getATStateMap()
+	{
+		return this.atStateMap;
+	}
+	
+	public ATTransactionMap getATTransactionMap()
+	{
+		return this.atTransactionMap;
 	}
 	
 	public DBSet fork()

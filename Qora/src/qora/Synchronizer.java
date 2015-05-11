@@ -3,7 +3,14 @@ package qora;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+
+import at.AT;
+import at.AT_API_Platform_Impl;
+import at.AT_Constants;
+
+import com.google.common.primitives.Bytes;
 
 import network.Peer;
 import network.message.BlockMessage;
@@ -12,6 +19,7 @@ import network.message.MessageFactory;
 import network.message.SignaturesMessage;
 import network.message.TransactionMessage;
 import qora.block.Block;
+import qora.crypto.Base58;
 import qora.transaction.Transaction;
 import database.DBSet;
 
@@ -31,9 +39,20 @@ public class Synchronizer
 		//VERIFY ALL BLOCKS TO PREVENT ORPHANING INCORRECTLY
 		DBSet fork = db.fork();	
 		
+		AT_API_Platform_Impl.getInstance().setDBSet( fork );
+
+		int originalHeight = 0;
+		
 		//ORPHAN BLOCK IN FORK TO VALIDATE THE NEW BLOCKS
 		if(lastCommonBlock != null)
 		{
+			//GET STATES TO RESTORE
+			Map<String, byte[]> states = db.getATStateMap().getStates( lastCommonBlock.getHeight() );
+			
+			//HEIGHT TO ROLL BACK
+			originalHeight = lastCommonBlock.getHeight();
+			int height = (int)(Math.round( lastCommonBlock.getHeight() /4))*4;
+
 			//GET LAST BLOCK
 			Block lastBlock = fork.getBlockMap().getLastBlock();
 			
@@ -43,6 +62,32 @@ public class Synchronizer
 				lastBlock.orphan(fork);
 				lastBlock = fork.getBlockMap().getLastBlock();
 			}
+
+			while ( lastBlock.getHeight() >= height && lastBlock.getHeight() > 11 )
+			{
+				newBlocks.add( 0 , lastBlock );
+				//Block tempBlock = fork.getBlockMap().getLastBlock();
+				lastBlock.orphan(fork);
+				lastBlock = fork.getBlockMap().getLastBlock();
+				//lastBlock = tempBlock;
+			}
+			
+			for ( String id : states.keySet() )
+			{
+				byte[] address = Base58.decode( id ); //25 BYTES
+				address = Bytes.ensureCapacity( address , AT_Constants.getInstance().AT_ID_SIZE, 0 ); // 32 BYTES
+				AT at = db.getATMap().getAT( address );
+				
+				at.setState( states.get( id ) );
+				
+				fork.getATMap().update( at , height );
+				
+			}
+			
+			fork.getATMap().deleteAllAfterHeight( height );
+			fork.getATStateMap().deleteStatesAfter( height );
+			
+
 		}
 		
 		//VALIDATE THE NEW BLOCKS
@@ -56,14 +101,23 @@ public class Synchronizer
 			}
 			else
 			{
+				AT_API_Platform_Impl.getInstance().setDBSet( db );
 				//INVALID BLOCK THROW EXCEPTION
 				throw new Exception("Dishonest peer");
 			}
 		}
+
+		AT_API_Platform_Impl.getInstance().setDBSet( db );
 		
 		//NEW BLOCKS ARE ALL VALID SO WE CAN ORPHAN THEM FOR REAL NOW
 		if(lastCommonBlock != null)
 		{
+			//GET STATES TO RESTORE
+			Map<String, byte[]> states = db.getATStateMap().getStates( lastCommonBlock.getHeight() );
+			
+			//HEIGHT TO ROLL BACK
+			int height = (int)(Math.round( lastCommonBlock.getHeight()/4))*4;
+
 			//GET LAST BLOCK
 			Block lastBlock = db.getBlockMap().getLastBlock();
 			
@@ -76,6 +130,29 @@ public class Synchronizer
 				lastBlock.orphan(db);
 				lastBlock = db.getBlockMap().getLastBlock();
 			}
+
+			while ( lastBlock.getHeight() >= height && lastBlock.getHeight() > 11 )
+			{
+				orphanedTransactions.addAll(lastBlock.getTransactions());
+				lastBlock.orphan();
+				lastBlock = db.getBlockMap().getLastBlock();
+			}
+			
+			for ( String id : states.keySet() )
+			{
+				byte[] address = Base58.decode( id ); //25 BYTES
+				address = Bytes.ensureCapacity( address , AT_Constants.AT_ID_SIZE, 0 ); // 32 BYTES
+				AT at = db.getATMap().getAT( address );
+				
+				at.setState( states.get( id ) );
+				
+				db.getATMap().update( at , height );
+				
+			}
+
+			db.getATMap().deleteAllAfterHeight( height );
+			db.getATStateMap().deleteStatesAfter( height );
+
 		}
 		
 		//PROCESS THE NEW BLOCKS

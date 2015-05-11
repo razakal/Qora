@@ -2,7 +2,10 @@ package qora.block;
 
 import java.util.Arrays;
 
+import com.google.common.primitives.Ints;
+
 import qora.account.PublicKeyAccount;
+import qora.transaction.Transaction;
 
 public class BlockFactory {
 
@@ -37,9 +40,18 @@ public class BlockFactory {
 		}
 		else
 		{
+			//PARSE HEIGHT
+			byte[] versionBytes =  Arrays.copyOfRange(data, 0, 4);
+			int version = Ints.fromByteArray(versionBytes);
+			
 			//PARSE NORMAL BLOCK
-			return Block.parse(data);
+			return ( version > 1 ) ? Block.parse(data) : Block.parseOld(data);
 		}
+	}
+
+	public Block create(int version, byte[] reference, long timestamp, long baseTarget, PublicKeyAccount generator, byte[] signature, byte[] atBytes, long atFees) 
+	{		
+		return new Block(version, reference, timestamp, baseTarget, generator, signature, atBytes, atFees);		
 	}
 	
 	public Block create(int version, byte[] reference, long timestamp, long baseTarget, PublicKeyAccount generator, byte[] signature) 

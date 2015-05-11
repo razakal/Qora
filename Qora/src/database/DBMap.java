@@ -149,7 +149,14 @@ public abstract class DBMap<T, U> extends Observable {
 			if(this.getObservableData().containsKey(NOTIFY_ADD))
 			{
 				this.setChanged();
-				this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_ADD), value));
+				if ( this.getObservableData().get(NOTIFY_ADD).equals( ObserverMessage.ADD_AT_TX_TYPE ) )
+				{
+					this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_ADD), new Tuple2(key,value)));
+				}
+				else
+				{
+					this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_ADD), value));
+				}
 			}
 			
 			//NOTIFY LIST
@@ -182,7 +189,14 @@ public abstract class DBMap<T, U> extends Observable {
 				if(this.getObservableData().containsKey(NOTIFY_REMOVE))
 				{
 					this.setChanged();
-					this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_REMOVE), value));
+					if ( this.getObservableData().get(NOTIFY_REMOVE).equals( ObserverMessage.REMOVE_AT_TX ))
+					{
+						this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_REMOVE), new Tuple2(key,value)));
+					}
+					else
+					{
+						this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_REMOVE), value));
+					}
 				}
 				
 				//NOTIFY LIST
@@ -267,6 +281,20 @@ public abstract class DBMap<T, U> extends Observable {
 			
 			return new IndexIterator<T>(this.indexes.get(index));
 		}
+	}
+
+	public SortableList<T, U> getList() 
+	{
+		return new SortableList<T, U>(this);
+	}
+	
+	public SortableList<T, U> getParentList()
+	{
+		if (this.parent!=null)
+		{
+			return new SortableList<T, U>(this.parent);
+		}
+		return null;
 	}
 	
 	public void reset() 

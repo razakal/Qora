@@ -23,13 +23,13 @@ import database.DBSet;
 
 public class ArbitraryTransaction extends Transaction
 {
-	private static final int CREATOR_LENGTH = 32;
-	private static final int SERVICE_LENGTH = 4;
-	private static final int DATA_SIZE_LENGTH = 4;
-	private static final int REFERENCE_LENGTH = 64;
-	private static final int FEE_LENGTH = 8;
-	private static final int SIGNATURE_LENGTH = 64;
-	private static final int BASE_LENGTH = TIMESTAMP_LENGTH + REFERENCE_LENGTH + CREATOR_LENGTH + SERVICE_LENGTH + DATA_SIZE_LENGTH + FEE_LENGTH + SIGNATURE_LENGTH;
+	protected static final int CREATOR_LENGTH = 32;
+	protected static final int SERVICE_LENGTH = 4;
+	protected static final int DATA_SIZE_LENGTH = 4;
+	protected static final int REFERENCE_LENGTH = 64;
+	protected static final int FEE_LENGTH = 8;
+	protected static final int SIGNATURE_LENGTH = 64;
+	protected static final int BASE_LENGTH = TIMESTAMP_LENGTH + REFERENCE_LENGTH + CREATOR_LENGTH + SERVICE_LENGTH + DATA_SIZE_LENGTH + FEE_LENGTH + SIGNATURE_LENGTH;
 	
 	private PublicKeyAccount creator;
 	private int service;
@@ -274,7 +274,7 @@ public class ArbitraryTransaction extends Transaction
 	}
 
 	@Override
-	public Account getCreator() 
+	public PublicKeyAccount getCreator() 
 	{
 		return this.creator;
 	}

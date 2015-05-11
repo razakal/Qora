@@ -314,7 +314,7 @@ public class BuyNameTransaction extends Transaction
 	}
 
 	@Override
-	public Account getCreator() 
+	public PublicKeyAccount getCreator() 
 	{
 		return this.buyer;
 	}

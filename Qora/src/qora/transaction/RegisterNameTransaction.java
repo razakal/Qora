@@ -270,7 +270,7 @@ public class RegisterNameTransaction extends Transaction
 	}
 
 	@Override
-	public Account getCreator() 
+	public PublicKeyAccount getCreator() 
 	{
 		return this.registrant;
 	}
