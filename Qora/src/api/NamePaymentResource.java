@@ -24,14 +24,13 @@ public class NamePaymentResource {
 	public String namePayment(String x)
 	{
 		try
-		{
+		{				
 			//READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
 			String amount = (String) jsonObject.get("amount");
 			String fee = (String) jsonObject.get("fee");
 			String sender = (String) jsonObject.get("sender");
-			String nameName = (String) jsonObject.get("recipient");
-			
+			String nameName = (String) jsonObject.get("recipient");	
 			
 			Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(nameName);
 			if(nameToAdress.getB() == NameResult.OK)

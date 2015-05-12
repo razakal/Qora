@@ -225,13 +225,13 @@ public class SendMoneyPanel extends JPanel
 					
 			if(nameToAdress.getB() == NameResult.OK)
 			{
-				Account acct = nameToAdress.getA();
-				txtRecDetails.setText(acct.getBalance(1).toPlainString() + " - " + acct.getAddress());
-			}else
-			{
-				txtRecDetails.setText("Invalid address or name!");
+				Account account = nameToAdress.getA();
+				txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
 			}
-
+			else
+			{
+				txtRecDetails.setText(nameToAdress.getB().getShortStatusMessage());
+			}
 		}else
 		{
 			Account account = new Account(toValue);
@@ -294,13 +294,14 @@ public class SendMoneyPanel extends JPanel
 			if(result.getB() == NameResult.OK)
 			{
 				recipient = result.getA();
-			}else
+			}
+			else		
 			{
-				JOptionPane.showMessageDialog(null, "Invalid address or name!" , "Error", JOptionPane.ERROR_MESSAGE);
-				
+				JOptionPane.showMessageDialog(null, result.getB().getShortStatusMessage() , "Error", JOptionPane.ERROR_MESSAGE);
+		
 				//ENABLE
 				this.sendButton.setEnabled(true);
-				
+			
 				return;
 			}
 		}
