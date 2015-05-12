@@ -5,6 +5,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import java.util.ArrayList;
+import utils.MenuPopupUtil;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -21,6 +26,8 @@ public class ConsolePanel extends JPanel
 	private ApiClient client;
 	private JTextArea areaConsole;
 	private JTextField txtCommand;
+	private ArrayList<String> cmdHistory = new ArrayList<String>();
+	private int INTcmdHistory = -1;	
 	
 	public ConsolePanel()
 	{
@@ -68,6 +75,10 @@ public class ConsolePanel extends JPanel
             {
 				//GET COMMAND
 				String command = txtCommand.getText();
+				
+				cmdHistory.add(command);
+				INTcmdHistory = cmdHistory.size();
+				
 				areaConsole.append("[COMMAND] " + command + "\n");
 				
 				//EMPTY COMMAND FIELD
@@ -80,6 +91,35 @@ public class ConsolePanel extends JPanel
 				areaConsole.append("[RESULT] " + result + "\n");
             }
 		});
+		
+		this.txtCommand.addKeyListener(new KeyAdapter() {
+		    public void keyPressed(KeyEvent e) {
+		    	if(INTcmdHistory != -1)
+		    	{
+		    		if(e.getKeyCode()==KeyEvent.VK_UP) {
+		    			if(INTcmdHistory > 0)
+		    			{
+		    				INTcmdHistory--; 
+		    				txtCommand.setText(cmdHistory.get(INTcmdHistory));
+		    			}
+		    		}
+		    		
+		    		if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+		    			if(INTcmdHistory < cmdHistory.size() - 1)
+		    			{
+		    				INTcmdHistory++;
+			    			txtCommand.setText(cmdHistory.get(INTcmdHistory));
+			    		}
+		    		}
+		    		
+		    	}
+		    } 
+		});
+		
 		this.add(this.txtCommand, txtGBC);
+		
+		//CONTEXT MENU
+		MenuPopupUtil.installContextMenu(this.areaConsole);
+		MenuPopupUtil.installContextMenu(this.txtCommand);
 	}
 }
