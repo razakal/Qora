@@ -606,6 +606,10 @@ public class Wallet extends Observable implements Observer
 		    //SYNCHRONIZE
 		    this.synchronize();
 		    
+		    //NOTIFY
+		    this.setChanged();
+		    this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_ACCOUNT_TYPE, account));
+		    
 		    //RETURN
 		    return account.getAddress();
 	    }
