@@ -23,6 +23,7 @@ import qora.transaction.Transaction;
 import utils.NameUtils;
 import utils.NameUtils.NameResult;
 import utils.Pair;
+import utils.MenuPopupUtil;
 import controller.Controller;
 
 @SuppressWarnings("serial")
@@ -199,6 +200,12 @@ public class SendMoneyPanel extends JPanel
         labelGBC.gridy = 6;
         labelGBC.weighty = 1;
       	this.add(new JPanel(), labelGBC);
+      	
+      	//CONTEXT MENU
+      	MenuPopupUtil.installContextMenu(txtTo);
+      	MenuPopupUtil.installContextMenu(txtAmount);
+      	MenuPopupUtil.installContextMenu(txtFee);
+      	MenuPopupUtil.installContextMenu(txtRecDetails);
 	}
 	
 	

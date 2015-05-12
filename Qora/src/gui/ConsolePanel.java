@@ -6,6 +6,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import utils.MenuPopupUtil;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -21,7 +23,7 @@ public class ConsolePanel extends JPanel
 	private ApiClient client;
 	private JTextArea areaConsole;
 	private JTextField txtCommand;
-	
+
 	public ConsolePanel()
 	{
 		this.setLayout(new GridBagLayout());
@@ -80,6 +82,11 @@ public class ConsolePanel extends JPanel
 				areaConsole.append("[RESULT] " + result + "\n");
             }
 		});
+		
 		this.add(this.txtCommand, txtGBC);
+		
+		//CONTEXT MENU
+		MenuPopupUtil.installContextMenu(this.areaConsole);
+		MenuPopupUtil.installContextMenu(this.txtCommand);
 	}
 }
