@@ -15,11 +15,18 @@ public class Start {
 		boolean cli = false;
 		boolean disableGui = false;
 		boolean disableRpc = false;
+		boolean disableWeb = false;
+		
 		for(String arg: args)
 		{
 			if(arg.startsWith("-disablerpc"))
 			{
 				disableRpc = true;
+			}
+			
+			if(arg.equals("-disableweb"))
+			{
+				disableWeb = true;
 			}
 			
 			if(arg.equals("-disablegui"))
@@ -44,7 +51,7 @@ public class Start {
 				}
 				
 				//STARTING NETWORK/BLOCKCHAIN/RPC
-				Controller.getInstance().start(disableRpc);
+				Controller.getInstance().start(disableRpc, disableWeb);
 				
 				if(!disableGui)
 				{

@@ -49,6 +49,7 @@ import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import api.ApiService;
 import at.AT;
+import namewebserver.WebService;
 
 import com.google.common.io.Files;
 
@@ -64,6 +65,7 @@ public class Controller extends Observable {
 	private int status;
 	private Network network;
 	private ApiService rpcService;
+	private WebService webService;
 	private BlockChain blockChain;
 	private BlockGenerator blockGenerator;
 	private Wallet wallet;
@@ -94,7 +96,7 @@ public class Controller extends Observable {
 		return this.status;
 	}
 	
-	public void start(boolean disableRpc) throws Exception
+	public void start(boolean disableRpc, boolean disableWeb) throws Exception
 	{
 		//CHECK NETWORK PORT AVAILABLE
 		if(!Network.isPortAvailable(Network.PORT))
@@ -108,6 +110,15 @@ public class Controller extends Observable {
         	if(!Network.isPortAvailable(Settings.getInstance().getRpcPort()))
     		{
     			throw new Exception("Rpc port " + Settings.getInstance().getRpcPort() + " already in use!");
+    		}
+        }
+		
+		//CHECK WEB PORT AVAILABLE
+		if(!disableWeb)
+        {
+        	if(!Network.isPortAvailable(Settings.getInstance().getWebPort()))
+    		{
+    			throw new Exception("Web port " + Settings.getInstance().getWebPort() + " already in use!");
     		}
         }
 		
@@ -149,11 +160,18 @@ public class Controller extends Observable {
 		//CREATE BLOCKCHAIN
         this.blockChain = new BlockChain();
          
-        
+        //START API SERVICE
         if(!disableRpc)
         {
         	this.rpcService = new ApiService();
         	this.rpcService.start();
+        }
+        
+        //START WEB SERVICE
+        if(!disableWeb)
+        {
+        	this.webService = new WebService();
+        	this.webService.start();
         }
         
         //CREATE WALLET
