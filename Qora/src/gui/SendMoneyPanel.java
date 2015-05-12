@@ -229,7 +229,7 @@ public class SendMoneyPanel extends JPanel
 				txtRecDetails.setText(acct.getBalance(1).toPlainString() + " - " + acct.getAddress());
 			}else
 			{
-				txtRecDetails.setText("Invalid address!");
+				txtRecDetails.setText("Invalid address or name!");
 			}
 
 		}else
