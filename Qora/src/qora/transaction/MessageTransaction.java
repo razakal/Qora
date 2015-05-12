@@ -83,12 +83,12 @@ public class MessageTransaction extends Transaction {
 	
 	public boolean isText()
 	{
-		return (Ints.fromByteArray(this.isText)>0)?true:false;
+		return (Arrays.equals(this.isText,new byte[1]))?false:true;
 	}
 	
 	public boolean isEncrypted()
 	{
-		return (Ints.fromByteArray(this.encrypted)>0)?true:false;
+		return (Arrays.equals(this.encrypted,new byte[1]))?true:false;
 	}
 
 	public static Transaction Parse(byte[] data) throws Exception

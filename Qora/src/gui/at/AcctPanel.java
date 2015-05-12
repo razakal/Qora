@@ -51,7 +51,7 @@ public class AcctPanel extends JPanel
 		//PADDING
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		this.atsTableModel = new AcctTableModel("acct2", true);
+		this.atsTableModel = new AcctTableModel("acct", true);
 		final JTable atsTable = Gui.createSortableTable(atsTableModel, 1);
 		
 		final TableRowSorter<ATTableModel> sorter =  (TableRowSorter<ATTableModel>) atsTable.getRowSorter();

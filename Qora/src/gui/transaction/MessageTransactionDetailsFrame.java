@@ -14,9 +14,9 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-
 import qora.crypto.Base58;
 import qora.transaction.MessageTransaction;
+import utils.Converter;
 
 @SuppressWarnings("serial")
 public class MessageTransactionDetailsFrame extends JFrame
@@ -121,7 +121,8 @@ public class MessageTransactionDetailsFrame extends JFrame
 		
 		//SERVICE
 		detailGBC.gridy = 5;
-		JTextField service = new JTextField(new String(messageTransaction.getData(), Charset.forName("UTF-8")));
+		
+		JTextField service = new JTextField( ( messageTransaction.isText() ) ? new String(messageTransaction.getData(), Charset.forName("UTF-8")) : Converter.toHex(messageTransaction.getData()));
 		service.setEditable(false);
 		this.add(service, detailGBC);			
 		
