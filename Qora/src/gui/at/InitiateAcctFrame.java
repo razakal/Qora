@@ -222,7 +222,7 @@ public class InitiateAcctFrame extends JFrame {
 		labelGBC.gridy = 5;
 		labelGBC.gridx = 0;
 		labelGBC.gridwidth = 4;
-		JLabel passAlert = new JLabel("( DO NOT USE your wallet's password. This password will be sent as a message to the counterparty )");
+		JLabel passAlert = new JLabel("( DO NOT USE your wallet's password. )");
 		this.add(passAlert, labelGBC);
 		
 		//LABEL FEE
