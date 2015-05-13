@@ -196,7 +196,7 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL DATA
 		labelGBC.gridy = 4;
 		labelGBC.gridx = 0;
-		JLabel dataBytesLabel = new JLabel("Secret:");
+		JLabel dataBytesLabel = new JLabel("Lock:");
 		this.add(dataBytesLabel, labelGBC);
 
 		//TXTAREA DESCRIPTION
