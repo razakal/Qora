@@ -2,7 +2,13 @@ package qora.account;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
+import org.mapdb.Fun.Tuple2;
+import org.mapdb.Fun.Tuple4;
+
+import at.AT_Transaction;
 import controller.Controller;
 import qora.BlockGenerator;
 import qora.block.Block;
@@ -163,6 +169,16 @@ public class Account {
 					{
 						balance = balance.subtract(transaction.getAmount(this));
 					}
+				}
+			}
+			LinkedHashMap<Tuple2<Integer,Integer>,AT_Transaction> atTxs = db.getATTransactionMap().getATTransactions(block.getHeight(db));
+			Iterator<AT_Transaction> iter = atTxs.values().iterator(); 
+			while ( iter.hasNext() )
+			{
+				AT_Transaction key = iter.next();
+				if ( key.getRecipient().equals( this.getAddress() ) )
+				{
+					balance = balance.subtract( BigDecimal.valueOf(key.getAmount(), 8) );
 				}
 			}
 				

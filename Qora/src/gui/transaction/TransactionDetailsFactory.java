@@ -10,6 +10,7 @@ import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.IssueAssetTransaction;
+import qora.transaction.MessageTransaction;
 import qora.transaction.MultiPaymentTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
@@ -110,8 +111,12 @@ public class TransactionDetailsFactory
 		case Transaction.MULTI_PAYMENT_TRANSACTION:
 			
 			MultiPaymentTransaction MultiPaymentTransaction = (MultiPaymentTransaction) transaction;
-			return new MultiPaymentDetailsFrame(MultiPaymentTransaction);			
-			
+			return new MultiPaymentDetailsFrame(MultiPaymentTransaction);
+
+		case Transaction.MESSAGE_TRANSACTION:
+			MessageTransaction messageTransaction = (MessageTransaction)transaction;
+			return new MessageTransactionDetailsFrame(messageTransaction);
+
 		}
 		
 		return null;

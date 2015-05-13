@@ -10,6 +10,9 @@ import java.util.Observer;
 import java.util.logging.Logger;
 
 import org.mapdb.Fun.Tuple2;
+import org.mapdb.Fun.Tuple4;
+
+import at.AT_Transaction;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -603,6 +606,10 @@ public class Wallet extends Observable implements Observer
 		    //SYNCHRONIZE
 		    this.synchronize();
 		    
+		    //NOTIFY
+		    this.setChanged();
+		    this.notifyObservers(new ObserverMessage(ObserverMessage.ADD_ACCOUNT_TYPE, account));
+		    
 		    //RETURN
 		    return account.getAddress();
 	    }
@@ -712,6 +719,31 @@ public class Wallet extends Observable implements Observer
 		}
 	}
 	
+	private void processATTransaction( Tuple2< Tuple2< Integer, Integer >, AT_Transaction > atTx )
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+				
+		//FOR ALL ACCOUNTS
+		List<Account> accounts = this.getAccounts();	
+		synchronized(accounts)
+		{		
+			for(Account account: accounts)
+			{
+				//CHECK IF INVOLVED
+				if(atTx.b.getRecipient().equalsIgnoreCase( account.getAddress() ))
+				{				
+						BigDecimal unconfirmedBalance = this.getUnconfirmedBalance(account.getAddress()).add( BigDecimal.valueOf(atTx.b.getAmount(),8));
+						this.database.getAccountMap().update(account, unconfirmedBalance);
+					
+				}
+			}
+		}
+	}
+	
 	private void orphanTransaction(Transaction transaction)
 	{
 		//CHECK IF WALLET IS OPEN
@@ -736,6 +768,31 @@ public class Wallet extends Observable implements Observer
 					//UPDATE UNCONFIRMED BALANCE
 					BigDecimal unconfirmedBalance = this.getUnconfirmedBalance(account.getAddress()).subtract(transaction.getAmount(account));
 					this.database.getAccountMap().update(account, unconfirmedBalance);
+				}
+			}
+		}
+	}
+	
+	private void orphanATTransaction(Tuple2<Tuple2<Integer,Integer>, AT_Transaction> atTx)
+	{
+		//CHECK IF WALLET IS OPEN
+		if(!this.exists())
+		{
+			return;
+		}
+				
+		//FOR ALL ACCOUNTS
+		List<Account> accounts = this.getAccounts();	
+		synchronized(accounts)
+		{		
+			for(Account account: accounts)
+			{
+				//CHECK IF INVOLVED
+				if(atTx.b.getRecipient().equalsIgnoreCase( account.getAddress() ))
+				{				
+						BigDecimal unconfirmedBalance = this.getUnconfirmedBalance(account.getAddress()).subtract( BigDecimal.valueOf(atTx.b.getAmount(),8));
+						this.database.getAccountMap().update(account, unconfirmedBalance);
+					
 				}
 			}
 		}
@@ -1342,6 +1399,16 @@ public class Wallet extends Observable implements Observer
 			{
 				this.orphanOrderCreation((CreateOrderTransaction) transaction);
 			}
+		}
+		
+		if (message.getType() == ObserverMessage.ADD_AT_TX_TYPE)
+		{
+			this.processATTransaction( (Tuple2) message.getValue() );
+		}
+		
+		if (message.getType() == ObserverMessage.REMOVE_AT_TX)
+		{
+			this.orphanATTransaction( (Tuple2) message.getValue() );
 		}
 		
 		//ADD ORDER

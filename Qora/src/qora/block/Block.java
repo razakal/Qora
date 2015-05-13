@@ -2,22 +2,35 @@ package qora.block;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import ntp.NTP;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.mapdb.Fun.Tuple2;
 
 import qora.BlockGenerator;
+import qora.account.Account;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import qora.transaction.DeployATTransaction;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.Transaction;
 import qora.transaction.TransactionFactory;
+import utils.Converter;
+import at.AT_API_Platform_Impl;
+import at.AT_Block;
+import at.AT_Constants;
+import at.AT_Controller;
+import at.AT_Exception;
+import at.AT_Transaction;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -37,7 +50,10 @@ public class Block {
 	private static final int TRANSACTIONS_SIGNATURE_LENGTH = 64;
 	private static final int TRANSACTIONS_COUNT_LENGTH = 4;
 	private static final int TRANSACTION_SIZE_LENGTH = 4;
+	public static final int AT_BYTES_LENGTH = 4;
 	private static final int BASE_LENGTH = VERSION_LENGTH + REFERENCE_LENGTH + TIMESTAMP_LENGTH + GENERATING_BALANCE_LENGTH + GENERATOR_LENGTH + TRANSACTIONS_SIGNATURE_LENGTH + GENERATOR_SIGNATURE_LENGTH + TRANSACTIONS_COUNT_LENGTH;
+	private static final int AT_FEES_LENGTH = 8;
+	private static final int AT_LENGTH = AT_FEES_LENGTH + AT_BYTES_LENGTH;
 	public static final int MAX_TRANSACTION_BYTES = MAX_BLOCK_BYTES - BASE_LENGTH;
 	
 	protected int version;
@@ -52,7 +68,25 @@ public class Block {
 	private byte[] rawTransactions;
 		
 	protected byte[] transactionsSignature;
-	
+
+	protected byte[] atBytes;
+	protected Long atFees;
+
+	public Block(int version, byte[] reference, long timestamp, long generatingBalance, PublicKeyAccount generator, byte[] generatorSignature, byte[] atBytes, long atFees)
+	{
+		this.version = version;
+		this.reference = reference;
+		this.timestamp = timestamp;
+		this.generatingBalance = generatingBalance;
+		this.generator = generator;
+		this.generatorSignature = generatorSignature;
+
+		this.transactionCount = 0;
+
+		this.atBytes = atBytes;
+		this.atFees = atFees;
+	}
+
 	public Block(int version, byte[] reference, long timestamp, long generatingBalance, PublicKeyAccount generator, byte[] generatorSignature)
 	{
 		this.version = version;
@@ -63,6 +97,9 @@ public class Block {
 		this.generatorSignature = generatorSignature;
 		
 		this.transactionCount = 0;
+
+		this.atBytes = new byte[0];
+		this.atFees = 0L;
 	}
 	
 	//GETTERS/SETTERS
@@ -106,6 +143,8 @@ public class Block {
 			fee = fee.add(transaction.getFee());
 		}
 		
+		fee = fee.add(BigDecimal.valueOf(this.atFees,8));
+
 		return fee;
 	}
 	
@@ -175,7 +214,12 @@ public class Block {
 		
 		return null;
 	}
-	
+
+	public byte[] getBlockATs()
+	{
+		return this.atBytes;
+	}
+
 	public Block getParent()
 	{
 		return this.getParent(DBSet.getInstance());
@@ -260,7 +304,81 @@ public class Block {
 		//READ GENERATOR SIGNATURE
 		byte[] generatorSignature =  Arrays.copyOfRange(data, position, position + GENERATOR_SIGNATURE_LENGTH);
 		position += GENERATOR_SIGNATURE_LENGTH;
-		
+
+		//ADD ATs BYTES
+		byte[] atBytesCountBytes = Arrays.copyOfRange(data, position, position + AT_BYTES_LENGTH);
+		int atBytesCount = Ints.fromByteArray(atBytesCountBytes);
+		position += AT_BYTES_LENGTH;
+
+		byte[] atBytes = Arrays.copyOfRange( data , position, position + atBytesCount);
+		position += atBytesCount;
+
+		byte[] atFees = Arrays.copyOfRange( data , position , position + 8 );
+		position += 8;
+
+		long atFeesL = Longs.fromByteArray(atFees);
+
+		//CREATE BLOCK
+		Block block = new Block(version, reference, timestamp, generatingBalance, generator, generatorSignature, atBytes, atFeesL);
+
+		//READ TRANSACTIONS COUNT
+		byte[] transactionCountBytes = Arrays.copyOfRange(data, position, position + TRANSACTIONS_COUNT_LENGTH);
+		int transactionCount = Ints.fromByteArray(transactionCountBytes);
+		position += TRANSACTIONS_COUNT_LENGTH;
+
+		//SET TRANSACTIONDATA
+		byte[] rawTransactions = Arrays.copyOfRange(data, position, data.length);
+		block.setTransactionData(transactionCount, rawTransactions);
+
+		//SET TRANSACTIONS SIGNATURE
+		block.setTransactionsSignature(transactionsSignature);
+
+		return block;
+	}
+
+	public static Block parseOld(byte[] data) throws Exception
+	{
+		//CHECK IF WE HAVE MINIMUM BLOCK LENGTH
+		if(data.length < BASE_LENGTH)
+		{
+			throw new Exception("Data is less then minimum block length");
+		}
+
+		int position = 0;
+
+		//READ VERSION
+		byte[] versionBytes = Arrays.copyOfRange(data, position, position + VERSION_LENGTH);
+		int version = Ints.fromByteArray(versionBytes);
+		position += VERSION_LENGTH;
+
+		//READ TIMESTAMP
+		byte[] timestampBytes = Arrays.copyOfRange(data, position, position + TIMESTAMP_LENGTH);
+		long timestamp = Longs.fromByteArray(timestampBytes);
+		position += TIMESTAMP_LENGTH;		
+
+		//READ REFERENCE
+		byte[] reference = Arrays.copyOfRange(data, position, position + REFERENCE_LENGTH);
+		position += REFERENCE_LENGTH;
+
+		//READ GENERATING BALANCE
+		byte[] generatingBalanceBytes = Arrays.copyOfRange(data, position, position + GENERATING_BALANCE_LENGTH);
+		long generatingBalance = Longs.fromByteArray(generatingBalanceBytes);
+		position += GENERATING_BALANCE_LENGTH;
+
+		//READ GENERATOR
+		byte[] generatorBytes = Arrays.copyOfRange(data, position, position + GENERATOR_LENGTH);
+		PublicKeyAccount generator = new PublicKeyAccount(generatorBytes);
+		position += GENERATOR_LENGTH;
+
+		//READ TRANSACTION SIGNATURE
+		byte[] transactionsSignature =  Arrays.copyOfRange(data, position, position + TRANSACTIONS_SIGNATURE_LENGTH);
+		position += TRANSACTIONS_SIGNATURE_LENGTH;
+
+
+		//READ GENERATOR SIGNATURE
+		byte[] generatorSignature =  Arrays.copyOfRange(data, position, position + GENERATOR_SIGNATURE_LENGTH);
+		position += GENERATOR_SIGNATURE_LENGTH;
+
 		//CREATE BLOCK
 		Block block = new Block(version, reference, timestamp, generatingBalance, generator, generatorSignature);
 		
@@ -294,6 +412,7 @@ public class Block {
 		block.put("generatorSignature", Base58.encode(this.generatorSignature));
 		block.put("signature",  Base58.encode(this.getSignature()));
 		
+
 		//CREATE TRANSACTIONS
 		JSONArray transactionsArray = new JSONArray();
 		
@@ -304,7 +423,14 @@ public class Block {
 		
 		//ADD TRANSACTIONS TO BLOCK
 		block.put("transactions", transactionsArray);
-		
+
+		//ADD AT BYTES
+		if ( atBytes != null )
+		{
+			block.put("blockATs", Converter.toHex( atBytes ));
+			block.put("atFees", this.atFees);
+		}
+
 		//RETURN
 		return block;
 	}
@@ -341,6 +467,29 @@ public class Block {
 		
 		//WRITE GENERATOR SIGNATURE
 		data = Bytes.concat(data, this.generatorSignature);
+
+		//ADD ATs BYTES
+		if ( this.getHeight() > Transaction.AT_BLOCK_HEIGHT_RELEASE )
+		{
+			if (atBytes!=null)
+			{
+				byte[] atBytesCount = Ints.toByteArray( atBytes.length );
+				data = Bytes.concat(data, atBytesCount);
+
+				data = Bytes.concat(data, atBytes);
+
+				byte[] atByteFees = Longs.toByteArray(atFees);
+				data = Bytes.concat(data,atByteFees);
+			}
+			else
+			{
+				byte[] atBytesCount = Ints.toByteArray( 0 );
+				data = Bytes.concat(data, atBytesCount);
+				byte[] atByteFees = Longs.toByteArray(0L);
+				data = Bytes.concat(data,atByteFees);
+			}
+		}
+
 		//WRITE TRANSACTION COUNT
 		byte[] transactionCountBytes = Ints.toByteArray(this.getTransactionCount());
 		//transactionCountBytes = Bytes.ensureCapacity(transactionCountBytes, 4, 0);
@@ -364,7 +513,17 @@ public class Block {
 	public int getDataLength() {
 		
 		int length = BASE_LENGTH;
-		
+
+		if ( this.getHeight() > Transaction.AT_BLOCK_HEIGHT_RELEASE )
+		{
+			length += AT_LENGTH;
+			if (this.atBytes!=null)
+			{
+				length+=atBytes.length;
+			}
+		}
+
+
 		for(Transaction transaction: this.getTransactions())
 		{
 			length += 4 + transaction.getDataLength();
@@ -484,7 +643,19 @@ public class Block {
 		{
 			return false;
 		}
-		
+
+		if ( this.atBytes != null && this.atBytes.length > 0 )
+		{
+			try {
+
+				AT_Block atBlock = AT_Controller.validateATs( this.getBlockATs() , db.getBlockMap().getLastBlock().getHeight(db)+1 , db);
+				this.atFees = atBlock.getTotalFees();
+			} catch (NoSuchAlgorithmException | AT_Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
 		//CHECK TRANSACTIONS
 		DBSet fork = db.fork();
 		for(Transaction transaction: this.getTransactions())
@@ -495,8 +666,22 @@ public class Block {
 				return false;
 			}
 			
+			Integer min = 0;
+			if ( db.getBlockMap().getParentList() != null )
+			{
+				min = AT_API_Platform_Impl.getForkHeight(db);
+			}
+
 			//CHECK IF VALID
-			if(transaction.isValid(fork) != Transaction.VALIDATE_OKE)
+			if ( transaction instanceof DeployATTransaction)
+			{
+				DeployATTransaction atTx = (DeployATTransaction)transaction;
+				if ( atTx.isValid(fork, min) != Transaction.VALIDATE_OKE )
+				{
+					return false;
+				}
+			}
+			else if(transaction.isValid(fork) != Transaction.VALIDATE_OKE)
 			{
 				return false;
 			}
@@ -575,6 +760,29 @@ public class Block {
 	
 	public void orphan(DBSet db)
 	{
+		//ORPHAN AT TRANSACTIONS
+		LinkedHashMap< Tuple2<Integer, Integer> , AT_Transaction > atTxs = DBSet.getInstance().getATTransactionMap().getATTransactions(this.getHeight(db));
+
+		Iterator<AT_Transaction> iter = atTxs.values().iterator();
+
+		while ( iter.hasNext() )
+		{
+			AT_Transaction key = iter.next();
+			Long amount  = key.getAmount();
+			if (key.getRecipientId() != null && !Arrays.equals(key.getRecipientId(), new byte[ AT_Constants.AT_ID_SIZE ]) && !key.getRecipient().equalsIgnoreCase("1") )
+			{
+				Account recipient = new Account( key.getRecipient() );
+				recipient.setConfirmedBalance( recipient.getConfirmedBalance( db ).subtract( BigDecimal.valueOf( amount, 8 ) ) , db );
+				if ( Arrays.equals(recipient.getLastReference(db),new byte[64]))
+				{
+					recipient.removeReference(db);
+				}
+			}
+			Account sender = new Account( key.getSender() );
+			sender.setConfirmedBalance( sender.getConfirmedBalance( db ).add( BigDecimal.valueOf( amount, 8 ) ) , db );
+
+		}
+
 		//ORPHAN TRANSACTIONS
 		this.orphanTransactions(this.getTransactions(), db);
 				
@@ -585,7 +793,10 @@ public class Block {
 			//UPDATE GENERATOR BALANCE WITH FEE
 			this.generator.setConfirmedBalance(this.generator.getConfirmedBalance(db).subtract(blockFee), db);
 		}
-				
+
+		//DELETE AT TRANSACTIONS FROM DB
+		db.getATTransactionMap().delete(this.getHeight(db));
+
 		//DELETE BLOCK FROM DB
 		db.getBlockMap().delete(this);
 				

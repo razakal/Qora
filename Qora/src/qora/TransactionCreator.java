@@ -18,11 +18,13 @@ import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.payment.Payment;
 import qora.transaction.ArbitraryTransaction;
+import qora.transaction.MessageTransaction;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelOrderTransaction;
 import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
+import qora.transaction.DeployATTransaction;
 import qora.transaction.IssueAssetTransaction;
 import qora.transaction.MultiPaymentTransaction;
 import qora.transaction.PaymentTransaction;
@@ -350,7 +352,41 @@ public class TransactionCreator
 		//VALIDATE AND PROCESS
 		return this.afterCreate(multiPayment);
 	}
+
+	public Pair<Transaction, Integer> deployATTransaction(PrivateKeyAccount creator, String name, String description, String type, String tags, byte[] creationBytes, BigDecimal amount, BigDecimal fee )
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+		
+		//TIME
+		long time = NTP.getTime();
+		
+		//CREATE SIGNATURE
+		byte[] signature = DeployATTransaction.generateSignature(this.fork, creator, name, description, creationBytes, amount, fee, time);
+		
+		//DEPLOY AT
+		DeployATTransaction deployAT = new DeployATTransaction(creator, name, description, type, tags, creationBytes, amount, fee, time, creator.getLastReference(this.fork), signature);
+		
+		return this.afterCreate(deployAT);
+		
+	}
 	
+
+	public Pair<Transaction, Integer> createMessage(PrivateKeyAccount sender,
+			Account recipient, BigDecimal amount, BigDecimal fee, byte[] isText,
+			byte[] message, byte[] encryptMessage) {
+		
+		this.checkUpdate();
+		
+		long timestamp = NTP.getTime();
+		
+		byte[] signature = MessageTransaction.generateSignature(this.fork, sender, recipient, amount, fee, message, isText, encryptMessage, timestamp);
+		
+		MessageTransaction messageTx = new MessageTransaction(sender, recipient, amount, fee, message, isText, encryptMessage, timestamp, sender.getLastReference(this.fork), signature );
+		
+		return afterCreate(messageTx);
+	}
+
 	private Pair<Transaction, Integer> afterCreate(Transaction transaction)
 	{
 		//CHECK IF PAYMENT VALID

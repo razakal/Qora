@@ -350,7 +350,7 @@ public class MultiPaymentTransaction extends Transaction {
 	//REST
 	
 	@Override
-	public Account getCreator()
+	public PublicKeyAccount getCreator()
 	{
 		return this.sender;
 	}

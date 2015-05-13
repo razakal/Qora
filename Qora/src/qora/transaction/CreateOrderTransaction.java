@@ -347,7 +347,7 @@ public class CreateOrderTransaction extends Transaction
 	}
 
 	@Override
-	public Account getCreator() 
+	public PublicKeyAccount getCreator() 
 	{
 		return this.creator;
 	}

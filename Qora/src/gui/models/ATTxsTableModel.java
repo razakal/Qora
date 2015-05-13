@@ -1,0 +1,146 @@
+package gui.models;
+
+import java.nio.charset.Charset;
+import java.util.Observable;
+import java.util.Observer;
+
+import org.mapdb.Fun.Tuple2;
+import org.mapdb.Fun.Tuple4;
+
+import at.AT;
+import at.AT_Transaction;
+import controller.Controller;
+import qora.account.Account;
+import qora.crypto.Base58;
+import utils.Converter;
+import utils.ObserverMessage;
+import database.SortableList;
+
+@SuppressWarnings("serial")
+public class ATTxsTableModel extends QoraTableModel<Tuple2<Integer, Integer>, AT_Transaction> implements Observer
+{
+	public static final int COLUMN_SENDER = 1;
+	public static final int COLUMN_RECIPIENT = 2;
+	public static final int COLUMN_AMOUNT = 3;
+	public static final int COLUMN_HEIGHT = 0;
+	public static final int COLUMN_MESSAGE = 4;
+	private static final int COLUMN_SEQUENCE = 5;
+
+	private SortableList<Tuple2<Integer, Integer>, AT_Transaction > ats;
+	
+	private String[] columnNames = {"Height", "Sender", "Recipient", "Amount", "Message","Seq"};
+	
+	public ATTxsTableModel()
+	{
+		Controller.getInstance().addObserver(this);
+	}
+	
+	@Override
+	public SortableList< Tuple2<Integer, Integer>, AT_Transaction > getSortableList() 
+	{
+		return this.ats;
+	}
+	
+	public Long getAT(int row)
+	{
+		return this.ats.get(row).getB().getAmount();
+	}
+	
+	@Override
+	public int getColumnCount() 
+	{
+		return this.columnNames.length;
+	}
+	
+	@Override
+	public String getColumnName(int index) 
+	{
+		return this.columnNames[index];
+	}
+
+	@Override
+	public int getRowCount() 
+	{
+		return this.ats.size();
+		
+	}
+
+	@Override
+	public Object getValueAt(int row, int column) 
+	{
+		if(this.ats == null || row > this.ats.size() - 1 )
+		{
+			return null;
+		}
+		
+		Tuple2<Integer, Integer> at = this.ats.get(row).getA();
+		Long amount = this.ats.get(row).getB().getAmount();
+		String message = "";
+		if ( this.ats.get(row).getB().getMessage() != null)
+		{
+			message = Converter.toHex(this.ats.get(row).getB().getMessage());
+		}
+		switch(column)
+		{
+		case COLUMN_HEIGHT:
+			return this.ats.get(row).getB().getBlockHeight();
+		case COLUMN_SEQUENCE:
+			return this.ats.get(row).getB().getSeq();
+		case COLUMN_SENDER:
+			return this.ats.get(row).getB().getSender();
+		case COLUMN_RECIPIENT:
+			return this.ats.get(row).getB().getRecipient();
+		case COLUMN_AMOUNT:
+			return this.ats.get(row).getB().getAmount();
+		case COLUMN_MESSAGE:
+			return message;
+		}
+		
+		return null;
+	}
+	
+	
+
+	@Override
+	public void update(Observable o, Object arg) 
+	{	
+		try
+		{
+			this.syncUpdate(o, arg);
+		}
+		catch(Exception e)
+		{
+			//GUI ERROR
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public synchronized void syncUpdate(Observable o, Object arg)
+	{
+		ObserverMessage message = (ObserverMessage) arg;
+		
+		//CHECK IF NEW LIST
+		if(message.getType() == ObserverMessage.LIST_AT_TXS)
+		{			
+			if(this.ats == null)
+			{
+				this.ats = (SortableList<Tuple2<Integer, Integer>, AT_Transaction >) message.getValue();
+				this.ats.registerObserver();
+			}	
+			
+			this.fireTableDataChanged();
+		}
+		
+		//CHECK IF LIST UPDATED
+		if(message.getType() == ObserverMessage.ADD_AT_TX_TYPE )
+		{
+			this.fireTableDataChanged();
+		}
+	}
+	
+	public void removeObservers() 
+	{
+		this.ats.removeObserver();
+		Controller.getInstance().deleteObserver(this);
+	}
+}

@@ -8,6 +8,9 @@ import javax.ws.rs.core.Response;
 
 import org.json.simple.JSONObject;
 
+import at.AT_Constants;
+import at.AT_Error;
+import qora.transaction.Transaction;
 import utils.NameUtils.NameResult;
 
 public class ApiErrorFactory 
@@ -71,6 +74,14 @@ public class ApiErrorFactory
 	public static final int ERROR_NAME_FOR_SALE = 702;
 	public static final int ERROR_NAME_WITH_SPACE = 703;
 	
+	//ATs
+	public static final int ERROR_INVALID_DESC_LENGTH = 801;
+	public static final int ERROR_EMPTY_CODE = 802;
+	public static final int ERROR_DATA_SIZE = 803;
+	public static final int ERROR_NULL_PAGES = 804;
+	public static final int ERROR_INVALID_TYPE_LENGTH = 805;
+	public static final int ERROR_INVALID_TAGS_LENGTH = 806;
+	public static final int ERROR_INVALID_CREATION_BYTES = 809;
 	
 	private static ApiErrorFactory  instance;
 	
@@ -149,15 +160,34 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_NAME_FOR_SALE, NameResult.NAME_FOR_SALE.getStatusMessage());
 		this.errorMessages.put(ERROR_NAME_WITH_SPACE, NameResult.NAME_WITH_SPACE.getStatusMessage());
 		
+		//AT
+		this.errorMessages.put(ERROR_INVALID_CREATION_BYTES,"error in creation bytes");
+		this.errorMessages.put(ERROR_INVALID_DESC_LENGTH,"invalid description length. max length " + AT_Constants.DESC_MAX_LENGTH);
+		this.errorMessages.put(ERROR_EMPTY_CODE,"code is empty");
+		this.errorMessages.put(ERROR_DATA_SIZE,"invalid data length");
+		this.errorMessages.put(ERROR_INVALID_TYPE_LENGTH,"invalid type length");
+		this.errorMessages.put(ERROR_INVALID_TAGS_LENGTH,"invalid tags length");
+		this.errorMessages.put(ERROR_NULL_PAGES,"invalid pages");
+		
+
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	public WebApplicationException createError(int error)
 	{
+
 		JSONObject jsonObject = new JSONObject();
-		
 		jsonObject.put("error", error);
-		jsonObject.put("message", this.errorMessages.get(error));
+		if ( error > Transaction.AT_ERROR )
+		{
+			jsonObject.put("message", AT_Error.getATError(error - Transaction.AT_ERROR) );
+		}
+		else
+		{
+			jsonObject.put("message", this.errorMessages.get(error));
+		}
+		
 		
 		return new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(jsonObject.toJSONString()).build());
 	}

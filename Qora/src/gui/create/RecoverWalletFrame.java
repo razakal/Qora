@@ -10,8 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -22,6 +26,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import qora.crypto.Base58;
 import controller.Controller;
@@ -84,6 +90,25 @@ public class RecoverWalletFrame extends JFrame
 		this.seedTxt = new JTextField();
 		this.add(this.seedTxt, labelGBC);
 		
+		// MENU
+		JPopupMenu menu = new JPopupMenu();
+		JMenuItem pasteSeed = new JMenuItem("Paste");
+		pasteSeed.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				try {
+					String clipboardContent = (String) clipboard.getData(DataFlavor.stringFlavor);
+					seedTxt.setText(clipboardContent);
+				} catch (UnsupportedFlavorException | IOException e1) {
+					e1.printStackTrace();
+				} 
+			}
+		});
+		menu.add(pasteSeed);
+		seedTxt.setComponentPopupMenu(menu);	
+				
 		//LABEL
       	labelGBC.gridy = 2;
       	labelGBC.insets.top = 00;

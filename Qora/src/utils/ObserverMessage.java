@@ -51,6 +51,13 @@ public class ObserverMessage {
 	public static final int LIST_ASSET_FAVORITES_TYPE = 35;
 	
 	public static final int FORGING_STATUS = 36;
+
+	public static final int LIST_ATS = 37;
+	public static final int ADD_AT_TYPE = 38;
+	public static final int ADD_AT_TX_TYPE = 39;
+	public static final int LIST_AT_TXS = 40;
+	public static final int REMOVE_AT_TYPE = 41;
+	public static final int REMOVE_AT_TX = 42;
 	
 	private int type;
 	private Object value;

@@ -9,6 +9,8 @@ import org.json.simple.JSONObject;
 
 import database.DBSet;
 import qora.account.Account;
+import qora.account.PublicKeyAccount;
+import qora.block.Block;
 import qora.crypto.Base58;
 import settings.Settings;
 
@@ -55,6 +57,10 @@ public abstract class Transaction {
 	public static final int INVALID_ORDER_CREATOR = 33;
 	public static final int INVALID_PAYMENTS_LENGTH = 34;
 	public static final int NEGATIVE_PRICE = 35;
+	public static final int INVALID_CREATION_BYTES = 36;
+	public static final int AT_ERROR = 10000;
+	public static final int INVALID_TAGS_LENGTH = 37;
+	public static final int INVALID_TYPE_LENGTH = 38;
 	
 	public static final int NOT_YET_RELEASED = 1000;
 	
@@ -78,6 +84,10 @@ public abstract class Transaction {
 	public static final int CREATE_ORDER_TRANSACTION = 13;
 	public static final int CANCEL_ORDER_TRANSACTION = 14;
 	public static final int MULTI_PAYMENT_TRANSACTION = 15;
+
+	public static final int DEPLOY_AT_TRANSACTION = 16;
+	
+	public static final int MESSAGE_TRANSACTION = 17;
 	
 	//MINIMUM FEE
 	public static final BigDecimal MINIMUM_FEE = BigDecimal.ONE;
@@ -85,6 +95,8 @@ public abstract class Transaction {
 	//RELEASES
 	public static final long VOTING_RELEASE = 1403715600000l;
 	public static final long ARBITRARY_TRANSACTIONS_RELEASE = 1405702800000l;
+	public static final int AT_BLOCK_HEIGHT_RELEASE = 99000;
+	public static final int MESSAGE_BLOCK_HEIGHT_RELEASE = 99000;
 	//public static final long ASSETS_RELEASE = 1411308000000l;
 	public static final long ASSETS_RELEASE = 0l;
 	
@@ -158,6 +170,11 @@ public abstract class Transaction {
 		return this.feePerByte().compareTo(minFeePerByte) >= 0;
 	}
 	
+	public Block getParent() {
+		
+		return DBSet.getInstance().getTransactionParentMap().getParent(this.signature);
+	}
+
 	//PARSE/CONVERT
 	
 	@SuppressWarnings("unchecked")
@@ -210,7 +227,7 @@ public abstract class Transaction {
 	
 	//REST
 	
-	public abstract Account getCreator();
+	public abstract PublicKeyAccount getCreator();
 	
 	public abstract List<Account> getInvolvedAccounts();
 		
