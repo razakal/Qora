@@ -69,7 +69,7 @@ public class ResponseAcctFrame extends JFrame {
 
 	public ResponseAcctFrame()
 	{
-		super("Qora - Response Acct");
+		super("Qora - Response ACCT");
 
 		//CLOSE
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -212,7 +212,7 @@ public class ResponseAcctFrame extends JFrame {
 		labelGBC.gridy = 5;
 		labelGBC.gridx = 0;
 		labelGBC.gridwidth = 4;
-		JLabel passAlert = new JLabel("( * Use the secret of the matching counterparty )");
+		JLabel passAlert = new JLabel("( Use the secret of the matching counterparty )");
 		this.add(passAlert, labelGBC);
 
 		//LABEL FEE
@@ -249,7 +249,7 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL BLOCKS
 		labelGBC.gridx = 2;
 		labelGBC.gridwidth = 3;
-		JLabel blocksLabel = new JLabel("blocks ( 1 block approx. " + + AT_Constants.getInstance().AVERAGE_BLOCK_MINUTES(DBSet.getInstance().getBlockMap().getLastBlock().getHeight()) +" min ):");
+		JLabel blocksLabel = new JLabel("blocks ( 1 block approx. " + + AT_Constants.getInstance().AVERAGE_BLOCK_MINUTES(DBSet.getInstance().getBlockMap().getLastBlock().getHeight()) +" min )");
 		this.add(blocksLabel, labelGBC);
 		labelGBC.gridwidth = 1;
 

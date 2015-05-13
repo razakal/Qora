@@ -82,7 +82,7 @@ public class ATStateMap extends DBMap< Tuple2<Integer, String> ,  byte[] > {
 	public void addOrUpdate( Integer blockHeight , byte[] atId , byte[] stateBytes )
 	{
 		//Height to store state
-		int height = (int)((Math.round(blockHeight)/4)+1)*4;
+		int height = (int)((Math.round(blockHeight)/AT_Constants.STATE_STORE_DISTANCE)+1)*AT_Constants.STATE_STORE_DISTANCE;
 		
 		this.set( new Tuple2<Integer, String>( height, Base58.encode(atId) ), stateBytes);
 	}
@@ -94,7 +94,7 @@ public class ATStateMap extends DBMap< Tuple2<Integer, String> ,  byte[] > {
 		BTreeMap map = (BTreeMap) this.map;
 
 		//Height to store state
-		int height = (int)((Math.round(blockHeight)/4)+1)*4;
+		int height = (int)((Math.round(blockHeight)/AT_Constants.STATE_STORE_DISTANCE)+1)*AT_Constants.STATE_STORE_DISTANCE;
 		
 		//FILTER ALL ATS
 		Collection<Tuple2> keys = ((BTreeMap<Tuple2, String>) map).subMap(

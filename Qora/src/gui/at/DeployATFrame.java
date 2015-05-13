@@ -445,7 +445,7 @@ public class DeployATFrame extends JFrame {
 				this.dispose();
 				break;	
 			case Transaction.NOT_YET_RELEASED:
-				JOptionPane.showMessageDialog(new JFrame(), "AT will be enabled at !",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "AT will be enabled after " + Transaction.AT_BLOCK_HEIGHT_RELEASE + " block!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 			case Transaction.NEGATIVE_FEE:
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
