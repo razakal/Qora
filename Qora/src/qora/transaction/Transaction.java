@@ -95,8 +95,8 @@ public abstract class Transaction {
 	//RELEASES
 	public static final long VOTING_RELEASE = 1403715600000l;
 	public static final long ARBITRARY_TRANSACTIONS_RELEASE = 1405702800000l;
-	public static final int AT_BLOCK_HEIGHT_RELEASE = 100000;
-	public static final int MESSAGE_BLOCK_HEIGHT_RELEASE = 100000;
+	public static final int AT_BLOCK_HEIGHT_RELEASE = 99000;
+	public static final int MESSAGE_BLOCK_HEIGHT_RELEASE = 99000;
 	//public static final long ASSETS_RELEASE = 1411308000000l;
 	public static final long ASSETS_RELEASE = 0l;
 	
