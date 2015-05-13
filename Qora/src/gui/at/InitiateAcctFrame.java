@@ -383,11 +383,14 @@ public class InitiateAcctFrame extends JFrame {
 				return;
 			}
 
-			if ( pas.getBytes(Charset.forName("UTF-8")).length > 32 )
+			if ( pas.length() < 20 )
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Password max size exceeded", "Error", JOptionPane.ERROR_MESSAGE);
-				this.deployButton.setEnabled(true);
-				return;
+				int resp = JOptionPane.showConfirmDialog(new JFrame(), "Password length too short! Continue?", "ALERT", JOptionPane.YES_NO_OPTION);
+				if ( resp == JOptionPane.NO_OPTION )
+				{
+					this.deployButton.setEnabled(true);
+					return;
+				}
 			}
 
 			int blocksToEnd = 0;
