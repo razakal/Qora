@@ -44,6 +44,8 @@ public class AT_Constants {
 	
 	public static final int CREATION_BYTES_MAX_LENGTH = 100000;
 	
+	public static final int STATE_STORE_DISTANCE = 500;
+	
 	
 	private final static AT_Constants instance = new AT_Constants();
 

@@ -70,7 +70,7 @@ public class InitiateAcctFrame extends JFrame {
 
 	public InitiateAcctFrame()
 	{
-		super("Qora - Initiate Acct");
+		super("Qora - Initiate ACCT");
 
 		//CLOSE
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -219,7 +219,7 @@ public class InitiateAcctFrame extends JFrame {
 		labelGBC.gridy = 5;
 		labelGBC.gridx = 0;
 		labelGBC.gridwidth = 4;
-		JLabel passAlert = new JLabel("( * do not use your wallet's password. This password will be sent as a message to the counterparty )");
+		JLabel passAlert = new JLabel("( DO NOT USE your wallet's password. This password will be sent as a message to the counterparty )");
 		this.add(passAlert, labelGBC);
 		
 		//LABEL FEE
@@ -256,7 +256,7 @@ public class InitiateAcctFrame extends JFrame {
 		//LABEL BLOCKS
 		labelGBC.gridx = 2;
 		labelGBC.gridwidth = 3;
-		JLabel blocksLabel = new JLabel("blocks ( 1 block approx. " + + AT_Constants.getInstance().AVERAGE_BLOCK_MINUTES(DBSet.getInstance().getBlockMap().getLastBlock().getHeight()) +" min ):");
+		JLabel blocksLabel = new JLabel("blocks ( 1 block approx. " + + AT_Constants.getInstance().AVERAGE_BLOCK_MINUTES(DBSet.getInstance().getBlockMap().getLastBlock().getHeight()) +" min )");
 		this.add(blocksLabel, labelGBC);
 		labelGBC.gridwidth = 1;
 

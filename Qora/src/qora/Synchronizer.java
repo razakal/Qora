@@ -51,7 +51,7 @@ public class Synchronizer
 			
 			//HEIGHT TO ROLL BACK
 			originalHeight = lastCommonBlock.getHeight();
-			int height = (int)(Math.round( lastCommonBlock.getHeight() /4))*4;
+			int height = (int)(Math.round( lastCommonBlock.getHeight() /AT_Constants.STATE_STORE_DISTANCE))*AT_Constants.STATE_STORE_DISTANCE;
 
 			//GET LAST BLOCK
 			Block lastBlock = fork.getBlockMap().getLastBlock();
@@ -116,7 +116,7 @@ public class Synchronizer
 			Map<String, byte[]> states = db.getATStateMap().getStates( lastCommonBlock.getHeight() );
 			
 			//HEIGHT TO ROLL BACK
-			int height = (int)(Math.round( lastCommonBlock.getHeight()/4))*4;
+			int height = (int)(Math.round( lastCommonBlock.getHeight()/AT_Constants.STATE_STORE_DISTANCE))*AT_Constants.STATE_STORE_DISTANCE;
 
 			//GET LAST BLOCK
 			Block lastBlock = db.getBlockMap().getLastBlock();
