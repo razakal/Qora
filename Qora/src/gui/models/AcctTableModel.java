@@ -30,7 +30,7 @@ public class AcctTableModel extends QoraTableModel<String, AT> implements Observ
 	private String type;
 	private boolean initiators;
 	
-	private String[] columnNames = {"Name", "Description", "Address", "Creator", "Amount", "Secret", "Recipient", "Expiration Block"};
+	private String[] columnNames = {"Name", "Description", "Address", "Creator", "Amount", "Lock", "Recipient", "Expiration Block"};
 	
 	public AcctTableModel(String type, boolean initiators)
 	{

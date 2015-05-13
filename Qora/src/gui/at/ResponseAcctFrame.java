@@ -212,7 +212,7 @@ public class ResponseAcctFrame extends JFrame {
 		labelGBC.gridy = 5;
 		labelGBC.gridx = 0;
 		labelGBC.gridwidth = 4;
-		JLabel passAlert = new JLabel("( Use the secret of the matching counterparty )");
+		JLabel passAlert = new JLabel("( Use the lock of the matching counterparty )");
 		this.add(passAlert, labelGBC);
 
 		//LABEL FEE

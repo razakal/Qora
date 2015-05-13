@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -33,7 +34,9 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -420,9 +423,21 @@ public class InitiateAcctFrame extends JFrame {
 			shab.put( sha256.digest( b1.array()) );
 			shab.clear();
 			byte[] has = new byte[32];
-			has = shab.array();
+			has = shab.array().clone();
 
-			b.put(has);
+			//for (int i=0; i<100000; i++)
+			//{
+			//	shab.put( sha256.digest( has ) );
+			//	has = shab.array();
+			//	shab.clear();
+			//}
+			shab.clear();
+			shab.put( sha256.digest( has ) );
+			
+			byte[] finalHash = new byte[32];
+			finalHash = shab.array().clone();
+			
+			b.put(finalHash);
 
 			b.putInt(0);
 			b.putInt(blocksToEnd);
@@ -534,7 +549,18 @@ public class InitiateAcctFrame extends JFrame {
 			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OKE:
-				JOptionPane.showMessageDialog(new JFrame(), "AT has been deployed!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				
+				JPanel successPanel = new JPanel();
+				successPanel.setLayout(new GridLayout(2,2));
+
+				//Labels for the textfield components        
+				JLabel successLabel = new JLabel("***IMPORTANT*** Use the following key to unlock the counterparty funds:");
+				JTextField txtField = new JTextField(Converter.toHex(has));
+
+				//Add the components to the JPanel        
+				successPanel.add(successLabel);
+				successPanel.add(txtField);
+				JOptionPane.showMessageDialog(null, new JScrollPane(successPanel) , "AT has been deployed", JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;	
 			case Transaction.NOT_YET_RELEASED:

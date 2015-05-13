@@ -12,6 +12,7 @@ import at.AT_Transaction;
 import controller.Controller;
 import qora.account.Account;
 import qora.crypto.Base58;
+import utils.Converter;
 import utils.ObserverMessage;
 import database.SortableList;
 
@@ -77,7 +78,7 @@ public class ATTxsTableModel extends QoraTableModel<Tuple2<Integer, Integer>, AT
 		String message = "";
 		if ( this.ats.get(row).getB().getMessage() != null)
 		{
-			message = new String(this.ats.get(row).getB().getMessage(), Charset.forName("UTF-8"));
+			message = Converter.toHex(this.ats.get(row).getB().getMessage());
 		}
 		switch(column)
 		{
