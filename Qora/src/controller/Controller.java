@@ -629,7 +629,7 @@ public class Controller extends Observable {
 		return highestPeer;
 	}
 	
-	private int getMaxPeerHeight()
+	public int getMaxPeerHeight()
 	{
 		int height = 0;
 		

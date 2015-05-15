@@ -41,6 +41,15 @@ public class NetworkStatus extends JLabel implements Observer
 	{
 		ObserverMessage message = (ObserverMessage) arg1;
 		
+		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE)
+		{
+			if(Controller.getInstance().getStatus() == Controller.STATUS_SYNCHRONIZING)
+			{
+				this.setText("Synchronizing "+ 100*Controller.getInstance().getHeight()/Controller.getInstance().getMaxPeerHeight() + "%");	
+			}	
+			
+		}
+		
 		if(message.getType() == ObserverMessage.NETWORK_STATUS)
 		{
 			int status = (int) message.getValue();
