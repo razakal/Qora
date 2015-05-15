@@ -176,6 +176,8 @@ public class NoWalletFrame extends JFrame {
 	
 	public void onWalletCreated()
 	{
+		Controller.getInstance().forgingStatusChanged(Controller.getInstance().getForgingStatus());
+		
 		this.parent.onWalletCreated();
 		
 		this.dispose();
