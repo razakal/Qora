@@ -34,7 +34,7 @@ public class StatusPanel extends JPanel
 					else
 					{
 						String password = PasswordPane.showUnlockWalletDialog(); 
-						if(!Controller.getInstance().unlockWallet(password))
+						if(!password.equals("") && !Controller.getInstance().unlockWallet(password))
 						{
 							JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
 						}
