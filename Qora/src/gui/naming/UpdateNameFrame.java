@@ -157,10 +157,8 @@ public class UpdateNameFrame extends JFrame
       	this.txtareaValue.setBorder(cbxName.getBorder());
 
       	JScrollPane Valuescroll = new JScrollPane(this.txtareaValue);
-      	
-      	Valuescroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+      	Valuescroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       	this.add(Valuescroll, txtGBC);
         
       	//LABEL COUNT

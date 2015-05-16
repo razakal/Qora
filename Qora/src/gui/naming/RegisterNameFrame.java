@@ -137,11 +137,13 @@ public class RegisterNameFrame extends JFrame
 			}
         });
       	
-      	JScrollPane Valuescroll = new JScrollPane(this.txtareaValue);
-      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       	this.txtareaValue.setRows(20);
       	this.txtareaValue.setColumns(63);
       	this.txtareaValue.setBorder(this.txtName.getBorder());
+
+      	JScrollPane Valuescroll = new JScrollPane(this.txtareaValue);
+      	Valuescroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       	this.add(Valuescroll, txtGBC);
       			
       	//LABEL COUNT
