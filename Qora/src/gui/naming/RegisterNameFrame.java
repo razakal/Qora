@@ -17,6 +17,8 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import controller.Controller;
 import qora.account.Account;
@@ -31,6 +33,7 @@ public class RegisterNameFrame extends JFrame
 	private JTextField txtFee;
 	private JTextField txtName;
 	private JTextArea txtareaValue;
+	private JLabel countLabel;
 	private JButton registerButton;
 
 	public RegisterNameFrame()
@@ -115,23 +118,52 @@ public class RegisterNameFrame extends JFrame
       	//TXTAREA NAME
       	txtGBC.gridy = 2;
       	this.txtareaValue = new JTextArea();
-      	this.txtareaValue.setRows(4);
+      	
+      	this.txtareaValue.getDocument().addDocumentListener(new DocumentListener() {
+            
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
+			}
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+        });
+      	
+      	JScrollPane Valuescroll = new JScrollPane(this.txtareaValue);
+      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.txtareaValue.setRows(20);
+      	this.txtareaValue.setColumns(63);
       	this.txtareaValue.setBorder(this.txtName.getBorder());
-      	this.add(this.txtareaValue, txtGBC);
-        
-        //LABEL FEE
-      	labelGBC.gridy = 3;
+      	this.add(Valuescroll, txtGBC);
+      			
+      	//LABEL COUNT
+		labelGBC.gridy = 3;
+		labelGBC.gridx = 1;
+		countLabel = new JLabel("Character count: 0/4000");
+		this.add(countLabel, labelGBC);
+		
+      	//LABEL FEE
+      	labelGBC.gridy = 4;
+      	labelGBC.gridx = 0;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
       		
       	//TXT FEE
-      	txtGBC.gridy = 3;
+      	txtGBC.gridy = 4;
       	this.txtFee = new JTextField();
       	this.txtFee.setText("1");
         this.add(this.txtFee, txtGBC);
 		           
         //BUTTON Register
-        buttonGBC.gridy = 4;
+        buttonGBC.gridy = 5;
         registerButton = new JButton("Register");
         registerButton.setPreferredSize(new Dimension(80, 25));
         registerButton.addActionListener(new ActionListener()
