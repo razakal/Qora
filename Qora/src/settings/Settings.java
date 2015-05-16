@@ -24,10 +24,18 @@ public class Settings {
 	//RPC
 	private static final int DEFAULT_RPC_PORT = 9085;
 	private static final String DEFAULT_RPC_ALLOWED = "127.0.0.1";
+	private static final boolean DEFAULT_RPC_ENABLED = true;
 	
 	//WEB
 	private static final int DEFAULT_WEB_PORT = 9083;
 	private static final String DEFAULT_WEB_ALLOWED = "127.0.0.1";
+	private static final boolean DEFAULT_WEB_ENABLED = true;
+	
+	//GUI
+	private static final boolean DEFAULT_GUI_ENABLED = true;
+	
+	//SETTINGS.JSON FILE
+	private static final String DEFAULT_SETTINGS_PATH = "settings.json";
 	
 	//DATA
 	private static final String DEFAULT_DATA_DIR = "data";
@@ -41,6 +49,8 @@ public class Settings {
 	
 	private JSONObject settingsJSON;
 	
+	private String currentSettingsPath;
+	
 	public static Settings getInstance()
 	{
 		if(instance == null)
@@ -51,45 +61,80 @@ public class Settings {
 		return instance;
 	}
 	
+	public static void FreeInstance()
+	{
+		if(instance != null)
+		{
+			instance = null;
+		}
+	}
+	
 	private Settings()
 	{
 		BufferedReader reader;
+		int alreadyPassed = 0;
+		String settingsFilePath = "settings.json";
 		
 		try
 		{
-			//OPEN FILE
-			File file = new File("settings.json");
-			
-			//CREATE FILE IF IT DOESNT EXIST
-			if(!file.exists())
+			while(alreadyPassed<2)
 			{
-				file.createNewFile();
+				//OPEN FILE
+				File file = new File(settingsFilePath);
+				currentSettingsPath = settingsFilePath;
+				
+				//CREATE FILE IF IT DOESNT EXIST
+				if(!file.exists())
+				{
+					file.createNewFile();
+				}
+				
+				//READ SETTINGS FILE
+				reader = new BufferedReader(new FileReader(file));
+				
+				String line;
+				String jsonString = "";
+				
+				//READ LINE
+				while ((line = reader.readLine()) != null)
+				{
+					jsonString += line;
+			    }
+				
+				//CLOSE
+				reader.close();
+				
+				//CREATE JSON OBJECT
+				this.settingsJSON = (JSONObject) JSONValue.parse(jsonString);
+				
+				alreadyPassed++;
+				
+				if(this.settingsJSON.containsKey("settingspath"))
+				{
+					settingsFilePath = (String) this.settingsJSON.get("settingspath");
+				}
+				else
+				{
+					alreadyPassed ++;
+				}	
 			}
-			
-			//READ SETTINGS FILE
-			reader = new BufferedReader(new FileReader(file));
-			
-			String line;
-			String jsonString = "";
-			
-			//READ LINE
-			while ((line = reader.readLine()) != null)
-			{
-				jsonString += line;
-		    }
-			
-			//CREATE JSON OBJECT
-			this.settingsJSON = (JSONObject) JSONValue.parse(jsonString);
-			
-			//CLOSE
-			reader.close();
 		}
 		catch(Exception e)
 		{
 			//STOP
-			System.out.println("ERROR reading settings.ini. closing");
+			System.out.println("ERROR reading settings.json. closing");
 			System.exit(0);
 		}
+	}
+	
+	public JSONObject Dump()
+	{
+		return settingsJSON;
+	}
+	
+	public String GetCurrentSettingsPath()
+	{
+		return currentSettingsPath;
 	}
 	
 	public List<Peer> getKnownPeers()
@@ -197,6 +242,16 @@ public class Settings {
 		}
 	}
 
+	public boolean isRpcEnabled() 
+	{
+		if(this.settingsJSON.containsKey("rpcenabled"))
+		{
+			return ((Boolean) this.settingsJSON.get("rpcenabled")).booleanValue();
+		}
+		
+		return DEFAULT_RPC_ENABLED;
+	}
+	
 	public int getWebPort()
 	{
 		if(this.settingsJSON.containsKey("webport"))
@@ -236,6 +291,16 @@ public class Settings {
 			return new String[0];
 		}
 	}
+
+	public boolean isWebEnabled() 
+	{
+		if(this.settingsJSON.containsKey("webenabled"))
+		{
+			return ((Boolean) this.settingsJSON.get("webenabled")).booleanValue();
+		}
+		
+		return DEFAULT_WEB_ENABLED;
+	}
 	
 	public String getWalletDir()
 	{
@@ -255,6 +320,16 @@ public class Settings {
 		}
 		
 		return DEFAULT_DATA_DIR;
+	}
+	
+	public String getSettingsPath()
+	{
+		if(this.settingsJSON.containsKey("settingspath"))
+		{
+			return (String) this.settingsJSON.get("settingspath");
+		}
+		
+		return DEFAULT_SETTINGS_PATH;
 	}
 	
 	public int getPingInterval()
@@ -285,5 +360,15 @@ public class Settings {
 		}
 		
 		return DEFAULT_MAX_BYTE_PER_FEE;
+	}
+	
+	public boolean isGuiEnabled() 
+	{
+		if(this.settingsJSON.containsKey("guienabled"))
+		{
+			return ((Boolean) this.settingsJSON.get("guienabled")).booleanValue();
+		}
+		
+		return DEFAULT_GUI_ENABLED;
 	}
 }

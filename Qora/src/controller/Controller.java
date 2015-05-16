@@ -51,8 +51,6 @@ import api.ApiService;
 import at.AT;
 import namewebserver.WebService;
 
-import com.google.common.io.Files;
-
 import database.DBSet;
 import database.SortableList;
 
@@ -96,7 +94,8 @@ public class Controller extends Observable {
 		return this.status;
 	}
 	
-	public void start(boolean disableRpc, boolean disableWeb) throws Exception
+	
+	public void start() throws Exception
 	{
 		//CHECK NETWORK PORT AVAILABLE
 		if(!Network.isPortAvailable(Network.PORT))
@@ -105,20 +104,20 @@ public class Controller extends Observable {
 		}
 		
 		//CHECK RPC PORT AVAILABLE
-		if(!disableRpc)
+		if(Settings.getInstance().isRpcEnabled())
         {
         	if(!Network.isPortAvailable(Settings.getInstance().getRpcPort()))
-    		{
-    			throw new Exception("Rpc port " + Settings.getInstance().getRpcPort() + " already in use!");
-    		}
+        	{
+        		throw new Exception("Rpc port " + Settings.getInstance().getRpcPort() + " already in use!");
+        	}
         }
 		
 		//CHECK WEB PORT AVAILABLE
-		if(!disableWeb)
+		if(Settings.getInstance().isWebEnabled())
         {
         	if(!Network.isPortAvailable(Settings.getInstance().getWebPort()))
     		{
-    			throw new Exception("Web port " + Settings.getInstance().getWebPort() + " already in use!");
+        		System.out.println("Web port " + Settings.getInstance().getWebPort() + " already in use!");
     		}
         }
 		
@@ -161,14 +160,14 @@ public class Controller extends Observable {
         this.blockChain = new BlockChain();
          
         //START API SERVICE
-        if(!disableRpc)
+        if(Settings.getInstance().isRpcEnabled())
         {
         	this.rpcService = new ApiService();
         	this.rpcService.start();
         }
         
         //START WEB SERVICE
-        if(!disableWeb)
+        if(Settings.getInstance().isWebEnabled())
         {
         	this.webService = new WebService();
         	this.webService.start();
@@ -199,6 +198,30 @@ public class Controller extends Observable {
       	this.addObserver(DBSet.getInstance().getTransactionMap());
       	this.addObserver(DBSet.getInstance());
     }
+	
+	public void rpcServiceRestart()
+	{
+		this.rpcService.stop();
+		
+        //START API SERVICE
+        if(Settings.getInstance().isRpcEnabled())
+        {		
+        	this.rpcService = new ApiService();
+        	this.rpcService.start();
+        }		
+	}
+	
+	public void webServiceRestart()
+	{
+		this.webService.stop();
+		
+        //START API SERVICE
+        if(Settings.getInstance().isWebEnabled())
+        {		
+        	this.webService = new WebService();
+        	this.webService.start();
+        }		
+	}
 	
 	@Override
 	public void addObserver(Observer o) 

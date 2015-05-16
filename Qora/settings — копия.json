@@ -1,5 +1,4 @@
 {
-	"settingspath": "D:\settings.json",
 	"knownpeers":[
 		"188.166.53.239",
 		"192.227.139.228",
@@ -14,8 +13,7 @@
 	"minconnections": 10,
 	"maxconnections": 100,
 	"rpcallowed":[
-		"127.0.0.1",
-		"127.0.0.3"
+		"127.0.0.1"
 	],
 	"weballowed":[
 		"127.0.0.1"
