@@ -151,6 +151,7 @@ public class SendMoneyPanel extends JPanel
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				// TODO Auto-generated method stub
+				refreshReceiverDetails();
 			}
         });
         

@@ -149,7 +149,7 @@ public class UpdateNameFrame extends JFrame
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				// TODO Auto-generated method stub
-
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
 			}
         });
       	this.txtareaValue.setRows(20);
@@ -157,7 +157,10 @@ public class UpdateNameFrame extends JFrame
       	this.txtareaValue.setBorder(cbxName.getBorder());
 
       	JScrollPane Valuescroll = new JScrollPane(this.txtareaValue);
-      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	
+      	Valuescroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
       	this.add(Valuescroll, txtGBC);
         
       	//LABEL COUNT

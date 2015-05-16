@@ -133,7 +133,7 @@ public class RegisterNameFrame extends JFrame
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				// TODO Auto-generated method stub
-
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
 			}
         });
       	
