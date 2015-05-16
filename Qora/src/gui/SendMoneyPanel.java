@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import qora.account.Account;
 import qora.assets.Asset;
@@ -134,22 +136,23 @@ public class SendMoneyPanel extends JPanel
       	txtTo = new JTextField();
         this.add(txtTo, txtGBC);
         
-        txtTo.addFocusListener(new FocusListener() {
-			
+        
+        txtTo.getDocument().addDocumentListener(new DocumentListener() {
+            
 			@Override
-			public void focusLost(FocusEvent e) {
+			public void changedUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
 				refreshReceiverDetails();
-				
 			}
-			
 			@Override
-			public void focusGained(FocusEvent e) {
-				// does not matter
-				
+			public void removeUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
 			}
-			
-			
-		});
+        });
         
         //LABEL AMOUNT
       	labelGBC.gridy = 4;
