@@ -5,19 +5,24 @@ import gui.settings.SettingsFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import settings.Settings;
 import controller.Controller;
 
+import utils.URLViewer;
 
 public class Menu extends JMenuBar 
 {
 	private static final long serialVersionUID = 5237335232850181080L;
-
+	public static JMenuItem webServerItem;
+	
 	public Menu()
 	{
 		super();
@@ -50,6 +55,28 @@ public class Menu extends JMenuBar
         	}
         });
         fileMenu.add(settingsItem);        
+
+        //WEB SERVER
+        webServerItem = new JMenuItem("Decentralized Web-server");
+        webServerItem.getAccessibleContext().setAccessibleDescription("http://127.0.0.1:"+Settings.getInstance().getWebPort());
+        webServerItem.addActionListener(new ActionListener()
+        {
+        	public void actionPerformed(ActionEvent e)
+        	{
+        		try {
+        			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()));
+				} catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        	}
+        });
+        fileMenu.add(webServerItem);   
+        
+        webServerItem.setVisible(Settings.getInstance().isWebEnabled());
+        
+        //SEPARATOR
+        fileMenu.addSeparator();
         
         //QUIT
         JMenuItem quitItem = new JMenuItem("Quit");
@@ -63,6 +90,7 @@ public class Menu extends JMenuBar
                System.exit(0);
         	}
         });
+       
         fileMenu.add(quitItem);    
         
         /*//HELP MENU
@@ -75,5 +103,4 @@ public class Menu extends JMenuBar
         aboutItem.getAccessibleContext().setAccessibleDescription("Information about the application");
         helpMenu.add(aboutItem);  */ 
 	}
-	
 }

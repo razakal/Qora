@@ -1,5 +1,7 @@
 package gui.settings;
 
+import gui.Menu;
+
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -312,6 +314,8 @@ public class SettingsFrame extends JFrame{
 		if(settingsTabPane.settingsAllowedPanel.webServiceRestart)
 		{
 			Controller.getInstance().webServiceRestart();
+			
+			Menu.webServerItem.setVisible(Settings.getInstance().isWebEnabled());
 		}
 		
 		if(changeDataDir || changeWallet)
