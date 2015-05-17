@@ -1,5 +1,8 @@
 package namewebserver;
 
+import java.util.Base64;
+import utils.GZIP;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -111,7 +114,21 @@ public class NamesWebResource
 					.build();
 		}
 		
-
+		//WEBPAGE GZIP DECOMPRESSOR
+        if(Value.startsWith("?gz!"))
+        {
+        	Value = Value.substring(4, Value.length());
+        	
+        	byte[] compressed1 = Base64.getDecoder().decode(Value);
+            
+            try {
+				Value = GZIP.GZIPdecompress(compressed1);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        
 		//SHOW WEB-PAGE
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
