@@ -20,10 +20,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.google.common.io.BaseEncoding;
+
 import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.transaction.Transaction;
+import utils.GZIP;
 import utils.Pair;
 
 @SuppressWarnings("serial")
@@ -35,7 +38,8 @@ public class RegisterNameFrame extends JFrame
 	private JTextArea txtareaValue;
 	private JLabel countLabel;
 	private JButton registerButton;
-
+	private JButton CompressButton;
+	
 	public RegisterNameFrame()
 	{
 		super("Qora - Register Name");
@@ -146,18 +150,21 @@ public class RegisterNameFrame extends JFrame
       	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       	this.add(Valuescroll, txtGBC);
       			
-      	//LABEL COUNT
-		labelGBC.gridy = 3;
-		labelGBC.gridx = 1;
-		countLabel = new JLabel("Character count: 0/4000");
-		this.add(countLabel, labelGBC);
-		
       	//LABEL FEE
       	labelGBC.gridy = 4;
       	labelGBC.gridx = 0;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
       		
+      	//LABEL COUNT
+		labelGBC.gridy = 3;
+		labelGBC.gridx = 1;
+		labelGBC.fill = GridBagConstraints.BOTH;   
+		labelGBC.anchor = GridBagConstraints.CENTER;
+		
+		countLabel = new JLabel("Character count: 0/4000");
+		this.add(countLabel, labelGBC);
+
       	//TXT FEE
       	txtGBC.gridy = 4;
       	this.txtFee = new JTextField();
@@ -177,11 +184,60 @@ public class RegisterNameFrame extends JFrame
 		});
     	this.add(registerButton, buttonGBC);
         
+    	//BUTTON COMPRESS
+        buttonGBC.gridy = 3;
+        buttonGBC.gridx = 2;
+        buttonGBC.fill = GridBagConstraints.EAST;
+        buttonGBC.anchor = GridBagConstraints.EAST;
+        
+        CompressButton = new JButton("Compress/Decompress");
+        CompressButton.setPreferredSize(new Dimension(150, 25));
+        CompressButton.addActionListener(new ActionListener()
+		
+        {
+		    public void actionPerformed(ActionEvent e)
+		    {
+		        onComressorClick();
+		    }
+		});
+    	this.add(CompressButton, buttonGBC);
+    	
         //PACK
 		this.pack();
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+	}
+	
+	public void onComressorClick()
+	{
+		String text = txtareaValue.getText();
+		if(text.startsWith("?gz!"))
+        {
+			text = text.substring(4, text.length());
+        	
+        	byte[] compressed = BaseEncoding.base64().decode(text);
+            
+            try {
+            	text = GZIP.GZIPdecompress(compressed);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            txtareaValue.setText(text);
+        }
+		else
+		{
+			byte[] compressed = null;
+			try {
+				compressed = GZIP.GZIPcompress(text);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 
+			txtareaValue.setText("?gz!"+BaseEncoding.base64().encode(compressed));
+		}
 	}
 	
 	public void onRegisterClick()

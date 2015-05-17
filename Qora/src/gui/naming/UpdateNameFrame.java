@@ -22,11 +22,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.google.common.io.BaseEncoding;
+
 import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import utils.GZIP;
 import utils.Pair;
 
 @SuppressWarnings("serial")
@@ -37,6 +40,8 @@ public class UpdateNameFrame extends JFrame
 	private JTextArea txtareaValue;	
 	private JTextField txtFee;
 	private JButton updateButton;
+	private JButton CompressButton;
+	private JButton DeCompressButton;
 	private JLabel countLabel;
 	
 	public UpdateNameFrame(Name name)
@@ -81,7 +86,7 @@ public class UpdateNameFrame extends JFrame
 		txtGBC.insets = new Insets(5,5,5,5);
 		txtGBC.fill = GridBagConstraints.HORIZONTAL;  
 		txtGBC.anchor = GridBagConstraints.NORTHWEST;
-		txtGBC.weightx = 1;	
+		txtGBC.weightx = 1;
 		txtGBC.gridwidth = 2;
 		txtGBC.gridx = 1;		
 		
@@ -163,6 +168,7 @@ public class UpdateNameFrame extends JFrame
         
       	//LABEL COUNT
 		labelGBC.gridy = 4;
+		//labelGBC.gridwidth = ;
 		labelGBC.gridx = 1;
 		countLabel = new JLabel("Character count: 0/4000");
 		this.add(countLabel, labelGBC);
@@ -191,7 +197,25 @@ public class UpdateNameFrame extends JFrame
 		    }
 		});
     	this.add(updateButton, buttonGBC);
+             
+    	//BUTTON COMPRESS
+        buttonGBC.gridy = 4;
+        buttonGBC.gridx = 1;
+        buttonGBC.fill = GridBagConstraints.EAST;
+        buttonGBC.anchor = GridBagConstraints.EAST;
         
+        CompressButton = new JButton("Compress/Decompress");
+        CompressButton.setPreferredSize(new Dimension(150, 25));
+        CompressButton.addActionListener(new ActionListener()
+		
+        {
+		    public void actionPerformed(ActionEvent e)
+		    {
+		        onComressorClick();
+		    }
+		});
+    	this.add(CompressButton, buttonGBC);
+
     	//SET DEFAULT SELECTED ITEM
     	if(this.cbxName.getItemCount() > 0)
     	{
@@ -205,6 +229,37 @@ public class UpdateNameFrame extends JFrame
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+	}
+	
+	public void onComressorClick()
+	{
+		String text = txtareaValue.getText();
+		if(text.startsWith("?gz!"))
+        {
+			text = text.substring(4, text.length());
+        	
+        	byte[] compressed = BaseEncoding.base64().decode(text);
+            
+            try {
+            	text = GZIP.GZIPdecompress(compressed);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            txtareaValue.setText(text);
+        }
+		else
+		{
+			byte[] compressed = null;
+			try {
+				compressed = GZIP.GZIPcompress(text);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 
+			txtareaValue.setText("?gz!"+BaseEncoding.base64().encode(compressed));
+		}
 	}
 	
 	public void onUpdateClick()
