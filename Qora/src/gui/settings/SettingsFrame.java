@@ -20,6 +20,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 import javax.swing.JPanel;
 
@@ -27,10 +28,9 @@ import network.Network;
 
 import org.json.simple.JSONObject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import controller.Controller;
 import settings.Settings;
+import utils.JSonWriter;
 
 @SuppressWarnings("serial")
 public class SettingsFrame extends JFrame{
@@ -271,7 +271,7 @@ public class SettingsFrame extends JFrame{
 		
 		if(settingsTabPane.settingsAllowedPanel.chckbxWebAllowForAll.isSelected())
 		{
-			settingsJSONbuf.put("weballowed","");
+			settingsJSONbuf.put("weballowed",new ArrayList<String>());
 		}
 		else
 		{
@@ -280,7 +280,7 @@ public class SettingsFrame extends JFrame{
 		
 		if(settingsTabPane.settingsAllowedPanel.chckbxRpcAllowForAll.isSelected())
 		{
-			settingsJSONbuf.put("rpcallowed","");
+			settingsJSONbuf.put("rpcallowed",new ArrayList<String>());
 		}
 		else
 		{
@@ -288,10 +288,11 @@ public class SettingsFrame extends JFrame{
 		}
 		
 		try {
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        
+	        Writer writer = new JSonWriter();
+	        settingsJSONbuf.writeJSONString(writer);
+				
 			FileWriter file = new FileWriter(Settings.getInstance().GetCurrentSettingsPath());
-			file.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(settingsJSONbuf));
+			file.write(writer.toString());
 			file.flush();
 			file.close();
 		} catch (IOException e) {
@@ -335,7 +336,7 @@ public class SettingsFrame extends JFrame{
 		if(limitConnections)
 		{
 			JOptionPane.showMessageDialog(
-				new JFrame(), "You changed Max connections or min connections. To apply the settings to restart yourself the wallet.",
+				new JFrame(), "You changed max connections or min connections. To apply the settings to restart yourself the wallet.",
                 "Attention!",
                 JOptionPane.WARNING_MESSAGE);
 		}

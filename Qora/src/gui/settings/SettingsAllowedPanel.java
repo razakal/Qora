@@ -302,10 +302,15 @@ public class SettingsAllowedPanel extends JPanel
     		if(allow)
     		{
     			webAllowedTable.setBackground(getBackground());
+    				
     		}
     		else
     		{        			
     			webAllowedTable.setBackground(Color.WHITE);
+    			if(webAllowedTable.getRowCount() == 0)
+    			{
+    				webAllowedTableModel.addAddress("127.0.0.1");
+    			}
     		}
 	
 		}
@@ -322,6 +327,10 @@ public class SettingsAllowedPanel extends JPanel
     		else
     		{        			
     			rpcAllowedTable.setBackground(Color.WHITE);
+    			if(rpcAllowedTable.getRowCount() == 0)
+    			{
+    				rpcAllowedTableModel.addAddress("127.0.0.1");
+    			}
     		}	
     	}
 	}
