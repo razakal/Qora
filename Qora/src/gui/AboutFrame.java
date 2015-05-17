@@ -6,7 +6,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +21,7 @@ import java.awt.Font;
 
 import javax.swing.SwingConstants;
 
+import utils.BuildTime;
 import controller.Controller;
 
 import java.awt.Insets;
@@ -69,7 +69,7 @@ public class AboutFrame extends JFrame{
         getContentPane().add(this.aboutPanel);
         GridBagLayout gbl_aboutPanel = new GridBagLayout();
         gbl_aboutPanel.columnWidths = new int[]{483, 181, 70, 0};
-        gbl_aboutPanel.rowHeights = new int[]{262, 0, 0, 0, 0};
+        gbl_aboutPanel.rowHeights = new int[]{252, 0, 0, 0, 0};
         gbl_aboutPanel.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
         gbl_aboutPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         aboutPanel.setLayout(gbl_aboutPanel);
@@ -85,6 +85,16 @@ public class AboutFrame extends JFrame{
         gbc_lbllversionLabel.gridx = 1;
         gbc_lbllversionLabel.gridy = 1;
         aboutPanel.add(lblversionLabel, gbc_lbllversionLabel);
+        
+        JLabel label = new JLabel("Build date: " + BuildTime.getBuildDate());
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        GridBagConstraints gbc_label = new GridBagConstraints();
+        gbc_label.insets = new Insets(0, 0, 5, 5);
+        gbc_label.gridx = 1;
+        gbc_label.gridy = 2;
+        aboutPanel.add(label, gbc_label);
 
         //SHOW FRAME
         this.pack();
