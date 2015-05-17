@@ -3,7 +3,6 @@ package gui;
 import gui.models.AccountsComboBoxModel;
 import gui.models.AssetsComboBoxModel;
 
-import java.awt.Checkbox;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

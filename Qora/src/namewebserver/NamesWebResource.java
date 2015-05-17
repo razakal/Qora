@@ -1,6 +1,5 @@
 package namewebserver;
 
-import java.util.Base64;
 import utils.GZIP;
 
 import javax.ws.rs.GET;
@@ -9,6 +8,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Context;
 import javax.servlet.http.HttpServletRequest;
+
+import com.google.common.io.BaseEncoding;
 
 import qora.naming.Name;
 import controller.Controller;
@@ -105,7 +106,7 @@ public class NamesWebResource
 		}
 		
 		String Value = name.getValue().toString();
-		
+	
 		//REDIRECT
 		if(Value.startsWith("http://") || Value.startsWith("https://"))
 		{
@@ -119,7 +120,7 @@ public class NamesWebResource
         {
         	Value = Value.substring(4, Value.length());
         	
-        	byte[] compressed1 = Base64.getDecoder().decode(Value);
+        	byte[] compressed1 = BaseEncoding.base64().decode(Value);
             
             try {
 				Value = GZIP.GZIPdecompress(compressed1);
