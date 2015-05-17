@@ -75,6 +75,18 @@ public class Menu extends JMenuBar
         
         webServerItem.setVisible(Settings.getInstance().isWebEnabled());
         
+        //ABOUT
+        JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.getAccessibleContext().setAccessibleDescription("Information about the application");
+        aboutItem.addActionListener(new ActionListener()
+        {
+        	public void actionPerformed(ActionEvent e)
+        	{
+                new AboutFrame();
+        	}
+        });
+        fileMenu.add(aboutItem);
+        
         //SEPARATOR
         fileMenu.addSeparator();
         
