@@ -35,6 +35,7 @@ import javax.swing.table.TableRowSorter;
 import qora.account.Account;
 import qora.assets.Asset;
 import utils.BigDecimalStringComparator;
+import utils.TableMenuPopupUtil;
 import controller.Controller;
 
 @SuppressWarnings("serial")
@@ -165,7 +166,8 @@ public class AccountsPanel extends JPanel implements ItemListener
 		});
 		menu.add(copyGeneratingBalance);
 		
-		table.setComponentPopupMenu(menu);
+		TableMenuPopupUtil.installContextMenu(table, menu);  // SELECT ROW ON WHICH CLICKED RIGHT BUTTON
+		
 		table.addMouseListener(new MouseAdapter() 
 		{
 		     @Override

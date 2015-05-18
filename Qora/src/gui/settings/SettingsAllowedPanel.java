@@ -265,7 +265,6 @@ public class SettingsAllowedPanel extends JPanel
         
         chckbxWebAllowForAll.setSelected(Settings.getInstance().getWebAllowed().length == 0);
         AllowedEnabled(chckbxWebAllowForAll.isSelected(), 1);
-        
 	}
 	public void close() 
 	{

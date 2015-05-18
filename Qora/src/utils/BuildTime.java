@@ -10,8 +10,6 @@ import java.util.TimeZone;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import controller.Controller;
-
 public class BuildTime
 {
 	private static String bufgetBuildDateTime = "";
@@ -34,22 +32,19 @@ public class BuildTime
 		Date d = null;
 		if(bufgetBuildDateTime.equals(""))
 	    {
-	    	File file = new File("Qora.jar");
-	    	//d = new Date(file.lastModified());
+			//GET BUILD DATE FOR COMPILED VERSION
+			File file = new File("Qora.jar");
 	    	if(file.exists())
 	    	{
 		    	try {
 					@SuppressWarnings("resource")
 					JarFile jf = new JarFile(file);
 					ZipEntry ze = jf.getEntry("Start.class");
-					long zeTimeLong = ze.getTime ();
-					Date zeTimeDate = new Date(zeTimeLong);
-					d = zeTimeDate;
+					d = new Date(ze.getTime ());
 
 					SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					//f.setTimeZone(TimeZone.getTimeZone("UTC"));
 					bufgetBuildDateTime = f.format(d);
-					
 		    	} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -57,7 +52,7 @@ public class BuildTime
 		    }
 	    	else
 	    	{
-
+	    		//GET BUILD DATE FOR DEBUG VERSION
 	    		Class<?> currentClass = new Object() {}.getClass().getEnclosingClass();
 	    		URL resource = currentClass.getResource(currentClass.getSimpleName() + ".class");
 	    		if (resource != null) 
@@ -67,14 +62,12 @@ public class BuildTime
 	    				try 
 	    				{
 	    					d = new Date(new File(resource.toURI()).lastModified());
-	    					
 	    					SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    					f.setTimeZone(TimeZone.getTimeZone("UTC"));
 	    					bufgetBuildDateTime = f.format(d);
 	    					
 	    		        } catch (URISyntaxException ignored) { }
 	    			}  
-	    			
 	    		}
 	    	}
 	    }

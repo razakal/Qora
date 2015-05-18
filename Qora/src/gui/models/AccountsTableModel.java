@@ -135,8 +135,7 @@ public class AccountsTableModel extends AbstractTableModel implements Observer
 		{
 			this.accounts = Controller.getInstance().getAccounts();	
 			
-			this.fireTableDataChanged();	
-
+			this.fireTableRowsUpdated(0, this.getRowCount()-1);  // WHEN UDATE DATA SELECTION DOES NOT DISAPPEAR
 		}
 	}
 
