@@ -131,6 +131,7 @@ public class ATDetailsFrame extends JFrame {
 		txtAreaCode.setBorder(txtName.getBorder());
 		txtAreaCode.setEditable(false);
 		this.add(txtAreaCode, detailGBC);
+		((JFrame)txtAreaCode.getTopLevelAncestor()).pack();
 
 		//DATA LABEL - TEXT
 		labelGBC.gridy = 8;
@@ -145,6 +146,7 @@ public class ATDetailsFrame extends JFrame {
 		txtAreaData.setAutoscrolls(true);
 		txtAreaData.setAutoscrolls(true);
 		this.add(txtAreaData, detailGBC);
+		((JFrame)txtAreaData.getTopLevelAncestor()).pack();
 		
 		//CODE LABEL - TEXT
 		labelGBC.gridy = 9;
