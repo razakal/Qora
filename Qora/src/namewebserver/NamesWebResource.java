@@ -134,7 +134,7 @@ public class NamesWebResource
         }
         
         //PROCESSING TAG INJ
-        Pattern pattern = Pattern.compile("<inj>(.*?)</inj>");
+        Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
         Matcher matcher = pattern.matcher(Value);
         while (matcher.find()) {
         	Name nameinj = Controller.getInstance().getName(matcher.group(1));
