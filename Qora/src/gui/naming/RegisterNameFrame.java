@@ -197,7 +197,7 @@ public class RegisterNameFrame extends JFrame
         {
 		    public void actionPerformed(ActionEvent e)
 		    {
-		        onComressorClick();
+		    	txtareaValue.setText(GZIP.autoDecompress(txtareaValue.getText()));
 		    }
 		});
     	this.add(CompressButton, buttonGBC);
@@ -207,37 +207,6 @@ public class RegisterNameFrame extends JFrame
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-	}
-	
-	public void onComressorClick()
-	{
-		String text = txtareaValue.getText();
-		if(text.startsWith("?gz!"))
-        {
-			text = text.substring(4, text.length());
-        	
-        	byte[] compressed = BaseEncoding.base64().decode(text);
-            
-            try {
-            	text = GZIP.GZIPdecompress(compressed);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            txtareaValue.setText(text);
-        }
-		else
-		{
-			byte[] compressed = null;
-			try {
-				compressed = GZIP.GZIPcompress(text);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			 
-			txtareaValue.setText("?gz!"+BaseEncoding.base64().encode(compressed));
-		}
 	}
 	
 	public void onRegisterClick()

@@ -12,8 +12,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Context;
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.io.BaseEncoding;
-
 import qora.naming.Name;
 import controller.Controller;
 
@@ -119,26 +117,14 @@ public class NamesWebResource
 		}
 		
 		//WEBPAGE GZIP DECOMPRESSOR
-        if(Value.startsWith("?gz!"))
-        {
-        	Value = Value.substring(4, Value.length());
-        	
-        	byte[] compressed1 = BaseEncoding.base64().decode(Value);
-            
-            try {
-				Value = GZIP.GZIPdecompress(compressed1);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
+		Value = GZIP.webDecompress(Value);
         
         //PROCESSING TAG INJ
         Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
         Matcher matcher = pattern.matcher(Value);
         while (matcher.find()) {
         	Name nameinj = Controller.getInstance().getName(matcher.group(1));
-        	Value = Value.replace( matcher.group(), nameinj.getValue().toString());
+        	Value = Value.replace( matcher.group(), GZIP.webDecompress(nameinj.getValue().toString()));
         }
      
 		//SHOW WEB-PAGE
