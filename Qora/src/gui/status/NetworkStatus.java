@@ -1,11 +1,15 @@
 package gui.status;
 
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.ToolTipManager;
 
 import utils.GUIUtils;
 import utils.ObserverMessage;
@@ -27,6 +31,19 @@ public class NetworkStatus extends JLabel implements Observer
 		this.synchronizingIcon = this.createIcon(Color.ORANGE);
 		this.okeIcon = this.createIcon(Color.GREEN);
 
+		ToolTipManager.sharedInstance().setDismissDelay( (int) TimeUnit.SECONDS.toMillis(5));
+		
+		this.addMouseListener(new MouseAdapter() {
+			public void mouseEntered(MouseEvent mEvt) {
+				if(Controller.getInstance().getStatus() == Controller.STATUS_OKE || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS)
+				{
+					setToolTipText("Block height: " + Controller.getInstance().getHeight());
+				}
+				else if (Controller.getInstance().getStatus() == Controller.STATUS_SYNCHRONIZING)
+				{
+					setToolTipText("Block height: " + Controller.getInstance().getHeight()+"/"+Controller.getInstance().getMaxPeerHeight());
+				}	
+		}});
 		//LISTEN ON STATUS
 		Controller.getInstance().addObserver(this);			
 	}
