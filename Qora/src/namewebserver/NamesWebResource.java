@@ -1,5 +1,8 @@
 package namewebserver;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import utils.GZIP;
 
 import javax.ws.rs.GET;
@@ -130,6 +133,14 @@ public class NamesWebResource
 			}
         }
         
+        //PROCESSING TAG INJ
+        Pattern pattern = Pattern.compile("<inj>(.*?)</inj>");
+        Matcher matcher = pattern.matcher(Value);
+        while (matcher.find()) {
+        	Name nameinj = Controller.getInstance().getName(matcher.group(1));
+        	Value = Value.replace( matcher.group(), nameinj.getValue().toString());
+        }
+     
 		//SHOW WEB-PAGE
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
