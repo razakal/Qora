@@ -41,7 +41,7 @@ import controller.Controller;
 @SuppressWarnings("serial")
 public class AccountsPanel extends JPanel implements ItemListener
 {
-	private JComboBox<Asset> cbxFavorites;
+	private static JComboBox<Asset> cbxFavorites;
 	private AccountsTableModel tableModel;
 
 	@SuppressWarnings("unchecked")
@@ -208,6 +208,11 @@ public class AccountsPanel extends JPanel implements ItemListener
 		this.add(newButton, buttonGBC);
 	}
 	
+	public static Asset getAsset()
+	{
+		return (Asset) cbxFavorites.getSelectedItem();
+	}
+
 	public void onNewClick()
 	{
 		//CHECK IF WALLET UNLOCKED
