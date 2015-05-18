@@ -46,6 +46,41 @@ public class ATTxsTableModel extends QoraTableModel<Tuple2<Integer, Integer>, AT
 		return this.ats.get(row).getB().getAmount();
 	}
 	
+	public int getBlockHeight(int row)
+	{
+		return this.ats.get(row).getB().getBlockHeight();
+	}
+	
+	public int getSeq(int row)
+	{
+		return this.ats.get(row).getB().getSeq();
+	}
+
+	public String getSender(int row)
+	{
+		return this.ats.get(row).getB().getSender();
+	}
+	
+	public String getRecipient(int row)
+	{
+		return this.ats.get(row).getB().getRecipient();
+	}
+	
+	public Long getAmount(int row)
+	{
+		return this.ats.get(row).getB().getAmount();
+	}
+	
+	public String getMessage(int row)
+	{
+		String message = "";
+		if ( this.ats.get(row).getB().getMessage() != null)
+		{
+			message = Converter.toHex(this.ats.get(row).getB().getMessage());
+		}
+		return message;
+	}
+	
 	@Override
 	public int getColumnCount() 
 	{

@@ -35,7 +35,9 @@ import javax.swing.table.TableRowSorter;
 import qora.account.Account;
 import qora.crypto.Base58;
 import utils.BigDecimalStringComparator;
+import utils.MenuPopupUtil;
 import utils.StringComparator;
+import utils.TableMenuPopupUtil;
 
 
 @SuppressWarnings("serial")
@@ -137,6 +139,9 @@ public class AcctPanel extends JPanel
 			}
 		});
 		
+		//CONTEXT MENU
+      	MenuPopupUtil.installContextMenu(txtSearch);
+      	
 		this.add(txtSearch,searchGBC);
 
 		//ADD REGISTER BUTTON
@@ -196,19 +201,9 @@ public class AcctPanel extends JPanel
 			}
 		});
 		menu.add(copyHash);
-
-		atsTable.setComponentPopupMenu(menu);
-		atsTable.addMouseListener(new MouseAdapter() 
-		{
-			@Override
-			public void mousePressed(MouseEvent e) 
-			{
-				Point p = e.getPoint();
-				int row = atsTable.rowAtPoint(p);
-				atsTable.setRowSelectionInterval(row, row);
-			}
-		});
-
+		
+		TableMenuPopupUtil.installContextMenu(atsTable, menu);  // SELECT ROW ON WHICH CLICKED RIGHT BUTTON
+		
 		this.add(new JScrollPane(atsTable), tableGBC);
 
 	}
