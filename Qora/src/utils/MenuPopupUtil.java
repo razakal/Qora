@@ -70,6 +70,7 @@ public class MenuPopupUtil {
 
 			public void showMenu(final MouseEvent e) {
 				if (e.isPopupTrigger()) {
+					component.requestFocus();
 					final JPopupMenu menu = new JPopupMenu();
 					JMenuItem item;
 					item = new JMenuItem(new DefaultEditorKit.CopyAction());

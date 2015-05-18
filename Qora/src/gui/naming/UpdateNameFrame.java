@@ -30,6 +30,7 @@ import qora.account.PrivateKeyAccount;
 import qora.naming.Name;
 import qora.transaction.Transaction;
 import utils.GZIP;
+import utils.MenuPopupUtil;
 import utils.Pair;
 
 @SuppressWarnings("serial")
@@ -229,6 +230,11 @@ public class UpdateNameFrame extends JFrame
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+        
+      	//CONTEXT MENU
+      	MenuPopupUtil.installContextMenu(txtOwner);
+      	MenuPopupUtil.installContextMenu(txtareaValue);
+      	MenuPopupUtil.installContextMenu(txtFee);
 	}
 	
 	public void onUpdateClick()
