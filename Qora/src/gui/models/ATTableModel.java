@@ -19,7 +19,7 @@ public class ATTableModel extends QoraTableModel<Long, AT> implements Observer
 	public static final int COLUMN_DESCRIPTION = 3;
 	public static final int COLUMN_AMOUNT = 4;
 	public static final int COLUMN_CREATOR = 5;
-
+	
 	private SortableList<Long, AT> ats;
 	
 	private String[] columnNames = {"Type/Domain", "Address", "Name", "Description", "Quantity", "Creator"};

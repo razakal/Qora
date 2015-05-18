@@ -24,7 +24,7 @@ public class ATTxsTableModel extends QoraTableModel<Tuple2<Integer, Integer>, AT
 	public static final int COLUMN_AMOUNT = 3;
 	public static final int COLUMN_HEIGHT = 0;
 	public static final int COLUMN_MESSAGE = 4;
-	private static final int COLUMN_SEQUENCE = 5;
+	public static final int COLUMN_SEQUENCE = 5;
 
 	private SortableList<Tuple2<Integer, Integer>, AT_Transaction > ats;
 	
