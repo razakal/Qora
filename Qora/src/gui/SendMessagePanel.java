@@ -14,12 +14,17 @@ import java.nio.charset.Charset;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import qora.account.Account;
 import qora.assets.Asset;
+import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import utils.Converter;
+import utils.NameUtils;
 import utils.Pair;
+import utils.NameUtils.NameResult;
 import controller.Controller;
 
 @SuppressWarnings("serial")
@@ -35,6 +40,7 @@ public class SendMessagePanel extends JPanel
 	private JButton sendButton;
 	private AccountsComboBoxModel accountsModel;
 	private JComboBox<Asset> cbxFavorites;
+	private JTextField txtRecDetails;
 	
 	public SendMessagePanel()
 	{
@@ -131,14 +137,43 @@ public class SendMessagePanel extends JPanel
       	txtGBC.gridy = 2;
       	txtTo = new JTextField();
         this.add(txtTo, txtGBC);
+
+        txtTo.getDocument().addDocumentListener(new DocumentListener() {
+            
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				refreshReceiverDetails();
+			}
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				refreshReceiverDetails();
+			}
+        });
+        
+        //LABEL RECEIVER DETAILS 
+      	labelGBC.gridy = 3;
+      	JLabel recDetailsLabel = new JLabel("Receiver details:");
+      	this.add(recDetailsLabel, labelGBC);
+      		
+      	//RECEIVER DETAILS 
+      	txtGBC.gridy = 3;
+      	txtRecDetails = new JTextField();
+      	txtRecDetails.setEditable(false);
+        this.add(txtRecDetails, txtGBC);
         
         //LABEL MESSAGE
-        labelGBC.gridy = 3;
+        labelGBC.gridy = 4;
         JLabel messageLabel = new JLabel("Message:");
         this.add(messageLabel, labelGBC);
         
         //TXT MESSAGE
-        txtGBC.gridy = 3;
+        txtGBC.gridy = 4;
         txtMessage = new JTextArea();
         this.txtMessage.setRows(4);
       	this.txtMessage.setBorder(this.txtTo.getBorder());
@@ -146,54 +181,53 @@ public class SendMessagePanel extends JPanel
         this.add(txtMessage, txtGBC);
         
       	//LABEL ISTEXT 
-      	labelGBC.gridy = 4;
+      	labelGBC.gridy = 5;
       	JLabel isTextLabel = new JLabel("Text Message:");
       	this.add(isTextLabel, labelGBC);
       	
         //TEXT ISTEXT
-        txtGBC.gridy = 4;
+        txtGBC.gridy = 5;
         isText = new JCheckBox();
         isText.setSelected(true);
         this.add(isText, txtGBC);
         
         //LABEL AMOUNT
-      	labelGBC.gridy = 6;
+      	labelGBC.gridy = 7;
       	JLabel amountLabel = new JLabel("Amount:");
       	this.add(amountLabel, labelGBC);
       		
       	//TXT AMOUNT
-      	txtGBC.gridy = 6;
+      	txtGBC.gridy = 7;
       	txtAmount = new JTextField("0.00000000");
         this.add(txtAmount, txtGBC);
         
         //LABEL FEE
-      	labelGBC.gridy = 7;
+      	labelGBC.gridy = 8;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
       		
       	//TXT FEE
-      	txtGBC.gridy = 7;
+      	txtGBC.gridy = 8;
       	txtFee = new JTextField();
       	txtFee.setText("1.00000000");
         this.add(txtFee, txtGBC);
 
         //LABEL ENCRYPTED
-      	labelGBC.gridy = 8;
+      	labelGBC.gridy = 9;
       	labelGBC.gridwidth = 2;
       	JLabel encLabel = new JLabel("Encrypt Message (Not yet available):");
       	this.add(encLabel, labelGBC);
       	
         //ENCRYPTED CHECKBOX
-        txtGBC.gridy = 8;
+        txtGBC.gridy = 9;
         txtGBC.gridx = 3;
         encrypted = new JCheckBox();
         encrypted.setEnabled(false);
         encrypted.setSelected(false);
         this.add(encrypted, txtGBC);
         
-        
         //BUTTON SEND
-        buttonGBC.gridy = 9;
+        buttonGBC.gridy = 10;
         sendButton = new JButton("Send");
         sendButton.setPreferredSize(new Dimension(80, 25));
     	sendButton.addActionListener(new ActionListener()
@@ -206,11 +240,48 @@ public class SendMessagePanel extends JPanel
 		this.add(sendButton, buttonGBC);
         
         //ADD BOTTOM SO IT PUSHES TO TOP
-        labelGBC.gridy = 8;
+        labelGBC.gridy = 9;
         labelGBC.weighty = 1;
       	this.add(new JPanel(), labelGBC);
 	}
 	
+	private void refreshReceiverDetails()
+	{
+		String toValue = txtTo.getText();
+		
+		if(toValue.isEmpty())
+		{
+			txtRecDetails.setText("");
+			return;
+		}
+		
+		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
+		{
+			txtRecDetails.setText("Status must be OK to show receiver details.");
+			return;
+		}
+		
+		//CHECK IF RECIPIENT IS VALID ADDRESS
+		if(!Crypto.getInstance().isValidAddress(toValue))
+		{
+			Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(toValue);
+					
+			if(nameToAdress.getB() == NameResult.OK)
+			{
+				Account account = nameToAdress.getA();
+				txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+			}
+			else
+			{
+				txtRecDetails.setText(nameToAdress.getB().getShortStatusMessage());
+			}
+		}else
+		{
+			Account account = new Account(toValue);
+			txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+		}	
+	}
+
 	public void onSendClick()
 	{
 		//DISABLE
@@ -249,9 +320,35 @@ public class SendMessagePanel extends JPanel
 		//READ SENDER
 		Account sender = (Account) cbxFrom.getSelectedItem();
 		
+		
 		//READ RECIPIENT
 		String recipientAddress = txtTo.getText();
-		Account recipient = new Account(recipientAddress);
+		
+		Account recipient;
+		
+		//ORDINARY RECIPIENT
+		if(Crypto.getInstance().isValidAddress(recipientAddress))
+		{
+			recipient = new Account(recipientAddress);
+		//NAME RECIPIENT
+		}else
+		{
+			Pair<Account, NameResult> result = NameUtils.nameToAdress(recipientAddress);
+			
+			if(result.getB() == NameResult.OK)
+			{
+				recipient = result.getA();
+			}
+			else		
+			{
+				JOptionPane.showMessageDialog(null, result.getB().getShortStatusMessage() , "Error", JOptionPane.ERROR_MESSAGE);
+		
+				//ENABLE
+				this.sendButton.setEnabled(true);
+			
+				return;
+			}
+		}
 		
 		int parsing = 0;
 		try

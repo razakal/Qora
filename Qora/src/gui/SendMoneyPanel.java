@@ -134,7 +134,6 @@ public class SendMoneyPanel extends JPanel
       	txtTo = new JTextField();
         this.add(txtTo, txtGBC);
         
-        
         txtTo.getDocument().addDocumentListener(new DocumentListener() {
             
 			@Override
@@ -153,37 +152,37 @@ public class SendMoneyPanel extends JPanel
 			}
         });
         
-        //LABEL AMOUNT
-      	labelGBC.gridy = 4;
-      	JLabel amountLabel = new JLabel("Amount:");
-      	this.add(amountLabel, labelGBC);
-      		
-      	//TXT AMOUNT
-      	txtGBC.gridy = 4;
-      	txtAmount = new JTextField();
-        this.add(txtAmount, txtGBC);
-        
-        //LABEL FEE
-      	labelGBC.gridy = 5;
-      	JLabel feeLabel = new JLabel("Fee:");
-      	this.add(feeLabel, labelGBC);
-      		
-      	//TXT AMOUNT
-      	txtGBC.gridy = 5;
-      	txtFee = new JTextField();
-      	txtFee.setText("1");
-        this.add(txtFee, txtGBC);
-        
         //LABEL RECEIVER DETAILS 
-      	labelGBC.gridy = 6;
+      	labelGBC.gridy = 4;
       	JLabel recDetailsLabel = new JLabel("Receiver details:");
       	this.add(recDetailsLabel, labelGBC);
       		
       	//RECEIVER DETAILS 
-      	txtGBC.gridy = 6;
+      	txtGBC.gridy = 4;
       	txtRecDetails = new JTextField();
       	txtRecDetails.setEditable(false);
         this.add(txtRecDetails, txtGBC);
+        
+        //LABEL AMOUNT
+      	labelGBC.gridy = 5;
+      	JLabel amountLabel = new JLabel("Amount:");
+      	this.add(amountLabel, labelGBC);
+      		
+      	//TXT AMOUNT
+      	txtGBC.gridy = 5;
+      	txtAmount = new JTextField();
+        this.add(txtAmount, txtGBC);
+        
+        //LABEL FEE
+      	labelGBC.gridy = 6;
+      	JLabel feeLabel = new JLabel("Fee:");
+      	this.add(feeLabel, labelGBC);
+      		
+      	//TXT AMOUNT
+      	txtGBC.gridy = 6;
+      	txtFee = new JTextField();
+      	txtFee.setText("1");
+        this.add(txtFee, txtGBC);
         
         //BUTTON SEND
         buttonGBC.gridy = 7;
