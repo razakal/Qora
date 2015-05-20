@@ -1162,4 +1162,8 @@ public class Controller extends Observable {
 		}
 		
 	}
+	
+	public Block getBlockByHeight(int parseInt) {
+        return DBSet.getInstance().getBlockMap().getBlockByHeight(parseInt);
+    }
 }
