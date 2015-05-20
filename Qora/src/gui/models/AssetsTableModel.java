@@ -117,6 +117,7 @@ public class AssetsTableModel extends QoraTableModel<Long, Asset> implements Obs
 			if(this.assets == null)
 			{
 				this.assets = (SortableList<Long, Asset>) message.getValue();
+				this.assets.addFilterField("name");
 				this.assets.registerObserver();
 			}	
 			

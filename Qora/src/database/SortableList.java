@@ -1,5 +1,6 @@
 package database;
 
+import java.lang.reflect.Field;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +25,7 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 	private int size;
 	private Pair<T, U> lastValue;
 	private Collection<T> keys;
+	private List<String> additionalFilterFields;
 	
 	public SortableList(DBMap<T, U> db)
 	{
@@ -35,6 +37,7 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		this.descending = false;
 		this.iterator = this.filter(db.getIterator(DBMap.DEFAULT_INDEX, this.descending));
 		this.position = 0;
+		additionalFilterFields = new ArrayList<String>();
 	}
 	
 	public SortableList(DBMap<T, U> db, Collection<T> keys)
@@ -48,6 +51,7 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		this.descending = false;
 		this.iterator = keys.iterator();
 		this.position = 0;
+		additionalFilterFields = new ArrayList<String>();
 	}
 	
 	public void registerObserver()
@@ -149,7 +153,7 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		{
 			List<T> keys = new ArrayList<T>();
 			
-			while(iterator.hasNext())
+			Main:while(iterator.hasNext())
 			{
 				T key = iterator.next();
 				String keyString = key.toString();
@@ -158,7 +162,31 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 				if(matcher.find())
 				{
 					keys.add(key);
+					continue Main;
 				}
+				
+				U value = this.db.get(key);
+				
+				for (String fieldToSearch : additionalFilterFields) {
+					
+					try {
+						Field field = value.getClass().getDeclaredField(fieldToSearch);
+						field.setAccessible(true);
+						String searchVal = (String) field.get(value);
+						
+						matcher = this.pattern.matcher(searchVal);
+						if(matcher.find())
+						{
+							keys.add(key);
+							continue Main;
+						}
+						
+					} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+						
+						e.printStackTrace();
+					}
+				}
+				
 			}
 			
 			this.size = keys.size();
@@ -173,4 +201,17 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 		this.pattern = Pattern.compile(".*" + filter + ".*");
 		this.sort(this.index, this.descending);
 	}
+	
+	/**
+	 * Add a field to the filter list
+	 * @param fieldname this should be a field of type String in the Class of generic type U
+	 */
+	public void addFilterField(String fieldname)
+	{
+		if(!additionalFilterFields.contains(fieldname))
+		{
+			additionalFilterFields.add(fieldname);
+		}
+	}
+	
 }
