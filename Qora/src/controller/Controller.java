@@ -35,6 +35,7 @@ import qora.assets.Asset;
 import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.Block;
+import qora.crypto.Base58;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -1166,4 +1167,40 @@ public class Controller extends Observable {
 	public Block getBlockByHeight(int parseInt) {
         return DBSet.getInstance().getBlockMap().getBlockByHeight(parseInt);
     }
+	
+	public String getPublicKeyFromAddress(String address)
+	{
+		//CHECK ACCOUNT IN WALLET
+		Account account = Controller.getInstance().getAccountByAddress(address);	
+		if(account != null)
+		{
+			if(Controller.getInstance().isWalletUnlocked())
+			{
+				return Base58.encode(Controller.getInstance().getPrivateKeyAccountByAddress(address).getPublicKey());
+			}
+		}
+		
+		//WE ARE LOOKING IN ITS OWN TRANSACTIONS
+		for(Pair<Account, Transaction> transactions: Controller.getInstance().getLastTransactions(100))
+		{
+			if(transactions.getB().getCreator().getAddress().equals(address))
+			{
+				return Base58.encode(transactions.getB().getCreator().getPublicKey());
+			}	
+		}
+		
+		// FOR FOREIGN ADDRESSES, SLOW SEARCH THROUGHOUT THE BLOCKCHAIN
+		Block block = Controller.getInstance().getLastBlock();
+		do {
+			for (Transaction transaction : block.getTransactions()) {
+				if(transaction.getCreator().getAddress().equals(address))
+				{
+					return Base58.encode(transaction.getCreator().getPublicKey());
+				}
+			}
+			block = block.getParent();
+		} while (block.getHeight()>1);
+		
+		return "";
+	}
 }

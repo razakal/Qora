@@ -361,4 +361,26 @@ public class AddressesResource
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
 		}
 	}
+	
+	@GET
+	@Path("/publickey/{address}")
+	public String getPublicKey(@PathParam("address") String address)
+	{
+		//CHECK IF VALID ADDRESS
+		if(!Crypto.getInstance().isValidAddress(address))
+		{
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_ADDRESS);
+		}
+
+		String publicKey = Controller.getInstance().getPublicKeyFromAddress(address);
+		
+		if(publicKey.equals(""))
+		{
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_PUBLIC_KEY_NOT_FOUND);
+		}
+		else
+		{
+			return publicKey;
+		}
+	}
 }
