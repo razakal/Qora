@@ -1,35 +1,45 @@
 package qora.crypto;
 
-import java.util.Arrays;
+import java.io.File;
 
 import utils.Pair;
 
-public class Ed25519 {
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
 
-	private native static byte[] createKeyPairN(byte[] seed);
-	private native static byte[] signN(byte[] privateKey, byte[] publicKey, byte[] message, int messageLength);
-	private native static int verifyN(byte[] signature, byte[] message, int messageLength, byte[] publicKey);
-	
-	
+public class Ed25519 {
+		
+	public interface ed25519 extends Library {
+	   public void ed25519_key_exchange(byte[] shared_secret, byte[] public_key, byte[] private_key);
+	   public void ed25519_sign(byte[] signature, byte[] message, int messageLength, byte[] publicKey, byte[] privateKey);
+	   public int ed25519_verify(byte[] signature, byte[] message, int message_len, byte[] public_key);
+	   public void ed25519_create_keypair(byte[] public_key, byte[] private_key, byte[] seed);
+	}
+	   
+	private static ed25519 lib;
+	   
 	public static boolean load() 
 	{
 		try
 		{
 			String arch = System.getProperty("os.arch").toLowerCase();
 			String os = System.getProperty("os.name").toLowerCase();
-				
+			
+			String libname = null; 
+					
 			//WINDOWS
 			if(os.contains("windows"))
 			{
 				//32BIT
 				if(arch.contains("x86") || arch.contains("i386"))
 				{
-					System.loadLibrary("Qora25519.windows.x86");
+					libname = "ed25519.windows.32.dll";
 				}
 				//64BIT
 				else
 				{
-					System.loadLibrary("Qora25519.windows.x64");
+					libname = "ed25519.windows.64.dll";
 				}
 			}
 				
@@ -39,47 +49,65 @@ public class Ed25519 {
 				//32BIT
 				if(arch.contains("x86") || arch.contains("i386"))
 				{
-					System.loadLibrary("Qora25519.linux.x86");
+					libname = "ed25519.linux.32.so";
 				}
 				//64BIT
 				else
 				{
-					System.loadLibrary("Qora25519.linux.x64");
+					libname = "ed25519.linux.64.so";
 				}
 			}
 				
 			//OSX
 			if(os.contains("mac"))
 			{
-				System.loadLibrary("Qora25519.mac");
+				libname = "ed25519.mac.dylib";
 			}
+			
+			NativeLibrary.addSearchPath(libname, new File("").getAbsolutePath() + "\\libs\\native\\");
+			NativeLibrary.addSearchPath(libname, new File("").getAbsolutePath() + "/libs/native/");
+			NativeLibrary.addSearchPath(libname, "\\libs\\native\\");
+			NativeLibrary.addSearchPath(libname, "/libs/native/");
+			
+			lib = (ed25519) Native.loadLibrary(libname, ed25519.class);
 		}
 		catch(Exception e)
 		{
-			return false;
+				return false;
 		}
-		
+			
 		return true;
+	}
+
+	public static byte[] getSharedSecret(byte[] public_key, byte[] private_key)
+	{
+		byte[] shared_secret =  new byte[32];
+		
+		lib.ed25519_key_exchange(shared_secret, public_key, private_key);
+		
+		return shared_secret;
+	}
+	
+	public static boolean verify(byte[] signature, byte[] message, byte[] publicKey)
+	{
+		int valid = lib.ed25519_verify(signature, message, message.length, publicKey);
+		return valid == 1;
 	}
 	
 	public static Pair<byte[], byte[]> createKeyPair(byte[] seed)
 	{
-		byte[] rawPair = createKeyPairN(seed);
+		byte[] privateKey = new byte[64];
+		byte[] publicKey = new byte[32];
 		
-		byte[] privateKey = Arrays.copyOfRange(rawPair, 0, 64);
-		byte[] publicKey = Arrays.copyOfRange(rawPair, 64, 96);
+		lib.ed25519_create_keypair(publicKey, privateKey, seed);
 		
 		return new Pair<byte[], byte[]>(privateKey, publicKey);
 	}
 	
 	public static byte[] sign(Pair<byte[],byte[]> keyPair, byte[] message)
 	{
-		return signN(keyPair.getA(), keyPair.getB(), message, message.length);
-	}
-	
-	public static boolean verify(byte[] signature, byte[] message, byte[] publicKey)
-	{
-		int valid = verifyN(signature, message, message.length, publicKey);
-		return valid == 1;
+		byte[] signature = null;
+		lib.ed25519_sign(signature, message, message.length, keyPair.getB(), keyPair.getA());
+		return signature;
 	}
 }
