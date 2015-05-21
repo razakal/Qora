@@ -106,7 +106,7 @@ public class Ed25519 {
 	
 	public static byte[] sign(Pair<byte[],byte[]> keyPair, byte[] message)
 	{
-		byte[] signature = null;
+		byte[] signature = new byte[64];
 		lib.ed25519_sign(signature, message, message.length, keyPair.getB(), keyPair.getA());
 		return signature;
 	}
