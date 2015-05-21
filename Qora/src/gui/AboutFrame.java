@@ -74,7 +74,7 @@ public class AboutFrame extends JFrame{
         gbl_aboutPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         aboutPanel.setLayout(gbl_aboutPanel);
         
-        JLabel lblversionLabel = new JLabel("Version: " + Controller.getInstance().version);
+        JLabel lblversionLabel = new JLabel("Version: " + Controller.getInstance().getVersion());
         lblversionLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
         lblversionLabel.setForeground(Color.WHITE);
         lblversionLabel.setHorizontalAlignment(SwingConstants.CENTER);

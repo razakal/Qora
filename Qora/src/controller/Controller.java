@@ -56,7 +56,7 @@ import database.SortableList;
 
 public class Controller extends Observable {
 
-	public String version = "0.21.0 beta";
+	private String version = "0.21.0 beta";
 
 	public static final int STATUS_NO_CONNECTIONS = 0;
 	public static final int STATUS_SYNCHRONIZING = 1;
@@ -75,6 +75,11 @@ public class Controller extends Observable {
 	private Map<Peer, Integer> peerHeight;
 	
 	private static Controller instance;
+	
+	public String getVersion()
+	{
+		return version;
+	}
 	
 	public Map<Peer, Integer> getPeerHeights()
 	{
