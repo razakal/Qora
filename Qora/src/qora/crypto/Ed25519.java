@@ -46,8 +46,13 @@ public class Ed25519 {
 			//LINUX
 			if(os.contains("linux"))
 			{
+				//ARM
+				if(arch.startsWith("arm"))
+				{
+					libname = "ed25519.linux.arm7.so";
+				}
 				//32BIT
-				if(arch.contains("x86") || arch.contains("i386"))
+				else if(arch.contains("x86") || arch.contains("i386"))
 				{
 					libname = "ed25519.linux.32.so";
 				}
