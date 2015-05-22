@@ -325,8 +325,14 @@ public class MessageTransaction extends Transaction {
 			return INVALID_REFERENCE;
 		}
 		
-		//CHECK IF AMOUNT IS POSITIVE
-		if(this.amount.compareTo(BigDecimal.ZERO) <= 0)
+		//CHECK IF AMOUNT IS POSITIVE FOR AT
+		if(this.amount.compareTo(BigDecimal.ZERO) <= 0 && this.recipient.getAddress().endsWith("A"))
+		{
+			return NEGATIVE_AMOUNT;
+		}
+		
+		//CHECK IF AMOUNT IS POSITIVE FOR STANDARD QORA 
+		if(this.amount.compareTo(BigDecimal.ZERO) < 0 && this.recipient.getAddress().endsWith("Q"))
 		{
 			return NEGATIVE_AMOUNT;
 		}
