@@ -26,6 +26,9 @@ public class Settings {
 	private static final String DEFAULT_RPC_ALLOWED = "127.0.0.1";
 	private static final boolean DEFAULT_RPC_ENABLED = true;
 	
+	//GUI CONSOLE
+	private static final boolean DEFAULT_GUI_CONSOLE_ENABLED = true;
+	
 	//WEB
 	private static final int DEFAULT_WEB_PORT = 9083;
 	private static final String DEFAULT_WEB_ALLOWED = "127.0.0.1";
@@ -260,6 +263,16 @@ public class Settings {
 		}
 		
 		return DEFAULT_WEB_PORT;
+	}
+	
+	public boolean isGuiConsoleEnabled() 
+	{
+		if(this.settingsJSON.containsKey("guiconsoleenabled"))
+		{
+			return ((Boolean) this.settingsJSON.get("guiconsoleenabled")).booleanValue();
+		}
+		
+		return DEFAULT_GUI_CONSOLE_ENABLED;
 	}
 	
 	public String[] getWebAllowed()
