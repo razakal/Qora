@@ -7,7 +7,6 @@ import javax.swing.UIManager;
 
 import api.ApiClient;
 import controller.Controller;
-
 import settings.Settings;
 
 public class Start {

@@ -1,6 +1,6 @@
-package utils;
+package qora.crypto;
 
-public class MyBase64 {
+public class Base64 {
 
     private final static char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
 

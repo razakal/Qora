@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import qora.crypto.Base64;
+
 
 public class GZIP {
 	private static byte[] GZIPcompress(String str) throws Exception {
@@ -34,7 +36,7 @@ public class GZIP {
 		{
 			Value = Value.substring(4, Value.length());
 	      	
-			byte[] compressed = MyBase64.decode(Value);
+			byte[] compressed = Base64.decode(Value);
 	          
 			try {
 				Value = GZIPdecompress(compressed);
@@ -52,7 +54,7 @@ public class GZIP {
         {
 			text = text.substring(4, text.length());
             
-        	byte[] compressed = MyBase64.decode(text);
+        	byte[] compressed = Base64.decode(text);
         	try {
             	text = GZIPdecompress(compressed);
 			} catch (Exception e) {
@@ -70,7 +72,7 @@ public class GZIP {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return "?gz!"+MyBase64.encode(compressed); 
+			return "?gz!"+Base64.encode(compressed); 
 		}	
 	}
 }

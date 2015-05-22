@@ -18,16 +18,20 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import qora.account.Account;
+import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
+import qora.crypto.AEScrypto;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import utils.Converter;
+import utils.MenuPopupUtil;
 import utils.NameUtils;
 import utils.Pair;
 import utils.NameUtils.NameResult;
 import controller.Controller;
 
 @SuppressWarnings("serial")
+
 public class SendMessagePanel extends JPanel 
 {
 	private JComboBox<Account> cbxFrom;
@@ -215,14 +219,13 @@ public class SendMessagePanel extends JPanel
         //LABEL ENCRYPTED
       	labelGBC.gridy = 9;
       	labelGBC.gridwidth = 2;
-      	JLabel encLabel = new JLabel("Encrypt Message (Not yet available):");
+      	JLabel encLabel = new JLabel("Encrypt Message:");
       	this.add(encLabel, labelGBC);
       	
         //ENCRYPTED CHECKBOX
         txtGBC.gridy = 9;
         txtGBC.gridx = 3;
         encrypted = new JCheckBox();
-        encrypted.setEnabled(false);
         encrypted.setSelected(false);
         this.add(encrypted, txtGBC);
         
@@ -238,11 +241,18 @@ public class SendMessagePanel extends JPanel
 		    }
 		});	
 		this.add(sendButton, buttonGBC);
-        
+		
         //ADD BOTTOM SO IT PUSHES TO TOP
         labelGBC.gridy = 9;
         labelGBC.weighty = 1;
       	this.add(new JPanel(), labelGBC);
+      	
+      	//CONTEXT MENU
+      	MenuPopupUtil.installContextMenu(txtTo);
+      	MenuPopupUtil.installContextMenu(txtAmount);
+      	MenuPopupUtil.installContextMenu(txtFee);
+      	MenuPopupUtil.installContextMenu(txtRecDetails);
+      	MenuPopupUtil.installContextMenu(txtMessage);
 	}
 	
 	private void refreshReceiverDetails()
@@ -281,7 +291,7 @@ public class SendMessagePanel extends JPanel
 			txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
 		}	
 	}
-
+	
 	public void onSendClick()
 	{
 		//DISABLE
@@ -412,11 +422,30 @@ public class SendMessagePanel extends JPanel
 		
 			byte[] encrypted = (encryptMessage)?new byte[]{1}:new byte[]{0};
 			byte[] isTextByte = (isTextB)? new byte[] {1}:new byte[]{0};
+			
 			//CHECK IF PAYMENT OR ASSET TRANSFER
 			Asset asset = (Asset) this.cbxFavorites.getSelectedItem();
 			Pair<Transaction, Integer> result;
 			if(asset.getKey() == 0l)
 			{
+
+				if(encryptMessage)
+				{
+					//sender
+					PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress().toString());
+					byte[] privateKey = account.getPrivateKey();		
+
+					//recipient
+					byte[] publicKey = Controller.getInstance().getPublicKeyFromAddress(recipient.getAddress());
+					if(publicKey == null)
+					{
+						JOptionPane.showMessageDialog(new JFrame(), "The recipient has not yet performed any action in the blockchain.\nTo send an encrypted message to him impossible.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					messageBytes = AEScrypto.dataEncrypt(messageBytes, privateKey, publicKey);
+				}
+				
 				//CREATE PAYMENT
 				result = Controller.getInstance().sendMessage(Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress()), recipient, amount, fee, messageBytes, isTextByte, encrypted);
 			}

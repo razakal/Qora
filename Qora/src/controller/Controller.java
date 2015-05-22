@@ -1173,7 +1173,7 @@ public class Controller extends Observable {
         return DBSet.getInstance().getBlockMap().getBlockByHeight(parseInt);
     }
 	
-	public String getPublicKeyFromAddress(String address)
+	public byte[] getPublicKeyFromAddress(String address)
 	{
 		//CHECK ACCOUNT IN WALLET
 		Account account = Controller.getInstance().getAccountByAddress(address);	
@@ -1181,7 +1181,7 @@ public class Controller extends Observable {
 		{
 			if(Controller.getInstance().isWalletUnlocked())
 			{
-				return Base58.encode(Controller.getInstance().getPrivateKeyAccountByAddress(address).getPublicKey());
+				return Controller.getInstance().getPrivateKeyAccountByAddress(address).getPublicKey();
 			}
 		}
 		
@@ -1190,7 +1190,7 @@ public class Controller extends Observable {
 		{
 			if(transactions.getB().getCreator().getAddress().equals(address))
 			{
-				return Base58.encode(transactions.getB().getCreator().getPublicKey());
+				return transactions.getB().getCreator().getPublicKey();
 			}	
 		}
 		
@@ -1200,12 +1200,12 @@ public class Controller extends Observable {
 			for (Transaction transaction : block.getTransactions()) {
 				if(transaction.getCreator().getAddress().equals(address))
 				{
-					return Base58.encode(transaction.getCreator().getPublicKey());
+					return transaction.getCreator().getPublicKey();
 				}
 			}
 			block = block.getParent();
 		} while (block.getHeight()>1);
 		
-		return "";
+		return null;
 	}
 }
