@@ -66,7 +66,7 @@ public class Ed25519 {
 			//OSX
 			if(os.contains("mac"))
 			{
-				libname = "ed25519.mac.dylib";
+				libname = "ed25519.mac";
 			}
 			
 			NativeLibrary.addSearchPath(libname, new File("").getAbsolutePath() + "\\libs\\native\\");
