@@ -1,7 +1,5 @@
 package qora.crypto;
 
-import java.io.UnsupportedEncodingException;
-
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
@@ -13,16 +11,15 @@ public class AEScrypto {
 	
 	private static byte[] ivconst = new byte[]{6,4,3,8,1,2,1,2,7,2,3,8,5,7,1,1};
 
-	public static byte[] buf;
-	public static byte[] buf2;
-	
 	public static byte[] dataEncrypt(byte[] data, byte[] myPrivateKey, byte[] theirPublicKey)
 	{
 		byte[] encryptdata = null;
 		
 		byte[] SharedSecret = Ed25519.getSharedSecret(theirPublicKey, myPrivateKey);
-	    
+		byte[] password = Crypto.getInstance().digest(SharedSecret);  // SHA-256
+		
 		try {
+			encryptdata = aesEncrypt(data, password, ivconst);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -31,7 +28,7 @@ public class AEScrypto {
 		byte[] encryptdataandver = new byte[encryptdata.length + 1];
 		System.arraycopy(encryptdata, 0, encryptdataandver, 1, encryptdata.length);
 		encryptdataandver[0] = 1; //version crypto algo
-				
+		
 		return encryptdataandver;
 	}
 	
@@ -40,12 +37,14 @@ public class AEScrypto {
 		byte[] decryptdata = null;
 		
 		byte[] SharedSecret = Ed25519.getSharedSecret(theirPublicKey, myPrivateKey);
-	    
+		byte[] password = Crypto.getInstance().digest(SharedSecret);  // SHA-256
+		
 		//byte version = encryptdata[0];
 		byte[] encryptdata2 = new byte[encryptdata.length - 1];
 		System.arraycopy(encryptdata, 1, encryptdata2, 0, encryptdata.length-1);
 		
 		try {
+			decryptdata = aesDecrypt(encryptdata2, password, ivconst);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
