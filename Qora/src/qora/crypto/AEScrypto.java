@@ -16,54 +16,6 @@ public class AEScrypto {
 	public static byte[] buf;
 	public static byte[] buf2;
 	
-	public static String messageEncrypt(String plainmessage, byte[] myPrivateKey, byte[] theirPublicKey)
-	{
-		byte[] messageBytes = null;
-		byte[] encryptmessage = null;
-		
-		try {
-			messageBytes = plainmessage.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		byte[] SharedSecret = Ed25519.getSharedSecret(theirPublicKey, myPrivateKey);
-	    
-		try {
-			encryptmessage = aesEncrypt(messageBytes, SharedSecret, ivconst);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		
-		return Base64.encode(encryptmessage);
-	}
-	
-	public static String messageDecrypt(String encryptmessage, byte[] myPrivateKey, byte theirPublicKey[])
-	{
-		
-		byte[] encryptmessagebyte = Base64.decode(encryptmessage);
-		byte[] decryptmessagebyte = null;
-					
-		byte[] dhSharedSecret = Ed25519.getSharedSecret(theirPublicKey, myPrivateKey);
-
-		try {
-			decryptmessagebyte = aesDecrypt(encryptmessagebyte, dhSharedSecret, ivconst);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
-			return new String(decryptmessagebyte, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
-	}
-
 	public static byte[] dataEncrypt(byte[] data, byte[] myPrivateKey, byte[] theirPublicKey)
 	{
 		byte[] encryptdata = null;
@@ -71,7 +23,6 @@ public class AEScrypto {
 		byte[] SharedSecret = Ed25519.getSharedSecret(theirPublicKey, myPrivateKey);
 	    
 		try {
-			encryptdata = aesEncrypt(data, SharedSecret, ivconst);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -95,7 +46,6 @@ public class AEScrypto {
 		System.arraycopy(encryptdata, 1, encryptdata2, 0, encryptdata.length-1);
 		
 		try {
-			decryptdata = aesDecrypt(encryptdata2, SharedSecret, ivconst);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
