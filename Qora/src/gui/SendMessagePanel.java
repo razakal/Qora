@@ -9,6 +9,9 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -39,6 +42,7 @@ import utils.MenuPopupUtil;
 import utils.NameUtils;
 import utils.ObserverMessage;
 import utils.Pair;
+import utils.TableMenuPopupUtil;
 import utils.NameUtils.NameResult;
 import controller.Controller;
 
@@ -330,7 +334,7 @@ public class SendMessagePanel extends JPanel
 		ChkEncGBC.gridx = 3;
 		ChkEncGBC.gridy = 5;
 		encrypted = new JCheckBox();
-		encrypted.setSelected(false);
+		encrypted.setSelected(true);
 		this.add(encrypted, ChkEncGBC);
 		
     	//LABEL GBC
@@ -510,6 +514,58 @@ public class SendMessagePanel extends JPanel
 		bottomGBC.gridwidth = 5;
 		
         add(scrollPane, bottomGBC);
+        
+		//MENU
+		JPopupMenu menu = new JPopupMenu();	
+
+		JMenuItem copyMessage = new JMenuItem("Copy message");
+		copyMessage.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				int row = table.getSelectedRow();
+				row = table.convertRowIndexToModel(row);
+
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				StringSelection value = new StringSelection(messageBufs.get(row).getDecrMessage());
+			    clipboard.setContents(value, null);
+			}
+		});
+		menu.add(copyMessage);
+		
+		JMenuItem copySender = new JMenuItem("Copy sender address");
+		copySender.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				int row = table.getSelectedRow();
+				row = table.convertRowIndexToModel(row);
+				
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				StringSelection value = new StringSelection(messageBufs.get(row).getFrom());
+			    clipboard.setContents(value, null);
+			}
+		});
+		menu.add(copySender);
+				
+		JMenuItem copyRecipient = new JMenuItem("Copy recipient address");
+		copyRecipient.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				int row = table.getSelectedRow();
+				row = table.convertRowIndexToModel(row);
+				
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				StringSelection value = new StringSelection(messageBufs.get(row).getTo());
+			    clipboard.setContents(value, null);
+			}
+		});
+		
+		menu.add(copyRecipient);
+		
+		TableMenuPopupUtil.installContextMenu(table, menu);  // SELECT ROW ON WHICH CLICKED RIGHT BUTTON
+		
 	}
 	
 	public void cryptoCloseAll()
@@ -816,7 +872,10 @@ public class SendMessagePanel extends JPanel
 				
 				this.txtMessage.setText("");
 				
-				//JOptionPane.showMessageDialog(new JFrame(), "Message has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				if(amount.compareTo(BigDecimal.ZERO) > 0)
+				{
+					JOptionPane.showMessageDialog(new JFrame(), "Message with payment has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				}
 				break;	
 			
 			case Transaction.INVALID_ADDRESS:
@@ -1054,23 +1113,36 @@ public class SendMessagePanel extends JPanel
 			}
 				
 			//CHECK IF NEW LIST
-			if(message.getType() == ObserverMessage.LIST_TRANSACTION_TYPE)
+			if(message.getType() == ObserverMessage.LIST_TRANSACTION_TYPE || message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE || message.getType() == ObserverMessage.REMOVE_TRANSACTION_TYPE)
 			{
 				if(transactions == null)
 				{
 					transactions = (SortableList<Tuple2<String, String>, Transaction>) message.getValue();
-					transactions.registerObserver();
 					transactions.sort(TransactionMap.TIMESTAMP_INDEX, true);
 				}
+				boolean is = false;
 				
-				messageBufs.clear();
-				for (int i = 0; i < transactions.size(); i++) {
+				boolean added = false; 
+				
+				for (int i = transactions.size()-1; i >= 0; i--) {
 					if(transactions.get(i).getB().getType() == Transaction.MESSAGE_TRANSACTION)
 					{
 						MessageTransaction transaction = (MessageTransaction)transactions.get(i).getB();
-						messageBufs.add(
-							new MessageBuf(
-								transaction.getData(),
+						
+						is = false;
+						
+						for (int j = 0; j < messageBufs.size(); j++) 
+						{			
+							if(messageBufs.get(j).getSign().equals(transaction.getSignature()))
+							{
+								is = true;
+							}
+						}
+						
+						if(! is)
+						{
+							messageBufs.add(0, new MessageBuf(
+								transaction.getData(), 
 								transaction.isEncrypted(),
 								transaction.getSender().getAddress(),
 								transaction.getRecipient().getAddress(),
@@ -1079,64 +1151,25 @@ public class SendMessagePanel extends JPanel
 								transaction.getFee(),
 								transaction.getSignature(),
 								transaction.getCreator().getPublicKey()
-							)
-						);
+							));
+							added = true;
+						}
 					}
 				}
-				
+
 				((DefaultTableModel) table.getModel()).setRowCount(messageBufs.size());
 				
+				if(added && messageBufs.get(1).getOpend())
+				{
+					if(Controller.getInstance().isWalletUnlocked())
+					{
+						CryptoOpenBox(0);
+					}
+				}
+
 				this.repaint();
 			}
-			
-			//CHECK IF LIST UPDATED
-			if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE || message.getType() == ObserverMessage.REMOVE_TRANSACTION_TYPE)
-			{
-				//messageBufs.clear();
-				
-				for (int i = 0; i < transactions.size(); i++) {
-					if(transactions.get(i).getB().getType() == Transaction.MESSAGE_TRANSACTION)
-					{
-						MessageTransaction transaction = (MessageTransaction)transactions.get(i).getB();
-						
-						boolean is = false;
-						for (int j = 0; j < messageBufs.size(); j++) 
-						{			
-							if(messageBufs.get(j).getSign() == transaction.getSignature())
-							{
-								is = true;
-							}
-						}
-						if(! is)
-						{
-							messageBufs.add(
-									new MessageBuf(
-										transaction.getData(), 
-										transaction.isEncrypted(),
-										transaction.getSender().getAddress(),
-										transaction.getRecipient().getAddress(),
-										transaction.getTimestamp(),
-										transaction.getAmount(),
-										transaction.getFee(),
-										transaction.getSignature(),
-										transaction.getCreator().getPublicKey()
-									)
-								);	
-							if(messageBufs.get(1).getOpend())
-							{
-								CryptoOpenBox(0);
-							}
-						}
-					}
-				}
-				((DefaultTableModel) table.getModel()).setRowCount(messageBufs.size());
-				
-				this.repaint();
-			}	
 		}
-
-
-	
 	}
 	
 	public class MessageBuf
@@ -1167,6 +1200,7 @@ public class SendMessagePanel extends JPanel
 			this.fee = fee;
 			this.fromPublicKey = fromPublicKey;
 			this.toPublicKey = null;
+			this.sign = sign;
 		}
 
 		public byte[] getMessage()
