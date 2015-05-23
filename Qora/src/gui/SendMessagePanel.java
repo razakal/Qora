@@ -3,7 +3,9 @@ package gui;
 import gui.models.AccountsComboBoxModel;
 import gui.models.AssetsComboBoxModel;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -38,6 +40,7 @@ import qora.transaction.MessageTransaction;
 import qora.transaction.Transaction;
 import qora.wallet.Wallet;
 import utils.Converter;
+import utils.GUIUtils;
 import utils.MenuPopupUtil;
 import utils.NameUtils;
 import utils.ObserverMessage;
@@ -66,6 +69,8 @@ import database.wallet.TransactionMap;
 
 public class SendMessagePanel extends JPanel 
 {
+	SortableList<Tuple2<String, String>, Transaction> transactions;
+	
 	private final String[] columnNames = {"",""};
     private final DefaultTableModel model = new DefaultTableModel(columnNames,0)  {
         @Override public boolean isCellEditable(int row, int column) {
@@ -938,6 +943,7 @@ public class SendMessagePanel extends JPanel
 		Icon iconReceive;
 		Icon iconLock;
 		Icon iconUnlock;
+		Icon iconUnlockEncryp;
 		
 	    public ColumnSpanningCellRenderer() {
 	    	super(new BorderLayout(0, 0));
@@ -949,11 +955,20 @@ public class SendMessagePanel extends JPanel
 	    	
 	    	BufferedImage buff;
 			try {
+				
+				buff = ImageIO.read(new File("images/wallet/unlockedred.png"));
+				
+				iconUnlock = new ImageIcon(buff.getScaledInstance(20, 16, Image.SCALE_SMOOTH));
+				
 				buff = ImageIO.read(new File("images/wallet/locked.png"));
+		
 				iconLock = new ImageIcon(buff.getScaledInstance(20, 16, Image.SCALE_SMOOTH));
 				
 				buff = ImageIO.read(new File("images/wallet/unlocked.png"));
-				iconUnlock = new ImageIcon(buff.getScaledInstance(20, 16, Image.SCALE_SMOOTH));
+				iconUnlockEncryp = new ImageIcon(buff.getScaledInstance(20, 16, Image.SCALE_SMOOTH));
+				
+				
+		
 					
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -1060,9 +1075,16 @@ public class SendMessagePanel extends JPanel
 			if(column == 1)
 			{
 				add(iconCryptoLabel, BorderLayout.EAST);
-	 	       	if(messageBufs.get(row).getEncrypted() && !messageBufs.get(row).getOpend())
+	 	       	if(messageBufs.get(row).getEncrypted())
 	 	       	{
-	 	       		iconCryptoLabel.setIcon(iconLock);
+	 	       		if(messageBufs.get(row).getOpend())
+	 	       		{
+	 	       			iconCryptoLabel.setIcon(iconUnlockEncryp);
+	 	       		}
+	 	       		else
+	 	       		{
+	 	       			iconCryptoLabel.setIcon(iconLock);
+	 	       		}
 	 	       	}
 	 	       	else
 	 	       	{
@@ -1099,7 +1121,7 @@ public class SendMessagePanel extends JPanel
 		@SuppressWarnings("unchecked")
 		public synchronized void syncUpdate(Observable o, Object arg)
 		{
-			SortableList<Tuple2<String, String>, Transaction> transactions = null;
+
 			ObserverMessage message = (ObserverMessage) arg;
 			
 			if(message.getType() == ObserverMessage.WALLET_STATUS)

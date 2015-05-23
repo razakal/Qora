@@ -59,7 +59,14 @@ public class HeightMap extends DBMap<byte[], Integer>
 	
 	public int get(Block block)
 	{
-		return this.get(block.getSignature());
+		try
+		{
+			return this.get(block.getSignature());
+		}catch(NullPointerException e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
 	}
 	
 	public void set(Block block, int height)
