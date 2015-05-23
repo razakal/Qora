@@ -1,6 +1,7 @@
 package qora.crypto;
 
 import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -32,7 +33,7 @@ public class AEScrypto {
 		return encryptdataandver;
 	}
 	
-	public static byte[] dataDecrypt(byte[] encryptdata, byte[] myPrivateKey, byte[] theirPublicKey)
+	public static byte[] dataDecrypt(byte[] encryptdata, byte[] myPrivateKey, byte[] theirPublicKey) throws InvalidCipherTextException
 	{
 		byte[] decryptdata = null;
 		
@@ -47,8 +48,9 @@ public class AEScrypto {
 			decryptdata = aesDecrypt(encryptdata2, password, ivconst);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
+		
 		
 		return decryptdata;
 	}

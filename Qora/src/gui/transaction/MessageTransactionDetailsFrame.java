@@ -19,6 +19,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import org.bouncycastle.crypto.InvalidCipherTextException;
+
 import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
@@ -201,6 +203,9 @@ public class MessageTransactionDetailsFrame extends JFrame
 	        		try {
 						service.setText(new String(AEScrypto.dataDecrypt(messageTransaction.getData(), privateKey, publicKey), "UTF-8"));
 					} catch (UnsupportedEncodingException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InvalidCipherTextException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
