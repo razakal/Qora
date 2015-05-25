@@ -5,6 +5,8 @@ import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.json.simple.JSONObject;
 
 import database.DBSet;
@@ -260,6 +262,9 @@ public abstract class Transaction {
 	
 	public int getConfirmations()
 	{
+		
+		try
+		{
 		//CHECK IF IN TRANSACTIONDATABASE
 		if(DBSet.getInstance().getTransactionMap().contains(this))
 		{
@@ -272,6 +277,12 @@ public abstract class Transaction {
 		
 		//RETURN
 		return 1 + lastBlockHeight - transactionBlockHeight;
+
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 }

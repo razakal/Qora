@@ -646,6 +646,7 @@ public class Wallet extends Observable implements Observer
 		return this.secureDatabase.getSeed();
 	}
 	
+
 	//OBSERVER
 	
 	@Override
@@ -690,6 +691,18 @@ public class Wallet extends Observable implements Observer
 		o.update(this, new ObserverMessage(ObserverMessage.WALLET_STATUS, status));
 	}
 
+	public void addMessagesObserver(Observer o)
+	{
+		//REGISTER FOR STATUSUNLOCK
+		super.addObserver(o);
+		
+		//REGISTER ON TRANSACTIONS
+		this.database.getTransactionMap().addObserver(o);
+		
+		//REGISTER ON ALL BLOCKS
+		DBSet.getInstance().getBlockMap().addObserver(o);
+	}
+	
 	private void processTransaction(Transaction transaction)
 	{
 		//CHECK IF WALLET IS OPEN

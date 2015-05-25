@@ -67,6 +67,7 @@ public class KnownPeersTableModel extends AbstractTableModel implements Observer
 		} 
 	}
 	
+	@SuppressWarnings("unused")
 	public KnownPeersTableModel()
 	{
 		peers = Settings.getInstance().getKnownPeers();

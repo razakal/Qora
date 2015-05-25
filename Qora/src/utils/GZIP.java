@@ -40,10 +40,10 @@ public class GZIP {
 	          
 			try {
 				Value = GZIPdecompress(compressed);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return Value;
 	}
