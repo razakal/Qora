@@ -353,7 +353,6 @@ public class SendMessagePanel extends JPanel
 		decryptAllGBC.gridx = 3;
 		decryptAllGBC.gridy = 11;
 		JButton decryptButton = new JButton("Decrypt All");
-
     	this.add(decryptButton, decryptAllGBC);
 		
 		//MESSAGES HISTORY TABLE
@@ -633,12 +632,14 @@ public class SendMessagePanel extends JPanel
 					this.txtAmount.setText("0.00000000");
 				}
 				
-				if(this.txtMessage.getText().startsWith("A"))
+				if(this.txtTo.getText().startsWith("A"))
 				{
-					this.txtMessage.setText("");
+					this.txtTo.setText("");
 				}
 				
-				if(this.txtMessage.getText().startsWith("A"))
+				this.txtMessage.setText("");
+				
+				if(this.txtTo.getText().startsWith("A"))
 				{
 					JOptionPane.showMessageDialog(new JFrame(), "Message with payment has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
 				}

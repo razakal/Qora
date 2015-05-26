@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -99,6 +100,27 @@ public class MessagesTableModel extends JTable implements Observer{
 		});
 		menu.add(copyMessage);
 		
+		JMenuItem copyAllMessages = new JMenuItem("Copy All Messages");
+		copyAllMessages.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				String strvalue = "";
+				strvalue =	"<html>\n"
+							+ "<body width='"+800+"'>\n";
+				
+				for (int i = 0; i < messageBufs.size(); i++) {
+					strvalue += messageBufs.get(i).getDecrMessageHtml(800, false, false, false); 
+				}
+				strvalue +=	"</body></html>\n";
+				
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				StringSelection value = new StringSelection(strvalue);
+			    clipboard.setContents(value, null);
+			}
+		});
+		menu.add(copyAllMessages);
+
 		JMenuItem copySender = new JMenuItem("Copy Sender Address");
 		copySender.addActionListener(new ActionListener()
 		{
@@ -250,104 +272,7 @@ public class MessagesTableModel extends JTable implements Observer{
 	@Override
 	public Object getValueAt(int row, int column)
 	{
-		Date date = new Date(messageBufs.get(row).getTimestamp());
-		DateFormat format = DateFormat.getDateTimeInstance();
-		
-		Account account = Controller.getInstance().getAccountByAddress( messageBufs.get(row).getSender());
-		String imginout = "";
-		if(account != null)
-	    {
-			imginout = "file:images/messages/receive.png";
-		}
-		else
-		{
-			imginout = "file:images/messages/send.png";
-	    }
-		
-		String imglock = "";
-		
-		if(messageBufs.get(row).getOpend())
-		{
-			imglock = "file:images/messages/unlocked.png";
-		}
-		else
-		{	
-			imglock = "file:images/messages/locked.png";
-		}
-		
-		if(messageBufs.get(row).getEncrypted())
-		{	
-			if(messageBufs.get(row).getOpend())
-			{
-				imglock = "file:images/messages/unlocked.png";
-			}
-			else
-			{	
-				imglock = "file:images/messages/locked.png";
-			}
-		}
-		else
-		{
-			imglock = "file:images/messages/unlockedred.png";
-		}
-	
-		String confirmations = Integer.toString(messageBufs.get(row).getConfirmations());
-		
-		if(messageBufs.get(row).getConfirmations()<1)
-		{
-			confirmations = "<font color=red>" + confirmations +"</font>";
-		}
-		
-		String colorHeader = "F0F0F0";
-		String colorTextHeader = "000000";
-		String colorTextMessage = "000000";
-		String colorTextBackground = "FFFFFF";
-		
-		if(this.getSelectedRow() == row)
-		{
-			colorHeader = "C4DAEF";
-			colorTextBackground = "D1E8FF";
-		}
-		
-		if(messageBufs.get(row).getEncrypted())
-		{
-			if(messageBufs.get(row).getOpend())
-			{
-				colorTextMessage = "0000FF";
-			}
-			else
-			{
-				colorTextMessage = "FF0000";
-			}	
-		}
-		
-		String decrMessage = messageBufs.get(row).getDecrMessage(); 
-		decrMessage = decrMessage.replace("<","&lt;");
-		decrMessage = decrMessage.replace(">","&gt;");
-		decrMessage = decrMessage.replace("\n","<br>");
-
-		
-		String text =	"<html>"
-						+ "<body width='"+this.getWidth()+"'>"
-						+ "<table border='0' cellpadding='3' cellspacing='0'><tr><td bgcolor='"+colorHeader+"' width='"+this.getWidth()/2+"'>"
-						+ "<font size='2' color='"+colorTextHeader+"'>From:"+messageBufs.get(row).getSender()
-						+ "<br>To:"
-						+ messageBufs.get(row).getRecipient()+"</font></td>"
-						+ "<td bgcolor='"+colorHeader+"' align='right' width='"+this.getWidth()/2+"'>"
-						+ "<font color='"+colorTextHeader+"'>"+ confirmations + " . "
-						+ format.format(date)+"<br>"
-						+ "Amount: " +  messageBufs.get(row).getAmount().toPlainString()+" Fee: "
-						+ messageBufs.get(row).getFee().toPlainString()
-						+ "</font></td></tr></table>"
-						+ "<table border='0' cellpadding='3' cellspacing='0'><tr bgcolor='"+colorTextBackground+"'><td width='25'><img src='"+imginout+"'>"
-						+ "<td width='"+(this.getWidth())+"'>"
-						+ "<font color='"+colorTextMessage+"'>"
-						+ decrMessage
-						+ "</font>"
-						+ "<td width='30'><img src='"+imglock+"'>"
-						+ "</td></tr></table></body></html>";
-
-		return text;
+		return messageBufs.get(row).getDecrMessageHtml(this.getWidth(), (this.getSelectedRow() == row), true, true);
 	}
 	
 	@Override
@@ -403,6 +328,7 @@ public class MessagesTableModel extends JTable implements Observer{
 			if(transactions == null)
 			{
 				transactions = (SortableList<byte[], Transaction>) message.getValue();
+				transactions.registerObserver();
 				transactions.sort(TransactionMap.TIMESTAMP_INDEX, true);
 			}
 		
@@ -738,6 +664,144 @@ public class MessagesTableModel extends JTable implements Observer{
 		public boolean isText()
 		{
 			return isText;
+		}
+		
+		public String getDecrMessageHtml(int width, boolean selected, boolean images, boolean starthtmltag)
+		{
+		Date date = new Date(getTimestamp());
+		DateFormat format = DateFormat.getDateTimeInstance();
+		
+		Account account = Controller.getInstance().getAccountByAddress( getSender());
+		String imginout = "";
+		if(account != null)
+	    {
+			if(images)
+			{
+				imginout = "<img src='file:images/messages/receive.png'>";
+			}
+			else
+			{
+				imginout = "receive'>";
+			}
+		}
+		else
+		{
+			if(images)
+			{
+				imginout = "<img src='file:images/messages/send.png'>";
+			}
+			else
+			{
+				imginout = "send";
+			}	
+	    }
+		
+		String imglock = "";
+		
+		if(getEncrypted())
+		{	
+			if(getOpend())
+			{
+				if(images)
+				{
+					imglock = "<img src='file:images/messages/unlocked.png'>";
+				}
+				else
+				{
+					imglock = "decrypted";
+				}
+			}
+			else
+			{	
+				if(images)
+				{
+					imglock = "<img src='file:images/messages/locked.png'>";
+				}
+				else
+				{
+					imglock = "encrypted";
+				}	
+			}
+		}
+		else
+		{
+			if(images)
+			{
+				imglock = "<img src='file:images/messages/unlockedred.png'>";
+			}
+			else
+			{
+				imglock = "unencrypted";
+			}
+		}
+	
+		String confirmations = Integer.toString(getConfirmations());
+		
+		if(getConfirmations()<1)
+		{
+			confirmations = "<font color=red>" + confirmations +"</font>";
+		}
+		
+		String colorHeader = "F0F0F0";
+		String colorTextHeader = "000000";
+		String colorTextMessage = "000000";
+		String colorTextBackground = "FFFFFF";
+		
+		
+		if(selected)
+		{
+			colorHeader = "C4DAEF";
+			colorTextBackground = "D1E8FF";
+		}
+		
+		if(getEncrypted())
+		{
+			if(getOpend())
+			{
+				colorTextMessage = "0000FF";
+			}
+			else
+			{
+				colorTextMessage = "FF0000";
+			}	
+		}
+		
+		String decrMessage = decryptedMessage; 
+		decrMessage = decrMessage.replace("<","&lt;");
+		decrMessage = decrMessage.replace(">","&gt;");
+		decrMessage = decrMessage.replace("\n","<br>");
+
+		String text = "";
+		
+		if(starthtmltag)
+		{
+			text =		"<html>\n"
+						+ "<body width='"+width+"'>\n";
+		}
+		
+		text +=			 "<table border='0' cellpadding='3' cellspacing='0'><tr>\n<td bgcolor='"+colorHeader+"' width='"+width/2+"'>\n"
+						+ "<font size='2' color='"+colorTextHeader+"'>\nFrom:"+sender
+						+ "\n<br>\nTo:"
+						+ recipient+"\n</font></td>\n"
+						+ "<td bgcolor='"+colorHeader+"' align='right' width='"+width/2+"'>\n"
+						+ "<font color='"+colorTextHeader+"'>\n"+ confirmations + " . "
+						+ format.format(date)+"\n<br>\n"
+						+ "Amount: " +  amount.toPlainString()+" Fee: "
+						+ getFee().toPlainString()
+						+ "\n</font></td></tr></table>"
+						+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
+						+ "<td width='"+width+"'>\n"
+						+ "<font color='"+colorTextMessage+"'>\n"
+						+ decrMessage
+						+ "\n</font>"
+						+ "<td width='30'>"+imglock
+						+ "</td></tr>\n</table>\n";
+		if(starthtmltag)
+		{
+			text +=		"</body></html>\n";
+		}
+		
+		return text;
 		}
 	}
 		
