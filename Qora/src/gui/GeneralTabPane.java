@@ -41,7 +41,7 @@ public class GeneralTabPane extends JTabbedPane{
 		this.addTab("Send money", new SendMoneyPanel());
 
 		//MESSAGE
-		this.addTab("Send message", new SendMessagePanel());
+		this.addTab("Messages", new SendMessagePanel());
 		
 		//TRANSACTIONS
 		this.transactionsModel = new WalletTransactionsTableModel();

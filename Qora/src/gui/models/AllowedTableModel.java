@@ -8,14 +8,9 @@ import java.util.Observer;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import settings.Settings;
-import utils.ObserverMessage;
-import controller.Controller;
 import network.Peer;
-import network.message.GetSignaturesMessage;
 
 @SuppressWarnings("serial")
 public class AllowedTableModel extends AbstractTableModel implements Observer{
