@@ -144,5 +144,11 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 		{
 			this.fireTableDataChanged();
 		}	
+		
+		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE
+				|| message.getType() == ObserverMessage.LIST_BLOCK_TYPE)
+		{
+			this.fireTableDataChanged();
+		}
 	}
 }

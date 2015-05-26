@@ -270,12 +270,6 @@ public class Controller extends Observable {
 		o.update(this, new ObserverMessage(ObserverMessage.NETWORK_STATUS, this.status));
 	}
 	
-	public void addMessagesObserver(Observer o) 
-	{
-		wallet.addMessagesObserver(o);
-	}
-	
-	
 	@Override 
 	public void deleteObserver(Observer o)
 	{

@@ -434,7 +434,13 @@ public class SendMessagePanel extends JPanel
 		}else
 		{
 			account = new Account(toValue);
+			
 			txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+			
+			if(account.getBalance(1).toPlainString().equals("0.00000000"))
+			{
+				txtRecDetails.setText(txtRecDetails.getText()+ " - Warning!");
+			}
 		}
 		
 		if(account!=null && account.getAddress().startsWith("A"))

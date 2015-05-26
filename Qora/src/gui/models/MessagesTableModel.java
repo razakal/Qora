@@ -17,7 +17,10 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -35,7 +38,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.mapdb.Fun.Tuple2;
 
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
@@ -45,16 +47,20 @@ import qora.transaction.Transaction;
 import qora.wallet.Wallet;
 import utils.Converter;
 import utils.ObserverMessage;
+import utils.Pair;
 import utils.TableMenuPopupUtil;
 import controller.Controller;
 import database.DBSet;
-import database.SortableList;
-import database.wallet.TransactionMap;
 
 @SuppressWarnings("serial")
 public class MessagesTableModel extends JTable implements Observer{
-	private ArrayList<MessageBuf> messageBufs;	
-	private SortableList<Tuple2<String, String>, Transaction> transactions;
+	private ArrayList<MessageBuf> messageBufs;
+	Comparator<MessageBuf> comparator = new Comparator<MessageBuf>() {
+	    public int compare(MessageBuf c1, MessageBuf c2) {
+	        return (int) (c2.getTimestamp() - c1.getTimestamp());
+	    }
+	};
+
 	JMenuItem menuDecrypt;
 	private DefaultTableModel messagesModel;
 	int width;
@@ -75,8 +81,36 @@ public class MessagesTableModel extends JTable implements Observer{
 		topRenderer.setVerticalAlignment(DefaultTableCellRenderer.TOP);
 		this.getColumn("").setCellRenderer( topRenderer );
 		
-		Controller.getInstance().addMessagesObserver(this);
-
+		List<Pair<Account, Transaction>> transaction = Controller.getInstance().getLastTransactions(10000);
+		
+		for (int i = 0; i < transaction.size(); i++) {
+			if(transaction.get(i).getB().getType() == Transaction.MESSAGE_TRANSACTION)
+			{
+				boolean is = false;
+				
+				for ( int j = messageBufs.size()-1; j >= 0; j-- )
+				{
+					if(Arrays.equals(transaction.get(i).getB().getSignature(),messageBufs.get(j).getSignature()))
+					{
+						is = true;
+					}
+				}
+				if(!is)
+				{
+					addMessage(messageBufs.size(),(MessageTransaction)transaction.get(i).getB());
+				}
+			}
+		}
+		
+		Collections.sort(messageBufs, comparator);
+		
+		messagesModel.setRowCount(messageBufs.size());
+		for ( int j = messageBufs.size()-1; j >= 0; j-- )
+		{
+			setHeight(j);	
+		}
+		
+		
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
 
@@ -230,6 +264,8 @@ public class MessagesTableModel extends JTable implements Observer{
 			}
 		});
 
+		Controller.getInstance().addWalletListener(this);
+		DBSet.getInstance().getBlockMap().addObserver(this);
 	}
 
 	
@@ -287,8 +323,6 @@ public class MessagesTableModel extends JTable implements Observer{
 		}
 	}
 	
-		
-	@SuppressWarnings("unchecked")
 	public synchronized void syncUpdate(Observable o, Object arg)
 	{
 
@@ -320,77 +354,60 @@ public class MessagesTableModel extends JTable implements Observer{
 				}
 			}.start();
 		}
-			
-		//CHECK IF NEW LIST
-		if(message.getType() == ObserverMessage.LIST_TRANSACTION_TYPE || message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE || message.getType() == ObserverMessage.REMOVE_TRANSACTION_TYPE)
-		{			
-			if(transactions == null)
+
+		if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
+		{		
+			boolean is;
+			if(((Transaction) message.getValue()).getType() == Transaction.MESSAGE_TRANSACTION)
 			{
-				transactions = (SortableList<Tuple2<String, String>, Transaction>) message.getValue();
-				transactions.registerObserver();
-				transactions.sort(TransactionMap.TIMESTAMP_INDEX, true);
-			}
-		
-			boolean alreadyIs = false;
-			boolean added = false; 
-			
-			for ( int i = transactions.size()-1; i >= 0; i-- ) {
-				if( transactions.get(i).getB().getType() == Transaction.MESSAGE_TRANSACTION )
-				{	
-					alreadyIs = false;
+				is = false;
+				for ( int i = messageBufs.size()-1; i >= 0; i-- )
+				{
+					if(Arrays.equals(((MessageTransaction) message.getValue()).getSignature(), messageBufs.get(i).getSignature()))
+					{
+						is = true;
+					}
+				}
+				if(!is)
+				{
+					addMessage(0, (MessageTransaction) message.getValue());
 					
-					for (int j = 0; j < messageBufs.size(); j++) 
-					{			
-						if(Arrays.equals(transactions.get(i).getB().getSignature(),messageBufs.get(j).getSignature()))
-						{
-							alreadyIs = true;
-						}
-					}
-		
-					if(! alreadyIs)
+					messagesModel.setRowCount( messageBufs.size() );
+					
+					for ( int j = messageBufs.size()-1; j >= 0; j-- )
 					{
-						messageBufs.add(0, new MessageBuf(
-							((MessageTransaction)transactions.get(i).getB()).getData(), 
-							((MessageTransaction)transactions.get(i).getB()).isEncrypted(),
-							((MessageTransaction)transactions.get(i).getB()).getSender().getAddress(),
-							((MessageTransaction)transactions.get(i).getB()).getRecipient().getAddress(),
-							((MessageTransaction)transactions.get(i).getB()).getTimestamp(),
-							((MessageTransaction)transactions.get(i).getB()).getAmount(),
-							((MessageTransaction)transactions.get(i).getB()).getFee(),
-							((MessageTransaction)transactions.get(i).getB()).getSignature(),
-							((MessageTransaction)transactions.get(i).getB()).getCreator().getPublicKey(),
-							((MessageTransaction)transactions.get(i).getB()).getConfirmations(),
-							((MessageTransaction)transactions.get(i).getB()).isText()
-						));
-						
-						added = true;
+						setHeight(j);	
 					}
-				}
-			}
-			
-			if(added)
-			{
-				messagesModel.setRowCount(messageBufs.size());
-			
-				for (int j = 0; j < messageBufs.size(); j++) 
-				{
-					int textHeight = (3+lineCount(messageBufs.get(j).getDecrMessage()))*fontHeight;
-					if(textHeight< 24 + 3*fontHeight)
+					
+					if(messageBufs.get(1).getOpend() && Controller.getInstance().isWalletUnlocked())
 					{
-						textHeight = 24 + 3*fontHeight;
+						CryptoOpenBox( 0, 1 );
 					}
-					this.setRowHeight(j, textHeight);
+					
+					this.repaint();
 				}
-				                
-				if(messageBufs.get(1).getOpend() && Controller.getInstance().isWalletUnlocked())
-				{
-					CryptoOpenBox(0, 1);
-				}
+				
 			}
-			this.repaint();
 		}
 	}
 
+	private void addMessage(int pos, MessageTransaction transaction)
+	{
+		messageBufs.add(pos, new MessageBuf(
+				transaction.getData(), 
+				transaction.isEncrypted(),
+				transaction.getSender().getAddress(),
+				transaction.getRecipient().getAddress(),
+				transaction.getTimestamp(),
+				transaction.getAmount(),
+				transaction.getFee(),
+				transaction.getSignature(),
+				transaction.getCreator().getPublicKey(),
+				transaction.getConfirmations(),
+				transaction.isText()
+		));
+	}
+	
 	public void cryptoCloseAll()
 	{
 		for (int i = 0; i < messageBufs.size(); i++) {
@@ -442,7 +459,6 @@ public class MessagesTableModel extends JTable implements Observer{
 						
 						return;
 					}
-					
 				}
 		
 				Account account = Controller.getInstance().getAccountByAddress(messageBufs.get(row).getSender());	
@@ -500,14 +516,19 @@ public class MessagesTableModel extends JTable implements Observer{
 			}
 	
 		
-			int textHeight = ( 3+lineCount(messageBufs.get(row).getDecrMessage()) )*fontHeight;
-			if( textHeight< 24 + 3*fontHeight )
-			{
-				textHeight = 24 + 3*fontHeight;
-			}
-			this.setRowHeight( row, textHeight );
+			setHeight(row);
 		}	
 	} 
+	
+	private void setHeight(int row)
+	{
+		int textHeight = (3+lineCount(messageBufs.get(row).getDecrMessage()))*fontHeight;
+		if(textHeight< 24 + 3*fontHeight)
+		{
+			textHeight = 24 + 3*fontHeight;
+		}
+		this.setRowHeight(row, textHeight);
+	}
 	
 	
 	private void updateBlock()
@@ -729,7 +750,7 @@ public class MessagesTableModel extends JTable implements Observer{
 				}	
 			}
 			
-			String decrMessage = decryptedMessage; 
+			String decrMessage = getDecrMessage(); 
 			decrMessage = decrMessage.replace( "<" , "&lt;" );
 			decrMessage = decrMessage.replace( ">" , "&gt;" );
 			decrMessage = decrMessage.replace( "\n" , "<br>" );
@@ -737,8 +758,8 @@ public class MessagesTableModel extends JTable implements Observer{
 			return	  "<html>\n"
 					+ "<body width='" + width + "'>\n"
 					+ "<table border='0' cellpadding='3' cellspacing='0'><tr>\n<td bgcolor='" + colorHeader + "' width='" + (width/2-1) + "'>\n"
-					+ "<font size='2' color='" + colorTextHeader + "'>\nFrom: "+sender
-					+ "\n<br>\nTo: "
+					+ "<font size='2' color='" + colorTextHeader + "'>\nFrom:"+sender
+					+ "\n<br>\nTo:"
 					+ recipient+"\n</font></td>\n"
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
 					+ "<font color='" + colorTextHeader + "'>\n" + confirmations + " . "
@@ -802,10 +823,10 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "Sender: " + sender + "\n"
 					+ "Recipient: " + recipient + "\n"
 					+ "Amount: " +  amount.toPlainString() + " Fee: " + fee.toPlainString() + "\n"
-					+ "Type:" + imginout + ". " + imglock + "\n"
+					+ "Type: " + imginout + ". " + imglock + "\n"
 					+ "Confirmations: " + confirmations + "\n"
 					+ "[MESSAGE START]\n"
-					+ decryptedMessage + "\n"
+					+ getDecrMessage() + "\n"
 					+ "[MESSAGE END]\n";
 		}
 	}
