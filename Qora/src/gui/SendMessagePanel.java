@@ -602,6 +602,10 @@ public class SendMessagePanel extends JPanel
 					if(publicKey == null)
 					{
 						JOptionPane.showMessageDialog(new JFrame(), "The recipient has not yet performed any action in the blockchain.\nTo send an encrypted message to him impossible.", "Error", JOptionPane.ERROR_MESSAGE);
+
+						//ENABLE
+						this.sendButton.setEnabled(true);
+						
 						return;
 					}
 					

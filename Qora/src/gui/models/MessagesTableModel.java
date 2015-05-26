@@ -7,7 +7,6 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +35,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.mapdb.Fun.Tuple2;
 
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
@@ -54,7 +54,7 @@ import database.wallet.TransactionMap;
 @SuppressWarnings("serial")
 public class MessagesTableModel extends JTable implements Observer{
 	private ArrayList<MessageBuf> messageBufs;	
-	SortableList<byte[], Transaction> transactions;
+	private SortableList<Tuple2<String, String>, Transaction> transactions;
 	JMenuItem menuDecrypt;
 	private DefaultTableModel messagesModel;
 	int width;
@@ -94,7 +94,7 @@ public class MessagesTableModel extends JTable implements Observer{
 				row = invokerAsJComponent.convertRowIndexToModel(row);
 
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				StringSelection value = new StringSelection(messageBufs.get(row).getDecrMessage());
+				StringSelection value = new StringSelection(messageBufs.get(row).getDecrMessageTXT());
 			    clipboard.setContents(value, null);
 			}
 		});
@@ -106,17 +106,15 @@ public class MessagesTableModel extends JTable implements Observer{
 			public void actionPerformed(ActionEvent e) 
 			{
 				String strvalue = "";
-				strvalue =	"<html>\n"
-							+ "<body width='"+800+"'>\n";
-				
+	
 				for (int i = 0; i < messageBufs.size(); i++) {
-					strvalue += messageBufs.get(i).getDecrMessageHtml(800, false, false, false); 
+					strvalue += messageBufs.get(i).getDecrMessageTXT() +"\n"; 
 				}
-				strvalue +=	"</body></html>\n";
 				
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 				StringSelection value = new StringSelection(strvalue);
 			    clipboard.setContents(value, null);
+		        
 			}
 		});
 		menu.add(copyAllMessages);
@@ -128,7 +126,7 @@ public class MessagesTableModel extends JTable implements Observer{
 			{
 				JMenuItem menuItem = (JMenuItem) e.getSource();
 		        JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent();
-		        Component invoker = popupMenu.getInvoker(); //this is the JMenu (in my code)
+		        Component invoker = popupMenu.getInvoker(); 
 		        MessagesTableModel invokerAsJComponent = (MessagesTableModel) invoker;
 		        
 				int row = invokerAsJComponent.getSelectedRow();
@@ -148,7 +146,7 @@ public class MessagesTableModel extends JTable implements Observer{
 			{
 				JMenuItem menuItem = (JMenuItem) e.getSource();
 		        JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent();
-		        Component invoker = popupMenu.getInvoker(); //this is the JMenu (in my code)
+		        Component invoker = popupMenu.getInvoker(); 
 		        MessagesTableModel invokerAsJComponent = (MessagesTableModel) invoker;
 		        
 				int row = invokerAsJComponent.getSelectedRow();
@@ -169,7 +167,7 @@ public class MessagesTableModel extends JTable implements Observer{
 			{
 				JMenuItem menuItem = (JMenuItem) e.getSource();
 		        JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent();
-		        Component invoker = popupMenu.getInvoker(); //this is the JMenu (in my code)
+		        Component invoker = popupMenu.getInvoker(); 
 		        MessagesTableModel invokerAsJComponent = (MessagesTableModel) invoker;
 		        
 				int row = invokerAsJComponent.getSelectedRow();
@@ -234,6 +232,7 @@ public class MessagesTableModel extends JTable implements Observer{
 
 	}
 
+	
 	@Override
 	public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
 	{
@@ -272,7 +271,7 @@ public class MessagesTableModel extends JTable implements Observer{
 	@Override
 	public Object getValueAt(int row, int column)
 	{
-		return messageBufs.get(row).getDecrMessageHtml(this.getWidth(), (this.getSelectedRow() == row), true, true);
+		return messageBufs.get(row).getDecrMessageHtml(this.getWidth(), (this.getSelectedRow() == row), true);
 	}
 	
 	@Override
@@ -327,7 +326,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		{			
 			if(transactions == null)
 			{
-				transactions = (SortableList<byte[], Transaction>) message.getValue();
+				transactions = (SortableList<Tuple2<String, String>, Transaction>) message.getValue();
 				transactions.registerObserver();
 				transactions.sort(TransactionMap.TIMESTAMP_INDEX, true);
 			}
@@ -335,8 +334,8 @@ public class MessagesTableModel extends JTable implements Observer{
 			boolean alreadyIs = false;
 			boolean added = false; 
 			
-			for (int i = transactions.size()-1; i >= 0; i--) {
-				if(transactions.get(i).getB().getType() == Transaction.MESSAGE_TRANSACTION)
+			for ( int i = transactions.size()-1; i >= 0; i-- ) {
+				if( transactions.get(i).getB().getType() == Transaction.MESSAGE_TRANSACTION )
 				{	
 					alreadyIs = false;
 					
@@ -428,15 +427,15 @@ public class MessagesTableModel extends JTable implements Observer{
 		{
 			if(toOpen != 2 && !messageBufs.get(row).getOpend())
 			{
-				if(!Controller.getInstance().isWalletUnlocked())
+				if( !Controller.getInstance().isWalletUnlocked() )
 				{
 					//ASK FOR PASSWORD
 					String password = PasswordPane.showUnlockWalletDialog(); 
-					if(password.equals(""))
+					if( password.equals("") )
 					{
 						return;
 					}
-					if(!Controller.getInstance().unlockWallet(password))
+					if( !Controller.getInstance().unlockWallet(password) )
 					{
 						//WRONG PASSWORD
 						JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
@@ -451,7 +450,7 @@ public class MessagesTableModel extends JTable implements Observer{
 				byte[] privateKey = null; 
 				byte[] publicKey = null;
 				//IF SENDER ANOTHER
-				if(account == null)
+				if( account == null )
 				{
 		    		PrivateKeyAccount accountRecipient = Controller.getInstance().getPrivateKeyAccountByAddress(messageBufs.get(row).getRecipient());
 					privateKey = accountRecipient.getPrivateKey();		
@@ -464,7 +463,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		    		PrivateKeyAccount accountRecipient = Controller.getInstance().getPrivateKeyAccountByAddress(account.getAddress());
 					privateKey = accountRecipient.getPrivateKey();		
 					
-					if(messageBufs.get(row).getToPublicKey() == null)
+					if( messageBufs.get(row).getToPublicKey() == null )
 					{
 						messageBufs.get(row).setRecipientPublicKey(Controller.getInstance().getPublicKeyFromAddress( messageBufs.get(row).getRecipient()));
 					}
@@ -475,7 +474,7 @@ public class MessagesTableModel extends JTable implements Observer{
 				
 				try {
 					decrypt = AEScrypto.dataDecrypt(messageBufs.get(row).getMessage(), privateKey, publicKey);
-				} catch (InvalidCipherTextException | NullPointerException e1) {
+				} catch ( InvalidCipherTextException | NullPointerException e1 ) {
 					messageBufs.get(row).setDecryptedMessage("Decrypt Error!");
 				} 
 		
@@ -501,12 +500,12 @@ public class MessagesTableModel extends JTable implements Observer{
 			}
 	
 		
-			int textHeight = (3+lineCount(messageBufs.get(row).getDecrMessage()))*fontHeight;
-			if(textHeight< 24 + 3*fontHeight)
+			int textHeight = ( 3+lineCount(messageBufs.get(row).getDecrMessage()) )*fontHeight;
+			if( textHeight< 24 + 3*fontHeight )
 			{
 				textHeight = 24 + 3*fontHeight;
 			}
-			this.setRowHeight(row, textHeight);
+			this.setRowHeight( row, textHeight );
 		}	
 	} 
 	
@@ -517,7 +516,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		{	
 			try
 			{
-				if(DBSet.getInstance().getTransactionMap().contains(messageBufs.get(j).getSignature()))
+				if( DBSet.getInstance().getTransactionMap().contains(messageBufs.get(j).getSignature()) )
 				{
 					messageBufs.get(j).setConfirmations(0);
 				}
@@ -525,20 +524,20 @@ public class MessagesTableModel extends JTable implements Observer{
 				{
 					messageBufs.get(j).setConfirmations(Controller.getInstance().getTransaction(messageBufs.get(j).getSignature()).getConfirmations());
 				}	
-			} catch (Exception e) {
+			} catch ( Exception e ) {
 				messageBufs.get(j).setConfirmations(0);
 			}
 		}
 		this.repaint();
 	}
 	
-	int lineCount(String text) 
+	int lineCount( String text ) 
 	{
 		int lineCount = 1;
 		
 		for(int k = 0; k < text.length(); k++) 
 	    {
-	       if (text.charAt(k)=='\n')
+	       if( text.charAt(k) == '\n' )
 	       {
 	    	   lineCount++;
 	       }
@@ -563,8 +562,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		private byte[] signature;
 		private int confirmations;
 		
-		
-		public MessageBuf(byte[] rawMessage, boolean encrypted, String sender, String recipient, long timestamp, BigDecimal amount, BigDecimal fee, byte[] signature, byte[] senderPublicKey, int confirmations, boolean isText)
+		public MessageBuf( byte[] rawMessage, boolean encrypted, String sender, String recipient, long timestamp, BigDecimal amount, BigDecimal fee, byte[] signature, byte[] senderPublicKey, int confirmations, boolean isText )
 		{
 			this.rawMessage = rawMessage;
 			this.encrypted = encrypted;	
@@ -592,15 +590,15 @@ public class MessagesTableModel extends JTable implements Observer{
 		}
 		public String getDecrMessage()
 		{
-			if(decryptedMessage.equals(""))
+			if( decryptedMessage.equals("") )
 			{
-				if(this.encrypted && !this.opened)
+				if( this.encrypted && !this.opened )
 				{
 					this.decryptedMessage = "Encrypted";
 				}
-				if(!this.encrypted)
+				if( !this.encrypted )
 				{
-					this.decryptedMessage = ( isText ) ? new String(this.rawMessage, Charset.forName("UTF-8")) : Converter.toHex(this.rawMessage);
+					this.decryptedMessage = ( isText ) ? new String( this.rawMessage, Charset.forName("UTF-8") ) : Converter.toHex( this.rawMessage );
 				}
 			}
 			return this.decryptedMessage;
@@ -666,144 +664,151 @@ public class MessagesTableModel extends JTable implements Observer{
 			return isText;
 		}
 		
-		public String getDecrMessageHtml(int width, boolean selected, boolean images, boolean starthtmltag)
+		public String getDecrMessageHtml(int width, boolean selected, boolean images)
 		{
-		Date date = new Date(getTimestamp());
-		DateFormat format = DateFormat.getDateTimeInstance();
-		
-		Account account = Controller.getInstance().getAccountByAddress( getSender());
-		String imginout = "";
-		if(account != null)
-	    {
-			if(images)
-			{
+			Date date = new Date( timestamp );
+			DateFormat format = DateFormat.getDateTimeInstance();
+			
+			Account account = Controller.getInstance().getAccountByAddress( sender );
+			String imginout = "";
+			if(account != null)
+		    {
 				imginout = "<img src='file:images/messages/receive.png'>";
 			}
 			else
 			{
-				imginout = "receive'>";
-			}
-		}
-		else
-		{
-			if(images)
-			{
 				imginout = "<img src='file:images/messages/send.png'>";
-			}
-			else
-			{
-				imginout = "send";
-			}	
-	    }
-		
-		String imglock = "";
-		
-		if(getEncrypted())
-		{	
-			if(getOpend())
-			{
-				if(images)
+		    }
+			
+			String imglock = "";
+			
+			if(encrypted)
+			{	
+				if(opened)
 				{
 					imglock = "<img src='file:images/messages/unlocked.png'>";
 				}
 				else
 				{
-					imglock = "decrypted";
+					imglock = "<img src='file:images/messages/locked.png'>";
 				}
 			}
 			else
-			{	
-				if(images)
-				{
-					imglock = "<img src='file:images/messages/locked.png'>";
-				}
-				else
-				{
-					imglock = "encrypted";
-				}	
-			}
-		}
-		else
-		{
-			if(images)
 			{
 				imglock = "<img src='file:images/messages/unlockedred.png'>";
 			}
+		
+			String confirmations = Integer.toString( this.confirmations );
+			
+			if( this.confirmations < 1 )
+			{
+				confirmations = "<font color=red>" + confirmations +"</font>";
+			}
+			
+			String colorHeader = "F0F0F0";
+			String colorTextHeader = "000000";
+			String colorTextMessage = "000000";
+			String colorTextBackground = "FFFFFF";
+			
+			
+			if( selected )
+			{
+				colorHeader = "C4DAEF";
+				colorTextBackground = "D1E8FF";
+			}
+			
+			if( encrypted )
+			{
+				if( opened )
+				{
+					colorTextMessage = "0000FF";
+				}
+				else
+				{
+					colorTextMessage = "FF0000";
+				}	
+			}
+			
+			String decrMessage = decryptedMessage; 
+			decrMessage = decrMessage.replace( "<" , "&lt;" );
+			decrMessage = decrMessage.replace( ">" , "&gt;" );
+			decrMessage = decrMessage.replace( "\n" , "<br>" );
+		
+			return	  "<html>\n"
+					+ "<body width='" + width + "'>\n"
+					+ "<table border='0' cellpadding='3' cellspacing='0'><tr>\n<td bgcolor='" + colorHeader + "' width='" + (width/2-1) + "'>\n"
+					+ "<font size='2' color='" + colorTextHeader + "'>\nFrom: "+sender
+					+ "\n<br>\nTo: "
+					+ recipient+"\n</font></td>\n"
+					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
+					+ "<font color='" + colorTextHeader + "'>\n" + confirmations + " . "
+					+ format.format(date) + "\n<br>\n"
+					+ "Amount: " +  amount.toPlainString()+" Fee: "
+					+ fee.toPlainString()
+					+ "\n</font></td></tr></table>"
+					+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
+					+ "<td width='" + width + "'>\n"
+					+ "<font color='" + colorTextMessage + "'>\n"
+					+ decrMessage
+					+ "\n</font>"
+					+ "<td width='30'>"+ imglock
+					+ "</td></tr>\n</table>\n"
+					+ "</body></html>\n";
+		}
+		
+		public String getDecrMessageTXT()
+		{
+			Date date = new Date( timestamp );
+			DateFormat format = DateFormat.getDateTimeInstance();
+			
+			Account account = Controller.getInstance().getAccountByAddress( sender );
+			
+			String imginout = "";
+			if( account != null )
+		    {
+				imginout = "Receive";
+			}
 			else
 			{
-				imglock = "unencrypted";
-			}
-		}
-	
-		String confirmations = Integer.toString(getConfirmations());
-		
-		if(getConfirmations()<1)
-		{
-			confirmations = "<font color=red>" + confirmations +"</font>";
-		}
-		
-		String colorHeader = "F0F0F0";
-		String colorTextHeader = "000000";
-		String colorTextMessage = "000000";
-		String colorTextBackground = "FFFFFF";
-		
-		
-		if(selected)
-		{
-			colorHeader = "C4DAEF";
-			colorTextBackground = "D1E8FF";
-		}
-		
-		if(getEncrypted())
-		{
-			if(getOpend())
-			{
-				colorTextMessage = "0000FF";
+				imginout = "Send'>";
+		    }
+			
+			String imglock = "";
+			
+			if( encrypted )
+			{	
+				if( opened )
+				{
+					imglock = "Decrypted";
+				}
+				else
+				{
+					imglock = "Encrypted";
+				}
 			}
 			else
 			{
-				colorTextMessage = "FF0000";
-			}	
-		}
+				imglock = "Unencrypted";
+			}
 		
-		String decrMessage = decryptedMessage; 
-		decrMessage = decrMessage.replace("<","&lt;");
-		decrMessage = decrMessage.replace(">","&gt;");
-		decrMessage = decrMessage.replace("\n","<br>");
-
-		String text = "";
-		
-		if(starthtmltag)
-		{
-			text =		"<html>\n"
-						+ "<body width='"+width+"'>\n";
-		}
-		
-		text +=			 "<table border='0' cellpadding='3' cellspacing='0'><tr>\n<td bgcolor='"+colorHeader+"' width='"+width/2+"'>\n"
-						+ "<font size='2' color='"+colorTextHeader+"'>\nFrom:"+sender
-						+ "\n<br>\nTo:"
-						+ recipient+"\n</font></td>\n"
-						+ "<td bgcolor='"+colorHeader+"' align='right' width='"+width/2+"'>\n"
-						+ "<font color='"+colorTextHeader+"'>\n"+ confirmations + " . "
-						+ format.format(date)+"\n<br>\n"
-						+ "Amount: " +  amount.toPlainString()+" Fee: "
-						+ getFee().toPlainString()
-						+ "\n</font></td></tr></table>"
-						+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
-						+ "<td width='"+width+"'>\n"
-						+ "<font color='"+colorTextMessage+"'>\n"
-						+ decrMessage
-						+ "\n</font>"
-						+ "<td width='30'>"+imglock
-						+ "</td></tr>\n</table>\n";
-		if(starthtmltag)
-		{
-			text +=		"</body></html>\n";
-		}
-		
-		return text;
+			String confirmations = Integer.toString( this.confirmations );
+			
+			if( this.confirmations < 1 )
+			{
+				confirmations = confirmations + " !";
+			}
+			
+			return 	  "Date: " + format.format(date) + "\n"
+					+ "Sender: " + sender + "\n"
+					+ "Recipient: " + recipient + "\n"
+					+ "Amount: " +  amount.toPlainString() + " Fee: " + fee.toPlainString() + "\n"
+					+ "Type:" + imginout + ". " + imglock + "\n"
+					+ "Confirmations: " + confirmations + "\n"
+					+ "[MESSAGE START]\n"
+					+ decryptedMessage + "\n"
+					+ "[MESSAGE END]\n";
 		}
 	}
-		
+
 }
 
