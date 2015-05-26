@@ -56,7 +56,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxGuiEnabled.gridy = 0;
         add(chckbxGuiEnabled, gbc_chckbxGuiEnabled);
         
-        JLabel lblGUIExplanatoryText = new JLabel("If this option is disabled then the control wallet is possible only through RPC.");
+        JLabel lblGUIExplanatoryText = new JLabel("Enable/Disable the Graphical User Interface.");
         lblGUIExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblGUIExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblExplanatoryText = new GridBagConstraints();
@@ -98,7 +98,7 @@ public class SettingsParametersPanel extends JPanel
         add(txtRpcPort, gbc_txtRpcPort);
         txtRpcPort.setColumns(10);
         
-        JLabel lblRPCExplanatoryText = new JLabel("The ability to manage the wallet via the API commands.");
+        JLabel lblRPCExplanatoryText = new JLabel("RPC: Allows APi calls through the given port");
         lblRPCExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblRPCExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblAnExplanatoryText_1 = new GridBagConstraints();
@@ -162,13 +162,13 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxKeyCaching.gridy = 6;
         add(chckbxKeyCaching, gbc_chckbxKeyCaching);
         
-        JLabel lblKeyCachingExplanatoryText = new JLabel("Allows forging even when your wallet is locked.");
+        JLabel lblKeyCachingExplanatoryText = new JLabel("Allows forging even when your wallet is locked. You need to unlock it once.");
         lblKeyCachingExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblKeyCachingExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblAnExplanatoryText_3 = new GridBagConstraints();
         gbc_lblAnExplanatoryText_3.fill = GridBagConstraints.BOTH;
         gbc_lblAnExplanatoryText_3.insets = new Insets(0, 0, 5, 5);
-        gbc_lblAnExplanatoryText_3.gridwidth = 4;
+        gbc_lblAnExplanatoryText_3.gridwidth = 5;
         gbc_lblAnExplanatoryText_3.gridx = 1;
         gbc_lblAnExplanatoryText_3.gridy = 7;
         add(lblKeyCachingExplanatoryText, gbc_lblAnExplanatoryText_3);
