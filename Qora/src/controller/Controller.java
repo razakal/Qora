@@ -56,7 +56,7 @@ import database.SortableList;
 
 public class Controller extends Observable {
 
-	private String version = "0.21.0 beta";
+	private String version = "0.21.0";
 
 	public static final int STATUS_NO_CONNECTIONS = 0;
 	public static final int STATUS_SYNCHRONIZING = 1;
