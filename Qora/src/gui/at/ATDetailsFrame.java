@@ -32,7 +32,7 @@ public class ATDetailsFrame extends JFrame {
 		this.setLayout(new GridBagLayout());
 
 		//PADDING
-		((JComponent) this.getContentPane()).setBorder(new EmptyBorder(5, 5, 5, 5));
+		((JComponent) this.getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		//LABEL GBC
 		GridBagConstraints labelGBC = new GridBagConstraints();
