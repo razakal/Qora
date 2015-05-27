@@ -101,7 +101,7 @@ public class SettingsParametersPanel extends JPanel
         add(txtRpcPort, gbc_txtRpcPort);
         txtRpcPort.setColumns(10);
         
-        JLabel lblRPCExplanatoryText = new JLabel("RPC: Allows APi calls through the given port");
+        JLabel lblRPCExplanatoryText = new JLabel("Enable/Disable API calls using the given port.");
         lblRPCExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblRPCExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblAnExplanatoryText_1 = new GridBagConstraints();
@@ -143,7 +143,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_txtWebport.gridy = 4;
         add(txtWebport, gbc_txtWebport);
         
-        JLabel lblWEBExplanatoryText = new JLabel("Enables your decentralized web server. On tab Access permission more params.");
+        JLabel lblWEBExplanatoryText = new JLabel("Enables your decentralized web server. Use \"Access permission\" tab for additional options.");
         lblWEBExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblWEBExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblAnExplanatoryText_2 = new GridBagConstraints();
@@ -215,7 +215,7 @@ public class SettingsParametersPanel extends JPanel
         });
         add(btnBrowseDataFolder, gbc_btnBrowseDataFolder);
         
-        JLabel lblWelletDir = new JLabel("Wellet dir:");
+        JLabel lblWelletDir = new JLabel("Wallet dir:");
         GridBagConstraints gbc_lblWelletDir = new GridBagConstraints();
         gbc_lblWelletDir.anchor = GridBagConstraints.WEST;
         gbc_lblWelletDir.insets = new Insets(0, 0, 5, 5);
@@ -256,7 +256,7 @@ public class SettingsParametersPanel extends JPanel
         
         add(btnBrowseWallet, gbc_BrowseWalletbutton);
         
-        JLabel lblAnExplanatoryText_4 = new JLabel("Folders that store data blockchain and wallet.");
+        JLabel lblAnExplanatoryText_4 = new JLabel("The data folder contains blockchain data. The wallet dir contains user specific data.");
         lblAnExplanatoryText_4.setVerticalAlignment(SwingConstants.TOP);
         GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
         gbc_lblNewLabel_1.fill = GridBagConstraints.BOTH;
@@ -306,7 +306,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_textMaxConnections.gridy = 11;
         add(textMaxConnections, gbc_textMaxConnections);
         
-        JLabel lbllimitConnections = new JLabel("You can change the amount of simultaneous connections of the server.");
+        JLabel lbllimitConnections = new JLabel("Allows you to change the amount of simultaneous connections to the server.");
         lbllimitConnections.setVerticalAlignment(SwingConstants.TOP);
         GridBagConstraints gbc_lbllimitConnections = new GridBagConstraints();
         gbc_lbllimitConnections.fill = GridBagConstraints.BOTH;
@@ -338,7 +338,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxSoundReceivePayment.gridy = 14;
         add(chckbxSoundReceivePayment, gbc_chckbxSoundReceivePayment);
         
-        chckbxSoundReceiveMessage = new JCheckBox("Rereceive message");
+        chckbxSoundReceiveMessage = new JCheckBox("Receive message");
         chckbxSoundReceiveMessage.setHorizontalAlignment(SwingConstants.LEFT);
         chckbxSoundReceiveMessage.setSelected(Settings.getInstance().isSoundReceiveMessageEnabled());
         GridBagConstraints gbc_chckbxSoundReceiveMessage = new GridBagConstraints();

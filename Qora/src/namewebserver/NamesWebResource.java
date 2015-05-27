@@ -26,7 +26,7 @@ public class NamesWebResource
 	{
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity("<html><head><title>Qora web-server</title>" //		
+				.entity("<html><head><title>Qora web server</title>" //		
 				+"<script type='text/javascript'>" //
 				+ "function key(event) {return ('which' in event) ? event.which : event.keyCode;}" //
 				+ "function goto() {" //
@@ -38,7 +38,7 @@ public class NamesWebResource
 				+ "</head>" //
 				+ "<body>" //
 				+ getWarning(request)
-				+ "<center><h1 style='font-family: Verdana;'>Qora web-server</h1>" //
+				+ "<center><h1 style='font-family: Verdana;'>Qora web server</h1>" //
 				+ "<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAABGdBTUEAAL" //
 				+ "GPC/xhBQAAAAFzUkdCAK7OHOkAAACoUExURQAAAJOT7Zub7bSz7piW5UM/wLW08K+u6qGg6ain70ZCwTo2vWJ" //
 				+ "l/3t9/4WC1lJPxUM/wD46vm1r0zo2vXBtz4iF12dq/05KxD46vmJl/zo2vVNQxXR3/2JfylRRxnJ0/2pnzUpG" //

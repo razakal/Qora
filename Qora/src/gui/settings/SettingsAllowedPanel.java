@@ -77,7 +77,7 @@ public class SettingsAllowedPanel extends JPanel
  		
  		menu.add(deleteaddressmenu);
         
-        JLabel lblWebWhiteList = new JLabel("WEB server white list. The addresses are allowed to access to node.");
+        JLabel lblWebWhiteList = new JLabel("WEB server white list. The addresses are allowed to access the node.");
         lblWebWhiteList.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblWebWhiteList = new GridBagConstraints();
         gbc_lblWebWhiteList.anchor = GridBagConstraints.WEST;
@@ -176,7 +176,7 @@ public class SettingsAllowedPanel extends JPanel
         });	    
         add(btnAddAddressWeb, gbc_btnAddAddressWeb);
     
-        JLabel lblRpcWhiteList = new JLabel("RPC server white list. The addresses are allowed to access to node.");
+        JLabel lblRpcWhiteList = new JLabel("RPC server white list. The addresses are allowed to access the node.");
         GridBagConstraints gbc_lblRpcWhiteList = new GridBagConstraints();
         gbc_lblRpcWhiteList.anchor = GridBagConstraints.WEST;
         gbc_lblRpcWhiteList.gridwidth = 2;

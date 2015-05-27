@@ -57,7 +57,7 @@ public class Menu extends JMenuBar
         fileMenu.add(settingsItem);        
 
         //WEB SERVER
-        webServerItem = new JMenuItem("Decentralized Web-server");
+        webServerItem = new JMenuItem("Decentralized Web server");
         webServerItem.getAccessibleContext().setAccessibleDescription("http://127.0.0.1:"+Settings.getInstance().getWebPort());
         webServerItem.addActionListener(new ActionListener()
         {
