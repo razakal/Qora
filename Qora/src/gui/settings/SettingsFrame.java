@@ -337,21 +337,21 @@ public class SettingsFrame extends JFrame{
 		if(changeDataDir || changeWallet)
 		{
 			JOptionPane.showMessageDialog(
-				new JFrame(), "You changed WalletDir or DataDir. To apply the settings to restart yourself the wallet.",
+				new JFrame(), "You changed WalletDir or DataDir. You need to restart the wallet for the changes to take effect.",
                 "Attention!",
                 JOptionPane.WARNING_MESSAGE);
 		}
 		if(changeKeyCaching)
 		{
 			JOptionPane.showMessageDialog(
-				new JFrame(), "You changed Generator Key Caching option. To apply the settings to restart yourself the wallet.",
+				new JFrame(), "You changed Generator Key Caching option.You need to restart the wallet for the changes to take effect.",
                 "Attention!",
                 JOptionPane.WARNING_MESSAGE);
 		}
 		if(limitConnections)
 		{
 			JOptionPane.showMessageDialog(
-				new JFrame(), "You changed max connections or min connections. To apply the settings to restart yourself the wallet.",
+				new JFrame(), "You changed max connections or min connections. You need to restart the wallet for the changes to take effect.",
                 "Attention!",
                 JOptionPane.WARNING_MESSAGE);
 		}
