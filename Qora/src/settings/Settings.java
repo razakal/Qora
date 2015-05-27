@@ -140,7 +140,7 @@ public class Settings {
 		return settingsJSON;
 	}
 	
-	public String GetCurrentSettingsPath()
+	public String getCurrentSettingsPath()
 	{
 		return currentSettingsPath;
 	}

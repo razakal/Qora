@@ -306,7 +306,7 @@ public class SettingsFrame extends JFrame{
 	        Writer writer = new JSonWriter();
 	        settingsJSONbuf.writeJSONString(writer);
 				
-			FileWriter file = new FileWriter(Settings.getInstance().GetCurrentSettingsPath());
+			FileWriter file = new FileWriter(Settings.getInstance().getCurrentSettingsPath());
 			file.write(writer.toString());
 			file.flush();
 			file.close();
@@ -314,7 +314,7 @@ public class SettingsFrame extends JFrame{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(
-					new JFrame(), "Error writing to the file: " + Settings.getInstance().GetCurrentSettingsPath()
+					new JFrame(), "Error writing to the file: " + Settings.getInstance().getCurrentSettingsPath()
 							+ "\nProbably there is no access.",
 	                "Error!",
 	                JOptionPane.ERROR_MESSAGE);
