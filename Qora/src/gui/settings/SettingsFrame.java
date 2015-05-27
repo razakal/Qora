@@ -178,6 +178,21 @@ public class SettingsFrame extends JFrame{
 			changeKeyCaching = true;
 		}
 		
+		if(Settings.getInstance().isSoundNewTransactionEnabled() != settingsTabPane.settingsParametersPanel.chckbxSoundNewTransaction.isSelected())
+		{
+			settingsJSONbuf.put("soundnewtransaction", settingsTabPane.settingsParametersPanel.chckbxSoundNewTransaction.isSelected());
+		}
+		
+		if(Settings.getInstance().isSoundReceiveMessageEnabled() != settingsTabPane.settingsParametersPanel.chckbxSoundReceiveMessage.isSelected())
+		{
+			settingsJSONbuf.put("soundreceivemessage", settingsTabPane.settingsParametersPanel.chckbxSoundReceiveMessage.isSelected());
+		}
+
+		if(Settings.getInstance().isSoundReceivePaymentEnabled() != settingsTabPane.settingsParametersPanel.chckbxSoundReceivePayment.isSelected())
+		{
+			settingsJSONbuf.put("soundreceivepayment", settingsTabPane.settingsParametersPanel.chckbxSoundReceivePayment.isSelected());
+		}
+
 		if(Settings.getInstance().isGuiEnabled() != settingsTabPane.settingsParametersPanel.chckbxGuiEnabled.isSelected())
 		{
 			settingsJSONbuf.put("guienabled", settingsTabPane.settingsParametersPanel.chckbxGuiEnabled.isSelected());

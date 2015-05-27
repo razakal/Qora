@@ -28,6 +28,9 @@ public class SettingsParametersPanel extends JPanel
 	public JCheckBox chckbxKeyCaching;
 	public JCheckBox chckbxRpcEnabled;
 	public JCheckBox chckbxWebEnabled;
+	public JCheckBox chckbxSoundNewTransaction; 
+	public JCheckBox chckbxSoundReceiveMessage;
+	public JCheckBox chckbxSoundReceivePayment;
 	public JTextField textMinConnections;
 	public JTextField textMaxConnections;
 
@@ -312,7 +315,51 @@ public class SettingsParametersPanel extends JPanel
         gbc_lbllimitConnections.gridx = 1;
         gbc_lbllimitConnections.gridy = 12;
         add(lbllimitConnections, gbc_lbllimitConnections);
+     
+        
+        JLabel lblSounds = new JLabel("Sounds:");
+        lblSounds.setVerticalAlignment(SwingConstants.TOP);
+        GridBagConstraints gbc_lblSounds = new GridBagConstraints();
+        gbc_lblSounds.fill = GridBagConstraints.BOTH;
+        gbc_lblSounds.gridwidth = 4;
+        gbc_lblSounds.insets = new Insets(0, 0, 0, 5);
+        gbc_lblSounds.gridx = 1;
+        gbc_lblSounds.gridy = 13;
+        add(lblSounds, gbc_lblSounds);
          
+        chckbxSoundReceivePayment = new JCheckBox("Receive payment");
+        chckbxSoundReceivePayment.setHorizontalAlignment(SwingConstants.LEFT);
+        chckbxSoundReceivePayment.setSelected(Settings.getInstance().isSoundReceivePaymentEnabled());
+        GridBagConstraints gbc_chckbxSoundReceivePayment = new GridBagConstraints();
+        gbc_chckbxSoundReceivePayment.fill = GridBagConstraints.BOTH;
+        gbc_chckbxSoundReceivePayment.insets = new Insets(0, 0, 5, 5);
+        gbc_chckbxSoundReceivePayment.gridwidth = 1;
+        gbc_chckbxSoundReceivePayment.gridx = 1;
+        gbc_chckbxSoundReceivePayment.gridy = 14;
+        add(chckbxSoundReceivePayment, gbc_chckbxSoundReceivePayment);
+        
+        chckbxSoundReceiveMessage = new JCheckBox("Rereceive message");
+        chckbxSoundReceiveMessage.setHorizontalAlignment(SwingConstants.LEFT);
+        chckbxSoundReceiveMessage.setSelected(Settings.getInstance().isSoundReceiveMessageEnabled());
+        GridBagConstraints gbc_chckbxSoundReceiveMessage = new GridBagConstraints();
+        gbc_chckbxSoundReceiveMessage.fill = GridBagConstraints.BOTH;
+        gbc_chckbxSoundReceiveMessage.insets = new Insets(0, 0, 5, 5);
+        gbc_chckbxSoundReceiveMessage.gridwidth = 1;
+        gbc_chckbxSoundReceiveMessage.gridx = 2;
+        gbc_chckbxSoundReceiveMessage.gridy = 14;
+        add(chckbxSoundReceiveMessage, gbc_chckbxSoundReceiveMessage);
+
+        chckbxSoundNewTransaction = new JCheckBox("Other transactions");
+        chckbxSoundNewTransaction.setHorizontalAlignment(SwingConstants.LEFT);
+        chckbxSoundNewTransaction.setSelected(Settings.getInstance().isSoundNewTransactionEnabled());
+        GridBagConstraints gbc_chckbxSoundNewTransaction = new GridBagConstraints();
+        gbc_chckbxSoundNewTransaction.fill = GridBagConstraints.BOTH;
+        gbc_chckbxSoundNewTransaction.insets = new Insets(0, 0, 5, 5);
+        gbc_chckbxSoundNewTransaction.gridwidth = 2;
+        gbc_chckbxSoundNewTransaction.gridx = 3;
+        gbc_chckbxSoundNewTransaction.gridy = 14;
+        add(chckbxSoundNewTransaction, gbc_chckbxSoundNewTransaction);
+
 	}
 	public void close() 
 	{

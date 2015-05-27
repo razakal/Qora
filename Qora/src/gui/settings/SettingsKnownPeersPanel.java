@@ -46,7 +46,7 @@ public class SettingsKnownPeersPanel extends JPanel
 
         GridBagConstraints gbc_knownPeersTable = new GridBagConstraints();
         gbc_knownPeersTable.fill = GridBagConstraints.BOTH;
-        gbc_knownPeersTable.gridwidth = 4;
+        gbc_knownPeersTable.gridwidth = 5;
         gbc_knownPeersTable.anchor = GridBagConstraints.SOUTHWEST;
         gbc_knownPeersTable.insets = new Insets(0, 0, 5, 0);
         gbc_knownPeersTable.gridx = 0;
