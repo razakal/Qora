@@ -35,6 +35,7 @@ import qora.assets.Asset;
 import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.Block;
+import qora.crypto.Base58;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -50,13 +51,12 @@ import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import api.ApiService;
 import at.AT;
 import namewebserver.WebService;
-
-import com.google.common.io.Files;
-
 import database.DBSet;
 import database.SortableList;
 
 public class Controller extends Observable {
+
+	private String version = "0.21.0";
 
 	public static final int STATUS_NO_CONNECTIONS = 0;
 	public static final int STATUS_SYNCHRONIZING = 1;
@@ -75,6 +75,11 @@ public class Controller extends Observable {
 	private Map<Peer, Integer> peerHeight;
 	
 	private static Controller instance;
+	
+	public String getVersion()
+	{
+		return version;
+	}
 	
 	public Map<Peer, Integer> getPeerHeights()
 	{
@@ -96,7 +101,8 @@ public class Controller extends Observable {
 		return this.status;
 	}
 	
-	public void start(boolean disableRpc, boolean disableWeb) throws Exception
+	
+	public void start() throws Exception
 	{
 		//CHECK NETWORK PORT AVAILABLE
 		if(!Network.isPortAvailable(Network.PORT))
@@ -105,20 +111,20 @@ public class Controller extends Observable {
 		}
 		
 		//CHECK RPC PORT AVAILABLE
-		if(!disableRpc)
+		if(Settings.getInstance().isRpcEnabled())
         {
         	if(!Network.isPortAvailable(Settings.getInstance().getRpcPort()))
-    		{
-    			throw new Exception("Rpc port " + Settings.getInstance().getRpcPort() + " already in use!");
-    		}
+        	{
+        		throw new Exception("Rpc port " + Settings.getInstance().getRpcPort() + " already in use!");
+        	}
         }
 		
 		//CHECK WEB PORT AVAILABLE
-		if(!disableWeb)
+		if(Settings.getInstance().isWebEnabled())
         {
         	if(!Network.isPortAvailable(Settings.getInstance().getWebPort()))
     		{
-    			throw new Exception("Web port " + Settings.getInstance().getWebPort() + " already in use!");
+        		System.out.println("Web port " + Settings.getInstance().getWebPort() + " already in use!");
     		}
         }
 		
@@ -161,14 +167,14 @@ public class Controller extends Observable {
         this.blockChain = new BlockChain();
          
         //START API SERVICE
-        if(!disableRpc)
+        if(Settings.getInstance().isRpcEnabled())
         {
         	this.rpcService = new ApiService();
         	this.rpcService.start();
         }
         
         //START WEB SERVICE
-        if(!disableWeb)
+        if(Settings.getInstance().isWebEnabled())
         {
         	this.webService = new WebService();
         	this.webService.start();
@@ -199,6 +205,30 @@ public class Controller extends Observable {
       	this.addObserver(DBSet.getInstance().getTransactionMap());
       	this.addObserver(DBSet.getInstance());
     }
+	
+	public void rpcServiceRestart()
+	{
+		this.rpcService.stop();
+		
+        //START API SERVICE
+        if(Settings.getInstance().isRpcEnabled())
+        {		
+        	this.rpcService = new ApiService();
+        	this.rpcService.start();
+        }		
+	}
+	
+	public void webServiceRestart()
+	{
+		this.webService.stop();
+		
+        //START API SERVICE
+        if(Settings.getInstance().isWebEnabled())
+        {		
+        	this.webService = new WebService();
+        	this.webService.start();
+        }		
+	}
 	
 	@Override
 	public void addObserver(Observer o) 
@@ -629,7 +659,7 @@ public class Controller extends Observable {
 		return highestPeer;
 	}
 	
-	private int getMaxPeerHeight()
+	public int getMaxPeerHeight()
 	{
 		int height = 0;
 		
@@ -1137,5 +1167,45 @@ public class Controller extends Observable {
 			return this.transactionCreator.createMessage(sender, recipient, amount, fee, message, isText, encryptMessage);
 		}
 		
+	}
+	
+	public Block getBlockByHeight(int parseInt) {
+        return DBSet.getInstance().getBlockMap().getBlockByHeight(parseInt);
+    }
+	
+	public byte[] getPublicKeyFromAddress(String address)
+	{
+		//CHECK ACCOUNT IN WALLET
+		Account account = Controller.getInstance().getAccountByAddress(address);	
+		if(account != null)
+		{
+			if(Controller.getInstance().isWalletUnlocked())
+			{
+				return Controller.getInstance().getPrivateKeyAccountByAddress(address).getPublicKey();
+			}
+		}
+		
+		//WE ARE LOOKING IN ITS OWN TRANSACTIONS
+		for(Pair<Account, Transaction> transactions: Controller.getInstance().getLastTransactions(100))
+		{
+			if(transactions.getB().getCreator().getAddress().equals(address))
+			{
+				return transactions.getB().getCreator().getPublicKey();
+			}	
+		}
+		
+		// FOR FOREIGN ADDRESSES, SLOW SEARCH THROUGHOUT THE BLOCKCHAIN
+		Block block = Controller.getInstance().getLastBlock();
+		do {
+			for (Transaction transaction : block.getTransactions()) {
+				if(transaction.getCreator().getAddress().equals(address))
+				{
+					return transaction.getCreator().getPublicKey();
+				}
+			}
+			block = block.getParent();
+		} while (block.getHeight()>1);
+		
+		return null;
 	}
 }

@@ -16,6 +16,7 @@ import java.nio.charset.Charset;
 import org.json.simple.JSONObject;
 
 import qora.crypto.Base58;
+import utils.Converter;
 
 
 public class AT_Transaction{
@@ -153,7 +154,7 @@ public class AT_Transaction{
 		ob.put("sender", getSender());
 		ob.put("recipient", getRecipient());
 		ob.put("amount", BigDecimal.valueOf( amount , 8).toPlainString());
-		ob.put("message", ( message != null ) ? new String(message,Charset.forName("UTF-8")) : "");
+		ob.put("message", ( message != null ) ? Converter.toHex(message) : "");
 		return ob;
 	}
 	

@@ -646,6 +646,7 @@ public class Wallet extends Observable implements Observer
 		return this.secureDatabase.getSeed();
 	}
 	
+
 	//OBSERVER
 	
 	@Override

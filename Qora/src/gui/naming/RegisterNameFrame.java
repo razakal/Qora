@@ -17,12 +17,22 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import com.google.common.io.BaseEncoding;
 
 import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
+import qora.crypto.Crypto;
+import qora.naming.NameSale;
 import qora.transaction.Transaction;
+import utils.GZIP;
+import utils.MenuPopupUtil;
+import utils.NameUtils;
 import utils.Pair;
+import utils.NameUtils.NameResult;
 
 @SuppressWarnings("serial")
 public class RegisterNameFrame extends JFrame
@@ -31,8 +41,11 @@ public class RegisterNameFrame extends JFrame
 	private JTextField txtFee;
 	private JTextField txtName;
 	private JTextArea txtareaValue;
+	private JLabel countLabel;
 	private JButton registerButton;
-
+	private JButton CompressButton;
+	private JTextField txtRecDetails;
+	
 	public RegisterNameFrame()
 	{
 		super("Qora - Register Name");
@@ -107,31 +120,97 @@ public class RegisterNameFrame extends JFrame
       	this.txtName = new JTextField();
         this.add(this.txtName, txtGBC);
         
+        txtName.getDocument().addDocumentListener(new DocumentListener() {
+            
+ 			@Override
+ 			public void changedUpdate(DocumentEvent arg0) {
+ 				// TODO Auto-generated method stub
+ 			}
+ 			@Override
+ 			public void insertUpdate(DocumentEvent arg0) {
+ 				// TODO Auto-generated method stub
+ 				refreshReceiverDetails();
+ 			}
+ 			@Override
+ 			public void removeUpdate(DocumentEvent arg0) {
+ 				// TODO Auto-generated method stub
+ 				refreshReceiverDetails();
+ 			}
+         });
+         
+        
+        //LABEL RECEIVER DETAILS 
+       	labelGBC.gridy = 2;
+       	JLabel recDetailsLabel = new JLabel("Name details:");
+       	this.add(recDetailsLabel, labelGBC);
+       		
+       	//NAME DETAILS 
+       	txtGBC.gridy = 2;
+       	txtRecDetails = new JTextField();
+       	txtRecDetails.setEditable(false);
+        this.add(txtRecDetails, txtGBC);
+         
+         
         //LABEL NAME
-      	labelGBC.gridy = 2;
+      	labelGBC.gridy = 3;
       	JLabel valueLabel = new JLabel("Value:");
       	this.add(valueLabel, labelGBC);
       		
       	//TXTAREA NAME
-      	txtGBC.gridy = 2;
+      	txtGBC.gridy = 3;
       	this.txtareaValue = new JTextArea();
-      	this.txtareaValue.setRows(4);
+      	
+      	this.txtareaValue.getDocument().addDocumentListener(new DocumentListener() {
+            
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
+			}
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
+			}
+        });
+      	
+      	this.txtareaValue.setRows(20);
+      	this.txtareaValue.setColumns(63);
       	this.txtareaValue.setBorder(this.txtName.getBorder());
-      	this.add(this.txtareaValue, txtGBC);
-        
-        //LABEL FEE
-      	labelGBC.gridy = 3;
+
+      	JScrollPane Valuescroll = new JScrollPane(this.txtareaValue);
+      	Valuescroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.add(Valuescroll, txtGBC);
+      			
+      		
+      	//LABEL COUNT
+		labelGBC.gridy = 4;
+		labelGBC.gridx = 1;
+		labelGBC.fill = GridBagConstraints.BOTH;   
+		labelGBC.anchor = GridBagConstraints.CENTER;
+		
+		countLabel = new JLabel("Character count: 0/4000");
+		this.add(countLabel, labelGBC);
+
+		//LABEL FEE
+      	labelGBC.gridy = 5;
+      	labelGBC.gridx = 0;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
-      		
+      	
       	//TXT FEE
-      	txtGBC.gridy = 3;
+      	txtGBC.gridy = 5;
       	this.txtFee = new JTextField();
       	this.txtFee.setText("1");
         this.add(this.txtFee, txtGBC);
 		           
         //BUTTON Register
-        buttonGBC.gridy = 4;
+        buttonGBC.gridy = 6;
         registerButton = new JButton("Register");
         registerButton.setPreferredSize(new Dimension(80, 25));
         registerButton.addActionListener(new ActionListener()
@@ -143,13 +222,64 @@ public class RegisterNameFrame extends JFrame
 		});
     	this.add(registerButton, buttonGBC);
         
+    	//BUTTON COMPRESS
+        buttonGBC.gridy = 4;
+        buttonGBC.gridx = 2;
+        buttonGBC.fill = GridBagConstraints.EAST;
+        buttonGBC.anchor = GridBagConstraints.EAST;
+        
+        CompressButton = new JButton("Compress/Decompress");
+        CompressButton.setPreferredSize(new Dimension(150, 25));
+        CompressButton.addActionListener(new ActionListener()
+        {
+		    public void actionPerformed(ActionEvent e)
+		    {
+		    	txtareaValue.setText(GZIP.autoDecompress(txtareaValue.getText()));
+		    }
+		});
+    	this.add(CompressButton, buttonGBC);
+    	
         //PACK
 		this.pack();
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+        
+      	//CONTEXT MENU
+      	MenuPopupUtil.installContextMenu(this.txtName);
+      	MenuPopupUtil.installContextMenu(this.txtareaValue);
+      	MenuPopupUtil.installContextMenu(this.txtRecDetails);
+      	MenuPopupUtil.installContextMenu(this.txtFee);
 	}
 	
+	private void refreshReceiverDetails()
+	{
+		String nameCheck = txtName.getText().toLowerCase();
+		
+		if(nameCheck.isEmpty())
+		{
+			txtRecDetails.setText("");
+			return;
+		}
+		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
+		{
+			txtRecDetails.setText("Status must be OK to show receiver details.");
+			return;
+		}
+		Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(nameCheck);
+		if(nameToAdress.getB() == NameResult.OK)
+		{
+			txtRecDetails.setText("Already registered by someone.");
+		}
+		else if(nameToAdress.getB() == NameResult.NAME_FOR_SALE)
+		{
+			txtRecDetails.setText("Already registered. Sale: " + Controller.getInstance().getNameSale(nameCheck).getAmount());
+		}else if(nameToAdress.getB() == NameResult.NAME_NOT_REGISTERED)
+		{
+			txtRecDetails.setText("The name is free, you can register it!");
+		}
+	}
+
 	public void onRegisterClick()
 	{
 		//DISABLE
@@ -234,12 +364,12 @@ public class RegisterNameFrame extends JFrame
 				
 			case Transaction.INVALID_NAME_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Name must be between 1 and 100 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Name must be between 1 and 400 characters!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_VALUE_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Value must be between 1 and 1000 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Value must be between 1 and 4000 characters!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.NAME_ALREADY_REGISTRED:

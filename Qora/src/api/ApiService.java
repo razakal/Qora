@@ -34,7 +34,8 @@ public class ApiService {
         s.add(ArbitraryTransactionsResource.class);
         s.add(NamePaymentResource.class);
 		s.add(ATResource.class);
-        ResourceConfig config = new ResourceConfig(s);
+		s.add(VersionResource.class);
+		ResourceConfig config = new ResourceConfig(s);
 		
         //CREATE CONTAINER
         ServletContainer container = new ServletContainer(config);

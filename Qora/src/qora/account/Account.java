@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.mapdb.Fun.Tuple2;
-import org.mapdb.Fun.Tuple4;
 
 import at.AT_Transaction;
 import controller.Controller;

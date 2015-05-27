@@ -19,6 +19,7 @@ import javax.swing.JTable;
 import database.BlockMap;
 import database.TransactionMap;
 import qora.transaction.Transaction;
+import settings.Settings;
 
 public class DebugTabPane extends JTabbedPane{
 
@@ -35,8 +36,11 @@ public class DebugTabPane extends JTabbedPane{
 		super();
 		
 		//ADD TABS
-        this.addTab("Console", new ConsolePanel());
-		
+        if(Settings.getInstance().isGuiConsoleEnabled())
+        {
+        	this.addTab("Console", new ConsolePanel());
+        }
+        
         this.peersTableModel = new PeersTableModel();
 		this.addTab("Peers", new JScrollPane(Gui.createSortableTable(this.peersTableModel, 0)));
         

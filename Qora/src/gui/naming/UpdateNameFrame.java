@@ -19,12 +19,18 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import com.google.common.io.BaseEncoding;
 
 import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import utils.GZIP;
+import utils.MenuPopupUtil;
 import utils.Pair;
 
 @SuppressWarnings("serial")
@@ -35,6 +41,9 @@ public class UpdateNameFrame extends JFrame
 	private JTextArea txtareaValue;	
 	private JTextField txtFee;
 	private JButton updateButton;
+	private JButton CompressButton;
+	private JButton DeCompressButton;
+	private JLabel countLabel;
 	
 	public UpdateNameFrame(Name name)
 	{
@@ -78,7 +87,7 @@ public class UpdateNameFrame extends JFrame
 		txtGBC.insets = new Insets(5,5,5,5);
 		txtGBC.fill = GridBagConstraints.HORIZONTAL;  
 		txtGBC.anchor = GridBagConstraints.NORTHWEST;
-		txtGBC.weightx = 1;	
+		txtGBC.weightx = 1;
 		txtGBC.gridwidth = 2;
 		txtGBC.gridx = 1;		
 		
@@ -132,24 +141,53 @@ public class UpdateNameFrame extends JFrame
       	//TXTAREA VALUE
       	txtGBC.gridy = 3;
       	this.txtareaValue = new JTextArea();
-      	this.txtareaValue.setRows(4);
-      	this.txtareaValue.setColumns(40);
+      	this.txtareaValue.getDocument().addDocumentListener(new DocumentListener() {
+            
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
+			}
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
+			}
+        });
+      	this.txtareaValue.setRows(20);
+      	this.txtareaValue.setColumns(63);
       	this.txtareaValue.setBorder(cbxName.getBorder());
-      	this.add(this.txtareaValue, txtGBC);
+
+      	JScrollPane Valuescroll = new JScrollPane(this.txtareaValue);
+      	Valuescroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      	Valuescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.add(Valuescroll, txtGBC);
         
-        //LABEL FEE
-      	labelGBC.gridy = 4;
+      	//LABEL COUNT
+		labelGBC.gridy = 4;
+		//labelGBC.gridwidth = ;
+		labelGBC.gridx = 1;
+		countLabel = new JLabel("Character count: 0/4000");
+		this.add(countLabel, labelGBC);
+
+      	//LABEL FEE
+		labelGBC.gridx = 0;
+		labelGBC.gridy = 5;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
       		
       	//TXT FEE
-      	txtGBC.gridy = 4;
+      	txtGBC.gridy = 5;
       	txtFee = new JTextField();
       	this.txtFee.setText("1");
         this.add(txtFee, txtGBC);
 		           
         //BUTTON Register
-        buttonGBC.gridy = 5;
+        buttonGBC.gridy = 6;
         updateButton = new JButton("Update");
         updateButton.setPreferredSize(new Dimension(80, 25));
         updateButton.addActionListener(new ActionListener()
@@ -160,7 +198,25 @@ public class UpdateNameFrame extends JFrame
 		    }
 		});
     	this.add(updateButton, buttonGBC);
+             
+    	//BUTTON COMPRESS
+        buttonGBC.gridy = 4;
+        buttonGBC.gridx = 1;
+        buttonGBC.fill = GridBagConstraints.EAST;
+        buttonGBC.anchor = GridBagConstraints.EAST;
         
+        CompressButton = new JButton("Compress/Decompress");
+        CompressButton.setPreferredSize(new Dimension(150, 25));
+    
+        CompressButton.addActionListener(new ActionListener()
+	    {
+			public void actionPerformed(ActionEvent e)
+			{
+		    	txtareaValue.setText(GZIP.autoDecompress(txtareaValue.getText()));
+		    }
+		});
+    	this.add(CompressButton, buttonGBC);
+
     	//SET DEFAULT SELECTED ITEM
     	if(this.cbxName.getItemCount() > 0)
     	{
@@ -174,6 +230,11 @@ public class UpdateNameFrame extends JFrame
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+        
+      	//CONTEXT MENU
+      	MenuPopupUtil.installContextMenu(txtOwner);
+      	MenuPopupUtil.installContextMenu(txtareaValue);
+      	MenuPopupUtil.installContextMenu(txtFee);
 	}
 	
 	public void onUpdateClick()
@@ -254,12 +315,12 @@ public class UpdateNameFrame extends JFrame
 				
 			case Transaction.INVALID_NAME_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Name must be between 1 and 100 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Name must be between 1 and 400 characters!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_VALUE_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Value must be between 1 and 1000 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Value must be between 1 and 4000 characters!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.NAME_DOES_NOT_EXIST:

@@ -50,7 +50,8 @@ public class ApiErrorFactory
 	
 	//TRANSACTIONS
 	public static final int ERROR_TRANSACTION_NO_EXISTS = 311;
-	
+	public static final int ERROR_PUBLIC_KEY_NOT_FOUND = 304;	
+		
 	//NAMING
 	public static final int ERROR_NAME_NO_EXISTS = 401;
 	public static final int ERROR_NAME_ALREADY_EXISTS = 402;
@@ -136,6 +137,7 @@ public class ApiErrorFactory
 		
 		//TRANSACTIONS
 		this.errorMessages.put(ERROR_TRANSACTION_NO_EXISTS, "transactions does not exist");
+		this.errorMessages.put(ERROR_PUBLIC_KEY_NOT_FOUND, "public key not found");
 		
 		//NAMING
 		this.errorMessages.put(ERROR_NAME_NO_EXISTS, "name does not exist");

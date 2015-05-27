@@ -2,8 +2,9 @@ package gui;
 
 import gui.models.AccountsComboBoxModel;
 import gui.models.AssetsComboBoxModel;
+import gui.models.MessagesTableModel;
 
-import java.awt.Checkbox;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -15,17 +16,31 @@ import java.nio.charset.Charset;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import qora.account.Account;
+import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
+import qora.crypto.AEScrypto;
+
+import qora.crypto.Crypto;
 import qora.transaction.Transaction;
+
 import utils.Converter;
+import utils.MenuPopupUtil;
+import utils.NameUtils;
 import utils.Pair;
+import utils.NameUtils.NameResult;
 import controller.Controller;
 
 @SuppressWarnings("serial")
+
 public class SendMessagePanel extends JPanel 
 {
+	//private final MessagesTableModel messagesTableModel;
+    private final JTable table;
+    
 	private JComboBox<Account> cbxFrom;
 	private JTextField txtTo;
 	private JTextField txtAmount;
@@ -36,71 +51,33 @@ public class SendMessagePanel extends JPanel
 	private JButton sendButton;
 	private AccountsComboBoxModel accountsModel;
 	private JComboBox<Asset> cbxFavorites;
+	private JTextField txtRecDetails;
 	
 	public SendMessagePanel()
 	{
-		this.setLayout(new GridBagLayout());
+		
+		
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 112, 140, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
+		this.setLayout(gridBagLayout);
 		
 		//PADDING
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
-		//LABEL GBC
-		GridBagConstraints labelGBC = new GridBagConstraints();
-		labelGBC.insets = new Insets(5,5,5,5);
-		labelGBC.fill = GridBagConstraints.HORIZONTAL;   
-		labelGBC.anchor = GridBagConstraints.NORTHWEST;
-		labelGBC.weightx = 0;	
-		labelGBC.gridx = 0;
-		
-		//COMBOBOX GBC
-		GridBagConstraints cbxGBC = new GridBagConstraints();
-		cbxGBC.insets = new Insets(5,5,5,5);
-		cbxGBC.fill = GridBagConstraints.NONE;  
-		cbxGBC.anchor = GridBagConstraints.NORTHWEST;
-		cbxGBC.weightx = 0;	
-		cbxGBC.gridx = 1;	
-		
-		//TEXTFIELD GBC
-		GridBagConstraints txtGBC = new GridBagConstraints();
-		txtGBC.insets = new Insets(5,5,5,5);
-		txtGBC.fill = GridBagConstraints.HORIZONTAL;  
-		txtGBC.anchor = GridBagConstraints.NORTHWEST;
-		txtGBC.weightx = 1;	
-		txtGBC.gridwidth = 4;
-		txtGBC.gridx = 1;	
-		
-		//FAVORITES GBC
+		//ASSET FAVORITES
 		GridBagConstraints favoritesGBC = new GridBagConstraints();
-		favoritesGBC.insets = new Insets(5, 5, 5, 5);
+		favoritesGBC.insets = new Insets(5, 5, 5, 0);
 		favoritesGBC.fill = GridBagConstraints.BOTH;  
 		favoritesGBC.anchor = GridBagConstraints.NORTHWEST;
 		favoritesGBC.weightx = 1;
-		favoritesGBC.gridwidth = 4;
+		favoritesGBC.gridwidth = 5;
 		favoritesGBC.gridx = 0;	
 		favoritesGBC.gridy = 0;	
 		
-		//ASSET FAVORITES
 		cbxFavorites = new JComboBox<Asset>(new AssetsComboBoxModel());
 		this.add(cbxFavorites, favoritesGBC);
-		
-		//BUTTON GBC
-		GridBagConstraints buttonGBC = new GridBagConstraints();
-		buttonGBC.insets = new Insets(5,5,5,5);
-		buttonGBC.fill = GridBagConstraints.NONE;  
-		buttonGBC.anchor = GridBagConstraints.NORTHWEST;
-		buttonGBC.gridwidth = 2;
-		buttonGBC.gridx = 0;		
-		
-		//LABEL FROM
-		labelGBC.gridy = 1;
-		JLabel fromLabel = new JLabel("From:");
-		this.add(fromLabel, labelGBC);
-		
-		//COMBOBOX FROM
-		txtGBC.gridy = 1;
 		this.accountsModel = new AccountsComboBoxModel();
-		this.cbxFrom = new JComboBox<Account>(accountsModel);
-        this.add(this.cbxFrom, txtGBC);
         
 		//ON FAVORITES CHANGE
 		cbxFavorites.addActionListener (new ActionListener () {
@@ -123,79 +100,214 @@ public class SendMessagePanel extends JPanel
 		    }
 		});
         
-        //LABEL TO
-      	labelGBC.gridy = 2;
-      	JLabel toLabel = new JLabel("To:");
-      	this.add(toLabel, labelGBC);
-      		
+		//LABEL FROM
+		GridBagConstraints labelFromGBC = new GridBagConstraints();
+		labelFromGBC.insets = new Insets(5, 5, 5, 5);
+		labelFromGBC.fill = GridBagConstraints.HORIZONTAL;   
+		labelFromGBC.anchor = GridBagConstraints.NORTHWEST;
+		labelFromGBC.weightx = 0;	
+		labelFromGBC.gridx = 0;
+		labelFromGBC.gridy = 1;
+		JLabel fromLabel = new JLabel("From:");
+		this.add(fromLabel, labelFromGBC);
+		//fontHeight = fromLabel.getFontMetrics(fromLabel.getFont()).getHeight();
+		
+		//COMBOBOX FROM
+		GridBagConstraints cbxFromGBC = new GridBagConstraints();
+		cbxFromGBC.gridwidth = 4;
+		cbxFromGBC.insets = new Insets(5, 5, 5, 0);
+		cbxFromGBC.fill = GridBagConstraints.HORIZONTAL;   
+		cbxFromGBC.anchor = GridBagConstraints.NORTHWEST;
+		cbxFromGBC.weightx = 0;	
+		cbxFromGBC.gridx = 1;
+		cbxFromGBC.gridy = 1;
+		
+		this.cbxFrom = new JComboBox<Account>(accountsModel);
+		this.add(this.cbxFrom, cbxFromGBC);
+		
+		//LABEL TO
+		GridBagConstraints labelToGBC = new GridBagConstraints();
+		labelToGBC.gridy = 2;
+		labelToGBC.insets = new Insets(5,5,5,5);
+		labelToGBC.fill = GridBagConstraints.HORIZONTAL;   
+		labelToGBC.anchor = GridBagConstraints.NORTHWEST;
+		labelToGBC.weightx = 0;	
+		labelToGBC.gridx = 0;
+		JLabel toLabel = new JLabel("To:");
+		this.add(toLabel, labelToGBC);
+      	
       	//TXT TO
-      	txtGBC.gridy = 2;
-      	txtTo = new JTextField();
-        this.add(txtTo, txtGBC);
+		GridBagConstraints txtToGBC = new GridBagConstraints();
+		txtToGBC.gridwidth = 4;
+		txtToGBC.insets = new Insets(5, 5, 5, 0);
+		txtToGBC.fill = GridBagConstraints.HORIZONTAL;   
+		txtToGBC.anchor = GridBagConstraints.NORTHWEST;
+		txtToGBC.weightx = 0;	
+		txtToGBC.gridx = 1;
+		txtToGBC.gridy = 2;
+
+		txtTo = new JTextField();
+		this.add(txtTo, txtToGBC);
+		
+		        txtTo.getDocument().addDocumentListener(new DocumentListener() {
+		            
+					@Override
+					public void changedUpdate(DocumentEvent arg0) {
+						// TODO Auto-generated method stub
+					}
+					@Override
+					public void insertUpdate(DocumentEvent arg0) {
+						// TODO Auto-generated method stub
+						refreshReceiverDetails();
+					}
+					@Override
+					public void removeUpdate(DocumentEvent arg0) {
+						// TODO Auto-generated method stub
+						refreshReceiverDetails();
+					}
+		        });
+		        
+      	
+		//LABEL RECEIVER
+		GridBagConstraints labelDetailsGBC = new GridBagConstraints();
+		labelDetailsGBC.gridy = 3;
+		labelDetailsGBC.insets = new Insets(5,5,5,5);
+		labelDetailsGBC.fill = GridBagConstraints.HORIZONTAL;   
+		labelDetailsGBC.anchor = GridBagConstraints.NORTHWEST;
+		labelDetailsGBC.weightx = 0;	
+		labelDetailsGBC.gridx = 0;
+      	JLabel recDetailsLabel = new JLabel("Receiver details:");
+      	this.add(recDetailsLabel, labelDetailsGBC);
         
-        //LABEL MESSAGE
-        labelGBC.gridy = 3;
-        JLabel messageLabel = new JLabel("Message:");
-        this.add(messageLabel, labelGBC);
-        
+      	//RECEIVER DETAILS 
+		GridBagConstraints txtReceiverGBC = new GridBagConstraints();
+		txtReceiverGBC.gridwidth = 4;
+		txtReceiverGBC.insets = new Insets(5, 5, 5, 0);
+		txtReceiverGBC.fill = GridBagConstraints.HORIZONTAL;   
+		txtReceiverGBC.anchor = GridBagConstraints.NORTHWEST;
+		txtReceiverGBC.weightx = 0;	
+		txtReceiverGBC.gridx = 1;
+      	txtReceiverGBC.gridy = 3;
+
+      	txtRecDetails = new JTextField();
+      	txtRecDetails.setEditable(false);
+      	this.add(txtRecDetails, txtReceiverGBC);
+      	
+      	//LABEL MESSAGE
+      	GridBagConstraints labelMessageGBC = new GridBagConstraints();
+      	labelMessageGBC.insets = new Insets(5,5,5,5);
+      	labelMessageGBC.fill = GridBagConstraints.HORIZONTAL;   
+      	labelMessageGBC.anchor = GridBagConstraints.NORTHWEST;
+      	labelMessageGBC.weightx = 0;	
+      	labelMessageGBC.gridx = 0;
+      	labelMessageGBC.gridy = 4;
+      	
+      	JLabel messageLabel = new JLabel("Message:");
+      	this.add(messageLabel, labelMessageGBC);
+      	
         //TXT MESSAGE
-        txtGBC.gridy = 3;
-        txtMessage = new JTextArea();
+		GridBagConstraints txtMessageGBC = new GridBagConstraints();
+		txtMessageGBC.gridwidth = 4;
+		txtMessageGBC.insets = new Insets(5, 5, 5, 0);
+		txtMessageGBC.fill = GridBagConstraints.HORIZONTAL;   
+		txtMessageGBC.anchor = GridBagConstraints.NORTHWEST;
+		txtMessageGBC.weightx = 0;	
+		txtMessageGBC.gridx = 1;
+        txtMessageGBC.gridy = 4;
+        
+        this.txtMessage = new JTextArea();
         this.txtMessage.setRows(4);
       	this.txtMessage.setBorder(this.txtTo.getBorder());
-      	
-        this.add(txtMessage, txtGBC);
-        
-      	//LABEL ISTEXT 
-      	labelGBC.gridy = 4;
-      	JLabel isTextLabel = new JLabel("Text Message:");
-      	this.add(isTextLabel, labelGBC);
-      	
+        this.add(txtMessage, txtMessageGBC);
+
+		//LABEL ISTEXT
+		GridBagConstraints labelIsTextGBC = new GridBagConstraints();
+		labelIsTextGBC.gridy = 5;
+		labelIsTextGBC.insets = new Insets(5,5,5,5);
+		labelIsTextGBC.fill = GridBagConstraints.HORIZONTAL;   
+		labelIsTextGBC.anchor = GridBagConstraints.NORTHWEST;
+		labelIsTextGBC.weightx = 0;	
+		labelIsTextGBC.gridx = 0;     
+
+		final JLabel isTextLabel = new JLabel("Text Message:");
+      	isTextLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+      	this.add(isTextLabel, labelIsTextGBC);
+     	
         //TEXT ISTEXT
-        txtGBC.gridy = 4;
-        isText = new JCheckBox();
+		GridBagConstraints isChkTextGBC = new GridBagConstraints();
+		isChkTextGBC.insets = new Insets(5,5,5,5);
+		isChkTextGBC.fill = GridBagConstraints.HORIZONTAL;   
+		isChkTextGBC.anchor = GridBagConstraints.NORTHWEST;
+		isChkTextGBC.weightx = 0;	
+		isChkTextGBC.gridx = 1;
+		isChkTextGBC.gridy = 5;
+        
+		isText = new JCheckBox();
         isText.setSelected(true);
-        this.add(isText, txtGBC);
-        
-        //LABEL AMOUNT
-      	labelGBC.gridy = 6;
-      	JLabel amountLabel = new JLabel("Amount:");
-      	this.add(amountLabel, labelGBC);
-      		
-      	//TXT AMOUNT
-      	txtGBC.gridy = 6;
-      	txtAmount = new JTextField("0.00000000");
-        this.add(txtAmount, txtGBC);
-        
-        //LABEL FEE
-      	labelGBC.gridy = 7;
-      	JLabel feeLabel = new JLabel("Fee:");
-      	this.add(feeLabel, labelGBC);
-      		
-      	//TXT FEE
-      	txtGBC.gridy = 7;
-      	txtFee = new JTextField();
-      	txtFee.setText("1.00000000");
-        this.add(txtFee, txtGBC);
+        this.add(isText, isChkTextGBC);
 
         //LABEL ENCRYPTED
-      	labelGBC.gridy = 8;
-      	labelGBC.gridwidth = 2;
-      	JLabel encLabel = new JLabel("Encrypt Message (Not yet available):");
-      	this.add(encLabel, labelGBC);
-      	
+		GridBagConstraints labelEncGBC = new GridBagConstraints();
+		labelEncGBC.insets = new Insets(5,5,5,5);
+		labelEncGBC.fill = GridBagConstraints.HORIZONTAL;   
+		labelEncGBC.anchor = GridBagConstraints.NORTHWEST;
+		labelEncGBC.weightx = 0;	
+		labelEncGBC.gridx = 4;
+		labelEncGBC.gridx = 2;
+		labelEncGBC.gridy = 5;
+		
+		JLabel encLabel = new JLabel("Encrypt Message:");
+		encLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		this.add(encLabel, labelEncGBC);
+		
         //ENCRYPTED CHECKBOX
-        txtGBC.gridy = 8;
-        txtGBC.gridx = 3;
-        encrypted = new JCheckBox();
-        encrypted.setEnabled(false);
-        encrypted.setSelected(false);
-        this.add(encrypted, txtGBC);
+		GridBagConstraints ChkEncGBC = new GridBagConstraints();
+		ChkEncGBC.insets = new Insets(5,5,5,5);
+		ChkEncGBC.fill = GridBagConstraints.HORIZONTAL;   
+		ChkEncGBC.anchor = GridBagConstraints.NORTHWEST;
+		ChkEncGBC.weightx = 0;	
+		ChkEncGBC.gridx = 3;
+		ChkEncGBC.gridy = 5;
+		
+		encrypted = new JCheckBox();
+		encrypted.setSelected(true);
+		this.add(encrypted, ChkEncGBC);
+		
+    	//LABEL AMOUNT
+		GridBagConstraints amountlabelGBC = new GridBagConstraints();
+		amountlabelGBC.insets = new Insets(5,5,5,5);
+		amountlabelGBC.fill = GridBagConstraints.HORIZONTAL;   
+		amountlabelGBC.anchor = GridBagConstraints.NORTHWEST;
+		amountlabelGBC.weightx = 0;	
+		amountlabelGBC.gridx = 0;
+		amountlabelGBC.gridy = 6;
+		
+		final JLabel amountLabel = new JLabel("Amount:");
+		amountLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		this.add(amountLabel, amountlabelGBC);
         
-        
+      	//TXT AMOUNT
+		GridBagConstraints txtAmountGBC = new GridBagConstraints();
+		txtAmountGBC.insets = new Insets(5,5,5,5);
+		txtAmountGBC.fill = GridBagConstraints.HORIZONTAL;   
+		txtAmountGBC.anchor = GridBagConstraints.NORTHWEST;
+		txtAmountGBC.weightx = 0;	
+		txtAmountGBC.gridx = 1;
+		txtAmountGBC.gridy = 6;
+		
+		txtAmount = new JTextField("1.00000000");
+		txtAmount.setPreferredSize(new Dimension(130,22));
+		this.add(txtAmount, txtAmountGBC);
+		
         //BUTTON SEND
-        buttonGBC.gridy = 9;
-        sendButton = new JButton("Send");
+        GridBagConstraints buttonGBC = new GridBagConstraints();
+		buttonGBC.insets = new Insets(5,5,5,5);
+		buttonGBC.fill = GridBagConstraints.BOTH;  
+		buttonGBC.anchor = GridBagConstraints.PAGE_START;
+		buttonGBC.gridx = 0;
+		buttonGBC.gridy = 11;
+        
+		sendButton = new JButton("Send");
         sendButton.setPreferredSize(new Dimension(80, 25));
     	sendButton.addActionListener(new ActionListener()
 		{
@@ -205,11 +317,142 @@ public class SendMessagePanel extends JPanel
 		    }
 		});	
 		this.add(sendButton, buttonGBC);
-        
+		
+    	//LABEL GBC
+		GridBagConstraints feelabelGBC = new GridBagConstraints();
+		feelabelGBC.anchor = GridBagConstraints.EAST;
+		feelabelGBC.gridy = 6;
+		feelabelGBC.insets = new Insets(5,5,5,5);
+		feelabelGBC.fill = GridBagConstraints.BOTH;
+		feelabelGBC.weightx = 0;	
+		feelabelGBC.gridx = 2;
+		final JLabel feeLabel = new JLabel("Fee:");
+		feeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		feeLabel.setVerticalAlignment(SwingConstants.TOP);
+		this.add(feeLabel, feelabelGBC);
+		
+		//FEE TXT
+		GridBagConstraints feetxtGBC = new GridBagConstraints();
+		feetxtGBC.fill = GridBagConstraints.BOTH;
+		feetxtGBC.insets = new Insets(5, 5, 5, 5);
+		feetxtGBC.anchor = GridBagConstraints.NORTH;
+		feetxtGBC.gridx = 3;	
+		feetxtGBC.gridy = 6;
+
+		txtFee = new JTextField();
+		txtFee.setText("1.00000000");
+		txtFee.setPreferredSize(new Dimension(130,22));
+		this.add(txtFee, feetxtGBC);
+		
+		//BUTTON DECRYPTALL
+		GridBagConstraints decryptAllGBC = new GridBagConstraints();
+		decryptAllGBC.insets = new Insets(5,5,5,5);
+		decryptAllGBC.fill = GridBagConstraints.HORIZONTAL;  
+		decryptAllGBC.anchor = GridBagConstraints.NORTHWEST;
+		decryptAllGBC.gridwidth = 1;
+		decryptAllGBC.gridx = 3;
+		decryptAllGBC.gridy = 11;
+		JButton decryptButton = new JButton("Decrypt All");
+    	this.add(decryptButton, decryptAllGBC);
+		
+		//MESSAGES HISTORY TABLE
+
+    	table = new MessagesTableModel();
+    	
+    	table.setTableHeader(null);
+    	table.setSelectionBackground(new Color(209, 232, 255, 255));
+    	table.setEditingColumn(0);
+    	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    	JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(new Dimension(100, 100));
+        scrollPane.setWheelScrollingEnabled(true);
+
+        //BOTTOM GBC
+		GridBagConstraints messagesGBC = new GridBagConstraints();
+		messagesGBC.insets = new Insets(5,5,5,5);
+		messagesGBC.fill = GridBagConstraints.BOTH;   
+		messagesGBC.anchor = GridBagConstraints.NORTHWEST;
+		messagesGBC.weightx = 0;	
+		messagesGBC.gridx = 0;
+		
         //ADD BOTTOM SO IT PUSHES TO TOP
-        labelGBC.gridy = 8;
-        labelGBC.weighty = 1;
-      	this.add(new JPanel(), labelGBC);
+		messagesGBC.gridy = 13;
+		messagesGBC.weighty = 4;
+		messagesGBC.gridwidth = 5;
+		
+        add(scrollPane, messagesGBC);
+ 
+		//BUTTON DECRYPTALL
+    	decryptButton.addActionListener(new ActionListener()
+    	{
+		    public void actionPerformed(ActionEvent e)
+		    {
+		    	((MessagesTableModel) table).CryptoOpenBoxAll();
+		    }
+		});	
+
+        //CONTEXT MENU
+		MenuPopupUtil.installContextMenu(txtTo);
+		MenuPopupUtil.installContextMenu(txtFee);
+		MenuPopupUtil.installContextMenu(txtAmount);
+        MenuPopupUtil.installContextMenu(txtMessage);
+      	MenuPopupUtil.installContextMenu(txtRecDetails);
+	}
+
+	private void refreshReceiverDetails()
+	{
+		String toValue = txtTo.getText();
+		
+		if(toValue.isEmpty())
+		{
+			txtRecDetails.setText("");
+			return;
+		}
+		
+		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
+		{
+			txtRecDetails.setText("Status must be OK to show receiver details.");
+			return;
+		}
+		
+		Account account = null;
+		
+		//CHECK IF RECIPIENT IS VALID ADDRESS
+		if(!Crypto.getInstance().isValidAddress(toValue))
+		{
+			Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(toValue);
+					
+			if(nameToAdress.getB() == NameResult.OK)
+			{
+				account = nameToAdress.getA();
+				txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+			}
+			else
+			{
+				txtRecDetails.setText(nameToAdress.getB().getShortStatusMessage());
+			}
+		}else
+		{
+			account = new Account(toValue);
+			
+			txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+			
+			if(account.getBalance(1).toPlainString().equals("0.00000000"))
+			{
+				txtRecDetails.setText(txtRecDetails.getText()+ " - Warning!");
+			}
+		}
+		
+		if(account!=null && account.getAddress().startsWith("A"))
+		{
+			encrypted.setEnabled(false);
+			encrypted.setSelected(false);
+			isText.setSelected(false);
+		}
+		else
+		{
+			encrypted.setEnabled(true);
+		}
 	}
 	
 	public void onSendClick()
@@ -235,6 +478,11 @@ public class SendMessagePanel extends JPanel
 		{
 			//ASK FOR PASSWORD
 			String password = PasswordPane.showUnlockWalletDialog(); 
+			if(password.equals(""))
+			{
+				this.sendButton.setEnabled(true);
+				return;
+			}
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
@@ -250,9 +498,35 @@ public class SendMessagePanel extends JPanel
 		//READ SENDER
 		Account sender = (Account) cbxFrom.getSelectedItem();
 		
+		
 		//READ RECIPIENT
 		String recipientAddress = txtTo.getText();
-		Account recipient = new Account(recipientAddress);
+		
+		Account recipient;
+		
+		//ORDINARY RECIPIENT
+		if(Crypto.getInstance().isValidAddress(recipientAddress))
+		{
+			recipient = new Account(recipientAddress);
+		//NAME RECIPIENT
+		}else
+		{
+			Pair<Account, NameResult> result = NameUtils.nameToAdress(recipientAddress);
+			
+			if(result.getB() == NameResult.OK)
+			{
+				recipient = result.getA();
+			}
+			else		
+			{
+				JOptionPane.showMessageDialog(null, result.getB().getShortStatusMessage() , "Error", JOptionPane.ERROR_MESSAGE);
+		
+				//ENABLE
+				this.sendButton.setEnabled(true);
+			
+				return;
+			}
+		}
 		
 		int parsing = 0;
 		try
@@ -316,11 +590,34 @@ public class SendMessagePanel extends JPanel
 		
 			byte[] encrypted = (encryptMessage)?new byte[]{1}:new byte[]{0};
 			byte[] isTextByte = (isTextB)? new byte[] {1}:new byte[]{0};
+			
 			//CHECK IF PAYMENT OR ASSET TRANSFER
 			Asset asset = (Asset) this.cbxFavorites.getSelectedItem();
 			Pair<Transaction, Integer> result;
 			if(asset.getKey() == 0l)
 			{
+
+				if(encryptMessage)
+				{
+					//sender
+					PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress().toString());
+					byte[] privateKey = account.getPrivateKey();		
+
+					//recipient
+					byte[] publicKey = Controller.getInstance().getPublicKeyFromAddress(recipient.getAddress());
+					if(publicKey == null)
+					{
+						JOptionPane.showMessageDialog(new JFrame(), "The recipient has not yet performed any action in the blockchain.\nTo send an encrypted message to him impossible.", "Error", JOptionPane.ERROR_MESSAGE);
+
+						//ENABLE
+						this.sendButton.setEnabled(true);
+						
+						return;
+					}
+					
+					messageBytes = AEScrypto.dataEncrypt(messageBytes, privateKey, publicKey);
+				}
+				
 				//CREATE PAYMENT
 				result = Controller.getInstance().sendMessage(Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress()), recipient, amount, fee, messageBytes, isTextByte, encrypted);
 			}
@@ -339,11 +636,23 @@ public class SendMessagePanel extends JPanel
 			case Transaction.VALIDATE_OKE:
 				
 				//RESET FIELDS
-				this.txtAmount.setText("");
-				this.txtTo.setText("");
+				
+				if(amount.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+				{
+					this.txtAmount.setText("0.00000000");
+				}
+				
+				if(this.txtTo.getText().startsWith("A"))
+				{
+					this.txtTo.setText("");
+				}
+				
 				this.txtMessage.setText("");
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Payment has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				if(this.txtTo.getText().startsWith("A"))
+				{
+					JOptionPane.showMessageDialog(new JFrame(), "Message with payment has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				}
 				break;	
 			
 			case Transaction.INVALID_ADDRESS:
@@ -393,4 +702,7 @@ public class SendMessagePanel extends JPanel
 		//ENABLE
 		this.sendButton.setEnabled(true);
 	}
+	
 }
+
+

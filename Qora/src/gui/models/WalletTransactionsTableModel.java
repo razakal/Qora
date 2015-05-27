@@ -11,9 +11,13 @@ import controller.Controller;
 import database.SortableList;
 import database.wallet.TransactionMap;
 import qora.account.Account;
+import qora.transaction.MessageTransaction;
+import qora.transaction.PaymentTransaction;
 import qora.transaction.Transaction;
+import settings.Settings;
 import utils.ObserverMessage;
 import utils.Pair;
+import utils.PlaySound;
 
 @SuppressWarnings("serial")
 public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, String>, Transaction> implements Observer {
@@ -27,7 +31,7 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 	private SortableList<Tuple2<String, String>, Transaction> transactions;
 	
 	private String[] columnNames = {"Confirmations", "Timestamp", "Type", "Address", "Amount"};
-	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction", "Asset Issue", "Asset Transfer", "Order Creation", "Cancel Order", "Multi Payment","Deploy AT","Message Transaction"};
+	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction", "Asset Issue", "Asset Transfer", "Order Creation", "Cancel Order", "Multi Payment", "Deploy AT", "Message Transaction"};
 
 	public WalletTransactionsTableModel()
 	{
@@ -144,5 +148,53 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 		{
 			this.fireTableDataChanged();
 		}	
+		
+		if(Controller.getInstance().getStatus() == Controller.STATUS_OKE && message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
+		{		
+			if(((Transaction) message.getValue()).getParent() == null)
+			{
+				if(((Transaction) message.getValue()).getType() == Transaction.PAYMENT_TRANSACTION)
+				{
+					Account account = Controller.getInstance().getAccountByAddress(((PaymentTransaction) message.getValue()).getRecipient().getAddress());	
+					if(account != null)
+					{
+						if(Settings.getInstance().isSoundReceivePaymentEnabled())
+						{
+							PlaySound.playSound("receivepayment.wav");
+						}
+					}
+					else if(Settings.getInstance().isSoundNewTransactionEnabled())
+					{
+						PlaySound.playSound("newtransaction.wav");
+					}
+				}
+				else if(((Transaction) message.getValue()).getType() == Transaction.MESSAGE_TRANSACTION)
+				{
+					Account account = Controller.getInstance().getAccountByAddress(((MessageTransaction) message.getValue()).getRecipient().getAddress());	
+					if(account != null)
+					{
+						if(Settings.getInstance().isSoundReceiveMessageEnabled())
+						{
+							PlaySound.playSound("receivemessage.wav");
+						}
+					}
+					else if(Settings.getInstance().isSoundNewTransactionEnabled())
+					{
+						PlaySound.playSound("newtransaction.wav");
+					}
+				}
+				else if(Settings.getInstance().isSoundNewTransactionEnabled())
+				{
+					PlaySound.playSound("newtransaction.wav");
+				}
+			}
+		}	
+
+		
+		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE
+				|| message.getType() == ObserverMessage.LIST_BLOCK_TYPE)
+		{
+			this.fireTableDataChanged();
+		}
 	}
 }

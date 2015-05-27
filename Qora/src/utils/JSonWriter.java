@@ -15,29 +15,28 @@ public class JSonWriter extends StringWriter {
 
     @Override
     public void write(int c) {
-	if (((char)c) == '[' || ((char)c) == '{') {
-	    super.write(c);
-	    super.write('\n');
-	    indent++;
-	    writeIndentation();
-	} else if (((char)c) == ',') {
-	    super.write(c);
-	    super.write('\n');
-	    writeIndentation();
-	} else if (((char)c) == ']' || ((char)c) == '}') {
-	    super.write('\n');
-	    indent--;
-	    writeIndentation();
-	    super.write(c);
-	} else {
-	    super.write(c);
-	}
-
+		if (((char)c) == '[' || ((char)c) == '{') {
+		    super.write(c);
+		    super.write("\r\n");
+		    indent++;
+		    writeIndentation();
+		} else if (((char)c) == ',') {
+		    super.write(c);
+		    super.write("\r\n");
+		    writeIndentation();
+		} else if (((char)c) == ']' || ((char)c) == '}') {
+		    super.write("\r\n");
+		    indent--;
+		    writeIndentation();
+		    super.write(c);
+		} else {
+		    super.write(c);
+		}
     }
 
     private void writeIndentation() {
-	for (int i = 0; i < indent; i++) {
-	    super.write("   ");
-	}
+		for (int i = 0; i < indent; i++) {
+		    super.write("   ");
+		}
     }
 }

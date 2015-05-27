@@ -35,7 +35,9 @@ import at.AT;
 import qora.account.Account;
 import qora.crypto.Base58;
 import utils.BigDecimalStringComparator;
+import utils.MenuPopupUtil;
 import utils.StringComparator;
+import utils.TableMenuPopupUtil;
 
 
 @SuppressWarnings("serial")
@@ -140,6 +142,9 @@ public class ATPanel extends JPanel
 				atsTableModel.fireTableDataChanged();
 			}
 		});
+		
+		//CONTEXT MENU
+      	MenuPopupUtil.installContextMenu(txtSearch);
 
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
@@ -161,7 +166,8 @@ public class ATPanel extends JPanel
 		});
 		menu.add(copyAddress);
 
-		atsTable.setComponentPopupMenu(menu);
+		TableMenuPopupUtil.installContextMenu(atsTable, menu);  // SELECT ROW ON WHICH CLICKED RIGHT BUTTON
+		
 		atsTable.addMouseListener(new MouseAdapter() 
 		{
 			@Override

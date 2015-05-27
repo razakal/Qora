@@ -12,6 +12,7 @@ import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 import org.mapdb.Fun.Tuple2Comparator;
 
+import com.google.common.collect.Lists;
 import com.google.common.primitives.UnsignedBytes;
 
 import qora.block.Block;
@@ -158,4 +159,9 @@ public class BlockMap extends DBMap<byte[], Block>
 	{
 		this.delete(block.getSignature());
 	}
+	
+	public Block getBlockByHeight(int height)
+    {
+        return this.map.get( Lists.newArrayList(this.getIterator(HEIGHT_INDEX, false) ).get( height -1 ));
+    }
 }

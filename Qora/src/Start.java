@@ -7,33 +7,16 @@ import javax.swing.UIManager;
 
 import api.ApiClient;
 import controller.Controller;
+import settings.Settings;
 
 public class Start {
 
 	public static void main(String args[])
 	{	
 		boolean cli = false;
-		boolean disableGui = false;
-		boolean disableRpc = false;
-		boolean disableWeb = false;
 		
 		for(String arg: args)
 		{
-			if(arg.startsWith("-disablerpc"))
-			{
-				disableRpc = true;
-			}
-			
-			if(arg.equals("-disableweb"))
-			{
-				disableWeb = true;
-			}
-			
-			if(arg.equals("-disablegui"))
-			{
-				disableGui = true;
-			}
-			
 			if(arg.equals("-cli"))
 			{
 				cli = true;
@@ -45,15 +28,15 @@ public class Start {
 			try
 			{
 				//ONE MUST BE ENABLED
-				if(disableGui && disableRpc)
+				if(!Settings.getInstance().isGuiEnabled() && !Settings.getInstance().isRpcEnabled())
 				{
 					throw new Exception("Both gui and rpc cannot be disabled!");
 				}
 				
 				//STARTING NETWORK/BLOCKCHAIN/RPC
-				Controller.getInstance().start(disableRpc, disableWeb);
+				Controller.getInstance().start();
 				
-				if(!disableGui)
+				if(Settings.getInstance().isGuiEnabled())
 				{
 					//START GUI
 					new Gui();
@@ -73,7 +56,7 @@ public class Start {
 				//ERROR STARTING
 				System.out.println("STARTUP ERROR: " + e.getMessage());
 				
-				if(!disableGui)
+				if(Settings.getInstance().isGuiEnabled())
 				{
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Startup Error", JOptionPane.ERROR_MESSAGE);
 				}

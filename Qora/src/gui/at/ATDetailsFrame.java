@@ -9,7 +9,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -33,7 +32,7 @@ public class ATDetailsFrame extends JFrame {
 		this.setLayout(new GridBagLayout());
 
 		//PADDING
-		((JComponent) this.getContentPane()).setBorder(new EmptyBorder(5, 5, 5, 5));
+		((JComponent) this.getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		//LABEL GBC
 		GridBagConstraints labelGBC = new GridBagConstraints();
@@ -132,6 +131,7 @@ public class ATDetailsFrame extends JFrame {
 		txtAreaCode.setBorder(txtName.getBorder());
 		txtAreaCode.setEditable(false);
 		this.add(txtAreaCode, detailGBC);
+		((JFrame)txtAreaCode.getTopLevelAncestor()).pack();
 
 		//DATA LABEL - TEXT
 		labelGBC.gridy = 8;
@@ -146,6 +146,7 @@ public class ATDetailsFrame extends JFrame {
 		txtAreaData.setAutoscrolls(true);
 		txtAreaData.setAutoscrolls(true);
 		this.add(txtAreaData, detailGBC);
+		((JFrame)txtAreaData.getTopLevelAncestor()).pack();
 		
 		//CODE LABEL - TEXT
 		labelGBC.gridy = 9;

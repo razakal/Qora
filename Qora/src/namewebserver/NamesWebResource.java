@@ -1,9 +1,16 @@
 package namewebserver;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import utils.GZIP;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Context;
+import javax.servlet.http.HttpServletRequest;
 
 import qora.naming.Name;
 import controller.Controller;
@@ -12,6 +19,8 @@ import controller.Controller;
 @Path("/")
 public class NamesWebResource 
 {
+    @Context HttpServletRequest request;
+
 	@GET
 	public Response Default()
 	{
@@ -28,6 +37,7 @@ public class NamesWebResource
 				+ "</script>" //
 				+ "</head>" //
 				+ "<body>" //
+				+ getWarning(request)
 				+ "<center><h1 style='font-family: Verdana;'>Qora web-server</h1>" //
 				+ "<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAABGdBTUEAAL" //
 				+ "GPC/xhBQAAAAFzUkdCAK7OHOkAAACoUExURQAAAJOT7Zub7bSz7piW5UM/wLW08K+u6qGg6ain70ZCwTo2vWJ" //
@@ -97,7 +107,7 @@ public class NamesWebResource
 		}
 		
 		String Value = name.getValue().toString();
-		
+	
 		//REDIRECT
 		if(Value.startsWith("http://") || Value.startsWith("https://"))
 		{
@@ -106,10 +116,53 @@ public class NamesWebResource
 					.build();
 		}
 		
+		//WEBPAGE GZIP DECOMPRESSOR
+		Value = GZIP.webDecompress(Value);
+        
+        //PROCESSING TAG INJ
+        Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
+        Matcher matcher = pattern.matcher(Value);
+        while (matcher.find()) {
+        	Name nameinj = Controller.getInstance().getName(matcher.group(1));
+        	Value = Value.replace( matcher.group(), GZIP.webDecompress(nameinj.getValue().toString()));
+        }
+     
 		//SHOW WEB-PAGE
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(Value)
+				.entity(getWarning(request)+Value)
 				.build();
-	}	
+	}
+	
+	private String getWarning(HttpServletRequest request)
+	{
+		if(Controller.getInstance().isWalletUnlocked())
+		{	
+			String ipAddress  = request.getHeader("X-FORWARDED-FOR");  
+		    if(ipAddress == null)  
+		    {  
+		    	ipAddress = request.getRemoteAddr();  
+		    }  
+			
+			if(ipAddress.equals("127.0.0.1"))
+			{
+				return "<style type=\"text/css\">" //
+				+ "#message_box {" // 
+				+ "position:absolute;" // 
+				+ "left:0; right:0; top:0;" // 
+				+ "z-index: 10;" // 
+				+ "background:#ffc;" //
+				+ "padding:5px;" //
+				+ "border:1px solid #CCCCCC;" //
+				+ "text-align:center;" // 
+				+ "font-weight:bold;" // 
+				+ "width:auto;" //
+				+ "}" //
+				+ "</STYLE>" //
+				+ "<div id=message_box>Wallet is unlock!</div>" //
+				+ "<div style='margin-top:50px'>";
+			}
+		}
+		return "";	
+	}
 }

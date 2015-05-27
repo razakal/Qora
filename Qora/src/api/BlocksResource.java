@@ -237,4 +237,23 @@ public class BlocksResource
 		return String.valueOf(block.getHeight());
 	}
 	
+	@GET
+	@Path("/byheight/{height}")
+	public String getHeight(@PathParam("height") int height) 
+	{
+		Block block;
+		try
+		{
+			block = Controller.getInstance().getBlockByHeight(height);
+			if(block == null)
+			{
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_BLOCK_NO_EXISTS);
+			}
+		}
+		catch(Exception e)
+		{
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_BLOCK_NO_EXISTS);
+		}
+		return block.toJson().toJSONString();
+	}
 }
