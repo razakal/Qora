@@ -45,6 +45,11 @@ public class Settings {
 	private static final String DEFAULT_WALLET_DIR = "wallet";
 	
 	private static final boolean DEFAULT_GENERATOR_KEY_CACHING = false;
+
+	private static final boolean DEFAULT_SOUND_RECEIVE_COIN = true;
+	private static final boolean DEFAULT_SOUND_MESSAGE = true;
+	private static final boolean DEFAULT_SOUND_NEW_TRANSACTION = true;
+	
 	
 	private static final int DEFAULT_MAX_BYTE_PER_FEE = 512;
 	
@@ -363,6 +368,36 @@ public class Settings {
 		}
 		
 		return DEFAULT_GENERATOR_KEY_CACHING;
+	}
+	
+	public boolean isSoundReceivePaymentEnabled() 
+	{
+		if(this.settingsJSON.containsKey("soundreceivepayment"))
+		{
+			return ((Boolean) this.settingsJSON.get("soundreceivepayment")).booleanValue();
+		}
+		
+		return DEFAULT_SOUND_RECEIVE_COIN;
+	}
+	
+	public boolean isSoundReceiveMessageEnabled() 
+	{
+		if(this.settingsJSON.containsKey("soundreceivemessage"))
+		{
+			return ((Boolean) this.settingsJSON.get("soundreceivemessage")).booleanValue();
+		}
+		
+		return DEFAULT_SOUND_MESSAGE;
+	}
+	
+	public boolean isSoundNewTransactionEnabled() 
+	{
+		if(this.settingsJSON.containsKey("soundnewtransaction"))
+		{
+			return ((Boolean) this.settingsJSON.get("soundnewtransaction")).booleanValue();
+		}
+		
+		return DEFAULT_SOUND_NEW_TRANSACTION;
 	}
 	
 	public int getMaxBytePerFee() 
