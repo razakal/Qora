@@ -143,7 +143,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_txtWebport.gridy = 4;
         add(txtWebport, gbc_txtWebport);
         
-        JLabel lblWEBExplanatoryText = new JLabel("Enables your decentralized web server. Use \"Access permission\" tab for additional options.");
+        JLabel lblWEBExplanatoryText = new JLabel("Enable/Disable decentralized web server. Use \"Access permission\" tab for additional options.");
         lblWEBExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblWEBExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblAnExplanatoryText_2 = new GridBagConstraints();
