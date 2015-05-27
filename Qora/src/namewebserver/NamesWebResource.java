@@ -159,7 +159,7 @@ public class NamesWebResource
 				+ "width:auto;" //
 				+ "}" //
 				+ "</STYLE>" //
-				+ "<div id=message_box>Wallet is unlock!</div>" //
+				+ "<div id=message_box>Wallet is unlocked!</div>" //
 				+ "<div style='margin-top:50px'>";
 			}
 		}
