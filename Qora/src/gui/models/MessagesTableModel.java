@@ -41,6 +41,7 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
+import qora.block.Block;
 import qora.crypto.AEScrypto;
 import qora.transaction.MessageTransaction;
 import qora.transaction.Transaction;
@@ -81,23 +82,23 @@ public class MessagesTableModel extends JTable implements Observer{
 		topRenderer.setVerticalAlignment(DefaultTableCellRenderer.TOP);
 		this.getColumn("").setCellRenderer( topRenderer );
 		
-		List<Pair<Account, Transaction>> transaction = Controller.getInstance().getLastTransactions(10000);
+		List<Pair<Account, Transaction>> transaction = Controller.getInstance().getLastTransactions(30000);
 		
-		for (int i = 0; i < transaction.size(); i++) {
-			if(transaction.get(i).getB().getType() == Transaction.MESSAGE_TRANSACTION)
+		for (Pair<Account, Transaction> pair : transaction) 
+		{
+			if(pair.getB().getType() == Transaction.MESSAGE_TRANSACTION)
 			{
 				boolean is = false;
-				
-				for ( int j = messageBufs.size()-1; j >= 0; j-- )
-				{
-					if(Arrays.equals(transaction.get(i).getB().getSignature(),messageBufs.get(j).getSignature()))
+				for (MessageBuf message : messageBufs) {
+					if(Arrays.equals(pair.getB().getSignature(), message.getSignature()))
 					{
 						is = true;
+						break;
 					}
 				}
 				if(!is)
 				{
-					addMessage(messageBufs.size(),(MessageTransaction)transaction.get(i).getB());
+					addMessage(messageBufs.size(),(MessageTransaction)pair.getB());
 				}
 			}
 		}
@@ -327,6 +328,7 @@ public class MessagesTableModel extends JTable implements Observer{
 	{
 
 		ObserverMessage message = (ObserverMessage) arg;
+		
 		if(message.getType() == ObserverMessage.WALLET_STATUS)
 		{
 			int status = (int) message.getValue();
@@ -342,19 +344,14 @@ public class MessagesTableModel extends JTable implements Observer{
 		{
 			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
 			{
-				new Thread()
-				{
-					public void run() 
-					{
-						try {
-							sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						updateBlock();
-					}
-				}.start();
+				this.repaint();
 			}
+			else if (message.getType() == ObserverMessage.ADD_BLOCK_TYPE &&
+					((Block)message.getValue()).getHeight() == Controller.getInstance().getMaxPeerHeight())
+			{
+				this.repaint();
+			}
+			
 		}
 
 		if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
@@ -364,10 +361,11 @@ public class MessagesTableModel extends JTable implements Observer{
 			{
 				is = false;
 				for ( int i = messageBufs.size()-1; i >= 0; i-- )
-				{
-					if(Arrays.equals(((MessageTransaction) message.getValue()).getSignature(), messageBufs.get(i).getSignature()))
+				for (MessageBuf messageBuf : messageBufs) {
+					if(Arrays.equals(((MessageTransaction) message.getValue()).getSignature(), messageBuf.getSignature()))
 					{
 						is = true;
+						break;
 					}
 				}
 				if(!is)
@@ -405,7 +403,6 @@ public class MessagesTableModel extends JTable implements Observer{
 				transaction.getFee(),
 				transaction.getSignature(),
 				transaction.getCreator().getPublicKey(),
-				transaction.getConfirmations(),
 				transaction.isText()
 		));
 	}
@@ -532,7 +529,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		this.setRowHeight(row, textHeight);
 	}
 	
-	
+/*	
 	private void updateBlock()
 	{
 		for (int j = 0; j < messageBufs.size(); j++) 
@@ -553,7 +550,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		}
 		this.repaint();
 	}
-	
+*/	
 	int lineCount( String text ) 
 	{
 		int lineCount = 1;
@@ -583,9 +580,8 @@ public class MessagesTableModel extends JTable implements Observer{
 		private BigDecimal amount;
 		private BigDecimal fee;
 		private byte[] signature;
-		private int confirmations;
 		
-		public MessageBuf( byte[] rawMessage, boolean encrypted, String sender, String recipient, long timestamp, BigDecimal amount, BigDecimal fee, byte[] signature, byte[] senderPublicKey, int confirmations, boolean isText )
+		public MessageBuf( byte[] rawMessage, boolean encrypted, String sender, String recipient, long timestamp, BigDecimal amount, BigDecimal fee, byte[] signature, byte[] senderPublicKey, boolean isText )
 		{
 			this.rawMessage = rawMessage;
 			this.encrypted = encrypted;	
@@ -599,7 +595,6 @@ public class MessagesTableModel extends JTable implements Observer{
 			this.senderPublicKey = senderPublicKey;
 			this.recipientPublicKey = null;
 			this.signature = signature;
-			this.confirmations = confirmations;
 			this.isText = isText;
 		}
 
@@ -676,12 +671,16 @@ public class MessagesTableModel extends JTable implements Observer{
 		}
 		public int getConfirmations()
 		{
-			return this.confirmations;
+			if( DBSet.getInstance().getTransactionMap().contains(this.signature) )
+			{
+				return 0;
+			}
+			else
+			{
+				return Controller.getInstance().getTransaction(this.signature).getConfirmations();
+			}	
 		}
-		public void setConfirmations(int confirmations)
-		{
-			this.confirmations = confirmations;
-		}
+
 		public boolean isText()
 		{
 			return isText;
@@ -721,11 +720,13 @@ public class MessagesTableModel extends JTable implements Observer{
 				imglock = "<img src='file:images/messages/unlockedred.png'>";
 			}
 		
-			String confirmations = Integer.toString( this.confirmations );
+			int confirmations = getConfirmations();
 			
-			if( this.confirmations < 1 )
+			String strconfirmations = Integer.toString( confirmations );
+			
+			if( confirmations < 1 )
 			{
-				confirmations = "<font color=red>" + confirmations +"</font>";
+				strconfirmations = "<font color=red>" + strconfirmations +"</font>";
 			}
 			
 			String colorHeader = "F0F0F0";
@@ -764,7 +765,7 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "\n<br>\nTo:"
 					+ recipient+"\n</font></td>\n"
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
-					+ "<font color='" + colorTextHeader + "'>\n" + confirmations + " . "
+					+ "<font color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
 					+ format.format(date) + "\n<br>\n"
 					+ "Amount: " +  amount.toPlainString()+" Fee: "
 					+ fee.toPlainString()
@@ -813,12 +814,14 @@ public class MessagesTableModel extends JTable implements Observer{
 			{
 				imglock = "Unencrypted";
 			}
-		
-			String confirmations = Integer.toString( this.confirmations );
 			
-			if( this.confirmations < 1 )
+			int confirmations = getConfirmations();
+			
+			String strconfirmations = Integer.toString( confirmations );
+			
+			if( confirmations < 1 )
 			{
-				confirmations = confirmations + " !";
+				strconfirmations = strconfirmations + " !";
 			}
 			
 			return 	  "Date: " + format.format(date) + "\n"
@@ -826,7 +829,7 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "Recipient: " + recipient + "\n"
 					+ "Amount: " +  amount.toPlainString() + " Fee: " + fee.toPlainString() + "\n"
 					+ "Type: " + imginout + ". " + imglock + "\n"
-					+ "Confirmations: " + confirmations + "\n"
+					+ "Confirmations: " + strconfirmations + "\n"
 					+ "[MESSAGE START]\n"
 					+ getDecrMessage() + "\n"
 					+ "[MESSAGE END]\n";

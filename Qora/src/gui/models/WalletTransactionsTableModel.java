@@ -8,6 +8,7 @@ import java.util.Observer;
 import org.mapdb.Fun.Tuple2;
 
 import controller.Controller;
+import database.DBSet;
 import database.SortableList;
 import database.wallet.TransactionMap;
 import qora.account.Account;
@@ -151,7 +152,7 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 		
 		if(Controller.getInstance().getStatus() == Controller.STATUS_OKE && message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
 		{		
-			if(((Transaction) message.getValue()).getParent() == null)
+			if(DBSet.getInstance().getTransactionMap().contains(((Transaction) message.getValue()).getSignature()))
 			{
 				if(((Transaction) message.getValue()).getType() == Transaction.PAYMENT_TRANSACTION)
 				{
@@ -160,12 +161,12 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 					{
 						if(Settings.getInstance().isSoundReceivePaymentEnabled())
 						{
-							PlaySound.playSound("receivepayment.wav");
+							PlaySound.getInstance().playSound("receivepayment.wav", ((Transaction) message.getValue()).getSignature());
 						}
 					}
 					else if(Settings.getInstance().isSoundNewTransactionEnabled())
 					{
-						PlaySound.playSound("newtransaction.wav");
+						PlaySound.getInstance().playSound("newtransaction.wav", ((Transaction) message.getValue()).getSignature());
 					}
 				}
 				else if(((Transaction) message.getValue()).getType() == Transaction.MESSAGE_TRANSACTION)
@@ -175,17 +176,17 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 					{
 						if(Settings.getInstance().isSoundReceiveMessageEnabled())
 						{
-							PlaySound.playSound("receivemessage.wav");
+							PlaySound.getInstance().playSound("receivemessage.wav", ((Transaction) message.getValue()).getSignature()) ;
 						}
 					}
 					else if(Settings.getInstance().isSoundNewTransactionEnabled())
 					{
-						PlaySound.playSound("newtransaction.wav");
+						PlaySound.getInstance().playSound("newtransaction.wav", ((Transaction) message.getValue()).getSignature());
 					}
 				}
 				else if(Settings.getInstance().isSoundNewTransactionEnabled())
 				{
-					PlaySound.playSound("newtransaction.wav");
+					PlaySound.getInstance().playSound("newtransaction.wav", ((Transaction) message.getValue()).getSignature());
 				}
 			}
 		}	

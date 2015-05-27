@@ -45,8 +45,9 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 	public synchronized void syncUpdate(Observable o, Object arg)
 	{
 		ObserverMessage message = (ObserverMessage) arg;
-		
-		if(message.getType() == ObserverMessage.ADD_BALANCE_TYPE || message.getType() == ObserverMessage.REMOVE_BALANCE_TYPE || message.getType() == ObserverMessage.ADD_ACCOUNT_TYPE || message.getType() == ObserverMessage.REMOVE_ACCOUNT_TYPE)
+
+		if((message.getType() == ObserverMessage.NETWORK_STATUS && (int) message.getValue() == Controller.STATUS_OKE)
+			||((Controller.getInstance().getStatus() == Controller.STATUS_OKE) && (message.getType() == ObserverMessage.ADD_BALANCE_TYPE || message.getType() == ObserverMessage.REMOVE_BALANCE_TYPE || message.getType() == ObserverMessage.ADD_ACCOUNT_TYPE || message.getType() == ObserverMessage.REMOVE_ACCOUNT_TYPE)))
 		{
 			//GET SELECTED ITEM
 			Account selected = (Account) this.getSelectedItem();
@@ -66,6 +67,7 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 			{
 				this.setSelectedItem(selected);
 			}
+			
 		}
 	}
 
