@@ -340,19 +340,21 @@ public class MessagesTableModel extends JTable implements Observer{
 		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE
 				|| message.getType() == ObserverMessage.LIST_BLOCK_TYPE)
 		{
-			new Thread()
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
 			{
-				public void run() 
+				new Thread()
 				{
-					try {
-						sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					public void run() 
+					{
+						try {
+							sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						updateBlock();
 					}
-					updateBlock();
-				}
-			}.start();
+				}.start();
+			}
 		}
 
 		if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
