@@ -1,8 +1,8 @@
-# Qora [![release](https://img.shields.io/github/release/Qoracoin/Qora.svg)](https://github.com/Qoracoin/Qora/releases/tag/0.19.0)
+# Qora [![release](https://img.shields.io/github/release/Qoracoin/Qora.svg)](https://github.com/Qoracoin/Qora/releases)
 Public GIT for the Qora cryptocurrency project.
 
 * Website: http://qora.org
-* Bitcointalk: https://bitcointalk.org/index.php?topic=881230.0
+* Bitcointalk: https://bitcointalk.org/index.php?topic=1015379
 * API Docs: https://docs.google.com/document/d/1uBN8JXYNAWb8NUxon7MKx2MSJs4HHekIgolIXGTwR4c/edit?usp=sharing
 
 
