@@ -384,25 +384,33 @@ public class BlockGenerator extends Thread implements Observer
 				//CHECK TRANSACTION TIMESTAMP AND DEADLINE
 				if(transaction.getTimestamp() <= block.getTimestamp() && transaction.getDeadline() > block.getTimestamp())
 				{
-					//CHECK IF VALID
-					if(transaction.isValid(newBlockDb) == Transaction.VALIDATE_OKE)
-					{
-						//CHECK IF ENOUGH ROOM
-						if(totalBytes + transaction.getDataLength() <= Block.MAX_TRANSACTION_BYTES)
+					try{
+						//CHECK IF VALID
+						if(transaction.isValid(newBlockDb) == Transaction.VALIDATE_OKE)
 						{
-							//ADD INTO BLOCK
-							block.addTransaction(transaction);
-										
-							//REMOVE FROM LIST
-							orderedTransactions.remove(transaction);
-										
-							//PROCESS IN NEWBLOCKDB
-							transaction.process(newBlockDb);
-										
-							//TRANSACTION PROCESSES
-							transactionProcessed = true;
-							break;
+							//CHECK IF ENOUGH ROOM
+							if(totalBytes + transaction.getDataLength() <= Block.MAX_TRANSACTION_BYTES)
+							{
+								//ADD INTO BLOCK
+								block.addTransaction(transaction);
+											
+								//REMOVE FROM LIST
+								orderedTransactions.remove(transaction);
+											
+								//PROCESS IN NEWBLOCKDB
+								transaction.process(newBlockDb);
+											
+								//TRANSACTION PROCESSES
+								transactionProcessed = true;
+								break;
+							}
 						}
+					}catch(Exception e){
+                        e.printStackTrace();
+                        //REMOVE FROM LIST
+                        orderedTransactions.remove(transaction);
+                        transactionProcessed = true;
+                        break;                    
 					}
 				}
 						
