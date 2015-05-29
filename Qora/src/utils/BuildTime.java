@@ -46,7 +46,6 @@ public class BuildTime
 					//f.setTimeZone(TimeZone.getTimeZone("UTC"));
 					bufgetBuildDateTime = f.format(d);
 		    	} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		    }
