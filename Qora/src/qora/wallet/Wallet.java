@@ -10,17 +10,7 @@ import java.util.Observer;
 import java.util.logging.Logger;
 
 import org.mapdb.Fun.Tuple2;
-import org.mapdb.Fun.Tuple4;
 
-import at.AT_Transaction;
-
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-
-import controller.Controller;
-import database.DBSet;
-import database.wallet.SecureWalletDatabase;
-import database.wallet.WalletDatabase;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
@@ -44,6 +34,15 @@ import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
 import utils.ObserverMessage;
 import utils.Pair;
+import at.AT_Transaction;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+
+import controller.Controller;
+import database.DBSet;
+import database.wallet.SecureWalletDatabase;
+import database.wallet.WalletDatabase;
 
 public class Wallet extends Observable implements Observer
 {
@@ -1187,6 +1186,7 @@ public class Wallet extends Observable implements Observer
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) 
 	{
@@ -1404,12 +1404,12 @@ public class Wallet extends Observable implements Observer
 		
 		if (message.getType() == ObserverMessage.ADD_AT_TX_TYPE)
 		{
-			this.processATTransaction( (Tuple2) message.getValue() );
+			this.processATTransaction( (Tuple2<Tuple2<Integer, Integer>, AT_Transaction>) message.getValue() );
 		}
 		
 		if (message.getType() == ObserverMessage.REMOVE_AT_TX)
 		{
-			this.orphanATTransaction( (Tuple2) message.getValue() );
+			this.orphanATTransaction( (Tuple2<Tuple2<Integer, Integer>, AT_Transaction>) message.getValue() );
 		}
 		
 		//ADD ORDER

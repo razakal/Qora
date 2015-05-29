@@ -1,20 +1,14 @@
 package gui.models;
 
-import java.nio.charset.Charset;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.mapdb.Fun.Tuple2;
-import org.mapdb.Fun.Tuple4;
 
-import at.AT;
+import utils.Converter;
+import utils.ObserverMessage;
 import at.AT_Transaction;
 import controller.Controller;
-import qora.account.Account;
-import qora.crypto.Base58;
-import utils.Converter;
-import utils.NumberAsString;
-import utils.ObserverMessage;
 import database.SortableList;
 
 @SuppressWarnings("serial")
@@ -109,8 +103,8 @@ public class ATTxsTableModel extends QoraTableModel<Tuple2<Integer, Integer>, AT
 			return null;
 		}
 		
-		Tuple2<Integer, Integer> at = this.ats.get(row).getA();
-		Long amount = this.ats.get(row).getB().getAmount();
+//		Tuple2<Integer, Integer> at = this.ats.get(row).getA();
+//		Long amount = this.ats.get(row).getB().getAmount();
 		String message = "";
 		if ( this.ats.get(row).getB().getMessage() != null)
 		{

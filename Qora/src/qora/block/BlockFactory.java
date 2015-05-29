@@ -2,10 +2,9 @@ package qora.block;
 
 import java.util.Arrays;
 
-import com.google.common.primitives.Ints;
-
 import qora.account.PublicKeyAccount;
-import qora.transaction.Transaction;
+
+import com.google.common.primitives.Ints;
 
 public class BlockFactory {
 

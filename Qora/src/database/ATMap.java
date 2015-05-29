@@ -1,40 +1,31 @@
 package database;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.mapdb.BTreeMap;
 import org.mapdb.Bind;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
-import org.mapdb.Fun.Tuple2;
-import org.mapdb.Fun.Tuple3;
-import org.mapdb.Fun.Tuple4;
-
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Bytes;
 
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
-import qora.transaction.Transaction;
 import utils.ObserverMessage;
 import at.AT;
-import database.DBSet;
+
+import com.google.common.collect.Lists;
+
 import database.serializer.ATSerializer;
 
 public class ATMap extends DBMap<String, AT> 
 {
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 
+	
 	private NavigableSet typeATs;
 	private NavigableSet creatorATs;
 	private NavigableSet orderedATs;
@@ -295,7 +286,7 @@ public class ATMap extends DBMap<String, AT>
 	}
 
 	//delete all ATs created after blockHeight
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public void deleteAllAfterHeight(int blockHeight)
 	{
 		Iterable<String> ids = Fun.filter(this.creationHeightATs, blockHeight + 1 , true , Fun.HI() , true);
@@ -306,19 +297,21 @@ public class ATMap extends DBMap<String, AT>
 		}
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	public Iterable<String> getATsLimited(int limit)
 	{
 		Iterable<String> ids = Fun.filter(this.creationHeightATs, limit + 1, true, Fun.HI(), true);
 		return ids;
 	}
 	
+	@SuppressWarnings({ "unchecked" })
 	public Iterable<String> getATsByCreator(String creator)
 	{
 		return Fun.filter(this.creatorATs, creator);
 	}
 
 	//get ATs sorted by lastRunBlockHeight
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	public Iterator< String >  getOrderedATs(Integer height)
 	{
 		return Fun.filter(this.orderedATs, null , true, height , true).iterator();
@@ -328,7 +321,7 @@ public class ATMap extends DBMap<String, AT>
 		return this.parent;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	public SortableList<String, AT> getAcctATs(String type, boolean initiators)
 	{
 		Collection<String> keys = Lists.newArrayList(Fun.filter(this.typeATs, type));

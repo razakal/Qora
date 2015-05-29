@@ -15,24 +15,29 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.google.common.io.BaseEncoding;
-
-import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
-import qora.crypto.Crypto;
-import qora.naming.NameSale;
 import qora.transaction.Transaction;
 import utils.GZIP;
 import utils.MenuPopupUtil;
 import utils.NameUtils;
-import utils.Pair;
 import utils.NameUtils.NameResult;
+import utils.Pair;
+import controller.Controller;
 
 @SuppressWarnings("serial")
 public class RegisterNameFrame extends JFrame

@@ -1,6 +1,5 @@
 package database;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,13 +15,10 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
-import org.mapdb.Fun.Tuple4;
 
-import database.serializer.ATTransactionSerializer;
-import at.AT;
-import at.AT_Transaction;
-import qora.crypto.Base58;
 import utils.ObserverMessage;
+import at.AT_Transaction;
+import database.serializer.ATTransactionSerializer;
 
 
 

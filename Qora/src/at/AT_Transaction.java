@@ -11,7 +11,6 @@ package at;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 
 import org.json.simple.JSONObject;
 

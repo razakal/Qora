@@ -12,6 +12,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
 
+import namewebserver.WebService;
 import network.Network;
 import network.Peer;
 import network.message.BlockMessage;
@@ -35,7 +36,6 @@ import qora.assets.Asset;
 import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.Block;
-import qora.crypto.Base58;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -50,7 +50,6 @@ import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import api.ApiService;
 import at.AT;
-import namewebserver.WebService;
 import database.DBSet;
 import database.SortableList;
 

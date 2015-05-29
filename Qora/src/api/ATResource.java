@@ -3,15 +3,10 @@ package api;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,23 +18,20 @@ import javax.ws.rs.core.MediaType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.mapdb.Fun.Tuple2;
-import org.mapdb.Fun.Tuple4;
-
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Longs;
 
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import utils.Converter;
 import utils.Pair;
+import at.AT_Constants;
+import at.AT_Transaction;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Longs;
+
 import controller.Controller;
 import database.DBSet;
-import at.AT;
-import at.AT_Constants;
-import at.AT_Error;
-import at.AT_Transaction;
 
 @Path("at")
 @Produces(MediaType.APPLICATION_JSON)
@@ -75,11 +67,12 @@ public class ATResource
 	
 	}
 	
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/creator/{creator}")
 	public String getATsByCreator(@PathParam("creator") String creator)
 	{
-		Iterable ats = DBSet.getInstance().getATMap().getATsByCreator(creator);
+		Iterable<String> ats = DBSet.getInstance().getATMap().getATsByCreator(creator);
 		Iterator<String> iter = ats.iterator();
 		
 		JSONArray json = new JSONArray();
@@ -90,11 +83,12 @@ public class ATResource
 		return json.toJSONString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/type/{type}")
 	public String getATsByType(@PathParam("type") String type)
 	{
-		Iterable ats = DBSet.getInstance().getATMap().getTypeATs(type);
+		Iterable<String> ats = DBSet.getInstance().getATMap().getTypeATs(type);
 		Iterator<String> iter = ats.iterator();
 		
 		JSONArray json = new JSONArray();

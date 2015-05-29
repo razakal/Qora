@@ -6,12 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import at.AT;
-import at.AT_API_Platform_Impl;
-import at.AT_Constants;
-
-import com.google.common.primitives.Bytes;
-
 import network.Peer;
 import network.message.BlockMessage;
 import network.message.Message;
@@ -21,6 +15,12 @@ import network.message.TransactionMessage;
 import qora.block.Block;
 import qora.crypto.Base58;
 import qora.transaction.Transaction;
+import at.AT;
+import at.AT_API_Platform_Impl;
+import at.AT_Constants;
+
+import com.google.common.primitives.Bytes;
+
 import database.DBSet;
 
 public class Synchronizer
@@ -41,7 +41,7 @@ public class Synchronizer
 		
 		AT_API_Platform_Impl.getInstance().setDBSet( fork );
 
-		int originalHeight = 0;
+//		int originalHeight = 0;
 		
 		//ORPHAN BLOCK IN FORK TO VALIDATE THE NEW BLOCKS
 		if(lastCommonBlock != null)
@@ -50,7 +50,7 @@ public class Synchronizer
 			Map<String, byte[]> states = db.getATStateMap().getStates( lastCommonBlock.getHeight() );
 			
 			//HEIGHT TO ROLL BACK
-			originalHeight = lastCommonBlock.getHeight();
+//			originalHeight = lastCommonBlock.getHeight();
 			int height = (int)(Math.round( lastCommonBlock.getHeight() /AT_Constants.STATE_STORE_DISTANCE))*AT_Constants.STATE_STORE_DISTANCE;
 
 			//GET LAST BLOCK
@@ -75,7 +75,7 @@ public class Synchronizer
 			for ( String id : states.keySet() )
 			{
 				byte[] address = Base58.decode( id ); //25 BYTES
-				address = Bytes.ensureCapacity( address , AT_Constants.getInstance().AT_ID_SIZE, 0 ); // 32 BYTES
+				address = Bytes.ensureCapacity( address , AT_Constants.AT_ID_SIZE, 0 ); // 32 BYTES
 				AT at = db.getATMap().getAT( address );
 				
 				at.setState( states.get( id ) );

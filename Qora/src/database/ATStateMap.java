@@ -1,11 +1,8 @@
 package database;
 
-import java.math.BigInteger;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
@@ -17,11 +14,8 @@ import org.mapdb.DBMaker;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 
-import at.AT;
-import at.AT_Constants;
-import database.serializer.ATSerializer;
-import qora.assets.Trade;
 import qora.crypto.Base58;
+import at.AT_Constants;
 
 //Integer -> blockHeight (f.e 0 -> 1000 -> 2000 if we keep state every 1000s blocks), byte[] -> atId , byte[] stateBytes
 public class ATStateMap extends DBMap< Tuple2<Integer, String> ,  byte[] > {

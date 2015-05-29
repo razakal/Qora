@@ -5,16 +5,14 @@ import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import org.json.simple.JSONObject;
 
-import database.DBSet;
 import qora.account.Account;
 import qora.account.PublicKeyAccount;
 import qora.block.Block;
 import qora.crypto.Base58;
 import settings.Settings;
+import database.DBSet;
 
 public abstract class Transaction {
 	
