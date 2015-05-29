@@ -9,6 +9,7 @@ import java.util.Observer;
 import controller.Controller;
 import qora.assets.Asset;
 import qora.assets.Order;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.SortableList;
 
@@ -75,19 +76,19 @@ public class BuyOrdersTableModel extends QoraTableModel<BigInteger, Order> imple
 		{
 		case COLUMN_BUYING_PRICE:
 			
-			return BigDecimal.ONE.setScale(8).divide(order.getPrice(), 8, RoundingMode.DOWN).toPlainString();
+			return NumberAsString.getInstance().numberAsString(BigDecimal.ONE.setScale(8).divide(order.getPrice(), 8, RoundingMode.DOWN));
 			
 		case COLUMN_BUYING_AMOUNT:
 			
-			return order.getPrice().multiply(order.getAmountLeft()).setScale(8, RoundingMode.DOWN).toPlainString();
+			return NumberAsString.getInstance().numberAsString(order.getPrice().multiply(order.getAmountLeft()).setScale(8, RoundingMode.DOWN));
 		
 		case COLUMN_PRICE:
 			
-			return order.getPrice().toPlainString();
+			return NumberAsString.getInstance().numberAsString(order.getPrice());
 		
 		case COLUMN_AMOUNT:
 			
-			return order.getAmountLeft().toPlainString();
+			return NumberAsString.getInstance().numberAsString(order.getAmountLeft());
 			
 		}
 		

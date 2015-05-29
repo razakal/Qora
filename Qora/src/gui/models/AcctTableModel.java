@@ -10,6 +10,7 @@ import controller.Controller;
 import qora.account.Account;
 import qora.crypto.Base58;
 import utils.Converter;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.SortableList;
 
@@ -101,7 +102,7 @@ public class AcctTableModel extends QoraTableModel<String, AT> implements Observ
 		
 		case COLUMN_AT_AMOUNT:
 			
-			return new Account(Base58.encode(at.getId())).getConfirmedBalance().toPlainString();
+			return NumberAsString.getInstance().numberAsString(new Account(Base58.encode(at.getId())).getConfirmedBalance());
 		
 		case COLUMN_AT_SECRET:
 			

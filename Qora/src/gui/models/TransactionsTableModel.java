@@ -2,7 +2,6 @@ package gui.models;
 
 import java.text.DateFormat;
 import java.util.Date;
-
 import java.util.Observable;
 import java.util.Observer;
 
@@ -10,6 +9,7 @@ import controller.Controller;
 import database.SortableList;
 import database.TransactionMap;
 import qora.transaction.Transaction;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 
 @SuppressWarnings("serial")
@@ -87,7 +87,7 @@ public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> 
 			
 		case COLUMN_FEE:
 			
-			return transaction.getFee().toPlainString();		
+			return NumberAsString.getInstance().numberAsString(transaction.getFee());		
 		}
 		
 		return null;

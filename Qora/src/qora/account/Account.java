@@ -12,6 +12,7 @@ import controller.Controller;
 import qora.BlockGenerator;
 import qora.block.Block;
 import qora.transaction.Transaction;
+import utils.NumberAsString;
 import database.DBSet;
 
 public class Account {
@@ -244,12 +245,12 @@ public class Account {
 	@Override
 	public String toString()
 	{
-		return this.getBalance(0).toPlainString() + " - " + this.getAddress();
+		return NumberAsString.getInstance().numberAsString(this.getBalance(0)) + " - " + this.getAddress();
 	}
 	
 	public String toString(long key)
 	{
-		return this.getConfirmedBalance(key).toPlainString() + " - " + this.getAddress();
+		return NumberAsString.getInstance().numberAsString(this.getConfirmedBalance(key)) + " - " + this.getAddress();
 	}
 	
 	//EQUALS

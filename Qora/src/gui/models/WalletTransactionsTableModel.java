@@ -16,6 +16,7 @@ import qora.transaction.MessageTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.Transaction;
 import settings.Settings;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.PlaySound;
@@ -106,7 +107,7 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 			
 		case COLUMN_AMOUNT:
 			
-			return transaction.getAmount(account).toPlainString();			
+			return NumberAsString.getInstance().numberAsString(transaction.getAmount(account));			
 		}
 		
 		return null;

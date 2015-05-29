@@ -47,6 +47,7 @@ import qora.transaction.MessageTransaction;
 import qora.transaction.Transaction;
 import qora.wallet.Wallet;
 import utils.Converter;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.TableMenuPopupUtil;
@@ -767,8 +768,8 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
 					+ "<font color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
 					+ format.format(date) + "\n<br>\n"
-					+ "Amount: " +  amount.toPlainString()+" Fee: "
-					+ fee.toPlainString()
+					+ "Amount: " +  NumberAsString.getInstance().numberAsString(amount)+" Fee: "
+					+ NumberAsString.getInstance().numberAsString(fee)
 					+ "\n</font></td></tr></table>"
 					+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
 					+ "<td width='" + width + "'>\n"
@@ -827,7 +828,7 @@ public class MessagesTableModel extends JTable implements Observer{
 			return 	  "Date: " + format.format(date) + "\n"
 					+ "Sender: " + sender + "\n"
 					+ "Recipient: " + recipient + "\n"
-					+ "Amount: " +  amount.toPlainString() + " Fee: " + fee.toPlainString() + "\n"
+					+ "Amount: " +  NumberAsString.getInstance().numberAsString(amount) + " Fee: " + NumberAsString.getInstance().numberAsString(fee) + "\n"
 					+ "Type: " + imginout + ". " + imglock + "\n"
 					+ "Confirmations: " + strconfirmations + "\n"
 					+ "[MESSAGE START]\n"

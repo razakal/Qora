@@ -35,6 +35,7 @@ import javax.swing.table.TableRowSorter;
 import qora.account.Account;
 import qora.assets.Asset;
 import utils.BigDecimalStringComparator;
+import utils.NumberAsString;
 import utils.TableMenuPopupUtil;
 import controller.Controller;
 
@@ -190,7 +191,7 @@ public class AccountsPanel extends JPanel implements ItemListener
 		table.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent arg0) {
-				totalBalance.setText("Confirmed Balance: " + tableModel.getTotalBalance().toPlainString());				
+				totalBalance.setText("Confirmed Balance: " + NumberAsString.getInstance().numberAsString(tableModel.getTotalBalance()));				
 			}		
 		});
 		

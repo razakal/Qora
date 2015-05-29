@@ -6,6 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 import qora.voting.Poll;
 import qora.voting.PollOption;
+import utils.NumberAsString;
 
 @SuppressWarnings("serial")
 public class PollOptionsTableModel extends AbstractTableModel
@@ -72,7 +73,7 @@ public class PollOptionsTableModel extends AbstractTableModel
 		
 		case COLUMN_VOTES:
 			
-			return option.getVotes().toPlainString();
+			return NumberAsString.getInstance().numberAsString(option.getVotes());
 			
 		case COLUMN_PERCENTAGE:
 			

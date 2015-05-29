@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import controller.Controller;
 import qora.assets.Asset;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.SortableList;
 
@@ -82,7 +83,7 @@ public class AssetsTableModel extends QoraTableModel<Long, Asset> implements Obs
 			
 		case COLUMN_AMOUNT:
 			
-			return asset.getQuantity();
+			return NumberAsString.getInstance().numberAsString(asset.getQuantity());
 			
 		case COLUMN_DIVISIBLE:
 			

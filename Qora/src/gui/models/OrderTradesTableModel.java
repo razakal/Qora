@@ -12,6 +12,7 @@ import org.mapdb.Fun.Tuple2;
 import controller.Controller;
 import qora.assets.Order;
 import qora.assets.Trade;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.DBSet;
 import database.SortableList;
@@ -91,15 +92,15 @@ public class OrderTradesTableModel extends QoraTableModel<Tuple2<BigInteger, Big
 		
 		case COLUMN_PRICE:
 			
-			return trade.getPrice().divide(trade.getAmount(), RoundingMode.FLOOR).setScale(8).toPlainString();
+			return NumberAsString.getInstance().numberAsString(trade.getPrice().divide(trade.getAmount(), RoundingMode.FLOOR).setScale(8));
 		
 		case COLUMN_AMOUNT:
 			
-			return trade.getAmount().toPlainString();
+			return NumberAsString.getInstance().numberAsString(trade.getAmount());
 			
 		case COLUMN_TOTAL:
 			
-			return trade.getPrice().toPlainString();
+			return NumberAsString.getInstance().numberAsString(trade.getPrice());
 			
 		}
 		

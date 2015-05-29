@@ -8,6 +8,7 @@ import controller.Controller;
 import database.BlockMap;
 import database.SortableList;
 import qora.block.Block;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 
 @SuppressWarnings("serial")
@@ -93,7 +94,7 @@ public class BlocksTableModel extends QoraTableModel<byte[], Block> implements O
 			
 		case COLUMN_FEE:	
 			
-			return block.getTotalFee().toPlainString();
+			return NumberAsString.getInstance().numberAsString(block.getTotalFee());
 			
 		}
 		

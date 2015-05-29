@@ -13,6 +13,7 @@ import org.mapdb.Fun.Tuple2;
 import controller.Controller;
 import qora.assets.Asset;
 import qora.assets.Trade;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.DBSet;
 import database.SortableList;
@@ -96,17 +97,17 @@ public class TradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteg
 		case COLUMN_PRICE:
 			
 			if(trade.getAmount().compareTo(BigDecimal.ZERO) != 0)
-				return trade.getPrice().divide(trade.getAmount(), 8, RoundingMode.FLOOR).toPlainString();
+				return NumberAsString.getInstance().numberAsString(trade.getPrice().divide(trade.getAmount(), 8, RoundingMode.FLOOR));
 			else
-				return BigDecimal.ZERO.setScale(8).toPlainString();
+				return NumberAsString.getInstance().numberAsString(BigDecimal.ZERO.setScale(8));
 		
 		case COLUMN_AMOUNT:
 			
-			return trade.getAmount().toPlainString();
+			return NumberAsString.getInstance().numberAsString(trade.getAmount());
 			
 		case COLUMN_TOTAL:
 			
-			return trade.getPrice().toPlainString();
+			return NumberAsString.getInstance().numberAsString(trade.getPrice());
 			
 		}
 		

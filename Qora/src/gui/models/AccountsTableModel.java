@@ -1,7 +1,11 @@
 package gui.models;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,6 +13,7 @@ import javax.swing.table.AbstractTableModel;
 
 import qora.account.Account;
 import qora.assets.Asset;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import controller.Controller;
 
@@ -80,33 +85,33 @@ public class AccountsTableModel extends AbstractTableModel implements Observer
 			
 			if(this.asset == null || this.asset.getKey() == 0l)
 			{
-				return account.getBalance(0).toPlainString();
+				return NumberAsString.getInstance().numberAsString(account.getBalance(0));
 			}
 			else
 			{
-				return account.getConfirmedBalance(this.asset.getKey()).toPlainString();
+				return NumberAsString.getInstance().numberAsString(account.getConfirmedBalance(this.asset.getKey()));
 			}
 			
 		case COLUMN_CONFIRMED_BALANCE:
 			
 			if(this.asset == null || this.asset.getKey() == 0l)
 			{
-				return account.getConfirmedBalance().toPlainString();	
+				return NumberAsString.getInstance().numberAsString(account.getConfirmedBalance());	
 			}
 			else
 			{
-				return account.getConfirmedBalance(this.asset.getKey()).toPlainString();
+				return NumberAsString.getInstance().numberAsString(account.getConfirmedBalance(this.asset.getKey()));
 			}
 			
 		case COLUMN_GENERATING_BALANCE:
 			
 			if(this.asset == null || this.asset.getKey() == 0l)
 			{
-				return account.getGeneratingBalance().toPlainString();	
+				return  NumberAsString.getInstance().numberAsString(account.getGeneratingBalance());	
 			}
 			else
 			{
-				return BigDecimal.ZERO.setScale(8).toPlainString();
+				return NumberAsString.getInstance().numberAsString(BigDecimal.ZERO.setScale(8));
 			}
 			
 		}
