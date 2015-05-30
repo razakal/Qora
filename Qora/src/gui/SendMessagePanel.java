@@ -23,10 +23,8 @@ import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
 import qora.crypto.AEScrypto;
-
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
-
 import utils.Converter;
 import utils.MenuPopupUtil;
 import utils.NameUtils;
@@ -79,27 +77,6 @@ public class SendMessagePanel extends JPanel
 		this.add(cbxFavorites, favoritesGBC);
 		this.accountsModel = new AccountsComboBoxModel();
         
-		//ON FAVORITES CHANGE
-		cbxFavorites.addActionListener (new ActionListener () {
-		    public void actionPerformed(ActionEvent e) {
-		    	
-		    	Asset asset = ((Asset) cbxFavorites.getSelectedItem());
-		    	if(asset != null)
-		    	{
-		    		//REMOVE ITEMS
-			    	cbxFrom.removeAllItems();
-			    	
-			    	//SET RENDERER
-			    	cbxFrom.setRenderer(new AccountRenderer(asset.getKey()));
-			    	
-			    	//UPDATE MODEL
-			    	accountsModel.removeObservers();
-			    	accountsModel = new AccountsComboBoxModel();
-			    	cbxFrom.setModel(accountsModel);
-		    	}
-		    }
-		});
-        
 		//LABEL FROM
 		GridBagConstraints labelFromGBC = new GridBagConstraints();
 		labelFromGBC.insets = new Insets(5, 5, 5, 5);
@@ -123,7 +100,25 @@ public class SendMessagePanel extends JPanel
 		cbxFromGBC.gridy = 1;
 		
 		this.cbxFrom = new JComboBox<Account>(accountsModel);
+		this.cbxFrom.setRenderer(new AccountRenderer(0));
 		this.add(this.cbxFrom, cbxFromGBC);
+		
+		//ON FAVORITES CHANGE
+
+		cbxFavorites.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+
+		    	Asset asset = ((Asset) cbxFavorites.getSelectedItem());
+
+		    	if(asset != null)
+		    	{
+		    		((AccountRenderer)cbxFrom.getRenderer()).setAsset(asset.getKey());
+		    		cbxFrom.repaint();
+		    		refreshReceiverDetails();
+		    	}
+
+		    }
+		});
 		
 		//LABEL TO
 		GridBagConstraints labelToGBC = new GridBagConstraints();
@@ -149,23 +144,20 @@ public class SendMessagePanel extends JPanel
 		txtTo = new JTextField();
 		this.add(txtTo, txtToGBC);
 		
-		        txtTo.getDocument().addDocumentListener(new DocumentListener() {
-		            
-					@Override
-					public void changedUpdate(DocumentEvent arg0) {
-						// TODO Auto-generated method stub
-					}
-					@Override
-					public void insertUpdate(DocumentEvent arg0) {
-						// TODO Auto-generated method stub
-						refreshReceiverDetails();
-					}
-					@Override
-					public void removeUpdate(DocumentEvent arg0) {
-						// TODO Auto-generated method stub
-						refreshReceiverDetails();
-					}
-		        });
+        txtTo.getDocument().addDocumentListener(new DocumentListener() {
+            
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+			}
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				refreshReceiverDetails();
+			}
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				refreshReceiverDetails();
+			}
+        });
 		        
       	
 		//LABEL RECEIVER
@@ -397,11 +389,14 @@ public class SendMessagePanel extends JPanel
 		MenuPopupUtil.installContextMenu(txtAmount);
         MenuPopupUtil.installContextMenu(txtMessage);
       	MenuPopupUtil.installContextMenu(txtRecDetails);
+      	
+      	System.out.println("10 "+cbxFavorites.getItemCount());
 	}
 
 	private void refreshReceiverDetails()
 	{
 		String toValue = txtTo.getText();
+		Asset asset = ((Asset) cbxFavorites.getSelectedItem());
 		
 		if(toValue.isEmpty())
 		{
@@ -425,7 +420,7 @@ public class SendMessagePanel extends JPanel
 			if(nameToAdress.getB() == NameResult.OK)
 			{
 				account = nameToAdress.getA();
-				txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+				txtRecDetails.setText(account.toString(asset.getKey()));
 			}
 			else
 			{
@@ -435,9 +430,9 @@ public class SendMessagePanel extends JPanel
 		{
 			account = new Account(toValue);
 			
-			txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+			txtRecDetails.setText(account.toString(asset.getKey()));
 			
-			if(account.getBalance(1).toPlainString().equals("0.00000000"))
+			if(account.toString(asset.getKey()).equals("0.00000000"))
 			{
 				txtRecDetails.setText(txtRecDetails.getText()+ " - Warning!");
 			}

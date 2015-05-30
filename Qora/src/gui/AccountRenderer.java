@@ -19,6 +19,11 @@ public class AccountRenderer implements ListCellRenderer<Account>
 		this.key = key;
 	}
 	
+	public void setAsset(long key)
+	{
+		this.key = key;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public Component getListCellRendererComponent(JList list, Account value, int index, boolean isSelected, boolean cellHasFocus) 
 	{
