@@ -23,16 +23,6 @@
 	<classpathentry kind="lib" path="libs/jetty/jetty-webapp-9.1.1.v20140108.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-xml-9.1.1.v20140108.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/servlet-api-3.1.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/commons-cli-1.2.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/httpcore-4.3.1.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/httpcore-ab-4.3.1.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/httpcore-nio-4.3.1.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/jackson-annotations-2.2.3.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/jackson-core-2.2.3.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/jackson-databind-2.2.3.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/javax.servlet-3.0.0.v201112011016.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/jsonrpc4j.jar"/>
-	<classpathentry kind="lib" path="libs/jsonrpc4j/portlet-2.0.jar"/>
 	<classpathentry kind="lib" path="libs/guava-15.0.jar"/>
 	<classpathentry kind="lib" path="libs/json-simple-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
