@@ -387,10 +387,8 @@ public class SendMessagePanel extends JPanel
 		MenuPopupUtil.installContextMenu(txtTo);
 		MenuPopupUtil.installContextMenu(txtFee);
 		MenuPopupUtil.installContextMenu(txtAmount);
-        MenuPopupUtil.installContextMenu(txtMessage);
-      	MenuPopupUtil.installContextMenu(txtRecDetails);
-      	
-      	System.out.println("10 "+cbxFavorites.getItemCount());
+		MenuPopupUtil.installContextMenu(txtMessage);
+		MenuPopupUtil.installContextMenu(txtRecDetails);
 	}
 
 	private void refreshReceiverDetails()
