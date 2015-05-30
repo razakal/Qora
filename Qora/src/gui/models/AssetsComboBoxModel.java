@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.DefaultComboBoxModel;
 
@@ -14,7 +16,8 @@ import controller.Controller;
 
 @SuppressWarnings("serial")
 public class AssetsComboBoxModel extends DefaultComboBoxModel<Asset> implements Observer {
-
+	Lock lock = new ReentrantLock();
+	
 	public AssetsComboBoxModel()
 	{
 		Controller.getInstance().addWalletListener(this);
@@ -25,7 +28,15 @@ public class AssetsComboBoxModel extends DefaultComboBoxModel<Asset> implements 
 	{
 		try
 		{
-			this.syncUpdate(o, arg);
+			if (lock.tryLock()) {
+				try {
+					this.syncUpdate(o, arg);
+				}
+				finally {
+					lock.unlock();
+				}
+			}
+			
 		}
 		catch(Exception e)
 		{
