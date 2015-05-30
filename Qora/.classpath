@@ -11,27 +11,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libs/commons-net-3.3.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/aopalliance-repackaged-2.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/asm-all-repackaged-2.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-api-2.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-locator-2.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-utils-2.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javassist-3.18.1-GA.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javax.annotation-api-1.2.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javax.inject-2.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javax.servlet-api-3.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/jaxb-api-2.2.7.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/jersey-guava-2.7.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/org.osgi.core-4.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/osgi-resource-locator-1.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/persistence-api-1.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/validation-api-1.1.0.Final.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-client.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-common.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet-core.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-server.jar"/>
-	<classpathentry kind="lib" path="libs/javax.ws.rs-api-2.0-rc3.jar"/>
 	<classpathentry kind="lib" path="libs/mapdb-1.0.7.jar"/>
 	<classpathentry kind="lib" path="libs/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-152.jar"/>
@@ -60,5 +39,27 @@
 	<classpathentry kind="lib" path="libs/jetty/jetty-util-9.2.11.v20150529.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-webapp-9.2.11.v20150529.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-xml-9.2.11.v20150529.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/api/javax.ws.rs-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/aopalliance-repackaged-2.4.0-b10.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/asm-debug-all-5.0.2.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-api-2.4.0-b10.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-locator-2.4.0-b10.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-utils-2.4.0-b10.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javassist-3.18.1-GA.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javax.annotation-api-1.2.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javax.inject-2.4.0-b10.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javax.servlet-api-3.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/jaxb-api-2.2.7.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/jersey-guava-2.17.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/org.osgi.core-4.2.0.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/osgi-resource-locator-1.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/persistence-api-1.0.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/validation-api-1.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-client.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-common.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet-core.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-media-jaxb.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-server.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
