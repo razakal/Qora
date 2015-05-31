@@ -79,6 +79,13 @@ public class ConsolePanel extends JPanel
 				cmdHistory.add(command);
 				INTcmdHistory = cmdHistory.size();
 				
+				if(command.toLowerCase().equals("clear"))
+				{
+					areaConsole.setText("");
+					txtCommand.setText("");
+					return;
+				}
+					
 				areaConsole.append("[COMMAND] " + command + "\n");
 				
 				//EMPTY COMMAND FIELD
@@ -89,7 +96,8 @@ public class ConsolePanel extends JPanel
 				
 				//APPEND RESULT
 				areaConsole.append("[RESULT] " + result + "\n");
-				vertical.setValue(vertical.getMaximum());
+				areaConsole.setCaretPosition(areaConsole.getDocument().getLength());
+
             }
 		});
 		
