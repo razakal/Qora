@@ -1,0 +1,24 @@
+﻿<html>
+<head>
+<title>Qora web server</title>
+<link rel="shortcut icon" href="favicon.ico">
+<script type='text/javascript'>
+window.onload = function() {
+  document.getElementById("name").focus();
+  document.getElementById("name").selectionStart = document.getElementById("name").value.length;
+};
+function key(event) 
+{
+	return ('which' in event) ? event.which : event.keyCode;
+}
+function goto() 
+{
+	url = document.getElementById("name").value;
+	document.location.href = '/'+url;return 0;
+}
+</script>
+</head>
+<body>
+<warning></warning>
+<center><input size=100 id=name value="<data></data>" onkeyup="if(key(event)==13){document.getElementById('button').click();}">
+<input id=button type=button value="Search" style='font-family: Verdana;' onclick=javascript:goto()></center><br>

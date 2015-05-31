@@ -40,7 +40,7 @@ public class ATResource
 	
 	@GET
 	@Path("id/{id}")
-	public String getAT(@PathParam("id") String id)
+	public static String getAT(@PathParam("id") String id)
 	{
 		return DBSet.getInstance().getATMap().getAT(id).toJSON().toJSONString();
 	}
@@ -54,7 +54,7 @@ public class ATResource
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/transactions/id/{id}")
-	public String getATTransactionsBySender(@PathParam("id") String id)
+	public static String getATTransactionsBySender(@PathParam("id") String id)
 	{
 		List<AT_Transaction> txs = DBSet.getInstance().getATTransactionMap().getATTransactionsBySender(id);
 		
@@ -70,7 +70,7 @@ public class ATResource
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/creator/{creator}")
-	public String getATsByCreator(@PathParam("creator") String creator)
+	public static String getATsByCreator(@PathParam("creator") String creator)
 	{
 		Iterable<String> ats = DBSet.getInstance().getATMap().getATsByCreator(creator);
 		Iterator<String> iter = ats.iterator();
@@ -103,7 +103,7 @@ public class ATResource
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/transactions/recipient/{id}")
-	public String getATTransactionsByRecipient(@PathParam("id") String id)
+	public static String getATTransactionsByRecipient(@PathParam("id") String id)
 	{
 		List<AT_Transaction> txs = DBSet.getInstance().getATTransactionMap().getATTransactionsByRecipient(id);
 		

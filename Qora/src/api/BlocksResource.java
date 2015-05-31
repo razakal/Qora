@@ -80,7 +80,7 @@ public class BlocksResource
 	
 	@GET
 	@Path("/{signature}")	
-	public String getBlock(@PathParam("signature") String signature)
+	public static String getBlock(@PathParam("signature") String signature)
 	{
 		//DECODE SIGNATURE
 		byte[] signatureBytes;
@@ -113,7 +113,7 @@ public class BlocksResource
 	
 	@GET
 	@Path("/last")	
-	public String getLastBlock()
+	public static String getLastBlock()
 	{
 		return Controller.getInstance().getLastBlock().toJson().toJSONString();
 	}
@@ -206,14 +206,14 @@ public class BlocksResource
 	
 	@GET
 	@Path("/height")
-	public String getHeight() 
+	public static String getHeight() 
 	{
 		return String.valueOf(Controller.getInstance().getHeight());
 	}
 	
 	@GET
 	@Path("/height/{signature}")
-	public String getHeight(@PathParam("signature") String signature) 
+	public static String getHeight(@PathParam("signature") String signature) 
 	{
 		//DECODE SIGNATURE
 		byte[] signatureBytes;
@@ -239,7 +239,7 @@ public class BlocksResource
 	
 	@GET
 	@Path("/byheight/{height}")
-	public String getHeight(@PathParam("height") int height) 
+	public static String getbyHeight(@PathParam("height") int height) 
 	{
 		Block block;
 		try

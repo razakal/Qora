@@ -85,7 +85,7 @@ public class NameSalesResource
 	
 	@GET
 	@Path("/{name}")	
-	public String getNameSale(@PathParam("name") String nameName)
+	public static String getNameSale(@PathParam("name") String nameName)
 	{	
 		NameSale nameSale = Controller.getInstance().getNameSale(nameName);
 				

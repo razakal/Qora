@@ -83,7 +83,7 @@ public class NamesResource
 	
 	@GET
 	@Path("/{name}")	
-	public String getName(@PathParam("name") String nameName)
+	public static String getName(@PathParam("name") String nameName)
 	{	
 		Name name = Controller.getInstance().getName(nameName);
 				
