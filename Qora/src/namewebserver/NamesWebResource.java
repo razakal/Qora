@@ -57,7 +57,7 @@ public class NamesWebResource
 		}
 	}
 	
-	@Path("libs/qora.png")
+	@Path("index/qora.png")
 	@GET
 	public Response qorapng()
 	{
