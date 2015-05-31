@@ -37,6 +37,7 @@ import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.transaction.Transaction;
+import settings.Settings;
 import utils.Converter;
 import utils.Pair;
 
@@ -329,6 +330,27 @@ public class DeployATFrame extends JFrame {
 				this.deployButton.setEnabled(true);
 
 				return;
+			}
+
+			//CHECK BIG FEE
+			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), Settings.getInstance().getBigFeeMessage(),
+		                "Confirmation",
+		                JOptionPane.YES_NO_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+				}
+				if (n == JOptionPane.NO_OPTION) {
+					
+					txtFee.setText("1");
+					
+					//ENABLE
+					this.deployButton.setEnabled(true);
+					
+					return;
+				}
 			}
 
 			//CREATE POLL

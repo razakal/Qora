@@ -3,6 +3,7 @@ package settings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,8 @@ public class Settings {
 	
 	
 	private static final int DEFAULT_MAX_BYTE_PER_FEE = 512;
+	private static final BigDecimal DEFAULT_BIG_FEE = new BigDecimal(1000);
+	private static final String DEFAULT_BIG_FEE_MESSAGE = "Do you really want to set such a large fee?\nThese coins will go to the forgers.";
 	
 	private static Settings instance;
 	
@@ -410,6 +413,16 @@ public class Settings {
 		return DEFAULT_MAX_BYTE_PER_FEE;
 	}
 	
+	public BigDecimal getBigFee() 
+	{
+		return DEFAULT_BIG_FEE;
+	}
+	
+	public String getBigFeeMessage() 
+	{
+		return DEFAULT_BIG_FEE_MESSAGE;
+	}
+
 	public boolean isGuiEnabled() 
 	{
 		if(this.settingsJSON.containsKey("guienabled"))
