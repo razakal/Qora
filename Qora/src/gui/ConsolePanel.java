@@ -63,7 +63,7 @@ public class ConsolePanel extends JPanel
 		this.areaConsole.setLineWrap(true);
 		this.areaConsole.setEditable(false);
 		JScrollPane scrollPane = new JScrollPane(this.areaConsole);
-		JScrollBar vertical = scrollPane.getVerticalScrollBar();
+		final JScrollBar vertical = scrollPane.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
 		this.add(scrollPane, areaGBC);
 		
@@ -89,6 +89,7 @@ public class ConsolePanel extends JPanel
 				
 				//APPEND RESULT
 				areaConsole.append("[RESULT] " + result + "\n");
+				vertical.setValue(vertical.getMaximum());
             }
 		});
 		
