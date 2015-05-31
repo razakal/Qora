@@ -411,7 +411,7 @@ public class Block {
 		block.put("transactionsSignature", Base58.encode(this.transactionsSignature));
 		block.put("generatorSignature", Base58.encode(this.generatorSignature));
 		block.put("signature",  Base58.encode(this.getSignature()));
-		
+		block.put("height", this.getHeight());
 
 		//CREATE TRANSACTIONS
 		JSONArray transactionsArray = new JSONArray();
