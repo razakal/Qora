@@ -57,7 +57,7 @@ public class NamesWebResource
 		}
 	}
 	
-	@Path("index/qora.png")
+	@Path("libs/qora.png")
 	@GET
 	public Response qorapng()
 	{
@@ -72,7 +72,7 @@ public class NamesWebResource
 		}
 	}
 	
-	@Path("index/jquery.{version}.js")
+	@Path("libs/jquery.{version}.js")
 	@GET
 	public Response jquery(@PathParam("version") String version)
 	{
@@ -91,7 +91,7 @@ public class NamesWebResource
 		}
 		
 		if(file.exists()){
-			return Response.ok(file, "text/html; charset=utf-8").build();
+			return Response.ok(file, "text/javascript; charset=utf-8").build();
 		}
 		else
 		{
@@ -99,7 +99,7 @@ public class NamesWebResource
 		}
 	}
 
-	@Path("index/angular.min.{version}.js")
+	@Path("libs/angular.min.{version}.js")
 	@GET
 	public Response angular(@PathParam("version") String version)
 	{
@@ -118,7 +118,7 @@ public class NamesWebResource
 		}
 		
 		if(file.exists()){
-			return Response.ok(file, "text/html; charset=utf-8").build();
+			return Response.ok(file, "text/javascript; charset=utf-8").build();
 		}
 		else
 		{
@@ -126,16 +126,19 @@ public class NamesWebResource
 		}
 	}
 	
-	@Path("index/bootstrap/{version}/{folder}/{filename}")
+	@Path("libs/bootstrap/{version}/{folder}/{filename}")
 	@GET
 	public Response bootstrap(@PathParam("version") String version, @PathParam("folder") String folder, @PathParam("filename") String filename)
 	{
 		String fullname = "web/bootstrap-3.3.4-dist/";
+		String type = "text/html; charset=utf-8";
+		
 		switch(folder)
 		{
 			case "css":
 			{	
 				fullname += "css/";
+				type = "text/css";
 				switch(filename)
 				{
 					case "bootstrap.css":
@@ -178,26 +181,31 @@ public class NamesWebResource
 					case "glyphicons-halflings-regular.eot":
 						
 						fullname += "glyphicons-halflings-regular.eot";
+						type = "application/vnd.ms-fontobject";
 						break;
 						
 					case "glyphicons-halflings-regular.svg":
 						
 						fullname += "glyphicons-halflings-regular.svg";
+						type = "image/svg+xml";
 						break;
 						
 					case "glyphicons-halflings-regular.ttf":
 						
 						fullname += "glyphicons-halflings-regular.ttf";
+						type = "application/x-font-ttf";
 						break;
 						
 					case "glyphicons-halflings-regular.woff":
 						
 						fullname += "glyphicons-halflings-regular.woff";
+						type = "application/font-woff";
 						break;
 						
 					case "glyphicons-halflings-regular.woff2":
 						
 						fullname += "glyphicons-halflings-regular.woff2";
+						type = "application/font-woff";
 						break;
 				}
 				break;
@@ -205,6 +213,7 @@ public class NamesWebResource
 			case "js":
 			{
 				fullname += "js/";
+				type = "text/javascript";
 				switch(filename)
 				{
 					case "bootstrap.js":
@@ -230,7 +239,7 @@ public class NamesWebResource
 		File file = new File(fullname);
 		
 		if(file.exists()){
-			return Response.ok(file, "text/html; charset=utf-8").build();
+			return Response.ok(file, type).build();
 		}
 		else
 		{
