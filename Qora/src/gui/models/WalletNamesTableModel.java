@@ -5,8 +5,10 @@ import java.util.Observer;
 
 import org.mapdb.Fun.Tuple2;
 
+import qora.account.Account;
 import qora.naming.Name;
 import utils.ObserverMessage;
+import utils.Pair;
 import controller.Controller;
 import database.SortableList;
 import database.wallet.NameMap;
@@ -34,6 +36,13 @@ public class WalletNamesTableModel extends QoraTableModel<Tuple2<String, String>
 	
 	public Name getName(int row)
 	{
+		Pair<Tuple2<String, String>, Name> namepair = this.names.get(row);
+		if(!namepair.getA().a.equalsIgnoreCase(namepair.getB().getOwner().getAddress()))
+		{
+			//inconsistency, owner was not updated correctly
+			Name name = new Name(new Account(namepair.getA().a), namepair.getB().getName(), namepair.getB().getValue());
+			return name;
+		}
 		return this.names.get(row).getB();
 	}
 	
@@ -63,7 +72,7 @@ public class WalletNamesTableModel extends QoraTableModel<Tuple2<String, String>
 			return null;
 		}
 		
-		Name name = this.names.get(row).getB();
+		Name name = getName(row);
 		
 		switch(column)
 		{

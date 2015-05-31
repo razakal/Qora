@@ -40,6 +40,7 @@ import utils.GZIP;
 import utils.MenuPopupUtil;
 import utils.Pair;
 import controller.Controller;
+import database.DBSet;
 
 @SuppressWarnings("serial")
 public class UpdateNameFrame extends JFrame
@@ -280,6 +281,7 @@ public class UpdateNameFrame extends JFrame
 		
 		//READ NAME
 		Name name = (Name) this.cbxName.getSelectedItem();
+		name.setOwner(DBSet.getInstance().getNameMap().get(name.getName()).getOwner());
 		
 		try
 		{
