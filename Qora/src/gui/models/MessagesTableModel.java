@@ -530,28 +530,6 @@ public class MessagesTableModel extends JTable implements Observer{
 		this.setRowHeight(row, textHeight);
 	}
 	
-/*	
-	private void updateBlock()
-	{
-		for (int j = 0; j < messageBufs.size(); j++) 
-		{	
-			try
-			{
-				if( DBSet.getInstance().getTransactionMap().contains(messageBufs.get(j).getSignature()) )
-				{
-					messageBufs.get(j).setConfirmations(0);
-				}
-				else
-				{
-					messageBufs.get(j).setConfirmations(Controller.getInstance().getTransaction(messageBufs.get(j).getSignature()).getConfirmations());
-				}	
-			} catch ( Exception e ) {
-				messageBufs.get(j).setConfirmations(0);
-			}
-		}
-		this.repaint();
-	}
-*/	
 	int lineCount( String text ) 
 	{
 		int lineCount = 1;
@@ -758,6 +736,13 @@ public class MessagesTableModel extends JTable implements Observer{
 			decrMessage = decrMessage.replace( "<" , "&lt;" );
 			decrMessage = decrMessage.replace( ">" , "&gt;" );
 			decrMessage = decrMessage.replace( "\n" , "<br>" );
+			
+			String fontsmall = "";
+			
+			if(amount.compareTo(new BigDecimal(100000)) >= 0)
+			{
+				fontsmall = " size='2'";
+			}
 		
 			return	  "<html>\n"
 					+ "<body width='" + width + "'>\n"
@@ -768,8 +753,8 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
 					+ "<font color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
 					+ format.format(date) + "\n<br>\n"
-					+ "Amount: " +  NumberAsString.getInstance().numberAsString(amount)+" Fee: "
-					+ NumberAsString.getInstance().numberAsString(fee)
+					+ "<font"+fontsmall+">Amount: " +  NumberAsString.getInstance().numberAsString(amount)+" Fee: "
+					+ NumberAsString.getInstance().numberAsString(fee)+"</font>"
 					+ "\n</font></td></tr></table>"
 					+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
 					+ "<td width='" + width + "'>\n"
