@@ -323,29 +323,22 @@ public class NamesWebResource
 	@GET
 	public Response getBlock(@PathParam("block") String strBlock)
 	{
-		int height = 0;
 		String str;
 		try {
 			if(strBlock.matches("\\d+"))
 			{
 				str = BlocksResource.getbyHeight(Integer.valueOf(strBlock));
-				height = Integer.valueOf(strBlock);
 			}
 			else if (strBlock.equals("last"))
 			{
 				str = BlocksResource.getLastBlock();
-				
-				height = Integer.valueOf(BlocksResource.getHeight());
 			}
 			else
 			{
 				str = BlocksResource.getBlock(strBlock);
-				height = Integer.valueOf(BlocksResource.getHeight(strBlock));
 			}
 
 			str = jsonToFineSting(str);
-			
-			str = "{\n   height: "+height+"\n}\n\n" + str;
 
 		} catch (Exception e1) {
 			str = "<h2>Block does not exist!</h2";
