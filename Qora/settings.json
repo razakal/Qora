@@ -19,5 +19,5 @@
 	"weballowed":[
 		"127.0.0.1"
 	],
-	"generatorkeycaching": true
+	"generatorkeycaching": false
 }
