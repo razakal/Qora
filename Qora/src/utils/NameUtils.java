@@ -1,8 +1,15 @@
 package utils;
 
-import api.ApiErrorFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import qora.account.Account;
 import qora.naming.Name;
+import api.ApiErrorFactory;
+import controller.Controller;
 import database.DBSet;
 import database.NameMap;
 
@@ -76,5 +83,50 @@ public class NameUtils {
 		String recipientAddress = lookupName.getOwner().getAddress();
 		Account recipient = new Account(recipientAddress);
 		return new Pair<Account, NameUtils.NameResult>(recipient, NameResult.OK);
+	}
+	
+	public static List<String> getNamesContainingWebsites(boolean removeInjected) {
+		List<String> websites = new ArrayList<String>();
+		List<String> injected = new ArrayList<String>();
+
+		NameMap nameMap = DBSet.getInstance().getNameMap();
+
+		Set<String> keys = nameMap.getKeys();
+		Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
+
+		for (String string : keys) {
+			String value = nameMap.get(string).getValue();
+
+			value = GZIP.webDecompress(value);
+
+			// PROCESSING TAG INJ
+			Matcher matcher = pattern.matcher(value);
+			while (matcher.find()) {
+				String group = matcher.group(1);
+				Name nameinj = Controller.getInstance().getName(group);
+				injected.add(group);
+				value = value.replace(matcher.group(),
+						GZIP.webDecompress(nameinj.getValue().toString()));
+			}
+
+			if (value.toLowerCase().contains("html")
+					|| value.toLowerCase().contains("iframe")
+					|| value.toLowerCase().contains("<a href=")
+					|| value.toLowerCase().contains("<script>")
+					|| value.toLowerCase().contains("<table>")
+					|| value.toLowerCase().contains("<b>")
+					|| value.toLowerCase().contains("<font>")
+					|| value.toLowerCase().contains("<pre>")) {
+				websites.add(string);
+			}
+
+		}
+
+		if(removeInjected)
+		{
+			websites.removeAll(injected);
+		}
+		
+		return websites;
 	}
 }
