@@ -39,7 +39,7 @@ public class BuildTime
 		    	try {
 					@SuppressWarnings("resource")
 					JarFile jf = new JarFile(file);
-					ZipEntry ze = jf.getEntry("Start.class");
+					ZipEntry ze = jf.getEntry("META-INF/MANIFEST.MF");
 					d = new Date(ze.getTime ());
 
 					SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

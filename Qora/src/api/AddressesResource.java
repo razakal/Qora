@@ -214,9 +214,9 @@ public class AddressesResource
 	
 	@GET
 	@Path("balance/{address}")
-	public String getGeneratingBalance(@PathParam("address") String address)
+	public static String getGeneratingBalance(@PathParam("address") String address)
 	{
-		return this.getGeneratingBalance(address, 1);
+		return getGeneratingBalance(address, 1);
 	}
 	
 	@GET
@@ -251,7 +251,7 @@ public class AddressesResource
 	
 	@GET
 	@Path("balance/{address}/{confirmations}")
-	public String getGeneratingBalance(@PathParam("address") String address, @PathParam("confirmations") int confirmations)
+	public static String getGeneratingBalance(@PathParam("address") String address, @PathParam("confirmations") int confirmations)
 	{
 		//CHECK IF VALID ADDRESS
 		if(!Crypto.getInstance().isValidAddress(address))

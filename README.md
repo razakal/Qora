@@ -1,10 +1,11 @@
 # Qora [![release](https://img.shields.io/github/release/Qoracoin/Qora.svg)](https://github.com/Qoracoin/Qora/releases)
 Public GIT for the Qora cryptocurrency project.
 
-* Website: http://qora.org
-* Bitcointalk: https://bitcointalk.org/index.php?topic=1015379
-* API Docs: https://docs.google.com/document/d/1uBN8JXYNAWb8NUxon7MKx2MSJs4HHekIgolIXGTwR4c/edit?usp=sharing
-
+* [Website](http://qora.org)
+* [API](http://api.qora.org)
+* [Block Explorer](http://qora.co.in)
+* [Bitcointalk](https://bitcointalk.org/index.php?topic=1015379)
+* [Slack](http://slack.qora.org)
 
 ## Setting up Qora
 Add all the libraries from 'libs' except the native folder to your build path.

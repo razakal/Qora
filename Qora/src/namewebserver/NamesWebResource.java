@@ -7,11 +7,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import utils.GZIP;
 import utils.JSonWriter;
+import utils.NameUtils;
+import utils.Pair;
+import utils.NameUtils.NameResult;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,11 +29,17 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import api.ATResource;
+import api.AddressesResource;
+import api.ApiErrorFactory;
 import api.BlocksResource;
 import api.NameSalesResource;
 import api.NamesResource;
 import api.TransactionsResource;
+import qora.account.Account;
+import qora.block.Block;
+import qora.crypto.Crypto;
 import qora.naming.Name;
+import qora.transaction.Transaction;
 import controller.Controller;
 import database.DBSet;
 
@@ -313,29 +323,22 @@ public class NamesWebResource
 	@GET
 	public Response getBlock(@PathParam("block") String strBlock)
 	{
-		int height = 0;
 		String str;
 		try {
 			if(strBlock.matches("\\d+"))
 			{
 				str = BlocksResource.getbyHeight(Integer.valueOf(strBlock));
-				height = Integer.valueOf(strBlock);
 			}
 			else if (strBlock.equals("last"))
 			{
 				str = BlocksResource.getLastBlock();
-				
-				height = Integer.valueOf(BlocksResource.getHeight());
 			}
 			else
 			{
 				str = BlocksResource.getBlock(strBlock);
-				height = Integer.valueOf(BlocksResource.getHeight(strBlock));
 			}
 
 			str = jsonToFineSting(str);
-			
-			str = "{\n   height: "+height+"\n}\n\n" + str;
 
 		} catch (Exception e1) {
 			str = "<h2>Block does not exist!</h2";
@@ -347,7 +350,8 @@ public class NamesWebResource
 				.entity(miniIndex().replace( "<data></data>", "block:" + strBlock )+"<table whidh=100%><tr><td><pre>"+str+"</pre></table></body></html>")
 				.build();
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	@Path("tx:{tx}")
 	@GET
 	public Response getTx(@PathParam("tx") String strTx)
@@ -355,7 +359,26 @@ public class NamesWebResource
 
 		String str = null;
 		try {
-			str = TransactionsResource.getTransactionsBySignature(strTx);
+			
+			if(Crypto.getInstance().isValidAddress(strTx))
+			{
+				Account account = new Account(strTx);
+				
+				Pair<Block, List<Transaction>> result = Controller.getInstance().scanTransactions(null, -1, -1, -1, -1, account);
+				
+				JSONObject json = new JSONObject();
+				JSONArray transactions = new JSONArray();
+				for(Transaction transaction: result.getB())
+				{
+					transactions.add(transaction.toJson());
+				}
+				json.put(strTx, transactions);
+				str = json.toJSONString();
+			}
+			else
+			{
+				str = TransactionsResource.getTransactionsBySignature(strTx);
+			}
 			str = jsonToFineSting(str);
 		} catch (Exception e1) {
 			str = "<h2>Transaction does not exist!</h2>";
@@ -364,6 +387,65 @@ public class NamesWebResource
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex().replace( "<data></data>", "tx:" + strTx )+"<table whidh=100%><tr><td><pre>"+str+"</pre></table></body></html>")
+				.build();
+	}	
+	
+	@Path("balance:{address}")
+	@GET
+	public Response getBalance(@PathParam("address") String address)
+	{
+		String str = null;
+		try {
+			
+			String addressreal = "";
+			
+			if(!Crypto.getInstance().isValidAddress(address))
+			{
+				Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(address);
+				
+				if(nameToAdress.getB() == NameResult.OK)
+				{
+					addressreal = nameToAdress.getA().getAddress();
+				}
+				else
+				{
+					throw ApiErrorFactory.getInstance().createError(nameToAdress.getB().getErrorCode());
+				}
+			}
+			else
+			{
+				addressreal = address;
+			}
+			
+			str = AddressesResource.getGeneratingBalance(addressreal);
+			
+		} catch (Exception e1) {
+			str = "<h2>Address does not exist!</h2>";
+		}
+		
+		return Response.status(200)
+				.header("Content-Type", "text/html; charset=utf-8")
+				.entity(miniIndex().replace( "<data></data>", "balance:" + address )+"<table whidh=100%><tr><td><pre>"+str+"</pre></table></body></html>")
+				.build();
+	}	
+	
+	@Path("balance:{address}:{confirmations}")
+	@GET
+	public Response getBalance(@PathParam("address") String address, @PathParam("confirmations") int confirmations)
+	{
+
+		String str = null;
+		try {
+			
+			str = AddressesResource.getGeneratingBalance(address, confirmations);
+			
+		} catch (Exception e1) {
+			str = "<h2>Address does not exist!</h2>";
+		}
+		
+		return Response.status(200)
+				.header("Content-Type", "text/html; charset=utf-8")
+				.entity(miniIndex().replace( "<data></data>", "balance:" + address + ":" + confirmations )+"<table whidh=100%><tr><td><pre>"+str+"</pre></table></body></html>")
 				.build();
 	}	
 	
