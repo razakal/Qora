@@ -1,5 +1,6 @@
 package namewebserver;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -8,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +33,7 @@ import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import utils.AccountBalanceComparator;
 import utils.BlogUtils;
 import utils.GZIP;
 import utils.JSonWriter;
@@ -178,10 +181,12 @@ public class NamesWebResource
 			
 			List<Account> accounts = new ArrayList<Account>( Controller.getInstance().getAccounts());
 			
+			Collections.sort(accounts, new AccountBalanceComparator());
+			Collections.reverse(accounts);
 			
 			String accountStrings = "";
 			for (Account account : accounts) {
-				accountStrings += "<option>"+account.getAddress()+"</option>";
+				accountStrings += "<option value=" +account.getAddress() +">"+account+"</option>";
 			}
 			
 			content = content.replaceAll("<option></option>", accountStrings);
