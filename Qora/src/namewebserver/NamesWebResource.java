@@ -27,6 +27,7 @@ import qora.block.Block;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import utils.BlogUtils;
 import utils.GZIP;
 import utils.JSonWriter;
 import utils.NameUtils;
@@ -148,6 +149,41 @@ public class NamesWebResource
 			}
 			
 			content = content.replace( "!linkstoreplace!",linksAsHtml);
+			
+			return Response.ok(content, "text/html; charset=utf-8").build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return error404(request);
+		}
+	}
+	
+	@Path("blog.html")
+	@GET
+	public Response getBlog()
+	{
+		
+		try {
+			String content = readFile("web/blog.html", StandardCharsets.UTF_8);
+			
+			content = replaceWarning(content);
+			
+			List<Pair<String, String>> blogPosts = BlogUtils.getBlogPosts();
+			
+			String results = "<br>";
+			
+			String entryTemplate = "<table style=\"border:1px solid #000;\" ?=\"\" cellpadding=\"2\" cellspacing=\"1\" width=\"1015\"><tbody><tr><td colspan=\"3\" style=\"border-bottom: 1px solid #000;\" align=\"center\"><b>TITLE</b></td></tr><tr bgcolor=\"#FFFFFF\"><td colspan=\"3\" align=\"center\">CONTENT\r\n</tbody></table>\r\n<br>";
+			for (Pair<String, String> pair : blogPosts) {
+				
+			String converted =	entryTemplate;
+			converted = converted.replaceAll("TITLE", pair.getA());
+			converted = converted.replaceAll("CONTENT", pair.getB());
+				
+				results += converted;
+			}
+			
+			
+			
+			content = content.replace( "!blogposts!",results);
 			
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
