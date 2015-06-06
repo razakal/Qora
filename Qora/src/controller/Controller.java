@@ -136,6 +136,9 @@ public class Controller extends Observable {
 		this.peerHeight = new LinkedHashMap<Peer, Integer>(); //LINKED TO PRESERVE ORDER WHEN SYNCHRONIZING (PRIORITIZE SYNCHRONIZING FROM LONGEST CONNECTION ALIVE)
 		this.status = STATUS_NO_CONNECTIONS;
 		this.transactionCreator = new TransactionCreator();
+		
+		
+		
 
 		//OPENING DATABASES
 		DBSet.getInstance();

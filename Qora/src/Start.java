@@ -8,6 +8,7 @@ import javax.swing.UIManager;
 import api.ApiClient;
 import controller.Controller;
 import settings.Settings;
+import utils.SysTray;
 
 public class Start {
 
@@ -39,7 +40,9 @@ public class Start {
 				if(Settings.getInstance().isGuiEnabled())
 				{
 					//START GUI
-					new Gui();
+					Gui.getInstance();
+					
+					SysTray.getInstance().createTrayIcon();
 				}
 			}
 			catch(Exception e)

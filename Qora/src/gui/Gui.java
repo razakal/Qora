@@ -17,7 +17,19 @@ public class Gui extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 
-	public Gui() throws Exception
+	private static Gui maingui;
+	private MainFrame mainframe;
+	public static Gui getInstance() throws Exception
+	{
+		if(maingui == null)
+		{
+			maingui = new Gui();
+		}
+		
+		return maingui;
+	}
+	
+	private Gui() throws Exception
 	{
 		//USE SYSTEM STYLE
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -35,13 +47,22 @@ public class Gui extends JFrame{
         }
         else
         {
-        	new MainFrame();
+        mainframe =	new MainFrame();
         }
+        
 	}
 	
 	public void onWalletCreated()
 	{
-		new MainFrame();
+		mainframe = new MainFrame();
+	}
+	
+	public void bringtoFront()
+	{
+		if(mainframe != null)
+		{
+			mainframe.toFront();
+		}
 	}
 
 	public void onCancelCreateWallet() 

@@ -1,5 +1,6 @@
 package gui.models;
 
+import java.awt.TrayIcon.MessageType;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Observable;
@@ -20,6 +21,7 @@ import utils.NumberAsString;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.PlaySound;
+import utils.SysTray;
 
 @SuppressWarnings("serial")
 public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, String>, Transaction> implements Observer {
@@ -157,13 +159,17 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 			{
 				if(((Transaction) message.getValue()).getType() == Transaction.PAYMENT_TRANSACTION)
 				{
-					Account account = Controller.getInstance().getAccountByAddress(((PaymentTransaction) message.getValue()).getRecipient().getAddress());	
+					PaymentTransaction paymentTransaction = (PaymentTransaction) message.getValue();
+					Account account = Controller.getInstance().getAccountByAddress(paymentTransaction.getRecipient().getAddress());	
 					if(account != null)
 					{
 						if(Settings.getInstance().isSoundReceivePaymentEnabled())
 						{
 							PlaySound.getInstance().playSound("receivepayment.wav", ((Transaction) message.getValue()).getSignature());
 						}
+						
+						SysTray.getInstance().sendMessage("Payment received", "From: " + paymentTransaction.getSender().getAddress() + "\nTo: " + account.getAddress() + "\nAmount: " + paymentTransaction.getAmount().toPlainString(), MessageType.INFO);
+						
 					}
 					else if(Settings.getInstance().isSoundNewTransactionEnabled())
 					{
