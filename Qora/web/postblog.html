@@ -1,0 +1,66 @@
+﻿<html>
+<head>
+<title>Qora web server</title>
+<link rel="shortcut icon" href="favicon.ico">
+<script type='text/javascript'>
+function processpost() 
+{
+	title = document.getElementById("title").value;
+	content = document.getElementById("content").value;
+	creator = document.getElementById("creator").value;
+	fee = document.getElementById("fee").value;
+	if(content=="")
+	{
+		alert("Entering text is mandatory")
+		return 0;
+	}
+	if(fee=="")
+	{
+		alert("Entering fee is mandatory")
+		return 0;
+	}
+	if(creator=="")
+	{
+		alert("Entering creator is mandatory")
+		return 0;
+	}
+	document.location.href = '/postblog.html?title='+title+ "&content=" + content + "&creator=" +creator + "&fee=" + fee + "" ;return 0;
+}
+</script>
+</head>
+<body>
+<warning></warning>
+<center><h1 style='font-family: Verdana;'>Qora blog</h1>
+<img src='index/qora.png'>
+<br><br>
+<input name="newpost" value="" type="hidden">
+<table>
+   <tbody>
+      <tr>
+         <td>title:</td>
+         <td><input id="title" value="" name="title" size="45"> not necessary</td>
+      </tr>
+      <tr>
+         <td>text: </td>
+         <td><textarea id="content" rows="10" cols="60" name="content"></textarea></td>
+      </tr>
+      <tr>
+         <td>creator addr:</td>
+         <td><input id="creator" value="" size="59" name="creator"></td>
+      </tr>
+      <tr>
+         <td>fee:</td>
+         <td><input id="fee" size="19" name="fee" value="1.00000000"> qora</td>
+      </tr>
+   </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0">
+   <tbody>
+      <tr>
+         <td align="left"><br><input style="width: 150; background-color: #e7e7e7" name="do" value="post" onclick=javascript:processpost() type=button></td>
+      </tr>
+   </tbody>
+</table>
+</span><br><font></font></center>
+<body>
+</html>

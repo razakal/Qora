@@ -15,15 +15,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import qora.account.Account;
 import qora.block.Block;
+import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
@@ -36,6 +39,7 @@ import utils.Pair;
 import api.ATResource;
 import api.AddressesResource;
 import api.ApiErrorFactory;
+import api.ArbitraryTransactionsResource;
 import api.BlocksResource;
 import api.NameSalesResource;
 import api.NamesResource;
@@ -149,6 +153,53 @@ public class NamesWebResource
 			}
 			
 			content = content.replace( "!linkstoreplace!",linksAsHtml);
+			
+			return Response.ok(content, "text/html; charset=utf-8").build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return error404(request);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Path("postblog.html")
+	@GET
+	public Response postBlog()
+	{
+		
+		try {
+			String content = readFile("web/postblog.html", StandardCharsets.UTF_8);
+			
+			String title=request.getParameter("title");
+			String creator=request.getParameter("creator");
+			String contentparam=request.getParameter("content");
+			String fee=request.getParameter("fee");
+			
+			if(StringUtil.isNotBlank(creator) && StringUtil.isNotBlank(contentparam) && StringUtil.isNotBlank(fee)   )
+			{
+				JSONObject json = new JSONObject();
+				json.put("creator", creator);
+				json.put("service", 777);
+				json.put("fee", fee);
+				
+				String params =	"{\"title\":\""+title+ "\""+",\"post\":\""+contentparam+ "\"}";
+				
+				
+				 String data = Base58.encode(params.getBytes());
+				 json.put("data", data);
+				 
+				 // TODO maybe this is not the best way
+				 try {
+					 String result = new ArbitraryTransactionsResource().createArbitraryTransaction(json.toJSONString());
+					 
+					 content = content.replaceAll("<font></font>", "<br><font color=\"green\">Your post was successful</font><br><font color=\"green\">"+result+"</font>");
+					
+				} catch (WebApplicationException e) {
+					content = content.replaceAll("<font></font>", "<br><font color=\"red\">Your post was NOT successful</font><font color=\"red\">"+e.getResponse().getEntity()+"</font>");
+					
+				}
+				
+			}
 			
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
