@@ -11,23 +11,27 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import utils.GZIP;
-import utils.JSonWriter;
-import utils.NameUtils;
-import utils.Pair;
-import utils.NameUtils.NameResult;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Context;
-import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import qora.account.Account;
+import qora.block.Block;
+import qora.crypto.Crypto;
+import qora.naming.Name;
+import qora.transaction.Transaction;
+import utils.GZIP;
+import utils.JSonWriter;
+import utils.NameUtils;
+import utils.NameUtils.NameResult;
+import utils.Pair;
 import api.ATResource;
 import api.AddressesResource;
 import api.ApiErrorFactory;
@@ -35,11 +39,6 @@ import api.BlocksResource;
 import api.NameSalesResource;
 import api.NamesResource;
 import api.TransactionsResource;
-import qora.account.Account;
-import qora.block.Block;
-import qora.crypto.Crypto;
-import qora.naming.Name;
-import qora.transaction.Transaction;
 import controller.Controller;
 import database.DBSet;
 
@@ -55,13 +54,18 @@ public class NamesWebResource
 		try {
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 			
-			content = content.replace( "<warning></warning>", getWarning(request));
+			content = replaceWarning(content);
 			
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return error404(request);
 		}
+	}
+
+	private String replaceWarning(String content) {
+		content = content.replace( "<warning></warning>", getWarning(request));
+		return content;
 	}
 
 	@Path("favicon.ico")
@@ -90,6 +94,30 @@ public class NamesWebResource
 		}
 		else
 		{
+			return error404(request);
+		}
+	}
+	
+	@Path("webdirectory.html")
+	@GET
+	public Response websites()
+	{
+		try {
+			String content = readFile("web/webdirectory.html", StandardCharsets.UTF_8);
+			
+			content = replaceWarning(content);
+			
+			List<String> namesContainingWebsites = NameUtils.getNamesContainingWebsites(true);
+			String linksAsHtml = "";
+			for (String name : namesContainingWebsites) {
+				linksAsHtml += "<a href=/"+name+">"+name+"</a><br>";
+			}
+			
+			content = content.replace( "!linkstoreplace!",linksAsHtml);
+			
+			return Response.ok(content, "text/html; charset=utf-8").build();
+		} catch (IOException e) {
+			e.printStackTrace();
 			return error404(request);
 		}
 	}
