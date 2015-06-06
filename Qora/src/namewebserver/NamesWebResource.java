@@ -51,10 +51,36 @@ public class NamesWebResource
 	@GET
 	public Response Default()
 	{
+		return handleDefault();
+	}
+
+	public Response handleDefault() {
 		try {
-			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 			
+			String searchValue=request.getParameter("search");
+			String kind=request.getParameter("kind");
+			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 			content = replaceWarning(content);
+			if(searchValue != null)
+			{
+				List<String> namesByValue = NameUtils.getNamesByValue(searchValue, true);
+				String results = "<br>";
+				for (String name : namesByValue) {
+					results += "<a href=/"+name+">"+name+"</a><br>";
+				}
+				
+				content = content.replace( "<results></results>", results);
+				
+			}
+			
+			if(kind != null)
+			{
+				if(kind != "1")
+				{
+					content = content.replace( "<option value=\"2\">", "<option selected=\"true\" value=\"2\">");
+				}
+				
+			}
 			
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
@@ -66,6 +92,13 @@ public class NamesWebResource
 	private String replaceWarning(String content) {
 		content = content.replace( "<warning></warning>", getWarning(request));
 		return content;
+	}
+	
+	@Path("index.html")
+	@GET
+	public Response handleIndex()
+	{
+		return handleDefault();
 	}
 
 	@Path("favicon.ico")
@@ -101,6 +134,31 @@ public class NamesWebResource
 	@Path("webdirectory.html")
 	@GET
 	public Response websites()
+	{
+		
+		try {
+			String content = readFile("web/webdirectory.html", StandardCharsets.UTF_8);
+			
+			content = replaceWarning(content);
+			
+			List<String> namesContainingWebsites = NameUtils.getNamesContainingWebsites(true);
+			String linksAsHtml = "";
+			for (String name : namesContainingWebsites) {
+				linksAsHtml += "<a href=/"+name+">"+name+"</a><br>";
+			}
+			
+			content = content.replace( "!linkstoreplace!",linksAsHtml);
+			
+			return Response.ok(content, "text/html; charset=utf-8").build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return error404(request);
+		}
+	}
+	
+	@Path("searchNamesResult.html")
+	@GET
+	public Response searchByValue()
 	{
 		try {
 			String content = readFile("web/webdirectory.html", StandardCharsets.UTF_8);

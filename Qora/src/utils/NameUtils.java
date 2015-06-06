@@ -85,7 +85,24 @@ public class NameUtils {
 		return new Pair<Account, NameUtils.NameResult>(recipient, NameResult.OK);
 	}
 	
+	
+	public static List<String> getNamesByValue(String searchvalue, boolean removeInjected)
+	{
+		return getNamesbyValueInternal(removeInjected, searchvalue);
+
+		
+		
+	}
+	
+	
+	
+	
 	public static List<String> getNamesContainingWebsites(boolean removeInjected) {
+		return getNamesbyValueInternal(removeInjected, null);
+	}
+
+
+	public static List<String> getNamesbyValueInternal(boolean removeInjected, String searchValueOpt) {
 		List<String> websites = new ArrayList<String>();
 		List<String> injected = new ArrayList<String>();
 
@@ -109,15 +126,24 @@ public class NameUtils {
 						GZIP.webDecompress(nameinj.getValue().toString()));
 			}
 
-			if (value.toLowerCase().contains("html")
-					|| value.toLowerCase().contains("iframe")
-					|| value.toLowerCase().contains("<a href=")
-					|| value.toLowerCase().contains("<script>")
-					|| value.toLowerCase().contains("<table>")
-					|| value.toLowerCase().contains("<b>")
-					|| value.toLowerCase().contains("<font>")
-					|| value.toLowerCase().contains("<pre>")) {
-				websites.add(string);
+			if(searchValueOpt == null)
+			{
+				if (value.toLowerCase().contains("html")
+						|| value.toLowerCase().contains("iframe")
+						|| value.toLowerCase().contains("<a href=")
+						|| value.toLowerCase().contains("<script>")
+						|| value.toLowerCase().contains("<table>")
+						|| value.toLowerCase().contains("<b>")
+						|| value.toLowerCase().contains("<font>")
+						|| value.toLowerCase().contains("<pre>")) {
+					websites.add(string);
+				}
+			}else
+			{
+				if (value.matches(".*" + searchValueOpt + ".*"))
+				{
+					websites.add(string);
+				}
 			}
 
 		}

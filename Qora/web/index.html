@@ -9,8 +9,20 @@ function key(event)
 }
 function goto() 
 {
+
+	var kind = document.getElementById("kind");
+	var value = kind.options[kind.selectedIndex].value;
+
+
+	if(value==1)
+	{
 	url = document.getElementById("name").value;
 	document.location.href = '/'+url;return 0;
+	}else
+	{
+	searchval = document.getElementById("name").value;
+	document.location.href = '/index.html?search='+searchval+ "&kind=2";return 0;
+	}
 }
 </script>
 </head>
@@ -18,10 +30,16 @@ function goto()
 <warning></warning>
 <center><h1 style='font-family: Verdana;'>Qora web server</h1>
 <img src='index/qora.png'>
+<br>
+<br>
+<select name="kind" id="kind" value="1">
+  <option value="1">open page that matches the name</option>
+  <option value="2">search by value</option>
+</select>
 <br><br>
-<span style='font-family: Verdana;'>Enter the name:<br>
+<span style='font-family: Verdana;'>Enter search value:<br>
 <input size=55 id=name value="" onkeyup="if(key(event)==13){document.getElementById('button').click();}">
-<input id=button type=button value="Search" style='font-family: Verdana;' onclick=javascript:goto()><br><a href=/webdirectory.html>web directory</a><br><br>
+<input id=button type=button value="Search" style='font-family: Verdana;' onclick=javascript:goto()><results></results><br><a href=/webdirectory.html>web directory</a><br><br>
 © <a href=http://qora.org>Qora</a></span></center>
 <body>
 </html>
