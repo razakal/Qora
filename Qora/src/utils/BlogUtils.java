@@ -30,7 +30,6 @@ public class BlogUtils {
 				 Pair<String, String> blogpair =  new Pair<>();
 				
 				byte[] data = ((ArbitraryTransaction) transaction).getData();
-//				System.out.println(new String(data));
 				String string = new String(data);
 				
 				JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
@@ -38,9 +37,9 @@ public class BlogUtils {
 				String title = (String) jsonObject.get("title");
 				String post = (String) jsonObject.get("post");
 				
-				if(StringUtil.isNotBlank(title) && StringUtil.isNotBlank(post))
+				if(StringUtil.isNotBlank(post))
 				{
-					blogpair.setA(title);
+					blogpair.setA(title == null? "" : title);
 					blogpair.setB(post);
 					
 					results.add(blogpair);
