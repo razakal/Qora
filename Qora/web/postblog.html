@@ -7,7 +7,7 @@ function processpost()
 {
 	title = document.getElementById("title").value;
 	content = document.getElementById("content").value;
-	creator = document.getElementById("creator").value;
+	creator = document.getElementById("addr").value;
 	fee = document.getElementById("fee").value;
 	if(content=="")
 	{
@@ -46,7 +46,9 @@ function processpost()
       </tr>
       <tr>
          <td>creator addr:</td>
-         <td><input id="creator" value="" size="59" name="creator"></td>
+         <td><select name="addr" id="addr" value="1">
+  			<option></option>
+		</select></td>
       </tr>
       <tr>
          <td>fee:</td>

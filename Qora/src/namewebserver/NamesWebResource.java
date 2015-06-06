@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -174,6 +175,16 @@ public class NamesWebResource
 			String creator=request.getParameter("creator");
 			String contentparam=request.getParameter("content");
 			String fee=request.getParameter("fee");
+			
+			List<Account> accounts = new ArrayList<Account>( Controller.getInstance().getAccounts());
+			
+			
+			String accountStrings = "";
+			for (Account account : accounts) {
+				accountStrings += "<option>"+account.getAddress()+"</option>";
+			}
+			
+			content = content.replaceAll("<option></option>", accountStrings);
 			
 			if(StringUtil.isNotBlank(creator) && StringUtil.isNotBlank(contentparam) && StringUtil.isNotBlank(fee)   )
 			{
