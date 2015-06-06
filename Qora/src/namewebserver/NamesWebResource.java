@@ -156,30 +156,6 @@ public class NamesWebResource
 		}
 	}
 	
-	@Path("searchNamesResult.html")
-	@GET
-	public Response searchByValue()
-	{
-		try {
-			String content = readFile("web/webdirectory.html", StandardCharsets.UTF_8);
-			
-			content = replaceWarning(content);
-			
-			List<String> namesContainingWebsites = NameUtils.getNamesContainingWebsites(true);
-			String linksAsHtml = "";
-			for (String name : namesContainingWebsites) {
-				linksAsHtml += "<a href=/"+name+">"+name+"</a><br>";
-			}
-			
-			content = content.replace( "!linkstoreplace!",linksAsHtml);
-			
-			return Response.ok(content, "text/html; charset=utf-8").build();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return error404(request);
-		}
-	}
-	
 	@Path("libs/jquery.{version}.js")
 	@GET
 	public Response jquery(@PathParam("version") String version)
