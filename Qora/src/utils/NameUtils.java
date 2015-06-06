@@ -140,7 +140,7 @@ public class NameUtils {
 				}
 			}else
 			{
-				if (value.matches(".*" + searchValueOpt + ".*"))
+				if (value.matches(".*" + Pattern.quote(searchValueOpt) + ".*"))
 				{
 					websites.add(string);
 				}

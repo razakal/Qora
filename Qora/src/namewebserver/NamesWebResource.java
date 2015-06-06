@@ -66,7 +66,7 @@ public class NamesWebResource
 				List<String> namesByValue = NameUtils.getNamesByValue(searchValue, true);
 				String results = "<br>";
 				for (String name : namesByValue) {
-					results += "<a href=/"+name+">"+name+"</a><br>";
+					results += "<a href=/"+name.replaceAll(" ", "%20")+">"+name+"</a><br>";
 				}
 				
 				content = content.replace( "<results></results>", results);
@@ -144,7 +144,7 @@ public class NamesWebResource
 			List<String> namesContainingWebsites = NameUtils.getNamesContainingWebsites(true);
 			String linksAsHtml = "";
 			for (String name : namesContainingWebsites) {
-				linksAsHtml += "<a href=/"+name+">"+name+"</a><br>";
+				linksAsHtml += "<a href=/"+name.replaceAll(" ", "%20")+">"+name+"</a><br>";
 			}
 			
 			content = content.replace( "!linkstoreplace!",linksAsHtml);
