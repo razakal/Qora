@@ -24,6 +24,24 @@ function goto()
 	document.location.href = '/index.html?search='+searchval+ "&kind=2";return 0;
 	}
 }
+
+	function getSearchParameters() {
+	      var prmstr = window.location.search.substr(1);
+	      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+	}
+	
+	function transformToAssocArray( prmstr ) {
+	    var params = {};
+	    var prmarr = prmstr.split("&");
+	    for ( var i = 0; i < prmarr.length; i++) {
+	        var tmparr = prmarr[i].split("=");
+	        params[tmparr[0]] = tmparr[1];
+	    }
+	    return params;
+	}
+	
+
+
 </script>
 </head>
 <body>
@@ -39,6 +57,14 @@ function goto()
 <br><br>
 <span style='font-family: Verdana;'>Enter search value:<br>
 <input size=55 id=name value="" onkeyup="if(key(event)==13){document.getElementById('button').click();}">
+<script type="text/javascript">
+var elem = document.getElementById("name");
+elem.value = getSearchParameters().search;
+if(getSearchParameters().search ==undefined)
+{
+elem.value = ""
+}
+</script>
 <input id=button type=button value="Search" style='font-family: Verdana;' onclick=javascript:goto()><results></results><br><a href=/webdirectory.html>web directory</a><br><br>
 © <a href=http://qora.org>Qora</a></span></center>
 <body>
