@@ -20,7 +20,7 @@ public class KeyValueTableModel extends AbstractTableModel implements Observer{
 	
 	private String[] columnNames = {"Key", "Value"};
 	
-	private List<Pair<String, String>> keyvaluepairs;
+	private List<Pair<String, String>> keyvaluepairs = new ArrayList<Pair<String,String>>();
 	
 	@Override
 	public int getColumnCount() {
