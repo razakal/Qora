@@ -132,10 +132,13 @@ public class NameUtils {
 			if(searchValueOpt == null)
 			{
 				try {
-					JSONObject jsonObject = (JSONObject) JSONValue.parse(value);
-					if(jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname()))
+					if(value.startsWith("{"))
 					{
-						websites.add(key);
+						JSONObject jsonObject = (JSONObject) JSONValue.parse(value);
+						if(jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname()))
+						{
+							websites.add(key);
+						}
 					}
 				} catch (Exception e) {
 					// no valid json no website key
