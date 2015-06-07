@@ -1,6 +1,7 @@
 package gui.naming;
 
 import gui.PasswordPane;
+import gui.models.KeyValueTableModel;
 import gui.models.NameComboBoxModel;
 
 import java.awt.Dimension;
@@ -16,6 +17,7 @@ import java.awt.event.ItemListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -24,12 +26,20 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
@@ -47,11 +57,15 @@ public class UpdateNameFrame extends JFrame
 {
 	private JComboBox<Name> cbxName;
 	private JTextField txtOwner;
+	private JTextField txtKey;
 	private JTextArea txtareaValue;	
 	private JTextField txtFee;
 	private JButton updateButton;
-	private JButton CompressButton;
+//	private JButton CompressButton;
+	private JButton removeButton;
+	private JButton addButton;
 	private JLabel countLabel;
+	private KeyValueTableModel namesModel;
 	
 	public UpdateNameFrame(Name name)
 	{
@@ -111,61 +125,44 @@ public class UpdateNameFrame extends JFrame
       	labelGBC.gridy = 1;
       	JLabel nameLabel = new JLabel("Name:");
       	this.add(nameLabel, labelGBC);
+      	
       		
       	//TXT NAME
       	txtGBC.gridy = 1;
       	this.cbxName = new JComboBox<Name>(new NameComboBoxModel());
-      	this.cbxName.addItemListener(new ItemListener()
-      	{
-      		@Override
-      	    public void itemStateChanged(ItemEvent event) 
-      		{
-      			if (event.getStateChange() == ItemEvent.SELECTED) 
-      			{
-      				Name name = (Name) event.getItem();
-      	 
-      				txtareaValue.setText(name.getValue());
-      				txtOwner.setText(name.getOwner().getAddress());
-      			}
-      	    }    
-      	});
+      	
         this.add(this.cbxName, txtGBC);
         
         //LABEL OWNER
       	labelGBC.gridy = 2;
       	JLabel ownerLabel = new JLabel("Owner:");
       	this.add(ownerLabel, labelGBC);
+      	
       		
       	//TXT OWNER
       	txtGBC.gridy = 2;
       	this.txtOwner = new JTextField();
       	this.add(this.txtOwner, txtGBC);
+      	
+      	 //LABEL OWNER
+      	labelGBC.gridy = 3;
+      	JLabel keyLabel = new JLabel("Key:");
+      	this.add(keyLabel, labelGBC);
+      	
+      //TXT OWNER
+      	txtGBC.gridy = 3;
+      	this.txtKey = new JTextField();
+      	this.add(this.txtKey, txtGBC);
         
         //LABEL VALUE
-      	labelGBC.gridy = 3;
+      	labelGBC.gridy = 4;
       	JLabel valueLabel = new JLabel("Value:");
       	this.add(valueLabel, labelGBC);
       		
       	//TXTAREA VALUE
-      	txtGBC.gridy = 3;
+      	txtGBC.gridy = 4;
       	this.txtareaValue = new JTextArea();
-      	this.txtareaValue.getDocument().addDocumentListener(new DocumentListener() {
-            
-			@Override
-			public void changedUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-			@Override
-			public void insertUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
-				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
-			}
-			@Override
-			public void removeUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
-				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
-			}
-        });
+      	
       	this.txtareaValue.setRows(20);
       	this.txtareaValue.setColumns(63);
       	this.txtareaValue.setBorder(cbxName.getBorder());
@@ -176,26 +173,205 @@ public class UpdateNameFrame extends JFrame
       	this.add(Valuescroll, txtGBC);
         
       	//LABEL COUNT
-		labelGBC.gridy = 4;
+		labelGBC.gridy = 5;
 		//labelGBC.gridwidth = ;
 		labelGBC.gridx = 1;
 		countLabel = new JLabel("Character count: 0/4000");
 		this.add(countLabel, labelGBC);
+		
+		//TABLE GBC
+				GridBagConstraints tableGBC = new GridBagConstraints();
+				tableGBC.fill = GridBagConstraints.BOTH; 
+				tableGBC.anchor = GridBagConstraints.NORTHWEST;
+				tableGBC.weightx = 1;
+				tableGBC.weighty = 1;
+				tableGBC.gridwidth = 10;
+				tableGBC.gridx = 0;	
+				tableGBC.gridy= 6;	
+		
+				namesModel = new KeyValueTableModel();
+				final JTable namesTable = new JTable(namesModel);
+		
+				namesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		namesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(final ListSelectionEvent e) {
+				
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						if(!e.getValueIsAdjusting())
+						{
+							ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+							
+							int minSelectionIndex = lsm.getMinSelectionIndex();
+							txtareaValue.setEnabled(minSelectionIndex != -1);
+							txtKey.setEnabled(minSelectionIndex != -1);
+							txtareaValue.setText((String) namesModel.getValueAt(minSelectionIndex, 1)); 
+							txtKey.setText((String) namesModel.getValueAt(minSelectionIndex, 0)); 
+						}
+					}
+				});
+				
+			}
+		});
+		
+		
+			this.txtareaValue.getDocument().addDocumentListener(new DocumentListener() {
+            
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				update(namesModel, namesTable);
+			}
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				update(namesModel, namesTable);
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
+			}
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				update(namesModel, namesTable);
+				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
+			}
+			public void update(final KeyValueTableModel namesModel,
+					final JTable namesTable) {
+				final int selectedRow = namesTable.getSelectedRow();
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						String newValue = txtareaValue.getText();
+						namesModel.setValueAt(newValue, selectedRow, 1);
+						namesModel.fireTableCellUpdated(selectedRow, 1);
+					}
+				});
+			}
+        });
+		
+			//PREVENT UPPERCASE FOR KEYS
+//		((AbstractDocument)	txtKey.getDocument()).setDocumentFilter(new DocumentFilter()
+//		{
+//			@Override
+//            public void insertString(FilterBypass fb, int offset,
+//                    String string, AttributeSet attr)
+//                    throws BadLocationException {
+//				super.insertString(fb, offset, string.toLowerCase(), attr);
+//            }
+//
+//
+//            @Override
+//            public void replace(FilterBypass fb, int offset, int length,
+//                    String text, AttributeSet attrs)
+//                    throws BadLocationException {
+//            	super.insertString(fb, offset, text.toLowerCase(), attrs);
+//            }
+//		});
+		
+		txtKey.getDocument().addDocumentListener(new DocumentListener() {
+			  public void changedUpdate(DocumentEvent e) {
+			    valueChanged(e);
+			  }
+			  public void removeUpdate(DocumentEvent e) {
+			    valueChanged(e);
+			  }
+			  public void insertUpdate(DocumentEvent e) {
+			    valueChanged(e);
+			  }
 
+			  public void valueChanged(final DocumentEvent e) {
+				  SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						final int selectedRow = namesTable.getSelectedRow();
+						String newKey = txtKey.getText().toLowerCase();
+						
+						namesModel.setValueAt(newKey, selectedRow, 0);
+						namesModel.fireTableCellUpdated(selectedRow, 0);
+						
+					}
+				});
+			  }
+			});
+		
+		
+		txtareaValue.setEnabled(namesTable.getSelectedRow() != -1);
+		txtKey.setEnabled(namesTable.getSelectedRow() != -1);
+		
+		
+		this.cbxName.addItemListener(new ItemListener()
+      	{
+      		@Override
+      	    public void itemStateChanged(ItemEvent event) 
+      		{
+      			if (event.getStateChange() == ItemEvent.SELECTED) 
+      			{
+      				Name name = (Name) event.getItem();
+      	 
+//      				txtareaValue.setText(name.getValue());
+//      				txtOwner.setText(name.getOwner().getAddress());
+      				
+      				String value = GZIP.webDecompress(name.getValue());
+      				JSONObject jsonObject;
+      				try {
+						jsonObject = (JSONObject) JSONValue.parse(value);
+						
+					} catch (Exception e) {
+						jsonObject = null;
+					}
+      				
+      				List<Pair<String, String>> keyvaluepairs = new ArrayList<>();
+      				if(jsonObject != null)
+      				{
+      					@SuppressWarnings("unchecked")
+						Set<String> keySet = jsonObject.keySet();
+      					for (String key : keySet) {
+      						Object object = jsonObject.get(key);
+      						if(object instanceof Long)
+      						{
+      							object = ""+object;
+      						}
+							keyvaluepairs.add(new Pair<String, String>(key, (String) object));
+      					}
+      					
+      				}else
+      				{
+      					keyvaluepairs.add(new Pair<String, String>("defaultkey", value));
+      				}
+      				
+      				namesModel.setData(keyvaluepairs);
+      				namesTable.requestFocus();
+      				namesTable.changeSelection(0,0,false, false);
+      				
+      			}
+      	    }    
+      	});
+		
+		
+		
+
+		//ADD NAMING SERVICE TABLE
+		this.add(new JScrollPane(namesTable), tableGBC);
+		
       	//LABEL FEE
 		labelGBC.gridx = 0;
-		labelGBC.gridy = 5;
+		labelGBC.gridy = 8;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
       		
       	//TXT FEE
-      	txtGBC.gridy = 5;
+      	txtGBC.gridy = 8;
       	txtFee = new JTextField();
       	this.txtFee.setText("1");
         this.add(txtFee, txtGBC);
 		           
         //BUTTON Register
-        buttonGBC.gridy = 6;
+        buttonGBC.gridy = 9;
         updateButton = new JButton("Update");
         updateButton.setPreferredSize(new Dimension(80, 25));
         updateButton.addActionListener(new ActionListener()
@@ -208,22 +384,68 @@ public class UpdateNameFrame extends JFrame
     	this.add(updateButton, buttonGBC);
              
     	//BUTTON COMPRESS
-        buttonGBC.gridy = 4;
+//        buttonGBC.gridy = 5;
+//        buttonGBC.gridx = 1;
+//        buttonGBC.fill = GridBagConstraints.EAST;
+//        buttonGBC.anchor = GridBagConstraints.EAST;
+//        
+//        CompressButton = new JButton("Compress/Decompress");
+//        CompressButton.setPreferredSize(new Dimension(150, 25));
+//    
+//        CompressButton.addActionListener(new ActionListener()
+//	    {
+//			public void actionPerformed(ActionEvent e)
+//			{
+//		    	txtareaValue.setText(GZIP.autoDecompress(txtareaValue.getText()));
+//		    }
+//		});
+//    	this.add(CompressButton, buttonGBC);
+    	
+    	
+    	//BUTTON REMOVE
+        buttonGBC.gridy = 7;
         buttonGBC.gridx = 1;
         buttonGBC.fill = GridBagConstraints.EAST;
         buttonGBC.anchor = GridBagConstraints.EAST;
         
-        CompressButton = new JButton("Compress/Decompress");
-        CompressButton.setPreferredSize(new Dimension(150, 25));
+        removeButton = new JButton("Remove");
+        removeButton.setPreferredSize(new Dimension(150, 25));
+        this.add(removeButton, buttonGBC);
+        
+        buttonGBC.gridx = 0;
+        addButton = new JButton("Add");
+        addButton.setPreferredSize(new Dimension(150, 25));
+        this.add(addButton, buttonGBC);
     
-        CompressButton.addActionListener(new ActionListener()
+        removeButton.addActionListener(new ActionListener()
 	    {
 			public void actionPerformed(ActionEvent e)
 			{
-		    	txtareaValue.setText(GZIP.autoDecompress(txtareaValue.getText()));
+				int index = namesTable.getSelectionModel().getMinSelectionIndex();
+				if(index != -1)
+				{
+					namesModel.removeEntry(index);
+					
+					if(namesModel.getRowCount() > index)
+					{
+						namesTable.requestFocus();
+						namesTable.changeSelection(index,index,false, false);
+					}
+				}
 		    }
 		});
-    	this.add(CompressButton, buttonGBC);
+        
+        
+        addButton.addActionListener(new ActionListener()
+	    {
+			public void actionPerformed(ActionEvent e)
+			{
+				namesModel.addAtEnd();
+				namesTable.requestFocus();
+				int index = namesModel.getRowCount();
+				namesTable.changeSelection(index-1,index-1,false, false);
+		    }
+		});
 
     	//SET DEFAULT SELECTED ITEM
     	if(this.cbxName.getItemCount() > 0)
@@ -245,10 +467,12 @@ public class UpdateNameFrame extends JFrame
       	MenuPopupUtil.installContextMenu(txtFee);
 	}
 	
+	
 	public void onUpdateClick()
 	{
 		//DISABLE
 		this.updateButton.setEnabled(false);
+		
 		
 		//CHECK IF NETWORK OKE
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
@@ -319,10 +543,37 @@ public class UpdateNameFrame extends JFrame
 					return;
 				}
 			}
-
+			
+			
+			Pair<Boolean, String> isUpdatable = namesModel.checkUpdateable();
+			if(!isUpdatable.getA())
+			{
+				
+				JOptionPane.showMessageDialog(new JFrame(), isUpdatable.getB(), "Error", JOptionPane.ERROR_MESSAGE);
+				
+				//ENABLE
+				this.updateButton.setEnabled(true);
+				
+				return;
+			}
+			
 			//CREATE NAME UPDATE
 			PrivateKeyAccount owner = Controller.getInstance().getPrivateKeyAccountByAddress(name.getOwner().getAddress());
-			Pair<Transaction, Integer> result = Controller.getInstance().updateName(owner, new Account(this.txtOwner.getText()), name.getName(), this.txtareaValue.getText(), fee);
+			String currentValueAsJsonStringOpt = namesModel.getCurrentValueAsJsonStringOpt();
+			if(currentValueAsJsonStringOpt == null)
+			{
+					JOptionPane.showMessageDialog(new JFrame(), "Bad Json value", "Error", JOptionPane.ERROR_MESSAGE);
+				
+				//ENABLE
+				this.updateButton.setEnabled(true);
+				
+				return;
+			}
+			
+			
+			currentValueAsJsonStringOpt = GZIP.compress(currentValueAsJsonStringOpt);
+			
+			Pair<Transaction, Integer> result = Controller.getInstance().updateName(owner, new Account(this.txtOwner.getText()), name.getName(), currentValueAsJsonStringOpt, fee);
 			
 			//CHECK VALIDATE MESSAGE
 			switch(result.getB())

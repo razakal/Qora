@@ -66,13 +66,17 @@ public class GZIP {
         }
 		else
 		{
-			byte[] compressed = null;
-			try {
-				compressed = GZIPcompress(text);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return "?gz!"+Base64.encode(compressed); 
+			return compress(text); 
 		}	
+	}
+
+	public static String compress(String text) {
+		byte[] compressed = null;
+		try {
+			compressed = GZIPcompress(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "?gz!"+Base64.encode(compressed);
 	}
 }
