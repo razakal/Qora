@@ -144,12 +144,12 @@ public class UpdateNameFrame extends JFrame
       	this.txtOwner = new JTextField();
       	this.add(this.txtOwner, txtGBC);
       	
-      	 //LABEL OWNER
+      	 //LABEL KEY
       	labelGBC.gridy = 3;
       	JLabel keyLabel = new JLabel("Key:");
       	this.add(keyLabel, labelGBC);
       	
-      //TXT OWNER
+      	//TXT KEY
       	txtGBC.gridy = 3;
       	this.txtKey = new JTextField();
       	this.add(this.txtKey, txtGBC);
