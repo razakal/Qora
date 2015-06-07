@@ -38,6 +38,7 @@ import utils.BlogUtils;
 import utils.GZIP;
 import utils.JSonWriter;
 import utils.NameUtils;
+import utils.Qorakeys;
 import utils.NameUtils.NameResult;
 import utils.Pair;
 import api.ATResource;
@@ -62,6 +63,8 @@ public class NamesWebResource
 	{
 		return handleDefault();
 	}
+	
+	
 
 	public Response handleDefault() {
 		try {
@@ -781,19 +784,55 @@ public class NamesWebResource
 		
 		//WEBPAGE GZIP DECOMPRESSOR
 		Value = GZIP.webDecompress(Value);
+		
+		String website = null;
+		try {
+			JSONObject jsonObject = (JSONObject) JSONValue.parse(Value);
+			if(jsonObject != null && jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname()))
+			{
+				website = (String) jsonObject.get(Qorakeys.WEBSITE.getKeyname());
+			}
+			
+		} catch (Exception e) {
+//			no json probably
+		}
+		
+		if(website == null)
+		{
+			try {
+				String content = readFile("web/websitenotfound.html", StandardCharsets.UTF_8);
+				 content = content.replaceAll("!websitenotfoundcontent!", "<br><font color=\"red\">If this is your name, please do a name update for the name <a href=/name:"+nameName.replaceAll(" ", "%20")+">"+ nameName + "</a> and add the key \"website\" with webcontent as value to make this work.</font><br>You can see the current value <a href=/name:"+nameName.replaceAll(" ", "%20")+">here</a>");
+				
+				 Value = injectValues(Value);
+				 
+				 return Response.ok(content, "text/html; charset=utf-8").build();
+			} catch (IOException e) {
+				return error404(request);
+			}
+				 
+		}
+		
+		website = injectValues(website);
+		
         
-        //PROCESSING TAG INJ
-        Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
-        Matcher matcher = pattern.matcher(Value);
-        while (matcher.find()) {
-        	Name nameinj = Controller.getInstance().getName(matcher.group(1));
-        	Value = Value.replace( matcher.group(), GZIP.webDecompress(nameinj.getValue().toString()));
-        }
      
 		//SHOW WEB-PAGE
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(getWarning(request)+Value)
+				.entity(getWarning(request)+website)
 				.build();
+	}
+
+
+
+	public String injectValues(String Value) {
+		//PROCESSING TAG INJ
+		 Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
+		 Matcher matcher = pattern.matcher(Value);
+		 while (matcher.find()) {
+			 Name nameinj = Controller.getInstance().getName(matcher.group(1));
+			 Value = Value.replace( matcher.group(), GZIP.webDecompress(nameinj.getValue().toString()));
+		 }
+		return Value;
 	}
 }
