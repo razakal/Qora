@@ -191,10 +191,14 @@ public class UpdateNameFrame extends JFrame
 		
 				namesModel = new KeyValueTableModel();
 				final JTable namesTable = new JTable(namesModel);
+				
+				JScrollPane scrollPane = new JScrollPane(namesTable);
+		        scrollPane.setPreferredSize(new Dimension(100, 150));
+		        scrollPane.setWheelScrollingEnabled(true);
 		
 				namesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
-		namesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+				namesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			
 			@Override
 			public void valueChanged(final ListSelectionEvent e) {
@@ -356,7 +360,7 @@ public class UpdateNameFrame extends JFrame
 		
 
 		//ADD NAMING SERVICE TABLE
-		this.add(new JScrollPane(namesTable), tableGBC);
+		this.add(new JScrollPane(scrollPane), tableGBC);
 		
       	//LABEL FEE
 		labelGBC.gridx = 0;
