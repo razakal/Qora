@@ -6,6 +6,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
 import qora.account.Account;
 import qora.naming.Name;
 import api.ApiErrorFactory;
@@ -111,8 +114,8 @@ public class NameUtils {
 		Set<String> keys = nameMap.getKeys();
 		Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
 
-		for (String string : keys) {
-			String value = nameMap.get(string).getValue();
+		for (String key : keys) {
+			String value = nameMap.get(key).getValue();
 
 			value = GZIP.webDecompress(value);
 
@@ -128,21 +131,20 @@ public class NameUtils {
 
 			if(searchValueOpt == null)
 			{
-				if (value.toLowerCase().contains("html")
-						|| value.toLowerCase().contains("iframe")
-						|| value.toLowerCase().contains("<a href=")
-						|| value.toLowerCase().contains("<script>")
-						|| value.toLowerCase().contains("<table>")
-						|| value.toLowerCase().contains("<b>")
-						|| value.toLowerCase().contains("<font>")
-						|| value.toLowerCase().contains("<pre>")) {
-					websites.add(string);
+				try {
+					JSONObject jsonObject = (JSONObject) JSONValue.parse(value);
+					if(jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname()))
+					{
+						websites.add(key);
+					}
+				} catch (Exception e) {
+					// no valid json no website key
 				}
 			}else
 			{
 				if (value.toLowerCase().contains(searchValueOpt))
 				{
-					websites.add(string);
+					websites.add(key);
 				}
 			}
 
