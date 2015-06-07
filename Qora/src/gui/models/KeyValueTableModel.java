@@ -36,7 +36,7 @@ public class KeyValueTableModel extends AbstractTableModel implements Observer{
 	@Override
 	public String getValueAt(int row, int column) {
 		
-		if(this.keyvaluepairs == null || row > this.keyvaluepairs.size() - 1 )
+		if(this.keyvaluepairs == null || row > this.keyvaluepairs.size() - 1 || row == -1)
 		{
 			return null;
 		}
