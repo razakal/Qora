@@ -69,6 +69,18 @@
             /* Margin bottom by footer height */
             margin-bottom: 60px;
         }
+        .content {
+            position: fixed;
+            top: 40%;
+            left: 45%;
+            /* bring your own prefixes */
+            transform: translate(-40%, -45%);
+            margin: auto;
+        }
+        .main-logo {
+            margin-left: 12%;
+            margin-right: 12%;
+        }
         .footer {
             position: absolute;
             bottom: 0;
@@ -97,37 +109,40 @@
 <body>
     <warning></warning>
     <div class="container">
-        <h1 style="font-family: Verdana;">Qora web server</h1>
-        <img src="index/qora.png" alt="">
-        <br>
-        <br>
-        <select id="kind" name="kind" value="1">
-            <option value="1">open page that matches the name</option>
-            <option value="2">search by value</option>
-        </select>
-        <br>
-        <br><span style="font-family: Verdana;">Enter search value:<br>
+        <div id class="content">
+            <div id class="main-logo">
+                <img src="index/qora.png" alt="">
+            </div>
+            <div id class="search-area">
+                <select id="kind" name="kind" value="1">
+                    <option value="1">open page that matches the name</option>
+                    <option value="2">search by value</option>
+                </select>
+                <br>
+                <br><span style="font-family: Verdana;">Enter search value:<br>
       <input id="name" size="55" value="" autofocus="autofocus" onkeyup="if(key(event)==13){document.getElementById('button').click();}">
       <input id="button" type="button" value="Search" style="font-family: Verdana;" onclick="javascript:goto()">
+</div>
       <results></results><br></span>
-    </div>
-    <footer class="footer">
-        <div class="container">
-            <p class="text-muted"><a href="/webdirectory.html">web directory</a>		<a href="/blog.html">blog</a>	© <a href="http://qora.org">Qora</a>
-            </p>
+            </div>
         </div>
-    </footer>
-    <script type="text/javascript">
-        var elem;
+        <footer class="footer">
+            <div class="container">
+                <p class="text-muted"><a href="/webdirectory.html">web directory</a>		<a href="/blog.html">blog</a>	© <a href="http://qora.org">Qora</a>
+                </p>
+            </div>
+        </footer>
+        <script type="text/javascript">
+            var elem;
 
-        elem = document.getElementById('name');
+            elem = document.getElementById('name');
 
-        elem.value = getSearchParameters().search;
+            elem.value = getSearchParameters().search;
 
-        if (getSearchParameters().search == void 0) {
-            elem.value = '';
-        }
-    </script>
+            if (getSearchParameters().search == void 0) {
+                elem.value = '';
+            }
+        </script>
 </body>
 
 </html>
