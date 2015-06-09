@@ -143,6 +143,21 @@ public class NamesWebResource
 		}
 	}
 	
+	@Path("index/qora-user.png")
+	@GET
+	public Response qorauserpng()
+	{
+		File file = new File("web/qora-user.png");
+		
+		if(file.exists()){
+			return Response.ok(file, "image/png").build();
+		}
+		else
+		{
+			return error404(request);
+		}
+	}
+	
 	@Path("webdirectory.html")
 	@GET
 	public Response websites()
@@ -241,7 +256,7 @@ public class NamesWebResource
 			
 			String results = "<br>";
 			
-			String entryTemplate = "<li class=\"media\"><a class=\"pull-left\" href=\"#\"><img class=\"media-object\" src=\"http://www.vcita.com/assets/img-avatar.gif\" alt=\"Generic placeholder image\"></a><div class=\"media-body\"><h4 class=\"media-heading\">TITLE</h4><p>CONTENT</p></div></li>";
+			String entryTemplate = "<li class=\"media\"><a class=\"pull-left\" href=\"#\"><img class=\"media-object\" src=\"index/qora-user.png\" alt=\"Generic placeholder image\"></a><div class=\"media-body\"><h4 class=\"media-heading\">TITLE</h4><p>CONTENT</p></div></li>";
 			for (Pair<String, String> pair : blogPosts) {
 				
 			String converted =	entryTemplate;
