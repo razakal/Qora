@@ -1,25 +1,72 @@
-﻿<html>
+<!DOCTYPE html>
+<html>
+
 <head>
-<title>Qora web server</title>
-<link rel="shortcut icon" href="favicon.ico">
-<script type='text/javascript'>
-function key(event) 
-{
-	return ('which' in event) ? event.which : event.keyCode;
-}
-function goto() 
-{
-	url = document.getElementById("name").value;
-	document.location.href = '/'+url;return 0;
-}
-</script>
+    <meta charset="UTF-8">
+    <title>Qora web server</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <script src="libs/jquery.2.1.4.min.js"></script>
+    <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        li.media {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0px 0px 3px 0px #dddddd;
+        }
+        .media>.pull-left {
+            padding: 10px;
+        }
+        .media-body {
+            padding: 10px;
+        }
+        h4.media-heading {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .modal-content {
+            height: 500px;
+        }
+    </style>
+
 </head>
+
 <body>
-<warning></warning>
-<center><h1 style='font-family: Verdana;'>Qora blog</h1>
-<img src='index/qora.png'>
-<br><br>
-<br><a href=/postblog.html>create new blogpost</a><br>
-!blogposts!</span></center>
-<body>
+    <warning></warning>
+    <div class="container">
+        <h1 style="font-family: Verdana;">Qora blog</h1>
+        <img src="index/qora.png" alt="">
+        <br>
+        <br>
+        <br>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">create new blogpost</button>
+
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <iframe width="100%" height="100%" frameborder="0" src="/postblog.html"></iframe>
+                </div>
+            </div>
+        </div>
+        <br>
+        <ul id="media-list" class="media-list">!blogposts!</ul>
+    </div>
+    <script type="text/javascript">
+        // Check the main container is ready
+        $('#media-list').ready(function() {
+            // Get each div
+            $('.media-body').each(function() {
+                // Get the content
+                var str = $(this).html();
+                // Set the regex string
+                var regex = /(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/ig
+                // Replace plain text links by hyperlinks
+                var replaced_text = str.replace(regex, "<a href='$1' target='_blank'>$1</a>");
+                // Echo link
+                $(this).html(replaced_text);
+            });
+        });
+    </script>
+</body>
+
 </html>
