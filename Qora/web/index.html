@@ -1,147 +1,165 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8">
-    <title>Qora web server</title>
-    <link rel="shortcut icon" href="favicon.ico">
-    <link href="libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-    <script src="libs/jquery.2.1.4.min.js"></script>
-    <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
+	<meta charset="UTF-8">
 
-        var transformToAssocArray;
+	<title>Qora web server</title>
+	<link href="favicon.ico" rel="shortcut icon">
+	<link href="libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+	<script src="libs/jquery.2.1.4.min.js"></script>
+	<script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		var transformToAssocArray;
 
-        transformToAssocArray = function(prmstr) {
-            var i, params, prmarr, tmparr;
-            params = {};
-            prmarr = prmstr.split('&');
-            i = 0;
-            while (i < prmarr.length) {
-                tmparr = prmarr[i].split('=');
-                params[tmparr[0]] = tmparr[1];
-                i++;
-            }
-            return params;
-        };
-		        var getSearchParameters;
- 
-        getSearchParameters = function() {
-            var prmstr;
-            prmstr = window.location.search.substr(1);
-            if (prmstr != null && prmstr != '') {
-                return transformToAssocArray(prmstr);
-            } else {
-                return {};
-            }
-        };
- 
-    $(document).ready(function() {
-        
-        $("#button1").click( function() {
-            var searchval, url, value;
-            value = $( "#kind" )[0].selectedIndex;
-            if (value == 1) {
-                url = $('#name').val();
-                //$(location).attr('href',url);
-                document.location.href = '/' + url;
-                return 0;
-            } else {
-                searchval = $('#name').val();
-                //$(location).attr('href',url);
-                document.location.href = '/?search=' + searchval;
-                return 0;
-            }
-        });
-        
-        $("#name").keypress(function(e) {
-            if(e.which == 13) {
-                $("#button1").trigger("click");
-            }
-        });
-               
-        $('#name').val( getSearchParameters().search );
- 
-        if (getSearchParameters().search == void 0) {
-            $('#name').val('');
-        }
-        
-      });
-    </script>
-    <style type="text/css">
-        html {
-            position: relative;
-            min-height: 100%;
-        }
-        body {
-            /* Margin bottom by footer height */
-            margin-bottom: 60px;
-        }
-        .content {
-            position: fixed;
-            top: 40%;
-            left: 45%;
-            /* bring your own prefixes */
-            transform: translate(-40%, -45%);
-            margin: auto;
-        }
-        .main-logo {
-            margin-left: 12%;
-            margin-right: 12%;
-        }
-        .footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            /* Set the fixed height of the footer here */
-            height: 60px;
-            background-color: #f5f5f5;
-        }
-        @media (max-width: 768px) {
-            .footer {
-                position: absolute;
-                width: 100%;
-            }
-        }
-        @media (min-width: 768px) {
-            .footer {
-                position: absolute;
-                bottom: 0;
-                height: 60px;
-                width: 100%;
-            }
-        }
-    </style>
+			transformToAssocArray = function(prmstr) {
+				var i, params, prmarr, tmparr;
+				params = {};
+				prmarr = prmstr.split('&');
+				i = 0;
+				while (i < prmarr.length) {
+					tmparr = prmarr[i].split('=');
+					params[tmparr[0]] = tmparr[1];
+					i++;
+				}
+				return params;
+			};
+
+			var getSearchParameters;
+
+			getSearchParameters = function() {
+				var prmstr;
+				prmstr = window.location.search.substr(1);
+				if (prmstr != null && prmstr != '') {
+					return transformToAssocArray(prmstr);
+				} else {
+					return {};
+				}
+			};
+
+			$(document).ready(function() {
+
+			$("#button").click( function() {
+				var searchval, url, value;
+				value = $( "#kind" )[0].selectedIndex;
+				if (value == 1) {
+					url = $('#name').val();
+					document.location.href = '/' + url;
+					return 0;
+				} else {
+					searchval = $('#name').val();
+					document.location.href = '/?search=' + searchval;
+					return 0;
+				}
+			});
+
+			$("#name").keypress(function(e) {
+				if(e.which == 13) {
+					$("#button").trigger("click");
+				}
+			});
+
+			$("#name").val( getSearchParameters().search );
+
+			if (getSearchParameters().search == void 0) {
+				$('#name').val('');
+			}
+
+			});
+	</script>
+	<style type="text/css">
+			html {
+			position: relative;
+			min-height: 100%;
+			}
+			body {
+			margin-bottom: 60px;
+			}
+			.content {
+			position: fixed;
+			top: 40%;
+			left: 45%;
+			transform: translate(-40%, -45%);
+			margin: auto;
+			}
+			.main-logo {
+			margin-left: 18%;
+			margin-right: auto;
+			}
+			.footer {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: 60px;
+			background-color: #ffffff;
+	  		box-shadow: 0px 0px 3px 0px #ccc;
+			}
+			@media (max-width: 768px) {
+			.footer {
+			position: absolute;
+			width: 100%;
+			}
+			.main-logo {
+			margin-left: auto;
+			margin-right: auto;
+			}
+			}
+			@media (min-width: 768px) {
+			.footer {
+			position: absolute;
+			bottom: 0;
+			height: 60px;
+			width: 100%;
+			}
+			}
+	</style>
 </head>
 
 <body>
-    <warning></warning>
-    <div class="container">
-        <div id class="content">
-            <div id class="main-logo">
-                <img src="index/qora.png" alt="">
-            </div><br>
-            <div id class="search-area">
-                <div class="form-group">
-                <select class="form-control" id="kind" name="kind" value="1">
-                    <option value="1">search by value</option>
-                    <option value="2">open page that matches the name</option>
-                </select>
-                <br>
-					<form class="form-inline" role="form"><div class="form-group"></div> 
-					<input id="name" size="55" value="" class="form-control" autofocus="autofocus">
-					<button type="button" class="btn btn-default" input id="button1" value="Search">Search</button>
-					</form></div></div>
-				<results></results><br>
-        </div>
-    </div>
-        <footer class="footer">
-            <div class="container">
-                <p class="text-muted"><a href="/webdirectory.html">web directory</a>		<a href="/blog.html">blog</a>	© <a href="http://qora.org">Qora</a>
-                </p>
-            </div>
-        </footer>
-		
-</body>
+  <warning></warning>
+	<div class="container">
+		<div class="content" id="content">
+			<div class="main-logo" id="main-logo"><img alt="" src=
+			"index/qora.png">
+			</div>
+			<br>
 
+
+			<div class="search-area" id="search-area">
+				<select class="form-control" id="kind" name="kind">
+					<option value="1">
+						search by value
+					</option>
+
+					<option value="2">
+						open page that matches the name
+					</option>
+				</select><br>
+
+
+				<div class="form-inline">
+					<div class="form-group">
+						<label class="sr-only" for="name">Search</label>
+						<input autofocus="autofocus" class="form-control" id=
+						"name" size="85" type="text" value="">
+					</div>
+					<button class="btn btn-default" id="button" type="button"
+					value="Search"><span class=
+					"glyphicon glyphicon-search"></span><span class=
+					"sr-only">Search</span></button>
+				</div>
+			</div>
+			<br>
+      <results></results>
+		</div>
+	</div>
+
+
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted"><a href="/webdirectory.html">web
+			directory</a> <a href="/blog.html">blog</a> © <a href=
+			"http://qora.org">Qora</a></p>
+		</div>
+	</footer>
+</body>
 </html>
