@@ -7,6 +7,7 @@
     <link rel="shortcut icon" href="favicon.ico">
     <link href="libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <script src="libs/jquery.2.1.4.min.js"></script>
+    <script src="libs/angular.min.1.4.0.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript">
         window.onload = function() {
@@ -31,6 +32,14 @@
             return 0;
         };
     </script>
+    <script type="text/javascript">
+		var myApp = angular.module('myApp', []);
+		
+		myApp.controller('AppController', function ($scope) {
+			$scope.steps = <output></output>;
+		});
+	</script>
+	
 </head>
 
 <body>
@@ -40,8 +49,19 @@
         <input id="button" type="button" value="Search" style="font-family: Verdana;" onclick="javascript:goto()">
         <br>
         <br>
-        <output></output>
+        <div ng-app='myApp' ng-controller="AppController">
+			<div class="panel panel-default">
+				<div class="panel-heading">Results on : <data></data></div>
+				<table class="table">
+					<tr ng-repeat="(f1,f2) in steps">
+						<td>{{ f1 }}</td>
+						<td>{{ f2 }}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
     </div>
+
 </body>
 
 </html>

@@ -530,7 +530,7 @@ public class NamesWebResource
 		
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>","block:" + strBlock).replace( "<output></output>", "<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace("<data></data>","block:" + strBlock).replace( "<output></output>", str))
 				.build();
 	}
 	
@@ -569,7 +569,7 @@ public class NamesWebResource
 
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace( "<data></data>", "tx:" + strTx ).replace("<output></output>","<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace( "<data></data>", "tx:" + strTx ).replace("<output></output>",str))
 				.build();
 	}	
 	
@@ -608,7 +608,7 @@ public class NamesWebResource
 		
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace( "<data></data>", "balance:" + address ).replace("<output></output>","<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace( "<data></data>", "balance:" + address ).replace("<output></output>","{\"balance\":"+str+"}"))
 				.build();
 	}	
 	
@@ -628,7 +628,7 @@ public class NamesWebResource
 		
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace( "<data></data>", "balance:" + address + ":" + confirmations ).replace("<output></output>","<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace( "<data></data>", "balance:" + address + ":" + confirmations ).replace("<output></output>","{\"balance\":"+str+"}"))
 				.build();
 	}	
 	
@@ -660,7 +660,7 @@ public class NamesWebResource
 		
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace( "<data></data>", "name:" + strName ).replace("<output></output>","<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace( "<data></data>", "name:" + strName ).replace("<output></output>",str))
 				.build();
 	}	
 	
@@ -679,7 +679,7 @@ public class NamesWebResource
 
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace( "<data></data>", "at:" + strAt ).replace("<output></output>","<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace( "<data></data>", "at:" + strAt ).replace("<output></output>",str))
 				.build();
 	}	
 	
@@ -698,7 +698,7 @@ public class NamesWebResource
 		
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace( "<data></data>", "atbysender:" + strAtbySender ).replace("<output></output>","<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace( "<data></data>", "atbysender:" + strAtbySender ).replace("<output></output>",str))
 				.build();
 	}	
 	
@@ -717,7 +717,7 @@ public class NamesWebResource
 		
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace( "<data></data>", "atbycreator:" + strAtbyCreator ).replace("<output></output>","<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace( "<data></data>", "atbycreator:" + strAtbyCreator ).replace("<output></output>",str))
 				.build();
 	}	
 	
@@ -736,7 +736,7 @@ public class NamesWebResource
 		
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace( "<data></data>", "attxbyrecipient:" + StrAtTxbyRecipient ).replace("<output></output>","<pre>"+str+"</pre>"))
+				.entity(miniIndex().replace( "<data></data>", "attxbyrecipient:" + StrAtTxbyRecipient ).replace("<output></output>",str))
 				.build();
 	}	
 	
