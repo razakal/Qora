@@ -2,10 +2,12 @@ package api;
 
 import java.math.BigDecimal;
 
+import javax.swing.JOptionPane;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
@@ -69,7 +71,24 @@ public class ArbitraryTransactionsResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_NO_EXISTS);
 			}
-						
+			
+			//CHECK API CALL ALLOWED
+			try {
+				
+				if(Controller.getInstance().checkAPICallAllowed("Post arbitrarytransactions" + x) == JOptionPane.NO_OPTION)
+				{
+					throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_API_CALL_FORBIDDEN_BY_USER);
+				}
+			} catch (Exception e) {
+				if(e instanceof WebApplicationException)
+				{
+					throw (WebApplicationException) e;
+				}
+				e.printStackTrace();
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_UNKNOWN);	
+			}
+			
+			
 			//CHECK WALLET UNLOCKED
 			if(!Controller.getInstance().isWalletUnlocked())
 			{

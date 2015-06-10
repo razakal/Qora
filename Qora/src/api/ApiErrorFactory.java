@@ -44,6 +44,7 @@ public class ApiErrorFactory
 	public static final int ERROR_WALLET_ADDRESS_NO_EXISTS = 202;
 	public static final int ERROR_WALLET_LOCKED = 203;
 	public static final int ERROR_WALLET_ALREADY_EXISTS = 204;
+	public static final int ERROR_WALLET_API_CALL_FORBIDDEN_BY_USER = 205;
 	
 	//BLOCKS
 	public static final int ERROR_BLOCK_NO_EXISTS = 301;
@@ -131,6 +132,7 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_WALLET_ADDRESS_NO_EXISTS, "address does not exist in wallet");
 		this.errorMessages.put(ERROR_WALLET_LOCKED, "wallet is locked");
 		this.errorMessages.put(ERROR_WALLET_ALREADY_EXISTS, "wallet already exists");
+		this.errorMessages.put(ERROR_WALLET_API_CALL_FORBIDDEN_BY_USER, "user denied api call");
 		
 		//BLOCK
 		this.errorMessages.put(ERROR_BLOCK_NO_EXISTS, "block does not exist");
