@@ -49,6 +49,7 @@ import settings.Settings;
 import utils.GZIP;
 import utils.MenuPopupUtil;
 import utils.Pair;
+import utils.Qorakeys;
 import controller.Controller;
 import database.DBSet;
 
@@ -345,7 +346,7 @@ public class UpdateNameFrame extends JFrame
       					
       				}else
       				{
-      					keyvaluepairs.add(new Pair<String, String>("defaultkey", value));
+      					keyvaluepairs.add(new Pair<String, String>(Qorakeys.DEFAULT.toString(), value));
       				}
       				
       				namesModel.setData(keyvaluepairs);

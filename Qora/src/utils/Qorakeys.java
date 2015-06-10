@@ -3,7 +3,7 @@ package utils;
 public enum Qorakeys {
 
 	
-	WEBSITE("website");
+	DEFAULT("defaultkey"),WEBSITE("website");
 	private final String keyname;
 	
 	private Qorakeys(String keyname) {
@@ -11,6 +11,10 @@ public enum Qorakeys {
 	}
 
 	public String getKeyname() {
+		return keyname;
+	}
+	
+	public String toString() {
 		return keyname;
 	}
 

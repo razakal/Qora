@@ -42,6 +42,7 @@ import settings.Settings;
 import utils.GZIP;
 import utils.MenuPopupUtil;
 import utils.NameUtils;
+import utils.Qorakeys;
 import utils.NameUtils.NameResult;
 import utils.Pair;
 import controller.Controller;
@@ -391,7 +392,7 @@ public class RegisterNameFrame extends JFrame
 			});
 		
     	ArrayList<Pair<String, String>> list = new ArrayList<>();
-    	list.add(new Pair<String, String>("defaultkey", ""));
+    	list.add(new Pair<String, String>(Qorakeys.DEFAULT.toString(), ""));
     	namesModel.setData(list);
     	namesTable.requestFocus();
 		namesTable.changeSelection(0,0,false, false);
