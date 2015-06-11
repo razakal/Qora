@@ -61,5 +61,6 @@
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-media-jaxb.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-server.jar"/>
 	<classpathentry kind="lib" path="libs/guava-18.0.jar"/>
+	<classpathentry kind="lib" path="libs/jsoup-1.8.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

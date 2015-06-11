@@ -25,6 +25,10 @@ import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import qora.account.Account;
 import qora.block.Block;
@@ -62,6 +66,7 @@ public class NamesWebResource {
 		return handleDefault();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Response handleDefault() {
 		try {
 
@@ -892,15 +897,49 @@ public class NamesWebResource {
 				.entity(getWarning(request) + website).build();
 	}
 
-	public String injectValues(String Value) {
+	public String injectValues(String value) {
 		// PROCESSING TAG INJ
-		Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
-		Matcher matcher = pattern.matcher(Value);
+		
+		value = "<inj key=\"website\">a.better.web</inj> ";
+		
+		Pattern pattern = Pattern.compile("(?i)(<inj .*>(.*?)</inj>)");
+		Matcher matcher = pattern.matcher(value);
 		while (matcher.find()) {
-			Name nameinj = Controller.getInstance().getName(matcher.group(1));
-			Value = Value.replace(matcher.group(),
-					GZIP.webDecompress(nameinj.getValue().toString()));
+			Document doc = Jsoup.parse(matcher.group(1));
+			Elements inj = doc.select("inj");
+			Element element = inj.get(0);
+			
+			
+			NameMap nameMap = DBSet.getInstance().getNameMap();
+			String name = matcher.group(2);
+			if(nameMap.contains(name))
+			{
+				
+				Name nameinj = nameMap.get(name);
+				String result = GZIP.webDecompress(nameinj.getValue().toString());
+				if(element.hasAttr("key"))
+				{
+					String key = element.attr("key");
+					try {
+						
+						JSONObject jsonObject = (JSONObject) JSONValue.parse(result);
+						if (jsonObject != null) {
+							// Looks like valid jSon
+							if(jsonObject.containsKey(key))
+							{
+								result = (String) jsonObject.get(key);
+							}
+							
+						}
+						
+					} catch (Exception e) {
+						// no json probably
+					}
+				}
+					value = value.replace(matcher.group(),result);
+			}
+			
 		}
-		return Value;
+		return value;
 	}
 }
