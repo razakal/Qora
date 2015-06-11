@@ -69,16 +69,56 @@ public class NamesWebResource {
 			String kind = request.getParameter("kind");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 			content = replaceWarning(content);
-			if (searchValue != null) {
+
+			if (searchValue == null) {
+
+				return Response.ok(content, "text/html; charset=utf-8").build();
+			}
+
+			else if (searchValue != null) {
 				List<String> namesByValue = NameUtils.getNamesByValue(
 						searchValue, true);
+				String searchlist = readFile("web/index.mini.html", StandardCharsets.UTF_8);
 				String results = "<br>";
+				String nameresults = "<br>";
 				for (String name : namesByValue) {
 					results += "<a href=/" + name.replaceAll(" ", "%20") + ">"
 							+ name + "</a><br>";
+					
+					NameMap nameMap = DBSet.getInstance().getNameMap();
+					if (nameMap.contains(name)) {
+						String value = nameMap.get(name).getValue();
+
+						JSONObject resultJson = null;
+						try {
+
+							// WEBPAGE GZIP DECOMPRESSOR
+							value = GZIP.webDecompress(value);
+
+							JSONObject jsonObject = (JSONObject) JSONValue.parse(value);
+							if (jsonObject != null) {
+								// Looks like valid jSon
+								resultJson = jsonObject;
+
+							}
+
+						} catch (Exception e) {
+							// no json probably
+						}
+
+						// BAD FORMAT --> NO KEYVALUE
+						if (resultJson == null) {
+							resultJson = new JSONObject();
+							resultJson.put(Qorakeys.DEFAULT.toString(), value);
+
+							value = jsonToFineSting(resultJson.toJSONString());
+						}
+						nameresults = value;
+						}	
+					
 				}
 
-				content = content.replace("<results></results>", results);
+				content = searchlist.replace("<results></results>", results).replace("<data></data>", searchValue).replace("<output></output>", nameresults);
 
 			}
 
@@ -89,7 +129,7 @@ public class NamesWebResource {
 				}
 
 			}
-
+			
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -436,7 +476,7 @@ public class NamesWebResource {
 				.entity(miniIndex().replace("<data></data>", pathInfo)
 						+ "<h1>name \""
 						+ pathInfo
-						+ "\" does not exist</h1><hr>© <a href=http://www.qora.org>Qora</a></body></html>")
+						+ "\" does not exist</h1><hr>ï¿½ <a href=http://www.qora.org>Qora</a></body></html>")
 				.build();
 	}
 
