@@ -900,7 +900,7 @@ public class NamesWebResource {
 	public String injectValues(String value) {
 		// PROCESSING TAG INJ
 		
-		Pattern pattern = Pattern.compile("(?i)(<inj .*>(.*?)</inj>)");
+		Pattern pattern = Pattern.compile("(?i)(<inj.*>(.*?)</inj>)");
 		Matcher matcher = pattern.matcher(value);
 		while (matcher.find()) {
 			Document doc = Jsoup.parse(matcher.group(1));
