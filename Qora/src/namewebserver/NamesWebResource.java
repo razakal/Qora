@@ -900,8 +900,6 @@ public class NamesWebResource {
 	public String injectValues(String value) {
 		// PROCESSING TAG INJ
 		
-		value = "<inj key=\"website\">a.better.web</inj> ";
-		
 		Pattern pattern = Pattern.compile("(?i)(<inj .*>(.*?)</inj>)");
 		Matcher matcher = pattern.matcher(value);
 		while (matcher.find()) {
