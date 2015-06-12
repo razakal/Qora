@@ -66,7 +66,6 @@ public class NamesWebResource {
 		return handleDefault();
 	}
 
-	@SuppressWarnings("unchecked")
 	public Response handleDefault() {
 		try {
 
@@ -85,45 +84,11 @@ public class NamesWebResource {
 						searchValue, true);
 				String searchlist = readFile("web/index.mini.html", StandardCharsets.UTF_8);
 				String results = "<br>";
-				String nameresults = "<br>";
 				for (String name : namesByValue) {
-					results += "<a href=/" + name.replaceAll(" ", "%20") + ">"
-							+ name + "</a><br>";
-					
-					NameMap nameMap = DBSet.getInstance().getNameMap();
-					if (nameMap.contains(name)) {
-						String value = nameMap.get(name).getValue();
-
-						JSONObject resultJson = null;
-						try {
-
-							// WEBPAGE GZIP DECOMPRESSOR
-							value = GZIP.webDecompress(value);
-
-							JSONObject jsonObject = (JSONObject) JSONValue.parse(value);
-							if (jsonObject != null) {
-								// Looks like valid jSon
-								resultJson = jsonObject;
-
-							}
-
-						} catch (Exception e) {
-							// no json probably
-						}
-
-						// BAD FORMAT --> NO KEYVALUE
-						if (resultJson == null) {
-							resultJson = new JSONObject();
-							resultJson.put(Qorakeys.DEFAULT.toString(), value);
-
-							value = jsonToFineSting(resultJson.toJSONString());
-						}
-						nameresults = value;
-						}	
-					
+					results += "<p><a href=\"/" + name + "\">"+ name +"</a> <a href=\"/namepairs:" + name + "\"><span class=\"label label-primary\">Keys</span></a></p>";
 				}
 
-				content = searchlist.replace("<results></results>", results).replace("<data></data>", searchValue).replace("<output></output>", nameresults);
+				content = searchlist.replace("<results></results>", results ).replace("<data></data>", searchValue);
 
 			}
 
@@ -134,7 +99,7 @@ public class NamesWebResource {
 				}
 
 			}
-			
+
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -176,7 +141,42 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
+	@Path("index/logo_header.png")
+	@GET
+	public Response logo_header() {
+		File file = new File("web/logo_header.png");
 
+		if (file.exists()) {
+			return Response.ok(file, "image/png").build();
+		} else {
+			return error404(request);
+		}
+	}
+	
+	@Path("index/style.css")
+	@GET
+	public Response style() {
+		File file = new File("web/style.css");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/css").build();
+		} else {
+			return error404(request);
+		}
+	}
+	
+	@Path("index/theme.css")
+	@GET
+	public Response theme() {
+		File file = new File("web/theme.css");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/css").build();
+		} else {
+			return error404(request);
+		}
+	}
+	
 	@Path("index/qora-user.png")
 	@GET
 	public Response qorauserpng() {
@@ -376,6 +376,11 @@ public class NamesWebResource {
 				fullname += "bootstrap.css";
 				break;
 
+			case "theme.css":
+
+				fullname += "theme.css";
+				break;
+				
 			case "bootstrap.css.map":
 
 				fullname += "bootstrap.css.map";
@@ -557,8 +562,12 @@ public class NamesWebResource {
 					.status(200)
 					.header("Content-Type", "text/html; charset=utf-8")
 					.entity(miniIndex().replace("<data></data>",
-							"namepairs:" + name).replace("<output></output>",
-							value)).build();
+							"namepairs:" + name)
+							.replace("<jsonresults></jsonresults>",
+									"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+									+"<div class=\"panel-heading\">Results on :" + name + "</div><table class=\"table\">" //
+									+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+							.replace("$scope.steps = {}","$scope.steps = " + value)).build();
 
 		} else {
 			return error404(request);
@@ -588,9 +597,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>",
-						"block:" + strBlock).replace("<output></output>", str))
-				.build();
+				.entity(miniIndex()
+						.replace("<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+								+"<div class=\"panel-heading\">Block : " + strBlock + "</div><table class=\"table\">" //
+								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -626,8 +638,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>", "tx:" + strTx)
-						.replace("<output></output>", str)).build();
+				.entity(miniIndex()
+						.replace("<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+								+"<div class=\"panel-heading\">Transaction : " + strTx + "</div><table class=\"table\">" //
+								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
 	}
 
 	@Path("balance:{address}")
@@ -661,9 +677,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>",
-						"balance:" + address).replace("<output></output>",
-						"{\"balance\":" + str + "}")).build();
+				.entity(miniIndex()
+						.replace("<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+								+"<div class=\"panel-heading\">Balance of " + address + "</div><table class=\"table\">" //
+								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}","$scope.steps = {\"amount\":" + str + "}")).build();
 	}
 
 	@Path("balance:{address}:{confirmations}")
@@ -684,10 +703,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>",
-						"balance:" + address + ":" + confirmations).replace(
-						"<output></output>", "{\"balance\":" + str + "}"))
-				.build();
+				.entity(miniIndex()
+		.replace("<jsonresults></jsonresults>",
+				"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+				+"<div class=\"panel-heading\">Balance of " + address + ":" + confirmations + "</div><table class=\"table\">" //
+				+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+		.replace("$scope.steps = {}","$scope.steps = {\"amount\":" + str + "}")).build();
 	}
 
 	@Path("name:{name}")
@@ -716,8 +737,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>", "name:" + strName)
-						.replace("<output></output>", str)).build();
+				.entity(miniIndex()
+						.replace("<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+								+"<div class=\"panel-heading\">Name : " + strName + "</div><table class=\"table\">" //
+								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}","$scope.steps = "+ str)).build();
 	}
 
 	@Path("at:{at}")
@@ -735,8 +760,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>", "at:" + strAt)
-						.replace("<output></output>", str)).build();
+				.entity(miniIndex()
+						.replace("<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+								+"<div class=\"panel-heading\">AT : " + strAt + "</div><table class=\"table\">" //
+								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
 	}
 
 	@Path("atbysender:{atbysender}")
@@ -754,9 +783,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>",
-						"atbysender:" + strAtbySender).replace(
-						"<output></output>", str)).build();
+				.entity(miniIndex()
+						.replace("<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+								+"<div class=\"panel-heading\">AT Sender : " + strAtbySender + "</div><table class=\"table\">" //
+								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
 	}
 
 	@Path("atbycreator:{atbycreator}")
@@ -775,9 +807,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>",
-						"atbycreator:" + strAtbyCreator).replace(
-						"<output></output>", str)).build();
+				.entity(miniIndex()
+						.replace("<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+								+"<div class=\"panel-heading\">AT Creator : " + strAtbyCreator + "</div><table class=\"table\">" //
+								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
 	}
 
 	@Path("attxbyrecipient:{attxbyrecipient}")
@@ -796,9 +831,12 @@ public class NamesWebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>",
-						"attxbyrecipient:" + StrAtTxbyRecipient).replace(
-						"<output></output>", str)).build();
+				.entity(miniIndex()
+						.replace("<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+								+"<div class=\"panel-heading\">AT TX by Recipient : " + StrAtTxbyRecipient + "</div><table class=\"table\">" //
+								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
 	}
 
 	public String miniIndex() {
@@ -899,27 +937,27 @@ public class NamesWebResource {
 
 	public String injectValues(String value) {
 		// PROCESSING TAG INJ
-		
+
 		Pattern pattern = Pattern.compile("(?i)(<inj.*>(.*?)</inj>)");
 		Matcher matcher = pattern.matcher(value);
 		while (matcher.find()) {
 			Document doc = Jsoup.parse(matcher.group(1));
 			Elements inj = doc.select("inj");
 			Element element = inj.get(0);
-			
-			
+
+
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			String name = matcher.group(2);
 			if(nameMap.contains(name))
 			{
-				
+
 				Name nameinj = nameMap.get(name);
 				String result = GZIP.webDecompress(nameinj.getValue().toString());
 				if(element.hasAttr("key"))
 				{
 					String key = element.attr("key");
 					try {
-						
+
 						JSONObject jsonObject = (JSONObject) JSONValue.parse(result);
 						if (jsonObject != null) {
 							// Looks like valid jSon
@@ -927,16 +965,16 @@ public class NamesWebResource {
 							{
 								result = (String) jsonObject.get(key);
 							}
-							
+
 						}
-						
+
 					} catch (Exception e) {
 						// no json probably
 					}
 				}
 					value = value.replace(matcher.group(),result);
 			}
-			
+
 		}
 		return value;
 	}

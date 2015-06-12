@@ -1,76 +1,200 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="UTF-8">
-    <title>Qora web server</title>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Qora Blog">
     <link rel="shortcut icon" href="favicon.ico">
-    <link href="libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-    <script src="libs/jquery.2.1.4.min.js"></script>
-    <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <title>Qora Blog</title>
+    <link href="libs/bootstrap/3.3.4/css/theme.css" rel="stylesheet">
+    <link href="index/style.css" rel="stylesheet">
     <style type="text/css">
-        li.media {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0px 0px 3px 0px #dddddd;
+    .media-object {
+        display: none; /* Hide's the avatar  - remove it to display avatars */
+    }    body {
+        padding-top: 50px;
+    }
+    .sub-header {
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    .navbar-fixed-top {
+        border: 0;
+        z-index: 9999;
+    }
+    .sidebar {
+        display: none;
+    }
+    @media (min-width: 768px) {
+        .sidebar {
+            position: fixed;
+            top: 51px;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            display: block;
+            padding: 20px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            border-right: 1px solid #eee;
         }
-        .media>.pull-left {
-            padding: 10px;
+    }
+    .nav-sidebar {
+        margin-right: -21px;
+        margin-bottom: 20px;
+        margin-left: -20px;
+    }
+    .nav-sidebar > li > a {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+    .nav-sidebar > .active > a,
+    .nav-sidebar > .active > a:hover,
+    .nav-sidebar > .active > a:focus {
+        color: #fff;
+        background-color: #428bca;
+    }
+    .main {
+        padding-top: 20px;
+        width: 75%;
+        margin: auto;
+    }
+    .main-tabs {
+        width: 100%;
+        padding-top: 15px;
+        padding-left: 0px;
+        padding-right: 0px;
+        background-color: lightgray;
+    }
+    img.logo-header {
+        background-color: transparent;
+        height: 100%;
+    }
+    .col-lg-8 {
+        padding-left: 0px;
+    }
+    @media (min-width: 768px) {
+        .main {
+            padding-right: 40px;
         }
-        .media-body {
-            padding: 10px;
-        }
-        h4.media-heading {
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
-        img.media-object {
+    }
+    .main .page-header {
+        margin-top: 0;
+    }
+    .placeholders {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .placeholders h4 {
+        margin-bottom: 0;
+    }
+    .placeholder {
+        margin-bottom: 20px;
+    }
+    .placeholder img {
+        display: inline-block;
+        border-radius: 50%;
+    }
+    .r-t {
+        margin: 0px;
+    }
+    .r-l {
+        margin: 0px;
+    }
+    span.label.label-default {
+        background-color: #fff;
+        color: lightgray;
+        font-size: 90%;
+        line-height: 1;
+    }
+    a.r-l:hover,
+    a.r-l:focus {
+        color: #6467FF;
+        text-decoration: none;
+    }
+    .navbar-header {
+        width: 110px;
+    }
+    li.media {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0px 0px 3px 0px #dddddd;
+    }
+    .media>.pull-left {
+        padding: 10px;
+    }
+    .media-body {
+        padding: 10px;
+    }
+    h4.media-heading {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+    }
+    img.media-object {
         height: 74px;
         width: 74px;
-        }
-        .modal-content {
-            height: 500px;
-        }
+    }
+    .modal-content {
+        height: 500px;
+    }
+    .btn-primary {
+        color: #6467FF;
+        background-color: #fff;
+    }
+    .btn-primary:hover,
+    .btn-primary:active:hover,
+    .btn-primary:focus {
+        background-color: #6467FF;
+        color: #fff;
+    }
+    .modal-dialog.modal-lg {
+        padding-top: 100px;
+    }
     </style>
-
-</head>
-
-<body>
-    <warning></warning>
-    <div class="container">
-        <h1 style="font-family: Verdana;">Qora blog</h1>
-        <img src="index/qora.png" alt="">
-        <br>
-        <br>
-        <br>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">create new blogpost</button>
-
-        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <iframe width="100%" height="100%" frameborder="0" src="/postblog.html"></iframe>
-                </div>
-            </div>
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#" class="navbar-brand"><img src="index/logo_header.png" alt="" class="logo-header"></a>
         </div>
-        <br>
-        <ul id="media-list" class="media-list">!blogposts!</ul>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+          <div class="navbar-form navbar-left">
+            <button type="button" data-toggle="modal" data-target=".bs-example-modal-lg" class="btn btn-link"><span class="glyphicon glyphicon-edit"></span><span class="sr-only">Search</span></button>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="main">
+          <div tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" class="modal fade bs-example-modal-lg">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <iframe width="100%" height="100%" frameborder="0" src="/postblog.html"></iframe>
+              </div>
+            </div>
+          </div><br>
+          <ul id="media-list" class="media-list">!blogposts!</ul>
+        </div>
+      </div>
     </div>
+    <script src="libs/jquery.2.1.4.min.js"></script>
+    <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript">
-        // Check the main container is ready
-        $('#media-list').ready(function() {
-            // Get each div
-            $('.media-body').each(function() {
-                // Get the content
-                var str = $(this).html();
-                // Set the regex string
-                var regex = /(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/ig
-                // Replace plain text links by hyperlinks
-                var replaced_text = str.replace(regex, "<a href='$1' target='_blank'>$1</a>");
-                // Echo link
-                $(this).html(replaced_text);
-            });
-        });
+    $('#media-list').ready(function() {
+                $('.media-body').each(function() {
+                        var str = $(this).html();
+                        var regex = /(https?:\\/\ / ([-\w\.] + ) + (: \d + ) ? (\/([\w\/_\.]*(\?\S+)?)?)?)/ig
+                            var replaced_text = str.replace(regex, "<a href='$1' target='_blank'>$1</a>"); $(this).html(replaced_text);
+                        });
+                });
     </script>
-</body>
-
+  </body>
 </html>

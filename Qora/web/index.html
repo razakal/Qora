@@ -1,165 +1,204 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Qora Web">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>Qora Web</title>
+		<link href="libs/bootstrap/3.3.4/css/theme.css" rel="stylesheet">
+    <link href="index/style.css" rel="stylesheet">
+    <style type="text/css">
+		html {
+				position: relative;
+				min-height: 100%;
+		}
+		body {
+				margin-bottom: 60px;
+		}
+		.content {
+				position: fixed;
+				top: 40%;
+				left: 45%;
+				transform: translate(-40%, -45%);
+				margin: auto;
+		}
+		.main-logo {
+				margin-left: 20%;
+				margin-right: auto;
+		}
+		.footer {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				height: 60px;
+				background-color: #ffffff;
+				box-shadow: 0px 0px 3px 0px #ccc;
+		}
+		@media (max-width: 768px) {
+				.footer {
+						position: absolute;
+						width: 100%;
+				}
+				.main-logo {
+						margin-left: auto;
+						margin-right: auto;
+				}
+		}
+		@media (min-width: 768px) {
+				.footer {
+						position: absolute;
+						bottom: 0;
+						height: 60px;
+						width: 100%;
+				}
+		}
+		.btn-link {
+				color: #6467FF;
+		}
+		select#kind {
+				display: none;
+		}
+		.btn-link:hover,
+		.btn-link:focus {
+				color: #ffffff;
+				background-color: #6467FF;
+				border-radius: 2px;
+				-webkit-transition: background-color 500ms linear;
+				-moz-transition: background-color 500ms linear;
+				-o-transition: background-color 500ms linear;
+				-ms-transition: background-color 500ms linear;
+				transition: background-color 500ms linear;
+				-webkit-transition: color 250ms linear;
+				-moz-transition: color 250ms linear;
+				-o-transition: color 250ms linear;
+				-ms-transition: color 250ms linear;
+				transition: color 250ms linear;
+		}
+		.navbar-default .btn-link {
+				color: #6467FF;
+		}
+		.glyphicon.glyphicon-globe,
+		.glyphicon.glyphicon-edit,
+		.glyphicon.glyphicon-random {
+				font-size: 40px;
+				text-align: center;
+				color: #ddd;
+				display: block;
+		}
+		.hyperlinks {
+				padding-top: 50px;
+				padding-left: auto;
+				padding-right: auto;
+				color: #ddd;
+		}
+		.glyphicon.glyphicon-globe:hover,
+		.glyphicon.glyphicon-globe:focus,
+		.glyphicon.glyphicon-edit:hover,
+		.glyphicon.glyphicon-edit:focus,
+		.glyphicon.glyphicon-random:hover,
+		.glyphicon.glyphicon-random:focus {
+				color: #6467FF;
+				border-radius: 10px;
+				-webkit-transition: background-color 500ms linear;
+				-moz-transition: background-color 500ms linear;
+				-o-transition: background-color 500ms linear;
+				-ms-transition: background-color 500ms linear;
+				transition: background-color 500ms linear;
+				-webkit-transition: color 250ms linear;
+				-moz-transition: color 250ms linear;
+				-o-transition: color 250ms linear;
+				-ms-transition: color 250ms linear;
+				transition: color 250ms linear;
+				text-decoration: none;
+		}
+		a:hover,
+		a:focus {
+				color: #6467FF;
+				text-decoration: none;
+		}
+    </style>
+  </head>
+  <body>
 
-	<title>Qora web server</title>
-	<link href="favicon.ico" rel="shortcut icon">
-	<link href="libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-	<script src="libs/jquery.2.1.4.min.js"></script>
-	<script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-	<script type="text/javascript">
+    <div class="container">
+      <div id="content" class="content">
+        <div id="main-logo" class="main-logo"><img alt="" src="index/qora.png"></div><br>
+        <div id="search-area" class="search-area">
+          <select id="kind" name="kind" class="form-control">
+            <option value="1">search by value</option>
+            <option value="2">open page that matches the name</option>
+          </select><br>
+          <div class="form-inline">
+            <div class="form-group">
+              <label for="name" class="sr-only">Search</label>
+              <input id="name" autofocus="autofocus" size="75" type="text" value="" class="form-control">
+            </div>
+            <button id="button" type="button" value="Search" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button>
+          </div>
+        </div>
+				<div class="hyperlinks">
+				<div class="col-lg-4"><a href="/webdirectory.html"><span class="glyphicon glyphicon-globe"></span><span class="sr-only">Web</span></a></div>
+				<div class="col-lg-4"><a href="/blog.html"><span class="glyphicon glyphicon-edit"></span><span class="sr-only">Blog</span></a></div>
+				<div class="col-lg-4"><span class="glyphicon glyphicon-random"></span><span class="sr-only">Block Explorer</span></div>
+			</div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+      </div>
+    </footer>
+		<script src="libs/jquery.2.1.4.min.js"></script>
+		<script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<script type="text/javascript">
 		var transformToAssocArray;
-
-			transformToAssocArray = function(prmstr) {
+		transformToAssocArray = function(prmstr) {
 				var i, params, prmarr, tmparr;
 				params = {};
 				prmarr = prmstr.split('&');
 				i = 0;
 				while (i < prmarr.length) {
-					tmparr = prmarr[i].split('=');
-					params[tmparr[0]] = tmparr[1];
-					i++;
+						tmparr = prmarr[i].split('=');
+						params[tmparr[0]] = tmparr[1];
+						i++;
 				}
 				return params;
-			};
-
-			var getSearchParameters;
-
-			getSearchParameters = function() {
+		};
+		var getSearchParameters;
+		getSearchParameters = function() {
 				var prmstr;
 				prmstr = window.location.search.substr(1);
 				if (prmstr != null && prmstr != '') {
-					return transformToAssocArray(prmstr);
+						return transformToAssocArray(prmstr);
 				} else {
-					return {};
+						return {};
 				}
-			};
-
-			$(document).ready(function() {
-
-			$("#button").click( function() {
-				var searchval, url, value;
-				value = $( "#kind" )[0].selectedIndex;
-				if (value == 1) {
-					url = $('#name').val();
-					document.location.href = '/' + url;
-					return 0;
-				} else {
-					searchval = $('#name').val();
-					document.location.href = '/?search=' + searchval;
-					return 0;
+		};
+		$(document).ready(function() {
+				$("#button").click(function() {
+						var searchval, url, value;
+						value = $("#kind")[0].selectedIndex;
+						if (value == 1) {
+								url = $('#name').val();
+								document.location.href = '/' + url;
+								return 0;
+						} else {
+								searchval = $('#name').val();
+								document.location.href = '/?search=' + searchval;
+								return 0;
+						}
+				});
+				$("#name").keypress(function(e) {
+						if (e.which == 13) {
+								$("#button").trigger("click");
+						}
+				});
+				$("#name").val(getSearchParameters().search);
+				if (getSearchParameters().search == void 0) {
+						$('#name').val('');
 				}
-			});
-
-			$("#name").keypress(function(e) {
-				if(e.which == 13) {
-					$("#button").trigger("click");
-				}
-			});
-
-			$("#name").val( getSearchParameters().search );
-
-			if (getSearchParameters().search == void 0) {
-				$('#name').val('');
-			}
-
-			});
-	</script>
-	<style type="text/css">
-			html {
-			position: relative;
-			min-height: 100%;
-			}
-			body {
-			margin-bottom: 60px;
-			}
-			.content {
-			position: fixed;
-			top: 40%;
-			left: 45%;
-			transform: translate(-40%, -45%);
-			margin: auto;
-			}
-			.main-logo {
-			margin-left: 18%;
-			margin-right: auto;
-			}
-			.footer {
-			position: absolute;
-			bottom: 0;
-			width: 100%;
-			height: 60px;
-			background-color: #ffffff;
-	  		box-shadow: 0px 0px 3px 0px #ccc;
-			}
-			@media (max-width: 768px) {
-			.footer {
-			position: absolute;
-			width: 100%;
-			}
-			.main-logo {
-			margin-left: auto;
-			margin-right: auto;
-			}
-			}
-			@media (min-width: 768px) {
-			.footer {
-			position: absolute;
-			bottom: 0;
-			height: 60px;
-			width: 100%;
-			}
-			}
-	</style>
-</head>
-
-<body>
-  <warning></warning>
-	<div class="container">
-		<div class="content" id="content">
-			<div class="main-logo" id="main-logo"><img alt="" src=
-			"index/qora.png">
-			</div>
-			<br>
-
-
-			<div class="search-area" id="search-area">
-				<select class="form-control" id="kind" name="kind">
-					<option value="1">
-						search by value
-					</option>
-
-					<option value="2">
-						open page that matches the name
-					</option>
-				</select><br>
-
-
-				<div class="form-inline">
-					<div class="form-group">
-						<label class="sr-only" for="name">Search</label>
-						<input autofocus="autofocus" class="form-control" id=
-						"name" size="85" type="text" value="">
-					</div>
-					<button class="btn btn-default" id="button" type="button"
-					value="Search"><span class=
-					"glyphicon glyphicon-search"></span><span class=
-					"sr-only">Search</span></button>
-				</div>
-			</div>
-			<br>
-      <results></results>
-		</div>
-	</div>
-
-
-	<footer class="footer">
-		<div class="container">
-			<p class="text-muted"><a href="/webdirectory.html">web
-			directory</a> <a href="/blog.html">blog</a> © <a href=
-			"http://qora.org">Qora</a></p>
-		</div>
-	</footer>
-</body>
+		});
+		</script>
+  </body>
 </html>
