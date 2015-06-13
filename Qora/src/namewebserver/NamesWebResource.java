@@ -379,7 +379,7 @@ public class NamesWebResource {
 			String results = "<br>";
 
 			String entryTemplate = "<li class=\"media\"><a class=\"pull-left\" href=\"#\"><img class=\"media-object\" src=\"index/qora-user.png\" alt=\"Generic placeholder image\"></a><div class=\"media-body\"><h4 class=\"media-heading\">TITLE</h4><p>CONTENT</p></div></li>";
-			
+
 			for (Pair<String, String> pair : blogPosts) {
 
 				String converted = entryTemplate;
@@ -414,24 +414,41 @@ public class NamesWebResource {
 		List<Pair<String, String>> result = new ArrayList<>();
 		for (String link : links) {
 			String refurbishedlink = StringEscapeUtils.unescapeHtml4(link);
-			if (refurbishedlink.toLowerCase().matches(
-					Pattern.quote("https://www.youtube.com/watch?v=") + "([a-zA-Z0-9]+).*")) {
-				String vid = refurbishedlink.replaceAll(
-						Pattern.quote("https://www.youtube.com/watch?v=")
-								+ "([a-zA-Z0-9]+).*", "$1");
+			String youtubeWatchRegex = Pattern
+					.quote("https://www.youtube.com/watch?v=")
+					+ "([a-zA-Z0-9_]+).*";
+			String youTubeSlashRegex = Pattern.quote("https://youtu.be/")
+					+ "([a-zA-Z0-9_]+).*";
+			if (refurbishedlink.toLowerCase().matches(youtubeWatchRegex)) {
+				String vid = refurbishedlink
+						.replaceAll(youtubeWatchRegex, "$1");
+
+				result.add(new Pair<String, String>(
+						link,
+						getYoutubeEmbedHtml(vid)));
+			} else if (refurbishedlink.toLowerCase().matches(youTubeSlashRegex)) {
+				String vid = refurbishedlink
+						.replaceAll(youTubeSlashRegex, "$1");
 				
 				result.add(new Pair<String, String>(
 						link,
-						"<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/"
-								+ vid
-								+ "\" frameborder=\"0\" allowfullscreen></iframe>"));
-			} else {
+						getYoutubeEmbedHtml(vid)));
+			}else
+			{
 				refurbishedlink = transformURLIntoLinks(refurbishedlink);
 				result.add(new Pair<String, String>(link, refurbishedlink));
 			}
+			
+			
 		}
 
 		return result;
+	}
+
+	private String getYoutubeEmbedHtml(String vid) {
+		return "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/"
+				+ vid
+				+ "\" frameborder=\"0\" allowfullscreen></iframe>";
 	}
 
 	@Path("libs/jquery.{version}.js")
