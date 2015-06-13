@@ -2,6 +2,9 @@ a {
     color: #6467FF;
     text-decoration: none;
 }
+a:focus, a:hover {
+    color: #6467FF;
+}
 .text-primary {
     color: #6467FF;
 }
