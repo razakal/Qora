@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.swing.JOptionPane;
 
 import namewebserver.WebService;
@@ -54,6 +56,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import utils.SysTray;
+import api.ApiClient;
 import api.ApiService;
 import at.AT;
 import database.DBSet;
@@ -716,8 +719,23 @@ public class Controller extends Observable {
 		return this.wallet.isUnlocked();
 	}
 
-	public int checkAPICallAllowed(String json) throws Exception {
+	public int checkAPICallAllowed(String json, HttpServletRequest request) throws Exception {
 		int result = 0;
+		
+		if(request != null)
+		{
+			Enumeration<String> headers = request.getHeaders(ApiClient.APICALLKEY);
+			String uuid = null;
+			if(headers.hasMoreElements())
+			{
+				uuid = headers.nextElement();
+				if(ApiClient.isAllowedDebugWindowCall(uuid))
+				{
+					return result;
+				}
+			}
+		}
+		
 		if (Settings.getInstance().isGuiEnabled()) {
 			Gui gui = Gui.getInstance();
 			gui.bringtoFront();

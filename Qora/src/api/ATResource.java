@@ -7,12 +7,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONArray;
@@ -22,6 +24,7 @@ import org.json.simple.JSONValue;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
+import utils.APIUtils;
 import utils.Converter;
 import utils.Pair;
 import at.AT_Constants;
@@ -37,6 +40,8 @@ import database.DBSet;
 @Produces(MediaType.APPLICATION_JSON)
 public class ATResource 
 {
+	@Context
+	HttpServletRequest request;
 	
 	@GET
 	@Path("id/{id}")
@@ -163,6 +168,8 @@ public class ATResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			APIUtils.askAPICallAllowed("POST at "+ x, request);
 			
 			//GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(creator);				

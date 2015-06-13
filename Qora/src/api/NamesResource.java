@@ -3,12 +3,14 @@ package api;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONArray;
@@ -20,6 +22,7 @@ import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import utils.APIUtils;
 import utils.Pair;
 import controller.Controller;
 
@@ -27,6 +30,10 @@ import controller.Controller;
 @Produces(MediaType.APPLICATION_JSON)
 public class NamesResource 
 {
+	
+	@Context
+	HttpServletRequest request;
+	
 	@SuppressWarnings("unchecked")
 	@GET
 	public String getNames()
@@ -138,6 +145,8 @@ public class NamesResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			APIUtils.askAPICallAllowed("Post names " + x, request);
 				
 			//GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(registrant);				
@@ -238,6 +247,8 @@ public class NamesResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			APIUtils.askAPICallAllowed("POST names/" + nameName + "\n" + x, request);
 			
 			//GET NAME
 			Name name = Controller.getInstance().getName(nameName);

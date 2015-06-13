@@ -9,6 +9,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -19,6 +22,13 @@ import utils.JSonWriter;
 
 public class ApiClient {
 
+	
+	public static final String APICALLKEY = "apicallkey";
+
+
+	private static List<String> allowedcalls = new CopyOnWriteArrayList<>();
+	
+	
 	String[] [] helpStrings =
 		{
 			{
@@ -488,6 +498,9 @@ public class ApiClient {
 			//EXECUTE
 			connection.setRequestMethod(method);
 			
+			UUID randomUUID = UUID.randomUUID();
+			allowedcalls.add(randomUUID.toString());
+			connection.setRequestProperty(APICALLKEY, randomUUID.toString());
 			if(method.equals("POST"))
 			{
 				connection.setDoOutput(true);
@@ -549,4 +562,11 @@ public class ApiClient {
 				"Type help to get a list of commands.";
 		}
 	}
+
+
+	public static boolean isAllowedDebugWindowCall(String uuid) {
+		return allowedcalls.contains(uuid);
+	}
+
+
 }

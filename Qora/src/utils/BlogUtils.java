@@ -19,7 +19,13 @@ public class BlogUtils {
 	
 	public static List<Pair<String, String>> getBlogPosts()
 	{
-		Pair<Block, List<Transaction>> resultlist = Controller.getInstance().scanTransactions(Controller.getInstance().getBlockByHeight(Controller.getInstance().getHeight()-10000), 10000, 1000, 10, 777, null);
+		int height = Controller.getInstance().getHeight();
+		int floor = 0;
+		if(height > 10000)
+		{
+			floor = height - 10000;
+		}
+			Pair<Block, List<Transaction>> resultlist = Controller.getInstance().scanTransactions(Controller.getInstance().getBlockByHeight(floor), 10000, 1000, 10, 777, null);
 		 List<Pair<String, String>> results = new ArrayList<>();
 		List<Transaction> b = resultlist.getB();
 		
@@ -33,16 +39,18 @@ public class BlogUtils {
 				String string = new String(data);
 				
 				JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
-				
-				String title = (String) jsonObject.get("title");
-				String post = (String) jsonObject.get("post");
-				
-				if(StringUtil.isNotBlank(post))
+				if(jsonObject != null)
 				{
-					blogpair.setA(title == null? "" : title);
-					blogpair.setB(post);
+					String title = (String) jsonObject.get("title");
+					String post = (String) jsonObject.get("post");
 					
-					results.add(blogpair);
+					if(StringUtil.isNotBlank(post))
+					{
+						blogpair.setA(title == null? "" : title);
+						blogpair.setB(post);
+						
+						results.add(blogpair);
+					}
 				}
 				
 			}
