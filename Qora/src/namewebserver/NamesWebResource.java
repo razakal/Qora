@@ -70,33 +70,44 @@ public class NamesWebResource {
 		try {
 
 			String searchValue = request.getParameter("search");
-			String kind = request.getParameter("kind");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
-			content = replaceWarning(content);
 
-			if (searchValue == null) {
+			if (StringUtil.isBlank(searchValue)) {
 
+				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
 
 			else if (searchValue != null) {
-				List<String> namesByValue = NameUtils.getNamesByValue(
-						searchValue, true);
-				String searchlist = readFile("web/index.mini.html", StandardCharsets.UTF_8);
-				String results = "<br>";
-				for (String name : namesByValue) {
-					results += "<p><a href=\"/" + name + "\">"+ name +"</a> <a href=\"/namepairs:" + name + "\"><span class=\"label label-primary\">Keys</span></a></p>";
+				List<Pair<String, String>> searchResults = NameUtils
+						.getWebsitesByValue(searchValue);
+				content = readFile("web/index.mini.html",
+						StandardCharsets.UTF_8);
+
+				String searchResultTemplate = readFile("web/searchresult",
+						StandardCharsets.UTF_8);
+
+				String results = "";
+				for (Pair<String, String> result : searchResults) {
+					String name = result.getA();
+					String websitecontent = result.getB();
+					Document htmlDoc = Jsoup.parse(websitecontent);
+					String title = selectTitleOpt(htmlDoc);
+					title = title == null ? "" : title;
+					String description = selectDescriptionOpt(htmlDoc);
+					description = description == null ? "" : description;
+
+					results += searchResultTemplate.replace("!Name!", name)
+							.replace("!Title!", title)
+							.replace("!Description!", description)
+							.replace("!Titlelink!", "/" + name)
+							.replace("!Namelink!", "/" + name).replace("!keyslink!", "/namepairs:" + name);
+					
+					
+					
 				}
-
-				content = searchlist.replace("<results></results>", results ).replace("<data></data>", searchValue);
-
-			}
-
-			if (kind != null) {
-				if (kind != "1") {
-					content = content.replace("<option value=\"2\">",
-							"<option selected=\"true\" value=\"2\">");
-				}
+				
+				content = content.replace("<resultlist></resultlist>", results);
 
 			}
 
@@ -105,6 +116,27 @@ public class NamesWebResource {
 			e.printStackTrace();
 			return error404(request);
 		}
+	}
+
+	public String selectTitleOpt(Document htmlDoc) {
+		String title = selectFirstElementOpt(htmlDoc, "title");
+
+		return title;
+	}
+
+	public String selectFirstElementOpt(Document htmlDoc, String tag) {
+		Elements titleElements = htmlDoc.select(tag);
+		String title = null;
+		if (titleElements.size() > 0) {
+			title = titleElements.get(0).text();
+		}
+		return title;
+	}
+
+	public String selectDescriptionOpt(Document htmlDoc) {
+		String title = selectFirstElementOpt(htmlDoc, "description");
+
+		return title;
 	}
 
 	private String replaceWarning(String content) {
@@ -141,6 +173,7 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
+
 	@Path("index/logo_header.png")
 	@GET
 	public Response logo_header() {
@@ -152,7 +185,7 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
-	
+
 	@Path("index/style.css")
 	@GET
 	public Response style() {
@@ -164,7 +197,7 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
-	
+
 	@Path("index/theme.css")
 	@GET
 	public Response theme() {
@@ -176,7 +209,7 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
-	
+
 	@Path("index/qora-user.png")
 	@GET
 	public Response qorauserpng() {
@@ -199,10 +232,11 @@ public class NamesWebResource {
 
 			content = replaceWarning(content);
 
-			List<String> namesContainingWebsites = NameUtils
-					.getNamesContainingWebsites(true);
+			List<Pair<String,String>> namesContainingWebsites = NameUtils
+					.getNamesContainingWebsites();
 			String linksAsHtml = "";
-			for (String name : namesContainingWebsites) {
+			for (Pair<String,String> websitepair : namesContainingWebsites) {
+				String name = websitepair.getA();
 				linksAsHtml += "<a href=/" + name.replaceAll(" ", "%20") + ">"
 						+ name + "</a><br>";
 			}
@@ -380,7 +414,7 @@ public class NamesWebResource {
 
 				fullname += "theme.css";
 				break;
-				
+
 			case "bootstrap.css.map":
 
 				fullname += "bootstrap.css.map";
@@ -561,13 +595,17 @@ public class NamesWebResource {
 			return Response
 					.status(200)
 					.header("Content-Type", "text/html; charset=utf-8")
-					.entity(miniIndex().replace("<data></data>",
-							"namepairs:" + name)
-							.replace("<jsonresults></jsonresults>",
+					.entity(miniIndex()
+							.replace("<data></data>", "namepairs:" + name)
+							.replace(
+									"<jsonresults></jsonresults>",
 									"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-									+"<div class=\"panel-heading\">Results on :" + name + "</div><table class=\"table\">" //
-									+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-							.replace("$scope.steps = {}","$scope.steps = " + value)).build();
+											+ "<div class=\"panel-heading\">Results on :"
+											+ name
+											+ "</div><table class=\"table\">" //
+											+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+							.replace("$scope.steps = {}",
+									"$scope.steps = " + value)).build();
 
 		} else {
 			return error404(request);
@@ -598,11 +636,15 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-						.replace("<jsonresults></jsonresults>",
+						.replace(
+								"<jsonresults></jsonresults>",
 								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-								+"<div class=\"panel-heading\">Block : " + strBlock + "</div><table class=\"table\">" //
-								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
+										+ "<div class=\"panel-heading\">Block : "
+										+ strBlock
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}", "$scope.steps = " + str))
+				.build();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -639,11 +681,15 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-						.replace("<jsonresults></jsonresults>",
+						.replace(
+								"<jsonresults></jsonresults>",
 								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-								+"<div class=\"panel-heading\">Transaction : " + strTx + "</div><table class=\"table\">" //
-								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
+										+ "<div class=\"panel-heading\">Transaction : "
+										+ strTx
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}", "$scope.steps = " + str))
+				.build();
 	}
 
 	@Path("balance:{address}")
@@ -678,11 +724,16 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-						.replace("<jsonresults></jsonresults>",
+						.replace(
+								"<jsonresults></jsonresults>",
 								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-								+"<div class=\"panel-heading\">Balance of " + address + "</div><table class=\"table\">" //
-								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}","$scope.steps = {\"amount\":" + str + "}")).build();
+										+ "<div class=\"panel-heading\">Balance of "
+										+ address
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}",
+								"$scope.steps = {\"amount\":" + str + "}"))
+				.build();
 	}
 
 	@Path("balance:{address}:{confirmations}")
@@ -704,11 +755,18 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-		.replace("<jsonresults></jsonresults>",
-				"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-				+"<div class=\"panel-heading\">Balance of " + address + ":" + confirmations + "</div><table class=\"table\">" //
-				+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-		.replace("$scope.steps = {}","$scope.steps = {\"amount\":" + str + "}")).build();
+						.replace(
+								"<jsonresults></jsonresults>",
+								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
+										+ "<div class=\"panel-heading\">Balance of "
+										+ address
+										+ ":"
+										+ confirmations
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}",
+								"$scope.steps = {\"amount\":" + str + "}"))
+				.build();
 	}
 
 	@Path("name:{name}")
@@ -738,11 +796,15 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-						.replace("<jsonresults></jsonresults>",
+						.replace(
+								"<jsonresults></jsonresults>",
 								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-								+"<div class=\"panel-heading\">Name : " + strName + "</div><table class=\"table\">" //
-								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}","$scope.steps = "+ str)).build();
+										+ "<div class=\"panel-heading\">Name : "
+										+ strName
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}", "$scope.steps = " + str))
+				.build();
 	}
 
 	@Path("at:{at}")
@@ -761,11 +823,15 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-						.replace("<jsonresults></jsonresults>",
+						.replace(
+								"<jsonresults></jsonresults>",
 								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-								+"<div class=\"panel-heading\">AT : " + strAt + "</div><table class=\"table\">" //
-								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
+										+ "<div class=\"panel-heading\">AT : "
+										+ strAt
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}", "$scope.steps = " + str))
+				.build();
 	}
 
 	@Path("atbysender:{atbysender}")
@@ -784,11 +850,15 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-						.replace("<jsonresults></jsonresults>",
+						.replace(
+								"<jsonresults></jsonresults>",
 								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-								+"<div class=\"panel-heading\">AT Sender : " + strAtbySender + "</div><table class=\"table\">" //
-								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
+										+ "<div class=\"panel-heading\">AT Sender : "
+										+ strAtbySender
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}", "$scope.steps = " + str))
+				.build();
 	}
 
 	@Path("atbycreator:{atbycreator}")
@@ -808,11 +878,15 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-						.replace("<jsonresults></jsonresults>",
+						.replace(
+								"<jsonresults></jsonresults>",
 								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-								+"<div class=\"panel-heading\">AT Creator : " + strAtbyCreator + "</div><table class=\"table\">" //
-								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
+										+ "<div class=\"panel-heading\">AT Creator : "
+										+ strAtbyCreator
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}", "$scope.steps = " + str))
+				.build();
 	}
 
 	@Path("attxbyrecipient:{attxbyrecipient}")
@@ -832,11 +906,15 @@ public class NamesWebResource {
 				.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(miniIndex()
-						.replace("<jsonresults></jsonresults>",
+						.replace(
+								"<jsonresults></jsonresults>",
 								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-								+"<div class=\"panel-heading\">AT TX by Recipient : " + StrAtTxbyRecipient + "</div><table class=\"table\">" //
-								+"<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}","$scope.steps = " + str)).build();
+										+ "<div class=\"panel-heading\">AT TX by Recipient : "
+										+ StrAtTxbyRecipient
+										+ "</div><table class=\"table\">" //
+										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
+						.replace("$scope.steps = {}", "$scope.steps = " + str))
+				.build();
 	}
 
 	public String miniIndex() {
@@ -945,24 +1023,22 @@ public class NamesWebResource {
 			Elements inj = doc.select("inj");
 			Element element = inj.get(0);
 
-
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			String name = matcher.group(2);
-			if(nameMap.contains(name))
-			{
+			if (nameMap.contains(name)) {
 
 				Name nameinj = nameMap.get(name);
-				String result = GZIP.webDecompress(nameinj.getValue().toString());
-				if(element.hasAttr("key"))
-				{
+				String result = GZIP.webDecompress(nameinj.getValue()
+						.toString());
+				if (element.hasAttr("key")) {
 					String key = element.attr("key");
 					try {
 
-						JSONObject jsonObject = (JSONObject) JSONValue.parse(result);
+						JSONObject jsonObject = (JSONObject) JSONValue
+								.parse(result);
 						if (jsonObject != null) {
 							// Looks like valid jSon
-							if(jsonObject.containsKey(key))
-							{
+							if (jsonObject.containsKey(key)) {
 								result = (String) jsonObject.get(key);
 							}
 
@@ -972,7 +1048,7 @@ public class NamesWebResource {
 						// no json probably
 					}
 				}
-					value = value.replace(matcher.group(),result);
+				value = value.replace(matcher.group(), result);
 			}
 
 		}

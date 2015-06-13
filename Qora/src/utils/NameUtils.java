@@ -89,9 +89,9 @@ public class NameUtils {
 	}
 	
 	
-	public static List<String> getNamesByValue(String searchvalue, boolean removeInjected)
+	public static List<Pair<String, String>> getWebsitesByValue(String searchvalue)
 	{
-		return getNamesbyValueInternal(removeInjected, searchvalue);
+		return getWebsitesbyValueInternal(searchvalue);
 
 		
 		
@@ -100,13 +100,15 @@ public class NameUtils {
 	
 	
 	
-	public static List<String> getNamesContainingWebsites(boolean removeInjected) {
-		return getNamesbyValueInternal(removeInjected, null);
+	public static  List<Pair<String, String>> getNamesContainingWebsites() {
+		return getWebsitesbyValueInternal(null);
 	}
 
 
-	public static List<String> getNamesbyValueInternal(boolean removeInjected, String searchValueOpt) {
-		List<String> websites = new ArrayList<String>();
+	public static List<Pair<String, String>> getWebsitesbyValueInternal( String searchValueOpt) {
+		
+		
+		List<Pair<String, String>> results = new ArrayList<Pair<String,String>>();
 		List<String> injected = new ArrayList<String>();
 
 		NameMap nameMap = DBSet.getInstance().getNameMap();
@@ -129,35 +131,33 @@ public class NameUtils {
 						GZIP.webDecompress(nameinj.getValue().toString()));
 			}
 
-			if(searchValueOpt == null)
-			{
 				try {
 					if(value.startsWith("{"))
 					{
 						JSONObject jsonObject = (JSONObject) JSONValue.parse(value);
 						if(jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname()))
 						{
-							websites.add(key);
+							String websitevalue = (String) jsonObject.get(Qorakeys.WEBSITE.getKeyname());
+							if(searchValueOpt == null)
+							{
+								results.add(new Pair<String,String>(key,websitevalue));
+							}else
+							{
+								if(websitevalue.toLowerCase().contains(searchValueOpt.toLowerCase()))
+								{
+									results.add(new Pair<String,String>(key,websitevalue));
+								}
+								
+							}
 						}
 					}
 				} catch (Exception e) {
 					// no valid json no website key
 				}
-			}else
-			{
-				if (value.toLowerCase().contains(searchValueOpt))
-				{
-					websites.add(key);
-				}
-			}
 
 		}
 
-		if(removeInjected)
-		{
-			websites.removeAll(injected);
-		}
 		
-		return websites;
+		return results;
 	}
 }
