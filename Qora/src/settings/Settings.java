@@ -46,6 +46,7 @@ public class Settings {
 	private static final String DEFAULT_WALLET_DIR = "wallet";
 	
 	private static final boolean DEFAULT_GENERATOR_KEY_CACHING = false;
+	private static final boolean DEFAULT_CHECKPOINTING = true;
 
 	private static final boolean DEFAULT_SOUND_RECEIVE_COIN = true;
 	private static final boolean DEFAULT_SOUND_MESSAGE = true;
@@ -371,6 +372,16 @@ public class Settings {
 		}
 		
 		return DEFAULT_GENERATOR_KEY_CACHING;
+	}
+	
+	public boolean isCheckpointingEnabled() 
+	{
+		if(this.settingsJSON.containsKey("checkpoint"))
+		{
+			return ((Boolean) this.settingsJSON.get("checkpoint")).booleanValue();
+		}
+		
+		return DEFAULT_CHECKPOINTING;
 	}
 	
 	public boolean isSoundReceivePaymentEnabled() 

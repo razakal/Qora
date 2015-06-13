@@ -4,8 +4,10 @@ import gui.Gui;
 
 import java.awt.TrayIcon.MessageType;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -30,6 +32,7 @@ import network.message.MessageFactory;
 import network.message.TransactionMessage;
 import network.message.VersionMessage;
 
+import org.apache.commons.io.FileUtils;
 import org.mapdb.Fun.Tuple2;
 
 import qora.BlockChain;
@@ -156,7 +159,15 @@ public class Controller extends Observable {
 				// delete data folder
 				java.nio.file.Files.walkFileTree(dataDir.toPath(),
 						new SimpleFileVisitorForRecursiveFolderDeletion());
-				DBSet.reCreateDatabase();
+				File dataBak = getDataBakDir(dataDir);
+				if(dataBak.exists() && Settings.getInstance().isCheckpointingEnabled())
+				{
+					FileUtils.copyDirectory(dataBak, dataDir);
+					DBSet.reCreateDatabase();
+				}else
+				{
+					DBSet.reCreateDatabase();
+				}
 
 			}
 
@@ -208,6 +219,10 @@ public class Controller extends Observable {
 		// REGISTER DATABASE OBSERVER
 		this.addObserver(DBSet.getInstance().getTransactionMap());
 		this.addObserver(DBSet.getInstance());
+	}
+
+	private File getDataBakDir(File dataDir) {
+		return new File(dataDir.getParent(), "dataBak");
 	}
 
 	public void rpcServiceRestart() {
@@ -304,9 +319,41 @@ public class Controller extends Observable {
 			Logger.getGlobal().info("Closing wallet");
 			this.wallet.close();
 
+			createDataCheckpoint();
+
 			// FORCE CLOSE
 			System.exit(0);
 		}
+	}
+
+	private void createDataCheckpoint() {
+		if (!DBSet.getInstance().getBlockMap().isProcessing() && Settings.getInstance().isCheckpointingEnabled()) {
+			DBSet.getInstance().close();
+
+			File dataDir = new File(Settings.getInstance().getDataDir());
+
+			File dataBak = getDataBakDir(dataDir);
+
+			if (dataDir.exists()) {
+				if (dataBak.exists()) {
+					try {
+						Files.walkFileTree(
+								dataBak.toPath(),
+								new SimpleFileVisitorForRecursiveFolderDeletion());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				try {
+					FileUtils.copyDirectory(dataDir, dataBak);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+
+		}
+
 	}
 
 	// NETWORK
@@ -719,23 +766,22 @@ public class Controller extends Observable {
 		return this.wallet.isUnlocked();
 	}
 
-	public int checkAPICallAllowed(String json, HttpServletRequest request) throws Exception {
+	public int checkAPICallAllowed(String json, HttpServletRequest request)
+			throws Exception {
 		int result = 0;
-		
-		if(request != null)
-		{
-			Enumeration<String> headers = request.getHeaders(ApiClient.APICALLKEY);
+
+		if (request != null) {
+			Enumeration<String> headers = request
+					.getHeaders(ApiClient.APICALLKEY);
 			String uuid = null;
-			if(headers.hasMoreElements())
-			{
+			if (headers.hasMoreElements()) {
 				uuid = headers.nextElement();
-				if(ApiClient.isAllowedDebugWindowCall(uuid))
-				{
+				if (ApiClient.isAllowedDebugWindowCall(uuid)) {
 					return result;
 				}
 			}
 		}
-		
+
 		if (Settings.getInstance().isGuiEnabled()) {
 			Gui gui = Gui.getInstance();
 			gui.bringtoFront();
@@ -743,9 +789,10 @@ public class Controller extends Observable {
 					"An API call needs authorization!", MessageType.WARNING);
 			Object[] options = { "Yes", "No" };
 			result = JOptionPane
-					.showOptionDialog(gui, 
+					.showOptionDialog(gui,
 							"Do you want to authorize the following API call?\n"
-									+ json, "INCOMING API CALL",JOptionPane.YES_NO_OPTION,
+									+ json, "INCOMING API CALL",
+							JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options,
 							options[1]);
 		}
