@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import at.AT_Constants;
 import at.AT_Error;
 import qora.transaction.Transaction;
+import utils.Qorakeys;
 import utils.NameUtils.NameResult;
 
 public class ApiErrorFactory 
@@ -40,6 +41,8 @@ public class ApiErrorFactory
 	public static final int ERROR_INVALID_DATA_LENGTH = 116;
 	public static final int ERROR_INVALID_UPDATE_VALUE = 117;
 	public static final int ERROR_KEY_ALREADY_EXISTS = 118;
+	public static final int ERROR_KEY_NOT_EXISTS = 119;
+	public static final int ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR = 120;
 	
 	//WALLET
 	public static final int ERROR_WALLET_NO_EXISTS = 201;
@@ -130,6 +133,8 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_INVALID_DATA_LENGTH, "invalid data length");
 		this.errorMessages.put(ERROR_INVALID_UPDATE_VALUE, "invalid update value");
 		this.errorMessages.put(ERROR_KEY_ALREADY_EXISTS, "key already exists, edit is false");
+		this.errorMessages.put(ERROR_KEY_NOT_EXISTS, "the key does not exist");
+		this.errorMessages.put(ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR, "you can't delete the key \""+Qorakeys.DEFAULT.toString() +"\" if it is the only key");
 		
 		//WALLET
 		this.errorMessages.put(ERROR_WALLET_NO_EXISTS, "wallet does not exist");

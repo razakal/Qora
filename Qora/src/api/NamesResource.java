@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -204,6 +205,123 @@ public class NamesResource {
 	}
 
 	@SuppressWarnings("unchecked")
+	@DELETE
+	@Path("/key/{name}")
+	public String removeKey(String x, @PathParam("name") String nameName) {
+		try {
+			// READ JSON
+			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
+			String fee = (String) jsonObject.get("fee");
+			String key = (String) jsonObject.get("key");
+
+			// keys are always lowercase!
+			key = key.toLowerCase();
+
+			// PARSE FEE
+			BigDecimal bdFee;
+			try {
+				bdFee = new BigDecimal(fee);
+				bdFee = bdFee.setScale(8);
+			} catch (Exception e) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_INVALID_FEE);
+			}
+
+			// CHECK IF WALLET EXISTS
+			if (!Controller.getInstance().doesWalletExists()) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_WALLET_NO_EXISTS);
+			}
+
+			// CHECK WALLET UNLOCKED
+			if (!Controller.getInstance().isWalletUnlocked()) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_WALLET_LOCKED);
+			}
+
+
+			// GET NAME
+			Name name = Controller.getInstance().getName(nameName);
+			if (name == null) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_NAME_NO_EXISTS);
+			}
+
+			// GET ACCOUNT
+			PrivateKeyAccount account = Controller
+					.getInstance()
+					.getPrivateKeyAccountByAddress(name.getOwner().getAddress());
+			if (account == null) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_INVALID_NAME_OWNER);
+			}
+			
+			APIUtils.askAPICallAllowed("DELETE names/key/" + nameName + "\n"
+					+ x, request);
+
+			String oldValue = GZIP.webDecompress(name.getValue());
+			JSONObject resultJson = null;
+			try {
+				resultJson = (JSONObject) JSONValue.parse(oldValue);
+			} catch (Exception e) {
+				// looks like no json
+			}
+
+			if (resultJson != null) {
+				if (!resultJson.containsKey(key)) {
+
+					throw ApiErrorFactory.getInstance().createError(
+							ApiErrorFactory.ERROR_KEY_NOT_EXISTS);
+
+				} else {
+
+					
+					if(resultJson.size() == 1)
+					{
+						//THERE MUST BE at least one KEY always, so we convert it to the defaultkey
+						String oldVal = (String) resultJson.get(key);
+						resultJson.put(Qorakeys.DEFAULT.toString(), oldVal);
+					}
+					
+					resultJson.remove(key);
+					
+				}
+
+			} else {
+
+				//SPECIAL CASE USER TRIES TO DELETE LAST KEY
+				if(key.equals(Qorakeys.DEFAULT.toString()))
+				{
+					throw ApiErrorFactory.getInstance().createError(
+							ApiErrorFactory.ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR);
+				}
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_KEY_NOT_EXISTS);
+
+			}
+
+			String resultString = resultJson.toJSONString();
+
+			// UPDATE NAME
+			Pair<Transaction, Integer> result = Controller.getInstance()
+					.updateName(account, account, nameName,
+							GZIP.compress(resultString), bdFee);
+
+			return checkNameTransaction(result);
+
+		} catch (NullPointerException e) {
+			// JSON EXCEPTION
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_JSON);
+		} catch (ClassCastException e) {
+			// JSON EXCEPTION
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_JSON);
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/key/{name}")
 	public String updateKey(String x, @PathParam("name") String nameName) {
@@ -298,13 +416,11 @@ public class NamesResource {
 			}
 
 			String resultString = resultJson.toJSONString();
-			
-			
 
 			// UPDATE NAME
-			Pair<Transaction, Integer> result = Controller
-					.getInstance()
-					.updateName(account, account, nameName, GZIP.compress(resultString), bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance()
+					.updateName(account, account, nameName,
+							GZIP.compress(resultString), bdFee);
 
 			return checkNameTransaction(result);
 
