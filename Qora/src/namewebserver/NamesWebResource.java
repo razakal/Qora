@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -409,11 +410,10 @@ public class NamesWebResource {
 	private List<Pair<String, String>> createHtmlLinks(List<String> links) {
 		List<Pair<String, String>> result = new ArrayList<>();
 		for (String link : links) {
-			String refurbishedlink = link.replaceAll(Pattern.quote("&#46;"),
-					".");
+			String refurbishedlink = StringEscapeUtils.unescapeHtml4(link);
 			if (refurbishedlink.toLowerCase().matches(
 					Pattern.quote("https://www.youtube.com/watch?v=") + "(.+)")) {
-				String vid = link.replaceAll(
+				String vid = refurbishedlink.replaceAll(
 						Pattern.quote("https://www.youtube.com/watch?v=")
 								+ "(.+)", "$1");
 				result.add(new Pair<String, String>(
