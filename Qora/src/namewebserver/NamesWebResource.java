@@ -29,6 +29,7 @@ import org.json.simple.JSONValue;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import qora.account.Account;
@@ -378,11 +379,13 @@ public class NamesWebResource {
 			String results = "<br>";
 
 			String entryTemplate = "<li class=\"media\"><a class=\"pull-left\" href=\"#\"><img class=\"media-object\" src=\"index/qora-user.png\" alt=\"Generic placeholder image\"></a><div class=\"media-body\"><h4 class=\"media-heading\">TITLE</h4><p>CONTENT</p></div></li>";
+			
 			for (Pair<String, String> pair : blogPosts) {
 
 				String converted = entryTemplate;
 				String body = pair.getB();
 
+				body = Jsoup.clean(body, Whitelist.basic());
 				List<Pair<String, String>> linkList = createHtmlLinks(getAllLinks(body));
 
 				for (Pair<String, String> link : linkList) {
