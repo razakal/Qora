@@ -416,9 +416,9 @@ public class NamesWebResource {
 			String refurbishedlink = StringEscapeUtils.unescapeHtml4(link);
 			String youtubeWatchRegex = Pattern
 					.quote("https://www.youtube.com/watch?v=")
-					+ "([a-zA-Z0-9_]+).*";
+					+ "([a-zA-Z0-9_-]+).*";
 			String youTubeSlashRegex = Pattern.quote("https://youtu.be/")
-					+ "([a-zA-Z0-9_]+).*";
+					+ "([a-zA-Z0-9_-]+).*";
 			if (refurbishedlink.toLowerCase().matches(youtubeWatchRegex)) {
 				String vid = refurbishedlink
 						.replaceAll(youtubeWatchRegex, "$1");
