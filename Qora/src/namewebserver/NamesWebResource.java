@@ -70,17 +70,25 @@ public class NamesWebResource {
 		try {
 
 			String searchValue = request.getParameter("search");
+			String webDirectory = request.getParameter("webdirectory");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 
-			if (StringUtil.isBlank(searchValue)) {
+			if (StringUtil.isBlank(searchValue) && StringUtil.isBlank(webDirectory)) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
 
-			else if (searchValue != null) {
-				List<Pair<String, String>> searchResults = NameUtils
-						.getWebsitesByValue(searchValue);
+			else if (searchValue != null || webDirectory != null) {
+				List<Pair<String, String>> searchResults;
+				if(webDirectory != null)
+				{
+					searchResults = NameUtils.getWebsitesByValue(null);
+				}else
+				{
+					searchResults = NameUtils
+							.getWebsitesByValue(searchValue);
+				}
 				content = readFile("web/index.mini.html",
 						StandardCharsets.UTF_8);
 
