@@ -34,6 +34,8 @@ public class BlogPostResource {
 	public static final String TITLE_KEY = "title";
 	public static final String POST_KEY = "post";
 	public static final String BLOGENABLE_KEY = "blogenable";
+	public static final String BLOGTITLE_KEY = "blogtitle";
+	public static final String BLOGDESCRIPTION_KEY = "blogdescription";
 	
 	@Context
 	HttpServletRequest request;

@@ -3,20 +3,57 @@ package utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import api.BlogPostResource;
 import qora.block.Block;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
+import api.BlogPostResource;
 import controller.Controller;
+import database.DBSet;
+import database.NameMap;
 
 public class BlogUtils {
 
-	
+	/**
+	 * 
+	 * @return  triplet of name, title, description of all enabled blogs.
+	 */
+	public static List<Triplet<String, String, String>> getAllEnabledBlogs()
+	{
+
+		NameMap nameMap = DBSet.getInstance().getNameMap();
+		List<Triplet<String, String, String>> results = new ArrayList<>();
+		Set<String> names = nameMap.getKeys();
+
+		for (String name : names) {
+			String value = nameMap.get(name).getValue();
+			
+			value = GZIP.webDecompress(value);
+			
+			JSONObject jsonObject = null;
+			try {
+				jsonObject = (JSONObject) JSONValue.parse(value);
+			} catch (Exception e) {
+				// no valid json
+			}
+			
+			if(jsonObject != null && jsonObject.containsKey(BlogPostResource.BLOGENABLE_KEY))
+			{
+				
+				String title = (String) jsonObject.get(BlogPostResource.BLOGTITLE_KEY);
+				String description = (String) jsonObject.get(BlogPostResource.BLOGDESCRIPTION_KEY);
+				results.add(new Triplet<String, String, String>(name, title == null ? "" : title, description == null ? "" : description));
+			}
+			
+		}
+		
+		return results;
+	}
 	
 
 	public static List<Pair<String, String>> getBlogPosts(String blogOpt)

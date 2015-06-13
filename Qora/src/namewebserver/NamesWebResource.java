@@ -45,6 +45,7 @@ import utils.NameUtils;
 import utils.NameUtils.NameResult;
 import utils.Pair;
 import utils.Qorakeys;
+import utils.Triplet;
 import api.ATResource;
 import api.AddressesResource;
 import api.ApiErrorFactory;
@@ -72,27 +73,31 @@ public class NamesWebResource {
 
 			String searchValue = request.getParameter("search");
 			String webDirectory = request.getParameter("webdirectory");
+			String blogDirectory = request.getParameter("blogdirectory");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 
 			if (StringUtil.isBlank(searchValue)
-					&& StringUtil.isBlank(webDirectory)) {
+					&& StringUtil.isBlank(webDirectory) && StringUtil.isBlank(blogDirectory)) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
-
-			else if (searchValue != null || webDirectory != null) {
+			else if (searchValue != null || webDirectory != null || blogDirectory != null) {
 				List<Pair<String, String>> searchResults;
-				if (webDirectory != null) {
-					searchResults = NameUtils.getWebsitesByValue(null);
-				} else {
-					searchResults = NameUtils.getWebsitesByValue(searchValue);
-				}
 				content = readFile("web/index.mini.html",
 						StandardCharsets.UTF_8);
-
 				String searchResultTemplate = readFile("web/searchresult",
 						StandardCharsets.UTF_8);
+				if (webDirectory != null) {
+					searchResults = NameUtils.getWebsitesByValue(null);
+				} else if(blogDirectory != null)
+				{
+					return handleBlogDirectory(content, searchResultTemplate);
+				}else
+				{
+					searchResults = NameUtils.getWebsitesByValue(searchValue);
+				}
+
 
 				String results = "";
 				for (Pair<String, String> result : searchResults) {
@@ -122,6 +127,25 @@ public class NamesWebResource {
 			e.printStackTrace();
 			return error404(request);
 		}
+	}
+
+	private Response handleBlogDirectory(String content, String searchResultTemplate) {
+		String results = "";
+		List<Triplet<String, String, String>> allEnabledBlogs = BlogUtils.getAllEnabledBlogs();
+		for (Triplet<String, String, String> triplet : allEnabledBlogs) {
+			String name = triplet.getA();
+			String title = triplet.getB();
+			String description = triplet.getC();
+			
+			results += searchResultTemplate.replace("!Name!", name)
+					.replace("!Title!", title)
+					.replace("!Description!", description)
+					.replace("!Titlelink!", "/blog.html?blogname=" + name)
+					.replace("!Namelink!", "/blog.html?blogname=" + name)
+					.replace("!keyslink!", "/namepairs:" + name);
+		}
+		content = content.replace("<resultlist></resultlist>", results);
+		return Response.ok(content, "text/html; charset=utf-8").build();
 	}
 
 	public String selectTitleOpt(Document htmlDoc) {
