@@ -134,9 +134,18 @@ public class NamesWebResource {
 	}
 
 	public String selectDescriptionOpt(Document htmlDoc) {
-		String title = selectFirstElementOpt(htmlDoc, "description");
+		String result = "";
+		Elements descriptions = htmlDoc.select("meta[name=\"description\"]");
+		if(descriptions.size() > 0)
+		{
+			Element descr = descriptions.get(0);
+			if(descr.hasAttr("content"))
+			{
+				result = descr.attr("content");
+			}
+		}
 
-		return title;
+		return result;
 	}
 
 	private String replaceWarning(String content) {
