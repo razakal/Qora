@@ -412,10 +412,11 @@ public class NamesWebResource {
 		for (String link : links) {
 			String refurbishedlink = StringEscapeUtils.unescapeHtml4(link);
 			if (refurbishedlink.toLowerCase().matches(
-					Pattern.quote("https://www.youtube.com/watch?v=") + "(.+)")) {
+					Pattern.quote("https://www.youtube.com/watch?v=") + "([a-zA-Z0-9]+).*")) {
 				String vid = refurbishedlink.replaceAll(
 						Pattern.quote("https://www.youtube.com/watch?v=")
-								+ "(.+)", "$1");
+								+ "([a-zA-Z0-9]+).*", "$1");
+				
 				result.add(new Pair<String, String>(
 						link,
 						"<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/"
