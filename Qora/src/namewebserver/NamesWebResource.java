@@ -176,10 +176,10 @@ public class NamesWebResource {
 		}
 	}
 
-	@Path("index/qora.png")
+	@Path("libs/img/qora.png")
 	@GET
 	public Response qorapng() {
-		File file = new File("web/qora.png");
+		File file = new File("web/libs/img/qora.png");
 
 		if (file.exists()) {
 			return Response.ok(file, "image/png").build();
@@ -188,10 +188,10 @@ public class NamesWebResource {
 		}
 	}
 
-	@Path("index/logo_header.png")
+	@Path("libs/img/logo_header.png")
 	@GET
 	public Response logo_header() {
-		File file = new File("web/logo_header.png");
+		File file = new File("web/libs/img/logo_header.png");
 
 		if (file.exists()) {
 			return Response.ok(file, "image/png").build();
@@ -200,37 +200,49 @@ public class NamesWebResource {
 		}
 	}
 
-	@Path("index/style.css")
-	@GET
-	public Response style() {
-		File file = new File("web/style.css");
-
-		if (file.exists()) {
-			return Response.ok(file, "text/css").build();
-		} else {
-			return error404(request);
-		}
-	}
-
-	@Path("index/theme.css")
-	@GET
-	public Response theme() {
-		File file = new File("web/theme.css");
-
-		if (file.exists()) {
-			return Response.ok(file, "text/css").build();
-		} else {
-			return error404(request);
-		}
-	}
-
-	@Path("index/qora-user.png")
+	@Path("libs/img/qora-user.png")
 	@GET
 	public Response qorauserpng() {
-		File file = new File("web/qora-user.png");
+		File file = new File("web/libs/img/qora-user.png");
 
 		if (file.exists()) {
 			return Response.ok(file, "image/png").build();
+		} else {
+			return error404(request);
+		}
+	}
+
+	@Path("libs/css/style.css")
+	@GET
+	public Response style() {
+		File file = new File("web/libs/css/style.css");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/css").build();
+		} else {
+			return error404(request);
+		}
+	}
+
+	@Path("libs/css/sidebar.css")
+	@GET
+	public Response sidebarcss() {
+		File file = new File("web/libs/css/sidebar.css");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/css").build();
+		} else {
+			return error404(request);
+		}
+	}
+
+	@Path("libs/js/sidebar.js")
+	@GET
+	public Response sidebarjs() {
+		File file = new File("web/libs/js/sidebar.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
 		} else {
 			return error404(request);
 		}
@@ -429,7 +441,7 @@ public class NamesWebResource {
 			} else if (refurbishedlink.toLowerCase().matches(youTubeSlashRegex)) {
 				String vid = refurbishedlink
 						.replaceAll(youTubeSlashRegex, "$1");
-				
+
 				result.add(new Pair<String, String>(
 						link,
 						getYoutubeEmbedHtml(vid)));
@@ -438,8 +450,8 @@ public class NamesWebResource {
 				refurbishedlink = transformURLIntoLinks(refurbishedlink);
 				result.add(new Pair<String, String>(link, refurbishedlink));
 			}
-			
-			
+
+
 		}
 
 		return result;
@@ -451,16 +463,16 @@ public class NamesWebResource {
 				+ "\" frameborder=\"0\" allowfullscreen></iframe>";
 	}
 
-	@Path("libs/jquery.{version}.js")
+	@Path("libs/jquery/jquery.{version}.js")
 	@GET
 	public Response jquery(@PathParam("version") String version) {
 		File file;
 		if (version.equals("1")) {
-			file = new File("web/jquery-1.11.3.min.js");
+			file = new File("web/libs/jquery/jquery-1.11.3.min.js");
 		} else if (version.equals("2")) {
-			file = new File("web/jquery-2.1.4.min.js");
+			file = new File("web/libs/jquery/jquery-2.1.4.min.js");
 		} else {
-			file = new File("web/jquery-2.1.4.min.js");
+			file = new File("web/libs/jquery/jquery-2.1.4.min.js");
 		}
 
 		if (file.exists()) {
@@ -470,16 +482,16 @@ public class NamesWebResource {
 		}
 	}
 
-	@Path("libs/angular.min.{version}.js")
+	@Path("libs/angular/angular.min.{version}.js")
 	@GET
 	public Response angular(@PathParam("version") String version) {
 		File file;
 		if (version.equals("1.3")) {
-			file = new File("web/angular.min.1.3.15.js");
+			file = new File("web/libs/angular/angular.min.1.3.15.js");
 		} else if (version.equals("1.4")) {
-			file = new File("web/angular.min.1.4.0.js");
+			file = new File("web/libs/angular/angular.min.1.4.0.js");
 		} else {
-			file = new File("web/angular.min.1.3.15.js");
+			file = new File("web/libs/angular/angular.min.1.3.15.js");
 		}
 
 		if (file.exists()) {
@@ -494,7 +506,7 @@ public class NamesWebResource {
 	public Response bootstrap(@PathParam("version") String version,
 			@PathParam("folder") String folder,
 			@PathParam("filename") String filename) {
-		String fullname = "web/bootstrap-3.3.4-dist/";
+		String fullname = "web/libs/bootstrap-3.3.4-dist/";
 		String type = "text/html; charset=utf-8";
 
 		switch (folder) {
