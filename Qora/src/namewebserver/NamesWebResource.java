@@ -41,9 +41,9 @@ import utils.BlogUtils;
 import utils.GZIP;
 import utils.JSonWriter;
 import utils.NameUtils;
-import utils.Qorakeys;
 import utils.NameUtils.NameResult;
 import utils.Pair;
+import utils.Qorakeys;
 import api.ATResource;
 import api.AddressesResource;
 import api.ApiErrorFactory;
@@ -73,7 +73,8 @@ public class NamesWebResource {
 			String webDirectory = request.getParameter("webdirectory");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 
-			if (StringUtil.isBlank(searchValue) && StringUtil.isBlank(webDirectory)) {
+			if (StringUtil.isBlank(searchValue)
+					&& StringUtil.isBlank(webDirectory)) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
@@ -81,13 +82,10 @@ public class NamesWebResource {
 
 			else if (searchValue != null || webDirectory != null) {
 				List<Pair<String, String>> searchResults;
-				if(webDirectory != null)
-				{
+				if (webDirectory != null) {
 					searchResults = NameUtils.getWebsitesByValue(null);
-				}else
-				{
-					searchResults = NameUtils
-							.getWebsitesByValue(searchValue);
+				} else {
+					searchResults = NameUtils.getWebsitesByValue(searchValue);
 				}
 				content = readFile("web/index.mini.html",
 						StandardCharsets.UTF_8);
@@ -109,12 +107,11 @@ public class NamesWebResource {
 							.replace("!Title!", title)
 							.replace("!Description!", description)
 							.replace("!Titlelink!", "/" + name)
-							.replace("!Namelink!", "/" + name).replace("!keyslink!", "/namepairs:" + name);
-					
-					
-					
+							.replace("!Namelink!", "/" + name)
+							.replace("!keyslink!", "/namepairs:" + name);
+
 				}
-				
+
 				content = content.replace("<resultlist></resultlist>", results);
 
 			}
@@ -144,11 +141,9 @@ public class NamesWebResource {
 	public String selectDescriptionOpt(Document htmlDoc) {
 		String result = "";
 		Elements descriptions = htmlDoc.select("meta[name=\"description\"]");
-		if(descriptions.size() > 0)
-		{
+		if (descriptions.size() > 0) {
 			Element descr = descriptions.get(0);
-			if(descr.hasAttr("content"))
-			{
+			if (descr.hasAttr("content")) {
 				result = descr.attr("content");
 			}
 		}
@@ -249,10 +244,10 @@ public class NamesWebResource {
 
 			content = replaceWarning(content);
 
-			List<Pair<String,String>> namesContainingWebsites = NameUtils
+			List<Pair<String, String>> namesContainingWebsites = NameUtils
 					.getNamesContainingWebsites();
 			String linksAsHtml = "";
-			for (Pair<String,String> websitepair : namesContainingWebsites) {
+			for (Pair<String, String> websitepair : namesContainingWebsites) {
 				String name = websitepair.getA();
 				linksAsHtml += "<a href=/" + name.replaceAll(" ", "%20") + ">"
 						+ name + "</a><br>";
@@ -339,6 +334,35 @@ public class NamesWebResource {
 		}
 	}
 
+	public String transformURLIntoLinks(String text) {
+		String urlValidationRegex = "(https?|ftp)://(www\\d?|[a-zA-Z0-9]+)?.[a-zA-Z0-9-]+(\\:|.)([a-zA-Z0-9.]+|(\\d+)?)([/?:].*)?";
+		Pattern p = Pattern.compile(urlValidationRegex);
+		Matcher m = p.matcher(text);
+		StringBuffer sb = new StringBuffer();
+		while (m.find()) {
+			String found = m.group(0);
+			m.appendReplacement(sb, "<a href='" + found + "'>" + found + "</a>");
+		}
+		m.appendTail(sb);
+		return sb.toString();
+	}
+
+	private ArrayList<String> getAllLinks(String text) {
+		ArrayList<String> links = new ArrayList<>();
+
+		String regex = "\\(?\\b(http(s?)://|www[.])[-A-Za-z0-9+&amp;@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&amp;@#/%=~_()|]";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(text);
+		while (m.find()) {
+			String urlStr = m.group();
+			if (urlStr.startsWith("(") && urlStr.endsWith(")")) {
+				urlStr = urlStr.substring(1, urlStr.length() - 1);
+			}
+			links.add(urlStr);
+		}
+		return links;
+	}
+
 	@Path("blog.html")
 	@GET
 	public Response getBlog() {
@@ -356,8 +380,19 @@ public class NamesWebResource {
 			for (Pair<String, String> pair : blogPosts) {
 
 				String converted = entryTemplate;
+				String body = pair.getB();
+
+				List<Pair<String, String>> linkList = createHtmlLinks(getAllLinks(body));
+
+				for (Pair<String, String> link : linkList) {
+					String originalLink = link.getA();
+					String newLink = link.getB();
+
+					body = body.replace(originalLink, newLink);
+				}
+
 				converted = converted.replaceAll("TITLE", pair.getA());
-				converted = converted.replaceAll("CONTENT", pair.getB());
+				converted = converted.replaceAll("CONTENT", body);
 
 				results += converted;
 			}
@@ -369,6 +404,30 @@ public class NamesWebResource {
 			e.printStackTrace();
 			return error404(request);
 		}
+	}
+
+	private List<Pair<String, String>> createHtmlLinks(List<String> links) {
+		List<Pair<String, String>> result = new ArrayList<>();
+		for (String link : links) {
+			String refurbishedlink = link.replaceAll(Pattern.quote("&#46;"),
+					".");
+			if (refurbishedlink.toLowerCase().matches(
+					Pattern.quote("https://www.youtube.com/watch?v=") + "(.+)")) {
+				String vid = link.replaceAll(
+						Pattern.quote("https://www.youtube.com/watch?v=")
+								+ "(.+)", "$1");
+				result.add(new Pair<String, String>(
+						link,
+						"<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/"
+								+ vid
+								+ "\" frameborder=\"0\" allowfullscreen></iframe>"));
+			} else {
+				refurbishedlink = transformURLIntoLinks(refurbishedlink);
+				result.add(new Pair<String, String>(link, refurbishedlink));
+			}
+		}
+
+		return result;
 	}
 
 	@Path("libs/jquery.{version}.js")
