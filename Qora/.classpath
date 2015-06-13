@@ -10,7 +10,11 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libs/commons-net-3.3.jar"/>
-	<classpathentry kind="lib" path="libs/mapdb-1.0.7.jar"/>
+	<classpathentry kind="lib" path="libs/mapdb-1.0.7.jar" sourcepath="libs/sourceandjavadoc/mapdb-1.0.7-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/mapdb-1.0.7-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="libs/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-152.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-alpn-client-9.2.11.v20150529.jar"/>
@@ -60,7 +64,15 @@
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-media-jaxb.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/lib/jersey-server.jar"/>
-	<classpathentry kind="lib" path="libs/guava-18.0.jar"/>
-	<classpathentry kind="lib" path="libs/jsoup-1.8.2.jar"/>
+	<classpathentry kind="lib" path="libs/guava-18.0.jar" sourcepath="libs/sourceandjavadoc/guava-18.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/guava-18.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/jsoup-1.8.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/jsoup-1.8.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
