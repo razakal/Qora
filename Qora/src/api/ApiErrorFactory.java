@@ -38,6 +38,8 @@ public class ApiErrorFactory
 	public static final int ERROR_INVALID_OPTION_LENGTH = 114;
 	public static final int ERROR_INVALID_DATA = 115;
 	public static final int ERROR_INVALID_DATA_LENGTH = 116;
+	public static final int ERROR_INVALID_UPDATE_VALUE = 117;
+	public static final int ERROR_KEY_ALREADY_EXISTS = 118;
 	
 	//WALLET
 	public static final int ERROR_WALLET_NO_EXISTS = 201;
@@ -126,6 +128,8 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_INVALID_OPTION_LENGTH, "invalid option length");
 		this.errorMessages.put(ERROR_INVALID_DATA, "invalid data");
 		this.errorMessages.put(ERROR_INVALID_DATA_LENGTH, "invalid data length");
+		this.errorMessages.put(ERROR_INVALID_UPDATE_VALUE, "invalid update value");
+		this.errorMessages.put(ERROR_KEY_ALREADY_EXISTS, "key already exists, edit is false");
 		
 		//WALLET
 		this.errorMessages.put(ERROR_WALLET_NO_EXISTS, "wallet does not exist");
