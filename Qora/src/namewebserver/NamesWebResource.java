@@ -34,7 +34,6 @@ import org.jsoup.select.Elements;
 
 import qora.account.Account;
 import qora.block.Block;
-import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
@@ -49,8 +48,8 @@ import utils.Qorakeys;
 import api.ATResource;
 import api.AddressesResource;
 import api.ApiErrorFactory;
-import api.ArbitraryTransactionsResource;
 import api.BlocksResource;
+import api.BlogPostResource;
 import api.NameSalesResource;
 import api.NamesResource;
 import api.TransactionsResource;
@@ -285,10 +284,11 @@ public class NamesWebResource {
 			String content = readFile("web/postblog.html",
 					StandardCharsets.UTF_8);
 
-			String title = request.getParameter("title");
+			String title = request.getParameter(BlogPostResource.TITLE_KEY);
 			String creator = request.getParameter("creator");
 			String contentparam = request.getParameter("content");
 			String fee = request.getParameter("fee");
+			String blogname = request.getParameter(BlogPostResource.BLOGNAME_KEY);
 
 			List<Account> accounts = new ArrayList<Account>(Controller
 					.getInstance().getAccounts());
@@ -304,24 +304,22 @@ public class NamesWebResource {
 
 			content = content.replaceAll("<option></option>", accountStrings);
 
+			
+			
+			
+			
 			if (StringUtil.isNotBlank(creator)
 					&& StringUtil.isNotBlank(contentparam)
 					&& StringUtil.isNotBlank(fee)) {
 				JSONObject json = new JSONObject();
 				json.put("creator", creator);
-				json.put("service", 777);
 				json.put("fee", fee);
+				json.put("title", title);
+				json.put("body", contentparam);
 
-				String params = "{\"title\":\"" + title + "\"" + ",\"post\":\""
-						+ contentparam + "\"}";
-
-				String data = Base58.encode(params.getBytes());
-				json.put("data", data);
-
-				// TODO maybe this is not the best way
 				try {
-					String result = new ArbitraryTransactionsResource()
-							.createArbitraryTransaction(json.toJSONString());
+					String result = new BlogPostResource()
+							.addBlogEntry(json.toJSONString(), blogname);
 
 					content = content
 							.replaceAll(
@@ -382,11 +380,12 @@ public class NamesWebResource {
 	public Response getBlog() {
 
 		try {
+			String blogname = request.getParameter(BlogPostResource.BLOGNAME_KEY);
 			String content = readFile("web/blog.html", StandardCharsets.UTF_8);
 
 			content = replaceWarning(content);
 
-			List<Pair<String, String>> blogPosts = BlogUtils.getBlogPosts();
+			List<Pair<String, String>> blogPosts = BlogUtils.getBlogPosts(blogname);
 
 			String results = "<br>";
 

@@ -90,6 +90,9 @@ public class ApiErrorFactory
 	public static final int ERROR_INVALID_TAGS_LENGTH = 806;
 	public static final int ERROR_INVALID_CREATION_BYTES = 809;
 	
+	//BLOG
+	public static final int ERROR_BODY_EMPTY = 901;
+	
 	private static ApiErrorFactory  instance;
 	
 	public static ApiErrorFactory  getInstance()
@@ -181,6 +184,10 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_INVALID_TYPE_LENGTH,"invalid type length");
 		this.errorMessages.put(ERROR_INVALID_TAGS_LENGTH,"invalid tags length");
 		this.errorMessages.put(ERROR_NULL_PAGES,"invalid pages");
+		
+		
+		//BLOG
+		this.errorMessages.put(ERROR_BODY_EMPTY,"invalid body it must not be empty");
 		
 
 	}

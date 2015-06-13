@@ -97,32 +97,7 @@ public class ArbitraryTransactionsResource
 			//SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance().createArbitraryTransaction(account, service, dataBytes, bdFee);
 				
-			switch(result.getB())
-			{
-			case Transaction.VALIDATE_OKE:
-				
-				return result.getA().toJson().toJSONString();
-				
-			case Transaction.NOT_YET_RELEASED:
-				
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NOT_YET_RELEASED);			
-			
-			case Transaction.INVALID_DATA_LENGTH:
-				
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_DATA_LENGTH);	
-
-			case Transaction.NEGATIVE_FEE:
-					
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
-					
-			case Transaction.NO_BALANCE:	
-					
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NO_BALANCE);
-			
-			default:
-				
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_UNKNOWN);	
-			}
+			return checkArbitraryTransaction(result);
 		}
 		catch(NullPointerException e)
 		{
@@ -135,6 +110,35 @@ public class ArbitraryTransactionsResource
 			//JSON EXCEPTION
 			//e.printStackTrace();
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
+		}
+	}
+
+	public static String checkArbitraryTransaction(Pair<Transaction, Integer> result) {
+		switch(result.getB())
+		{
+		case Transaction.VALIDATE_OKE:
+			
+			return result.getA().toJson().toJSONString();
+			
+		case Transaction.NOT_YET_RELEASED:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NOT_YET_RELEASED);			
+		
+		case Transaction.INVALID_DATA_LENGTH:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_DATA_LENGTH);	
+
+		case Transaction.NEGATIVE_FEE:
+				
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				
+		case Transaction.NO_BALANCE:	
+				
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NO_BALANCE);
+		
+		default:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_UNKNOWN);	
 		}
 	}
 }
