@@ -385,6 +385,35 @@ public class NamesWebResource {
 
 			content = replaceWarning(content);
 
+			
+			NameMap nameMap = DBSet.getInstance().getNameMap();
+			if(blogname != null)
+			{
+				if(!nameMap.contains(blogname))
+				{
+					content = readFile("web/blogdisabled.html", StandardCharsets.UTF_8);
+					return Response.ok(content, "text/html; charset=utf-8").build();
+				}
+				
+				Name name = nameMap.get(blogname);
+				String value = GZIP.webDecompress(name.getValue());
+				
+				JSONObject jsonObject =null;
+				try {
+					jsonObject = (JSONObject) JSONValue.parse(value);
+				} catch (Exception e) {
+					// no valid json
+				}
+				if(jsonObject == null || !jsonObject.containsKey(BlogPostResource.BLOGENABLE_KEY))
+				{
+					content = readFile("web/blogdisabled.html", StandardCharsets.UTF_8);
+					return Response.ok(content, "text/html; charset=utf-8").build();
+				}
+				
+			}
+			
+			
+			
 			List<Pair<String, String>> blogPosts = BlogUtils.getBlogPosts(blogname);
 
 			String results = "<br>";
