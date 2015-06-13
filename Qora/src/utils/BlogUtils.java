@@ -35,6 +35,11 @@ public class BlogUtils {
 			
 			value = GZIP.webDecompress(value);
 			
+			if(!value.startsWith("{"))
+			{
+				continue;
+			}
+			
 			JSONObject jsonObject = null;
 			try {
 				jsonObject = (JSONObject) JSONValue.parse(value);
