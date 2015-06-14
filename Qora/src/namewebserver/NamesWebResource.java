@@ -594,8 +594,17 @@ public class NamesWebResource {
 
 			String results = "<br>";
 
-			String entryTemplate = "<li class=\"media\"><a class=\"pull-left\" href=\"#\"><img class=\"media-object\" src=\"index/qora-user.png\" alt=\"Generic placeholder image\"></a><div class=\"media-body\"><h4 class=\"media-heading\">TITLE</h4><p>CONTENT</p></div></li>";
-
+			String entryTemplate = "<li><div class=\"timeline-badge primary\"><a>"
+					+ "<i class=\"glyphicon glyphicon-record\" rel=\"tooltip\" title=\"POST TIME\" id=\"\">"
+					+ "</i></a></div>"
+					+ "<div class=\"timeline-panel\"><div class=\"timeline-heading\">"
+					+ "<div class=\"media\"><div class=\"media-left media-middle\">"
+					+ "<a href=\"#\"><img class=\"media-object\" src=\"libs/img/qora-user.png\" alt=\"\"></a></div>"
+					+ "<div class=\"media-body\">"
+					+ "<h6 class=\"media-heading\"><b>Name</b></h6>TITLE</div></div>"
+					+ "</div>"
+					+ "<div class=\"timeline-body\"><p>CONTENT</p></div></div></li>";
+					
 			for (Pair<String, String> pair : blogPosts) {
 
 				String converted = entryTemplate;
@@ -658,7 +667,7 @@ public class NamesWebResource {
 	}
 
 	private String getYoutubeEmbedHtml(String vid) {
-		return "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/"
+		return "<iframe width=\"320\" height=\"215\" src=\"https://www.youtube.com/embed/"
 				+ vid + "\" frameborder=\"0\" allowfullscreen></iframe>";
 	}
 
