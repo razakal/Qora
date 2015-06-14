@@ -573,7 +573,7 @@ public class NamesWebResource {
 					{
 						String apiurl = "/names/key/" + name.getName();
 						String type = "POST";
-						String resultcall = "/API.html?"+ "apiurl=" + apiurl + "&type=" + type + "&key=" + BlogPostResource.BLOGENABLE_KEY + "=true&value=true&update=false&fee=1";
+						String resultcall = "/API.html?"+ "apiurl=" + apiurl + "&type=" + type + "&key=" + BlogPostResource.BLOGENABLE_KEY + "&value=true&update=false&fee=1&okmsg=The blog will be available after the next block!";
 						String template = readFile("web/blogenabletemplate",
 								StandardCharsets.UTF_8);
 						template = template.replace("!TEXT!", "here");
