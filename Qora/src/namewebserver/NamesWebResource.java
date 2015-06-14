@@ -201,7 +201,7 @@ public class NamesWebResource {
 	@Path("favicon.ico")
 	@GET
 	public Response favicon() {
-		File file = new File("web/favicon.ico");
+		File file = new File("web/img/favicon.ico");
 
 		if (file.exists()) {
 			return Response.ok(file, "image/vnd.microsoft.icon").build();
@@ -338,10 +338,10 @@ public class NamesWebResource {
 
 	}
 
-	@Path("libs/img/qora.png")
+	@Path("img/qora.png")
 	@GET
 	public Response qorapng() {
-		File file = new File("web/libs/img/qora.png");
+		File file = new File("web/img/qora.png");
 
 		if (file.exists()) {
 			return Response.ok(file, "image/png").build();
@@ -350,10 +350,10 @@ public class NamesWebResource {
 		}
 	}
 
-	@Path("libs/img/logo_header.png")
+	@Path("img/logo_header.png")
 	@GET
 	public Response logo_header() {
-		File file = new File("web/libs/img/logo_header.png");
+		File file = new File("web/img/logo_header.png");
 
 		if (file.exists()) {
 			return Response.ok(file, "image/png").build();
@@ -362,10 +362,10 @@ public class NamesWebResource {
 		}
 	}
 
-	@Path("libs/img/qora-user.png")
+	@Path("img/qora-user.png")
 	@GET
 	public Response qorauserpng() {
-		File file = new File("web/libs/img/qora-user.png");
+		File file = new File("web/img/qora-user.png");
 
 		if (file.exists()) {
 			return Response.ok(file, "image/png").build();
@@ -599,11 +599,11 @@ public class NamesWebResource {
 					+ "</i></a></div>"
 					+ "<div class=\"timeline-panel\"><div class=\"timeline-heading\">"
 					+ "<div class=\"media\"><div class=\"media-left media-middle\">"
-					+ "<a href=\"#\"><img class=\"media-object\" src=\"libs/img/qora-user.png\" alt=\"\"></a></div>"
+					+ "<a href=\"#\"><img class=\"media-object\" src=\"img/qora-user.png\" alt=\"\"></a></div>"
 					+ "<div class=\"media-body\">"
-					+ "<h6 class=\"media-heading\"><b>Name</b></h6>TITLE</div></div>"
+					+ "<h6 class=\"media-heading\"><b>Name</b></h6>Time</div></div>"
 					+ "</div>"
-					+ "<div class=\"timeline-body\"><p>CONTENT</p></div></div></li>";
+					+ "<div class=\"timeline-body\"><p class=\"post-header\"><b>TITLE</b></p><p class=\"post-content\">CONTENT</p></div></div></li>";
 					
 			for (Pair<String, String> pair : blogPosts) {
 
