@@ -300,7 +300,7 @@ public class NamesWebResource {
 						content = content.replace("<customtext></customtext>", "<font color=red>" + errormsg + "</font>");
 					}
 					content = content.replace("!title!", "An Api error occured");
-					content = content.replace("!apicall!", "You tried to submit the following apicall: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
+					content = content.replace("!apicall!", "apicall: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
 					content = content.replace("!errormessage!", "Result:" + result);
 					return Response.ok(content, "text/html; charset=utf-8").build();
 				}else
@@ -569,6 +569,18 @@ public class NamesWebResource {
 								.containsKey(BlogPostResource.BLOGENABLE_KEY)) {
 					content = readFile("web/blogdisabled.html",
 							StandardCharsets.UTF_8);
+					if(Controller.getInstance().getAccountByAddress(name.getOwner().getAddress()) != null)
+					{
+						String apiurl = "/names/key/" + name.getName();
+						String type = "POST";
+						String resultcall = "/API.html?"+ "apiurl=" + apiurl + "&type=" + type + "&key=" + BlogPostResource.BLOGENABLE_KEY + "=true&value=true&update=false&fee=1";
+						String template = readFile("web/blogenabletemplate",
+								StandardCharsets.UTF_8);
+						template = template.replace("!TEXT!", "here");
+						template = template.replace("!LINK!", resultcall);
+						
+						content =content.replace("<enableblog></enableblog>", "You can activate the blog by clicking " + template);
+					}
 					return Response.ok(content, "text/html; charset=utf-8")
 							.build();
 				}
