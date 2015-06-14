@@ -17,18 +17,20 @@ import org.json.simple.JSONValue;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
+import qora.naming.Name;
 import qora.transaction.Transaction;
 import utils.APIUtils;
+import utils.GZIP;
 import utils.NameUtils;
 import utils.NameUtils.NameResult;
 import utils.Pair;
 import controller.Controller;
+import database.DBSet;
 
 @Path("blogpost")
 @Produces(MediaType.APPLICATION_JSON)
 public class BlogPostResource {
 
-	
 	public static final String AUTHOR = "author";
 	public static final String BLOGNAME_KEY = "blogname";
 	public static final String TITLE_KEY = "title";
@@ -36,7 +38,7 @@ public class BlogPostResource {
 	public static final String BLOGENABLE_KEY = "blogenable";
 	public static final String BLOGTITLE_KEY = "blogtitle";
 	public static final String BLOGDESCRIPTION_KEY = "blogdescription";
-	
+
 	@Context
 	HttpServletRequest request;
 
@@ -109,29 +111,24 @@ public class BlogPostResource {
 						ApiErrorFactory.ERROR_INVALID_ADDRESS);
 			}
 
-			// TODO CHECK IF BLOG IS ENABLED, CHECK IF I AM ALLOWED TO POST
+			isPostAllowed(blogname);
 
 			APIUtils.askAPICallAllowed("POST blogpost/" + blogname + "\n" + x,
 					request);
 
-			
 			JSONObject dataStructure = new JSONObject();
-			
+
 			dataStructure.put(TITLE_KEY, title);
 			dataStructure.put(POST_KEY, body);
-			
-			if(blogname != null)
-			{
+
+			if (blogname != null) {
 				dataStructure.put(BLOGNAME_KEY, blogname);
 			}
-			
-			//NAME != CREATOR -> NAME BLOGPOST
-			if(name != null)
-			{
+
+			// NAME != CREATOR -> NAME BLOGPOST
+			if (name != null) {
 				dataStructure.put(AUTHOR, name);
 			}
-			
-			
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
@@ -149,6 +146,29 @@ public class BlogPostResource {
 			// JSON EXCEPTION
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_JSON);
+		}
+
+	}
+
+	private void isPostAllowed(String blogname) {
+		Name name = DBSet.getInstance().getNameMap().get(blogname);
+		if (name == null) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_BLOG_DISABLED);
+		}
+		String value = GZIP.webDecompress(name.getValue());
+		JSONObject jsonObject = null;
+		try {
+			jsonObject = (JSONObject) JSONValue.parse(value);
+		} catch (Exception e) {
+			// no valid json
+		}
+
+		if (jsonObject == null
+				|| !jsonObject.containsKey(BlogPostResource.BLOGENABLE_KEY)) {
+
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_BLOG_DISABLED);
 		}
 
 	}

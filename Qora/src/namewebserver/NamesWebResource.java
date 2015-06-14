@@ -314,7 +314,8 @@ public class NamesWebResource {
 			String fee = request.getParameter("fee");
 			String blogname = request.getParameter(BlogPostResource.BLOGNAME_KEY);
 
-			List<Account> accounts = new ArrayList<Account>(Controller
+			
+ 			List<Account> accounts = new ArrayList<Account>(Controller
 					.getInstance().getAccounts());
 
 			Collections.sort(accounts, new AccountBalanceComparator());
@@ -434,8 +435,9 @@ public class NamesWebResource {
 					return Response.ok(content, "text/html; charset=utf-8").build();
 				}
 				
+				
+				content = content.replace("postblog.html", "postblog.html?blogname="+blogname);
 			}
-			
 			
 			
 			List<Pair<String, String>> blogPosts = BlogUtils.getBlogPosts(blogname);
