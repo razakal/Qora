@@ -221,6 +221,8 @@ public class NamesWebResource {
 			String type = request.getParameter("type");
 			// EXAMPLE /names/key/MyName
 			String url = request.getParameter("apiurl");
+			String okmsg = request.getParameter("okmsg");
+			String errormsg = request.getParameter("errormsg");
 			
 			
 			
@@ -246,7 +248,8 @@ public class NamesWebResource {
 			
 			parameterMap.remove("type");
 			parameterMap.remove("apiurl");
-			parameterMap.remove("resulturl");
+			parameterMap.remove("okmsg");
+			parameterMap.remove("errormsg");
 			
 			Set<String> keySet = parameterMap.keySet();
 			
@@ -291,12 +294,20 @@ public class NamesWebResource {
 				
 				if(result.contains("message") && result.contains("error"))
 				{
+					if(StringUtils.isNotBlank(errormsg))
+					{
+						content = content.replace("<customtext></customtext>", "<font color=red>" + errormsg + "</font>");
+					}
 					content = content.replace("!title!", "An Api error occured");
 					content = content.replace("!apicall!", "You tried to submit the following apicall: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
 					content = content.replace("!errormessage!", "Result:" + result);
 					return Response.ok(content, "text/html; charset=utf-8").build();
 				}else
 				{
+					if(StringUtils.isNotBlank(okmsg))
+					{
+					content = content.replace("<customtext></customtext>", "<font color=green>" + okmsg + "</font>");
+					}
 					content = content.replace("!title!", "The API Call was successful");
 					content = content.replace("!apicall!", "Submitted Api call: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
 					content = content.replace("!errormessage!", "Result:" + result);
