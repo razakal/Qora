@@ -59,8 +59,14 @@ fieldset[disabled] .btn-primary.active {
 .nav .open > a,
 .nav .open > a:hover,
 .nav .open > a:focus {
-    background-color: #eeeeee;
+    background-color: lightgray;
     border-color: #6467FF;
+}
+.navbar-default .navbar-nav>.open>a,
+.navbar-default .navbar-nav>.open>a:hover,
+.navbar-default .navbar-nav>.open>a:focus {
+  background-color: lightgray;
+  color: #6467ff;
 }
 .nav-pills > li.active > a,
 .nav-pills > li.active > a:hover,
@@ -71,6 +77,12 @@ fieldset[disabled] .btn-primary.active {
 .navbar-inverse {
     background-color: #6467FF;
     border-color: transparent;
+}
+.dropdown-menu>li>a:hover,
+.dropdown-menu>li>a:focus {
+  text-decoration: none;
+  color: #fff;
+  background-color: #6467ff;
 }
 .pagination > li > a,
 .pagination > li > span {
