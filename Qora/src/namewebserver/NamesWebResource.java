@@ -1,15 +1,23 @@
 package namewebserver;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +30,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -37,6 +46,7 @@ import qora.block.Block;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import settings.Settings;
 import utils.AccountBalanceComparator;
 import utils.BlogUtils;
 import utils.GZIP;
@@ -77,12 +87,13 @@ public class NamesWebResource {
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 
 			if (StringUtil.isBlank(searchValue)
-					&& StringUtil.isBlank(webDirectory) && StringUtil.isBlank(blogDirectory)) {
+					&& StringUtil.isBlank(webDirectory)
+					&& StringUtil.isBlank(blogDirectory)) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
-			}
-			else if (searchValue != null || webDirectory != null || blogDirectory != null) {
+			} else if (searchValue != null || webDirectory != null
+					|| blogDirectory != null) {
 				List<Pair<String, String>> searchResults;
 				content = readFile("web/index.mini.html",
 						StandardCharsets.UTF_8);
@@ -90,14 +101,11 @@ public class NamesWebResource {
 						StandardCharsets.UTF_8);
 				if (webDirectory != null) {
 					searchResults = NameUtils.getWebsitesByValue(null);
-				} else if(blogDirectory != null)
-				{
+				} else if (blogDirectory != null) {
 					return handleBlogDirectory(content, searchResultTemplate);
-				}else
-				{
+				} else {
 					searchResults = NameUtils.getWebsitesByValue(searchValue);
 				}
-
 
 				String results = "";
 				for (Pair<String, String> result : searchResults) {
@@ -129,14 +137,16 @@ public class NamesWebResource {
 		}
 	}
 
-	private Response handleBlogDirectory(String content, String searchResultTemplate) {
+	private Response handleBlogDirectory(String content,
+			String searchResultTemplate) {
 		String results = "";
-		List<Triplet<String, String, String>> allEnabledBlogs = BlogUtils.getAllEnabledBlogs();
+		List<Triplet<String, String, String>> allEnabledBlogs = BlogUtils
+				.getAllEnabledBlogs();
 		for (Triplet<String, String, String> triplet : allEnabledBlogs) {
 			String name = triplet.getA();
 			String title = triplet.getB();
 			String description = triplet.getC();
-			
+
 			results += searchResultTemplate.replace("!Name!", name)
 					.replace("!Title!", title)
 					.replace("!Description!", description)
@@ -197,6 +207,118 @@ public class NamesWebResource {
 		} else {
 			return error404(request);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Path("/API.html")
+	@GET
+	public Response handleAPICall() {
+
+		try {
+			String content = readFile("web/apianswer.html",
+					StandardCharsets.UTF_8);
+			// EXAMPLE POST/GET/DELETE
+			String type = request.getParameter("type");
+			// EXAMPLE /names/key/MyName
+			String url = request.getParameter("apiurl");
+			
+			
+			
+			
+			if (StringUtils.isBlank(type) ||( !type.equalsIgnoreCase("get")
+					&& !type.equalsIgnoreCase("post")
+					&& !type.equalsIgnoreCase("delete"))) {
+				content = content.replace("!title!", "An Api error occured");
+				content = content.replace("!apicall!", "You need a type parameter with value GET/POST or DELETE ");
+				content = content.replace("!errormessage!", "");
+				return Response.ok(content, "text/html; charset=utf-8").build();
+			}
+			
+			if (StringUtils.isBlank(url)) {
+				content = content.replace("!title!", "An Api error occured");
+				content = content.replace("!apicall!", "You need to provide an apiurl parameter");
+				content = content.replace("!errormessage!", "");
+				return Response.ok(content, "text/html; charset=utf-8").build();
+			}
+			url = url.startsWith("/") ? url.substring(1) : url;
+			
+			Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
+			
+			parameterMap.remove("type");
+			parameterMap.remove("apiurl");
+			parameterMap.remove("resulturl");
+			
+			Set<String> keySet = parameterMap.keySet();
+			
+			JSONObject json = new JSONObject();
+			
+			for (String key : keySet) {
+				String[] value = parameterMap.get(key);
+				json.put(key, value[0]);
+			}
+			
+			try {
+				//CREATE CONNECTION
+				URL urlToCall = new URL("http://127.0.0.1:" + Settings.getInstance().getRpcPort() + "/" + url);
+				HttpURLConnection connection = (HttpURLConnection) urlToCall.openConnection();
+				
+				//EXECUTE
+				connection.setRequestMethod(type.toUpperCase());
+				
+				if(type.equalsIgnoreCase("POST"))
+				{
+					connection.setDoOutput(true);
+					connection.getOutputStream().write(json.toJSONString().getBytes("UTF-8"));
+					connection.getOutputStream().flush();
+					connection.getOutputStream().close();
+				}
+				
+				//READ RESULT
+				InputStream stream;
+				if(connection.getResponseCode() == 400)
+				{
+					stream = connection.getErrorStream();
+				}
+				else
+				{
+					stream = connection.getInputStream();
+				}
+				
+				InputStreamReader isReader = new InputStreamReader(stream, "UTF-8"); 
+				BufferedReader br = new BufferedReader(isReader);
+				String result = br.readLine(); 
+				
+				
+				if(result.contains("message") && result.contains("error"))
+				{
+					content = content.replace("!title!", "An Api error occured");
+					content = content.replace("!apicall!", "You tried to submit the following apicall: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
+					content = content.replace("!errormessage!", "Result:" + result);
+					return Response.ok(content, "text/html; charset=utf-8").build();
+				}else
+				{
+					content = content.replace("!title!", "The API Call was successful");
+					content = content.replace("!apicall!", "Submitted Api call: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
+					content = content.replace("!errormessage!", "Result:" + result);
+					return Response.ok(content, "text/html; charset=utf-8").build();
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				content = content.replace("!title!", "An Api error occured");
+				content = content.replace("!apicall!", "You tried to submit the following apicall: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
+				content = content.replace("!errormessage!", "Details:\"" + e.getMessage() + "\"");
+				return Response.ok(content, "text/html; charset=utf-8").build();
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return error404(request);
+		
+		
+
 	}
 
 	@Path("libs/img/qora.png")
@@ -312,10 +434,10 @@ public class NamesWebResource {
 			String creator = request.getParameter("creator");
 			String contentparam = request.getParameter("content");
 			String fee = request.getParameter("fee");
-			String blogname = request.getParameter(BlogPostResource.BLOGNAME_KEY);
+			String blogname = request
+					.getParameter(BlogPostResource.BLOGNAME_KEY);
 
-			
- 			List<Account> accounts = new ArrayList<Account>(Controller
+			List<Account> accounts = new ArrayList<Account>(Controller
 					.getInstance().getAccounts());
 
 			Collections.sort(accounts, new AccountBalanceComparator());
@@ -329,10 +451,6 @@ public class NamesWebResource {
 
 			content = content.replaceAll("<option></option>", accountStrings);
 
-			
-			
-			
-			
 			if (StringUtil.isNotBlank(creator)
 					&& StringUtil.isNotBlank(contentparam)
 					&& StringUtil.isNotBlank(fee)) {
@@ -343,8 +461,8 @@ public class NamesWebResource {
 				json.put("body", contentparam);
 
 				try {
-					String result = new BlogPostResource()
-							.addBlogEntry(json.toJSONString(), blogname);
+					String result = new BlogPostResource().addBlogEntry(
+							json.toJSONString(), blogname);
 
 					content = content
 							.replaceAll(
@@ -405,42 +523,45 @@ public class NamesWebResource {
 	public Response getBlog() {
 
 		try {
-			String blogname = request.getParameter(BlogPostResource.BLOGNAME_KEY);
+			String blogname = request
+					.getParameter(BlogPostResource.BLOGNAME_KEY);
 			String content = readFile("web/blog.html", StandardCharsets.UTF_8);
 
 			content = replaceWarning(content);
 
-			
 			NameMap nameMap = DBSet.getInstance().getNameMap();
-			if(blogname != null)
-			{
-				if(!nameMap.contains(blogname))
-				{
-					content = readFile("web/blogdisabled.html", StandardCharsets.UTF_8);
-					return Response.ok(content, "text/html; charset=utf-8").build();
+			if (blogname != null) {
+				if (!nameMap.contains(blogname)) {
+					content = readFile("web/blogdisabled.html",
+							StandardCharsets.UTF_8);
+					return Response.ok(content, "text/html; charset=utf-8")
+							.build();
 				}
-				
+
 				Name name = nameMap.get(blogname);
 				String value = GZIP.webDecompress(name.getValue());
-				
-				JSONObject jsonObject =null;
+
+				JSONObject jsonObject = null;
 				try {
 					jsonObject = (JSONObject) JSONValue.parse(value);
 				} catch (Exception e) {
 					// no valid json
 				}
-				if(jsonObject == null || !jsonObject.containsKey(BlogPostResource.BLOGENABLE_KEY))
-				{
-					content = readFile("web/blogdisabled.html", StandardCharsets.UTF_8);
-					return Response.ok(content, "text/html; charset=utf-8").build();
+				if (jsonObject == null
+						|| !jsonObject
+								.containsKey(BlogPostResource.BLOGENABLE_KEY)) {
+					content = readFile("web/blogdisabled.html",
+							StandardCharsets.UTF_8);
+					return Response.ok(content, "text/html; charset=utf-8")
+							.build();
 				}
-				
-				
-				content = content.replace("postblog.html", "postblog.html?blogname="+blogname);
+
+				content = content.replace("postblog.html",
+						"postblog.html?blogname=" + blogname);
 			}
-			
-			
-			List<Pair<String, String>> blogPosts = BlogUtils.getBlogPosts(blogname);
+
+			List<Pair<String, String>> blogPosts = BlogUtils
+					.getBlogPosts(blogname);
 
 			String results = "<br>";
 
@@ -489,22 +610,18 @@ public class NamesWebResource {
 				String vid = refurbishedlink
 						.replaceAll(youtubeWatchRegex, "$1");
 
-				result.add(new Pair<String, String>(
-						link,
+				result.add(new Pair<String, String>(link,
 						getYoutubeEmbedHtml(vid)));
 			} else if (refurbishedlink.toLowerCase().matches(youTubeSlashRegex)) {
 				String vid = refurbishedlink
 						.replaceAll(youTubeSlashRegex, "$1");
 
-				result.add(new Pair<String, String>(
-						link,
+				result.add(new Pair<String, String>(link,
 						getYoutubeEmbedHtml(vid)));
-			}else
-			{
+			} else {
 				refurbishedlink = transformURLIntoLinks(refurbishedlink);
 				result.add(new Pair<String, String>(link, refurbishedlink));
 			}
-
 
 		}
 
@@ -513,8 +630,7 @@ public class NamesWebResource {
 
 	private String getYoutubeEmbedHtml(String vid) {
 		return "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/"
-				+ vid
-				+ "\" frameborder=\"0\" allowfullscreen></iframe>";
+				+ vid + "\" frameborder=\"0\" allowfullscreen></iframe>";
 	}
 
 	@Path("libs/jquery/jquery.{version}.js")
