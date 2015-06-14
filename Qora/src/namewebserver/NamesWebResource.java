@@ -159,13 +159,13 @@ public class NamesWebResource {
 		return Response.ok(content, "text/html; charset=utf-8").build();
 	}
 
-	public String selectTitleOpt(Document htmlDoc) {
+	public static String selectTitleOpt(Document htmlDoc) {
 		String title = selectFirstElementOpt(htmlDoc, "title");
 
 		return title;
 	}
 
-	public String selectFirstElementOpt(Document htmlDoc, String tag) {
+	public static String selectFirstElementOpt(Document htmlDoc, String tag) {
 		Elements titleElements = htmlDoc.select(tag);
 		String title = null;
 		if (titleElements.size() > 0) {
@@ -174,7 +174,7 @@ public class NamesWebResource {
 		return title;
 	}
 
-	public String selectDescriptionOpt(Document htmlDoc) {
+	public static String selectDescriptionOpt(Document htmlDoc) {
 		String result = "";
 		Elements descriptions = htmlDoc.select("meta[name=\"description\"]");
 		if (descriptions.size() > 0) {
@@ -1320,10 +1320,9 @@ public class NamesWebResource {
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(getWarning(request) + website).build();
 	}
-
-	public String injectValues(String value) {
+	
+	public static String injectValues(String value) {
 		// PROCESSING TAG INJ
-
 		Pattern pattern = Pattern.compile("(?i)(<inj.*>(.*?)</inj>)");
 		Matcher matcher = pattern.matcher(value);
 		while (matcher.find()) {

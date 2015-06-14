@@ -3,8 +3,8 @@ package utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import namewebserver.NamesWebResource;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -12,7 +12,6 @@ import org.json.simple.JSONValue;
 import qora.account.Account;
 import qora.naming.Name;
 import api.ApiErrorFactory;
-import controller.Controller;
 import database.DBSet;
 import database.NameMap;
 
@@ -109,27 +108,16 @@ public class NameUtils {
 		
 		
 		List<Pair<String, String>> results = new ArrayList<Pair<String,String>>();
-		List<String> injected = new ArrayList<String>();
 
 		NameMap nameMap = DBSet.getInstance().getNameMap();
 
 		Set<String> keys = nameMap.getKeys();
-		Pattern pattern = Pattern.compile("(?i)<inj>(.*?)</inj>");
 
 		for (String key : keys) {
 			String value = nameMap.get(key).getValue();
 
 			value = GZIP.webDecompress(value);
-
-			// PROCESSING TAG INJ
-			Matcher matcher = pattern.matcher(value);
-			while (matcher.find()) {
-				String group = matcher.group(1);
-				Name nameinj = Controller.getInstance().getName(group);
-				injected.add(group);
-				value = value.replace(matcher.group(),
-						GZIP.webDecompress(nameinj.getValue().toString()));
-			}
+			value = NamesWebResource.injectValues(value);
 
 				try {
 					if(value.startsWith("{"))
@@ -138,6 +126,7 @@ public class NameUtils {
 						if(jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname()))
 						{
 							String websitevalue = (String) jsonObject.get(Qorakeys.WEBSITE.getKeyname());
+							websitevalue =	NamesWebResource.injectValues(websitevalue);
 							if(searchValueOpt == null)
 							{
 								results.add(new Pair<String,String>(key,websitevalue));
