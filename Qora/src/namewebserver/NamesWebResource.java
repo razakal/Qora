@@ -2,6 +2,7 @@ package namewebserver;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -316,9 +317,14 @@ public class NamesWebResource {
 				
 			} catch (IOException e) {
 				e.printStackTrace();
+				String additionalHelp ="";
+				if(e instanceof FileNotFoundException)
+				{
+					additionalHelp = "The apicall with the following apiurl is not existing: " ;
+				}
 				content = content.replace("!title!", "An Api error occured");
 				content = content.replace("!apicall!", "You tried to submit the following apicall: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
-				content = content.replace("!errormessage!", "Details:\"" + e.getMessage() + "\"");
+				content = content.replace("!errormessage!", additionalHelp + e.getMessage() );
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
 			
