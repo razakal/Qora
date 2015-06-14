@@ -126,6 +126,11 @@ public class NameUtils {
 						if(jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname()))
 						{
 							String websitevalue = (String) jsonObject.get(Qorakeys.WEBSITE.getKeyname());
+							if(websitevalue.matches("<inj.*key=."+Qorakeys.WEBSITE.getKeyname()+ ".*>"))
+							{
+//								Another website is injected into this page, to avoid both in the searchengine we don't allow this!
+								continue;
+							}
 							websitevalue =	NamesWebResource.injectValues(websitevalue);
 							if(searchValueOpt == null)
 							{
