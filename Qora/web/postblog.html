@@ -1,97 +1,102 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="UTF-8">
-    <title>Qora web server</title>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Qora Web Server">
     <link rel="shortcut icon" href="img/favicon.ico">
-    <link href="libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <title>Qora Blog</title>
+    <link href="libs/bootstrap/3.3.4/css/theme.css" rel="stylesheet">
+    <link href="libs/css/style.css" rel="stylesheet">
+    <link href="libs/css/sidebar.css" rel="stylesheet">
+    <style type="text/css"></style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="postblog">
+        <div class="col-lg-8">
+          <input name="newpost" value="" type="hidden">
+          <!--
+          <form class="form-horizontal">
+          <fieldset>
+          --><br>
+          <legend>Create a new post</legend>
+          <div class="form-group">
+            <label for="title" class="col-lg-2 control-label">Title</label>
+            <div class="col-lg-10">
+              <input id="title" type="text" placeholder="Title (optional)" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="content" class="col-lg-2 control-label">Content</label>
+            <div class="col-lg-10">
+              <textarea id="content" rows="3" class="form-control"></textarea><span class="help-block"></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="select" class="col-lg-2 control-label">Address</label>
+            <div class="col-lg-10">
+              <select id="addr" value="1" class="form-control">
+                <option></option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="title" class="col-lg-2 control-label">Fee</label>
+            <div class="col-lg-10">
+              <input id="fee" type="text" name="fee" value="1.00000000" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2"><br>
+              <button type="reset" class="btn btn-default">Cancel</button>
+              <button type="submit" name="do" value="post" onclick="javascript:processpost()" class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+          <!--
+          </fieldset>
+          </form>
+          -->
+        </div>
+      </div>
+    </div><br><font></font>
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="libs/angular/angular.min.1.4.0.js"></script>
+    <script src="libs/js/sidebar.js"></script>
     <script type="text/javascript">
-        var processpost;
+      var processpost;
 
-
-		function getParameter(name){
-   			if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
-      		return decodeURIComponent(name[1]);
-}
-
-        processpost = function() {
-            var content, creator, fee, title, blogname;
-            title = document.getElementById('title').value;
-            content = document.getElementById('content').value;
-            creator = document.getElementById('addr').value;
-            fee = document.getElementById('fee').value;
-            blogname = getParameter('blogname');
-            if (content == '') {
-                alert('Entering text is mandatory');
-                return 0;
-            }
-            if (fee == '') {
-                alert('Entering fee is mandatory');
-                return 0;
-            }
-            if (creator == '') {
-                alert('Entering creator is mandatory');
-                return 0;
-            }
-            if(blogname != '')
-            {
-            	blogname = '&blogname=' + blogname;
-            }
-            document.location.href = '/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee +  '' + blogname + '';
-            return 0;
-        };
+      function getParameter(name) {
+          if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
+              return decodeURIComponent(name[1]);
+      }
+      processpost = function() {
+          var content, creator, fee, title, blogname;
+          title = document.getElementById('title').value;
+          content = document.getElementById('content').value;
+          creator = document.getElementById('addr').value;
+          fee = document.getElementById('fee').value;
+          blogname = getParameter('blogname');
+          if (content == '') {
+              alert('Entering text is mandatory');
+              return 0;
+          }
+          if (fee == '') {
+              alert('Entering fee is mandatory');
+              return 0;
+          }
+          if (creator == '') {
+              alert('Entering creator is mandatory');
+              return 0;
+          }
+          if (blogname != '') {
+              blogname = '&blogname=' + blogname;
+          }
+          document.location.href = '/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee + '' + blogname + '';
+          return 0;
+      };
     </script>
-</head>
-
-<body>
-    <div class="container">
-        <br>
-        <input name="newpost" value="" type="hidden">
-        <table>
-            <tbody>
-                <tr>
-                    <td>title:</td>
-                    <td>
-                        <input id="title" value="" name="title" size="45">not necessary
-                    </td>
-                </tr>
-                <tr>
-                    <td>text:</td>
-                    <td>
-                        <textarea id="content" rows="10" cols="60" name="content"></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <td>creator addr:</td>
-                    <td>
-                        <select id="addr" name="addr" value="1">
-                            <option></option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>fee:</td>
-                    <td>
-                        <input id="fee" size="19" name="fee" value="1.00000000">qora
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table>
-            <tbody>
-                <tr>
-                    <td>
-                        <br>
-                        <input style="width: 150; background-color: #e7e7e7" name="do" value="post" onclick="javascript:processpost()" type="button">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <br><font></font>
-    </div>
-</body>
-
+  </body>
 </html>
