@@ -12,111 +12,111 @@
     <link href="libs/css/sidebar.css" rel="stylesheet">
     <style type="text/css">
       body {
-          padding-top: 50px;
+      padding-top: 50px;
       }
       .sub-header {
-          padding-bottom: 10px;
-          border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
       }
       .navbar-fixed-top {
-          border: 0;
-          z-index: 9999;
+      border: 0;
+      z-index: 9999;
       }
       .sidebar {
-          display: none;
+      display: none;
       }
       @media (min-width: 768px) {
-          .sidebar {
-              position: fixed;
-              top: 51px;
-              bottom: 0;
-              left: 0;
-              z-index: 1000;
-              display: block;
-              padding: 20px;
-              overflow-x: hidden;
-              overflow-y: auto;
-              background-color: #f5f5f5;
-              border-right: 1px solid #eee;
-          }
+      .sidebar {
+      position: fixed;
+      top: 51px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee;
+      }
       }
       .nav-sidebar {
-          margin-right: -21px;
-          margin-bottom: 20px;
-          margin-left: -20px;
+      margin-right: -21px;
+      margin-bottom: 20px;
+      margin-left: -20px;
       }
       .nav-sidebar > li > a {
-          padding-right: 20px;
-          padding-left: 20px;
+      padding-right: 20px;
+      padding-left: 20px;
       }
       .nav-sidebar > .active > a,
       .nav-sidebar > .active > a:hover,
       .nav-sidebar > .active > a:focus {
-          color: #fff;
-          background-color: #428bca;
+      color: #fff;
+      background-color: #428bca;
       }
       .main {
-          padding-top: 20px;
+      padding-top: 20px;
       }
       .main-tabs {
-          width: 100%;
-          padding-top: 15px;
-          padding-left: 0px;
-          padding-right: 0px;
-          background-color: lightgray;
+      width: 100%;
+      padding-top: 15px;
+      padding-left: 0px;
+      padding-right: 0px;
+      background-color: lightgray;
       }
       img.logo-header {
-          background-color: transparent;
-          height: 100%;
+      background-color: transparent;
+      height: 100%;
       }
       .col-lg-8 {
-          padding-left: 0px;
+      padding-left: 0px;
       }
       @media (min-width: 768px) {
-          .main {
-              padding-right: 40px;
-          }
+      .main {
+      padding-right: 40px;
+      }
       }
       .main .page-header {
-          margin-top: 0;
+      margin-top: 0;
       }
       .placeholders {
-          margin-bottom: 30px;
-          text-align: center;
+      margin-bottom: 30px;
+      text-align: center;
       }
       .placeholders h4 {
-          margin-bottom: 0;
+      margin-bottom: 0;
       }
       .placeholder {
-          margin-bottom: 20px;
+      margin-bottom: 20px;
       }
       .placeholder img {
-          display: inline-block;
-          border-radius: 50%;
+      display: inline-block;
+      border-radius: 50%;
       }
       .r-t {
-          margin: 0px;
+      margin: 0px;
       }
       .r-l {
-          margin: 0px;
+      margin: 0px;
       }
       span.label.label-default {
-          background-color: #fff;
-          color: lightgray;
-          font-size: 90%;
-          line-height: 1;
+      background-color: #fff;
+      color: lightgray;
+      font-size: 90%;
+      line-height: 1;
       }
       span.label.label-default a {
-          color: #ddd;
-          text-decoration: none;
+      color: #ddd;
+      text-decoration: none;
       }
       a.r-l:hover,
       a.r-l:focus {
-          color: #6467FF;
-          text-decoration: none;
+      color: #6467FF;
+      text-decoration: none;
       }
       .navbar-header {
-          width: 110px;
+      width: 110px;
       }
     </style>
   </head>
@@ -129,25 +129,25 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="/?webdirectory=true">Webdirectory</a></li>
-          	<li><a href="/?blogdirectory=true">Blogdirectory</a></li>
+            <li><a href="/?blogdirectory=true">Blogdirectory</a></li>
             <li><a href="/blog.html">Blog</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Profile <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li class="dropdown-header">Profile name 01</li>
-                  <li><a href="#">PROFILE</a></li>
-                  <li class="divider"></li>
-                  <li class="dropdown-header">Profile name 02</li>
-                  <li><a href="#">PROFILE</a></li>
-                </ul>
-              </li>            <li><a href="#">Help</a></li>
+            <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Profile name 01</li>
+                <li><a href="#">PROFILE</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Profile name 02</li>
+                <li><a href="#">PROFILE</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Help</a></li>
           </ul>
           <div class="navbar-form navbar-left">
             <div class="input-group">
-            <label for="name" class="sr-only">Search</label>
-            <input id="name" size="55" type="text" value="" class="form-control"><span class="input-group-btn">
-            <button id="button" type="button" value="!searchval!" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
-          </div>
+              <label for="name" class="sr-only">Search</label>
+              <input id="name" size="55" type="text" value="" class="form-control"><span class="input-group-btn">
+                <button id="button" type="button" value="!searchval!" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
+            </div>
           </div>
         </div>
       </div>
@@ -158,8 +158,8 @@
           <div class="container">
             <div class="row">
               <ul role="tablist" class="nav nav-tabs">
-                <li class="active"><a href="javascript:window.location=webloc();">Web</a></li>
-                <li><a href="javascript:window.location=blogloc();">Blog</a></li>
+                <li class="active"><a href="#">Web</a></li>
+                <li><a href="#">Blog</a></li>
               </ul>
             </div>
           </div>
@@ -209,45 +209,34 @@
               return {};
           }
       };
-      
-      var blogloc;
-      blogloc = function() {
-       var url;
-          url = '/blogsearch.html?search=' + $("#name").val();
-          return url;
-      };
-      
-       var webloc;
-      webloc = function() {
-       var url;
-          url = '/?search=' + $("#name").val();
-          return url;
-      };
-      
-      
-		
-    
-      
       $(document).ready(function() {
-          $("#button").click(function() {
-              var searchval, url;
-              searchval = $('#name').val();
-              document.location.href = '?search=' + searchval;
-          });
-          
-         
-          $("#name").keypress(function(e) {
-              if (e.which === 13) {
-                  $("#button").trigger("click");
-              }
-          });
-          $("#name").val(getSearchParameters().search);
+          var searchval;
+          $('ul.nav-tabs > li').removeClass('active');
+          if (window.location.pathname === '/blogsearch.html') {
+              $('ul.nav-tabs > li:nth-child(2)').addClass('active');
+          } else {
+              $('ul.nav-tabs > li:nth-child(1)').addClass('active');
+          }
+          $('#name').val(getSearchParameters().search);
           if (getSearchParameters().search === void 0) {
               $('#name').val('');
           }
-          var searchval = $("#name").val();
-          searchval = searchval.replace(/%20/g, " ");
-          $("#name").val(searchval);
+          searchval = $('#name').val();
+          searchval = searchval.replace(/%20/g, ' ');
+          $('#name').val(searchval);
+          $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/?search=' + $('#name').val());
+          $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/blogsearch.html?search=' + $('#name').val());
+          $('#button').click(function() {
+              var url;
+              url = void 0;
+              searchval = $('#name').val();
+              document.location.href = '?search=' + searchval;
+          });
+          $('#name').keypress(function(e) {
+              if (e.which === 13) {
+                  $('#button').trigger('click');
+              }
+          });
       });
     </script>
     <script type="text/javascript">
