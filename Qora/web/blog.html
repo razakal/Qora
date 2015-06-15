@@ -456,8 +456,8 @@
           <div class="container">
             <div class="row">
               <ul role="tablist" class="nav nav-tabs">
-                <li class="active"><a href="#">Web</a></li>
-                <li><a href="#">Keys</a></li>
+                 <li class="active"><a href="javascript:window.location=webloc();">Web</a></li>
+                <li><a href="javascript:window.location=blogloc();">Blog</a></li>
               </ul>
             </div>
           </div>
@@ -481,6 +481,21 @@
       });
     </script>
     <script type="text/javascript">
+    
+      var blogloc;
+      blogloc = function() {
+       var url;
+          url = '/blogsearch.html?search=' + $("#name").val();
+          return url;
+      };
+      
+       var webloc;
+      webloc = function() {
+       var url;
+          url = '/?search=' + $("#name").val();
+          return url;
+      };
+    
       $(document).ready(function() {
           var my_posts = $("[rel=tooltip]");
           var size = $(window).width();

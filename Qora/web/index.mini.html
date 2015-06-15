@@ -158,8 +158,8 @@
           <div class="container">
             <div class="row">
               <ul role="tablist" class="nav nav-tabs">
-                <li class="active"><a href="#">Web</a></li>
-                <li><a href="#">Keys</a></li>
+                <li class="active"><a href="javascript:window.location=webloc();">Web</a></li>
+                <li><a href="javascript:window.location=blogloc();">Blog</a></li>
               </ul>
             </div>
           </div>
@@ -209,12 +209,33 @@
               return {};
           }
       };
+      
+      var blogloc;
+      blogloc = function() {
+       var url;
+          url = '/blogsearch.html?search=' + $("#name").val();
+          return url;
+      };
+      
+       var webloc;
+      webloc = function() {
+       var url;
+          url = '/?search=' + $("#name").val();
+          return url;
+      };
+      
+      
+		
+    
+      
       $(document).ready(function() {
           $("#button").click(function() {
               var searchval, url;
               searchval = $('#name').val();
-              document.location.href = '/?search=' + searchval;
+              document.location.href = '?search=' + searchval;
           });
+          
+         
           $("#name").keypress(function(e) {
               if (e.which === 13) {
                   $("#button").trigger("click");

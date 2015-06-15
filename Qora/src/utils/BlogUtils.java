@@ -23,7 +23,7 @@ public class BlogUtils {
 	 * 
 	 * @return  triplet of name, title, description of all enabled blogs.
 	 */
-	public static List<Triplet<String, String, String>> getAllEnabledBlogs()
+	public static List<Triplet<String, String, String>> getEnabledBlogs(String searchvalueOpt)
 	{
 
 		NameMap nameMap = DBSet.getInstance().getNameMap();
@@ -52,12 +52,27 @@ public class BlogUtils {
 				
 				String title = (String) jsonObject.get(BlogPostResource.BLOGTITLE_KEY);
 				String description = (String) jsonObject.get(BlogPostResource.BLOGDESCRIPTION_KEY);
-				results.add(new Triplet<String, String, String>(name, title == null ? "" : title, description == null ? "" : description));
+				if(searchvalueOpt != null)
+				{
+					searchvalueOpt = searchvalueOpt.toLowerCase();
+					if(name.toLowerCase().contains(searchvalueOpt) || (title != null && title.toLowerCase().contains(searchvalueOpt)) || (description != null) && description.toLowerCase().contains(searchvalueOpt) )
+					{
+						results.add(addTriplet(name, title, description));
+					}
+					continue;
+				}
+				results.add(addTriplet(name, title, description));
 			}
 			
 		}
 		
 		return results;
+	}
+
+
+	private static Triplet<String, String, String> addTriplet(String name,
+			String title, String description) {
+		return new Triplet<String, String, String>(name, title == null ? "" : title, description == null ? "" : description);
 	}
 	
 

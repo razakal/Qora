@@ -89,12 +89,12 @@ public class NamesWebResource {
 
 			if (StringUtil.isBlank(searchValue)
 					&& StringUtil.isBlank(webDirectory)
-					&& StringUtil.isBlank(blogDirectory)) {
+					&& StringUtil.isBlank(blogDirectory) ) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			} else if (searchValue != null || webDirectory != null
-					|| blogDirectory != null) {
+					|| blogDirectory != null ) {
 				List<Pair<String, String>> searchResults;
 				content = readFile("web/index.mini.html",
 						StandardCharsets.UTF_8);
@@ -103,10 +103,10 @@ public class NamesWebResource {
 				if (webDirectory != null) {
 					searchResults = NameUtils.getWebsitesByValue(null);
 				} else if (blogDirectory != null) {
-					return handleBlogDirectory(content, searchResultTemplate);
+					return handleBlogSearch(content, searchResultTemplate, null);
 				} else {
 					searchResults = NameUtils.getWebsitesByValue(searchValue);
-				}
+				} 
 
 				String results = "";
 				for (Pair<String, String> result : searchResults) {
@@ -137,12 +137,43 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
+	
+	
+	@Path("blogsearch.html")
+	@GET
+	public Response doBlogSearch() {
+		
+		String searchValue = request.getParameter("search");
+		String content;
+		try {
+			content = readFile("web/index.html", StandardCharsets.UTF_8);
+			if(StringUtil.isBlank(searchValue)) {
+				
+				content = replaceWarning(content);
+				return Response.ok(content, "text/html; charset=utf-8").build();
+			}
+			
+			content = readFile("web/index.mini.html",
+					StandardCharsets.UTF_8);
+			String searchResultTemplate = readFile("web/searchresult",
+					StandardCharsets.UTF_8);
+			return handleBlogSearch(content, searchResultTemplate, searchValue);
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return error404(request);
+		}
+		
+	}
+	
+	
 
-	private Response handleBlogDirectory(String content,
-			String searchResultTemplate) {
+	private Response handleBlogSearch(String content,
+			String searchResultTemplate, String blogSearchOpt) {
 		String results = "";
 		List<Triplet<String, String, String>> allEnabledBlogs = BlogUtils
-				.getAllEnabledBlogs();
+				.getEnabledBlogs(blogSearchOpt);
 		for (Triplet<String, String, String> triplet : allEnabledBlogs) {
 			String name = triplet.getA();
 			String title = triplet.getB();
@@ -156,6 +187,7 @@ public class NamesWebResource {
 					.replace("!keyslink!", "/namepairs:" + name);
 		}
 		content = content.replace("<resultlist></resultlist>", results);
+		
 		return Response.ok(content, "text/html; charset=utf-8").build();
 	}
 
