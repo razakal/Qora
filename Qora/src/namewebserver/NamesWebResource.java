@@ -87,9 +87,9 @@ public class NamesWebResource {
 			String blogDirectory = request.getParameter("blogdirectory");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 
-			if (StringUtil.isBlank(searchValue)
-					&& StringUtil.isBlank(webDirectory)
-					&& StringUtil.isBlank(blogDirectory) ) {
+			if (searchValue == null
+					&& webDirectory == null
+					&& blogDirectory == null ) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
@@ -146,15 +146,14 @@ public class NamesWebResource {
 		String searchValue = request.getParameter("search");
 		String content;
 		try {
-			content = readFile("web/index.html", StandardCharsets.UTF_8);
+			content = readFile("web/index.mini.html",
+					StandardCharsets.UTF_8);
 			if(StringUtil.isBlank(searchValue)) {
 				
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
 			
-			content = readFile("web/index.mini.html",
-					StandardCharsets.UTF_8);
 			String searchResultTemplate = readFile("web/searchresult",
 					StandardCharsets.UTF_8);
 			return handleBlogSearch(content, searchResultTemplate, searchValue);
