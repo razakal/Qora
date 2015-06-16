@@ -530,11 +530,25 @@ public class NamesWebResource {
 
 			content = content.replaceAll("<option></option>", accountStrings);
 
+			
+			
+			
 			if (StringUtil.isNotBlank(creator)
 					&& StringUtil.isNotBlank(contentparam)
 					&& StringUtil.isNotBlank(fee)) {
 				JSONObject json = new JSONObject();
-				json.put("creator", creator);
+				
+				Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(creator);
+				
+				if(nameToAdress.getB() == NameResult.OK)
+				{
+					json.put("author", creator);
+					json.put("creator", nameToAdress.getA().getAddress());
+				}else
+				{
+					json.put("creator", creator);
+				}
+				
 				json.put("fee", fee);
 				json.put("title", title);
 				json.put("body", contentparam);
