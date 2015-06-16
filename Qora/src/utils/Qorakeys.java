@@ -3,7 +3,7 @@ package utils;
 public enum Qorakeys {
 
 	
-	DEFAULT("defaultkey"),WEBSITE("website");
+	DEFAULT("defaultkey"),WEBSITE("website"),BLOGWHITELIST("blogwhitelist"),BLOGBLACKLIST("blogblacklist")  ;
 	private final String keyname;
 	
 	private Qorakeys(String keyname) {

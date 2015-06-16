@@ -47,6 +47,7 @@ import qora.block.Block;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import qora.web.BlogBlackWhiteList;
 import settings.Settings;
 import utils.AccountBalanceComparator;
 import utils.BlogUtils;
@@ -485,17 +486,47 @@ public class NamesWebResource {
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
 
-			List<Account> accounts = new ArrayList<Account>(Controller
-					.getInstance().getAccounts());
+			
+			if(blogname == null)
+			{
+				return error404(request);
+			}
+			
+			
+			BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(blogname);
+			
+			Pair<List<Account>, List<Name>> ownAllowedElements = blogBlackWhiteList.getOwnAllowedElements(true);
+			
+			List<Account> resultingAccounts = ownAllowedElements.getA();
+			List<Name> resultingNames = ownAllowedElements.getB();
+			
+			
+			
+			
+			
 
-			Collections.sort(accounts, new AccountBalanceComparator());
-			Collections.reverse(accounts);
+			Collections.sort(resultingAccounts, new AccountBalanceComparator());
+			Collections.reverse(resultingAccounts);
 
 			String accountStrings = "";
-			for (Account account : accounts) {
+			
+			for (Name name : resultingNames) {
+				accountStrings += "<option value=" + name.getName() + ">"
+						+ name.getNameBalanceString() + "</option>";
+			}
+			
+			for (Account account : resultingAccounts) {
 				accountStrings += "<option value=" + account.getAddress() + ">"
 						+ account + "</option>";
 			}
+			
+			//are we allowed to post
+			if(resultingNames.size() == 0 && resultingAccounts.size() == 0)
+			{
+				content = content.replaceAll("<errormessage></errormessage>", "<font color=red>You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!</font><br>");
+			}
+			
+			
 
 			content = content.replaceAll("<option></option>", accountStrings);
 

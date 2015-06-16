@@ -840,6 +840,19 @@ public class Controller extends Observable {
 	public List<Pair<Account, Name>> getNames() {
 		return this.wallet.getNames();
 	}
+	
+	public List<Name> getNamesAsList()
+	{
+		List<Pair<Account, Name>> names = this.wallet.getNames();
+		List<Name> result = new ArrayList<>();
+		for (Pair<Account, Name> pair : names) {
+			result.add(pair.getB());
+		}
+		
+		return result;
+		
+	}
+	
 
 	public List<Name> getNames(Account account) {
 		return this.wallet.getNames(account);

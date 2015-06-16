@@ -102,6 +102,26 @@ public class NameUtils {
 	public static  List<Pair<String, String>> getNamesContainingWebsites() {
 		return getWebsitesbyValueInternal(null);
 	}
+	
+	
+	public static JSONObject getJsonForNameOpt( Name name)
+	{
+		String rawNameValue = name.getValue();
+		
+		String decompressedNameValue = GZIP.webDecompress(rawNameValue);
+		try {
+			JSONObject jsonValue = (JSONObject) JSONValue.parse(decompressedNameValue);
+			
+			return jsonValue;
+			
+		} catch (Exception e) {
+//			no valid json
+		}
+		
+		
+		return null;
+		
+	}
 
 
 	public static List<Pair<String, String>> getWebsitesbyValueInternal( String searchValueOpt) {
