@@ -50,8 +50,7 @@ public class BlogEntry {
 	public String getCreationTime()
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
-		Date dt = new Date();
-		return sdf.format(dt); // formats to 09/23/2009 13:53:28.238
+		return sdf.format(new Date(time)); // formats to 09/23/2009 13:53:28.238
 	}
 	
 	
