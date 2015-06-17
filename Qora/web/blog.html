@@ -456,8 +456,8 @@
           <div class="container">
             <div class="row">
               <ul role="tablist" class="nav nav-tabs">
-                <li class="active"><a href="#">Web</a></li>
-                <li><a href="#">Blog</a></li>
+                 <li class="active"><a href="/?search=">Web</a></li>
+                <li><a href="/blogsearch.html?search=">Blog</a></li>
               </ul>
             </div>
           </div>
@@ -476,15 +476,17 @@
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript">
+    
+    
+    
       $('ul.nav-tabs > li').removeClass('active');
       if (window.location.pathname === '/blogsearch.html') {
           $('ul.nav-tabs > li:nth-child(2)').addClass('active');
       } else {
           $('ul.nav-tabs > li:nth-child(1)').addClass('active');
       }
-      $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/?search=' + $('#name').val());
-      $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/blogsearch.html?search=' + $('#name').val());
       $(document).ready(function() {
+      
       $("ul.timeline li:odd").addClass("timeline-inverted");
           var my_posts = $("[rel=tooltip]");
           var size = $(window).width();
