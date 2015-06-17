@@ -213,6 +213,10 @@
          var blogloc;
       blogloc = function() {
        var url;
+       	
+       	if (getSearchParameters().search === void 0) {
+              $('#name').val('');
+          }
           url = '/blogsearch.html?search=' + $("#name").val();
           return url;
       };
@@ -220,6 +224,9 @@
        var webloc;
       webloc = function() {
        var url;
+       if (getSearchParameters().search === void 0) {
+              $('#name').val('');
+          }
           url = '/?search=' + $("#name").val();
           return url;
       };

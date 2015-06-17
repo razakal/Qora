@@ -151,6 +151,13 @@ public class BlogPostResource {
 	}
 
 	private void isPostAllowed(String blogname) {
+		
+		//MAINBLOG allows posting always
+		if(blogname == null)
+		{
+			return;
+		}
+		
 		Name name = DBSet.getInstance().getNameMap().get(blogname);
 		if (name == null) {
 			throw ApiErrorFactory.getInstance().createError(

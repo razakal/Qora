@@ -487,25 +487,16 @@ public class NamesWebResource {
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
 
 			
-			if(blogname == null)
-			{
-				return error404(request);
-			}
-			
 			
 			BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(blogname);
 			
 			Pair<List<Account>, List<Name>> ownAllowedElements = blogBlackWhiteList.getOwnAllowedElements(true);
 			
-			List<Account> resultingAccounts = ownAllowedElements.getA();
+			List<Account> resultingAccounts = new ArrayList<Account>(ownAllowedElements.getA());
 			List<Name> resultingNames = ownAllowedElements.getB();
 			
-			
-			
-			
-			
 
-			Collections.sort(resultingAccounts, new AccountBalanceComparator());
+			Collections.sort( resultingAccounts, new AccountBalanceComparator());
 			Collections.reverse(resultingAccounts);
 
 			String accountStrings = "";

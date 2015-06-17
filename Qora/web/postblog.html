@@ -92,8 +92,11 @@
               alert('Entering creator is mandatory');
               return 0;
           }
-          if (blogname != '') {
+          if (blogname) {
               blogname = '&blogname=' + blogname;
+          }else
+          {
+          		blogname = '';
           }
           document.location.href = '/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee + '' + blogname + '';
           return 0;

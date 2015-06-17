@@ -36,6 +36,11 @@ public class BlogBlackWhiteList {
 	public static BlogBlackWhiteList getBlogBlackWhiteList(String blogname)
 	{
 		
+		if(blogname == null)
+		{
+			return new BlogBlackWhiteList(false, new ArrayList<String>(), null);
+		}
+		
 			Name blognameName = DBSet.getInstance().getNameMap().get(blogname);
 			
 			//Name not registered, --> Default = Whitelist
