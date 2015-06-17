@@ -1,7 +1,9 @@
 package qora.web.blog;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Date;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * This is the representation of an entry in a blog.
@@ -49,8 +51,14 @@ public class BlogEntry {
 	}
 	public String getCreationTime()
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
-		return sdf.format(new Date(time)); // formats to 09/23/2009 13:53:28.238
+		Date date = new Date( time );
+		DateFormat format = DateFormat.getDateTimeInstance();
+		return format.format(date);
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	
