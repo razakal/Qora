@@ -48,6 +48,7 @@ import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
+import qora.web.blog.BlogEntry;
 import settings.Settings;
 import utils.AccountBalanceComparator;
 import utils.BlogUtils;
@@ -533,7 +534,7 @@ public class NamesWebResource {
 				
 				if(nameToAdress.getB() == NameResult.OK)
 				{
-					json.put("author", creator);
+					json.put(BlogPostResource.AUTHOR, creator);
 					json.put("creator", nameToAdress.getA().getAddress());
 				}else
 				{
@@ -656,7 +657,7 @@ public class NamesWebResource {
 						"postblog.html?blogname=" + blogname);
 			}
 
-			List<Pair<String, String>> blogPosts = BlogUtils
+			List<BlogEntry> blogPosts = BlogUtils
 					.getBlogPosts(blogname);
 
 			String results = "<br>";
@@ -672,10 +673,10 @@ public class NamesWebResource {
 					+ "</div>"
 					+ "<div class=\"timeline-body\"><p class=\"post-header\"><b>TITLE</b></p><p class=\"post-content\">CONTENT</p></div></div></li>";
 					
-			for (Pair<String, String> pair : blogPosts) {
+			for (BlogEntry blogentry : blogPosts) {
 
 				String converted = entryTemplate;
-				String body = pair.getB();
+				String body = blogentry.getDescription();
 
 				body = Jsoup.clean(body, Whitelist.basic());
 				List<Pair<String, String>> linkList = createHtmlLinks(getAllLinks(body));
@@ -686,9 +687,17 @@ public class NamesWebResource {
 
 					body = body.replace(originalLink, newLink);
 				}
-
-				converted = converted.replaceAll("TITLE", pair.getA());
+				String nameOpt = blogentry.getNameOpt();
+				if(nameOpt != null)
+				{
+					converted = converted.replaceAll("Name", blogentry.getNameOpt());
+				}else
+				{
+					converted = converted.replaceAll("Name", blogentry.getCreator());
+				}
+				converted = converted.replaceAll("TITLE", blogentry.getTitleOpt());
 				converted = converted.replaceAll("CONTENT", body);
+				converted = converted.replaceAll("Time", blogentry.getCreationTime());
 
 				results += converted;
 			}

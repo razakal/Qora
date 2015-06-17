@@ -93,6 +93,7 @@ public class ApiErrorFactory
 	//BLOG
 	public static final int ERROR_BODY_EMPTY = 901;
 	public static final int ERROR_BLOG_DISABLED = 902;
+	public static final int ERROR_NAME_NOT_OWNER = 903;
 	
 	private static ApiErrorFactory  instance;
 	
@@ -190,6 +191,7 @@ public class ApiErrorFactory
 		//BLOG
 		this.errorMessages.put(ERROR_BODY_EMPTY,"invalid body it must not be empty");
 		this.errorMessages.put(ERROR_BLOG_DISABLED,"this blog is disabled");
+		this.errorMessages.put(ERROR_NAME_NOT_OWNER,"the creator address does not own the author name");
 		
 
 	}

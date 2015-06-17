@@ -14,15 +14,12 @@ import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.GZIP;
-import utils.NameUtils;
-import utils.NameUtils.NameResult;
 import utils.Pair;
 import controller.Controller;
 import database.DBSet;
@@ -52,6 +49,7 @@ public class BlogPostResource {
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
 			String fee = (String) jsonObject.get("fee");
 			String creator = (String) jsonObject.get("creator");
+			String authorOpt = (String) jsonObject.get(BlogPostResource.AUTHOR);
 			String title = (String) jsonObject.get("title");
 			String body = (String) jsonObject.get("body");
 
@@ -82,12 +80,17 @@ public class BlogPostResource {
 						ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
 
-			Pair<Account, NameResult> nameToAdress = NameUtils
-					.nameToAdress(creator);
-			String name = null;
-			if (nameToAdress.getB() == NameResult.OK) {
-				name = creator;
-				creator = nameToAdress.getA().getAddress();
+			if(authorOpt != null)
+			{
+			  Name	name = DBSet.getInstance().getNameMap().get(authorOpt);
+				
+			  	//Name is not owned by creator!
+				if(!name.getOwner().getAddress().equals(creator))
+				{
+					throw ApiErrorFactory.getInstance().createError(
+							ApiErrorFactory.ERROR_NAME_NOT_OWNER);
+				}
+				
 			}
 
 			// CHECK ADDRESS
@@ -125,9 +128,8 @@ public class BlogPostResource {
 				dataStructure.put(BLOGNAME_KEY, blogname);
 			}
 
-			// NAME != CREATOR -> NAME BLOGPOST
-			if (name != null) {
-				dataStructure.put(AUTHOR, name);
+			if (authorOpt != null) {
+				dataStructure.put(AUTHOR, authorOpt);
 			}
 
 			// SEND PAYMENT
