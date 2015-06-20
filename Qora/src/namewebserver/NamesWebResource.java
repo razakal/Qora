@@ -93,26 +93,25 @@ public class NamesWebResource {
 		try {
 
 			String searchValue = request.getParameter("search");
-			String content = readFile("web/index.html", StandardCharsets.UTF_8);
+			
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
+			pebbleHelper.getContextMap().put("resultlist", "");
 
 			if (searchValue == null) {
 
-				content = replaceWarning(content);
-				return Response.ok(content, "text/html; charset=utf-8").build();
+				return Response.ok(PebbleHelper.getPebbleHelper("web/index.html").evaluate(), "text/html; charset=utf-8").build();
 			} else  {
 				List<Pair<String, String>> searchResults;
-				content = readFile("web/index.mini.html",
-						StandardCharsets.UTF_8);
 				searchResults = NameUtils.getWebsitesByValue(searchValue);
 
 				String results = generateHTMLSearchresults(searchResults);
 
-				content = content.replace("<resultlist></resultlist>", results);
+				pebbleHelper.getContextMap().put("resultlist", results);
 
 			}
 
-			return Response.ok(content, "text/html; charset=utf-8").build();
-		} catch (IOException e) {
+			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+		} catch (PebbleException | IOException e) {
 			e.printStackTrace();
 			return error404(request);
 		}
@@ -149,20 +148,21 @@ public class NamesWebResource {
 	public Response doBlogSearch() {
 
 		String searchValue = request.getParameter("search");
-		String content;
 		try {
-			content = readFile("web/index.mini.html", StandardCharsets.UTF_8);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
+			pebbleHelper.getContextMap().put("resultlist", "");
 			if (StringUtil.isBlank(searchValue)) {
 
-				content = replaceWarning(content);
-				return Response.ok(content, "text/html; charset=utf-8").build();
+				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 			}
 
 			String searchResultTemplate = readFile("web/searchresult",
 					StandardCharsets.UTF_8);
-			return handleBlogSearch(content, searchResultTemplate, searchValue);
+			String results = handleBlogSearch( searchResultTemplate, searchValue);
+			pebbleHelper.getContextMap().put("resultlist", results);
+			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 
-		} catch (IOException e) {
+		} catch (IOException | PebbleException e) {
 			e.printStackTrace();
 			return error404(request);
 		}
@@ -174,14 +174,16 @@ public class NamesWebResource {
 	public Response doBlogdirectory() {
 
 		try {
-			String content = readFile("web/index.mini.html",
-					StandardCharsets.UTF_8);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
+			pebbleHelper.getContextMap().put("resultlist", "");
 
 			String searchResultTemplate = readFile("web/searchresult",
 					StandardCharsets.UTF_8);
 
-			return handleBlogSearch(content, searchResultTemplate, null);
-		} catch (IOException e) {
+			String results =  handleBlogSearch(searchResultTemplate, null);
+			pebbleHelper.getContextMap().put("resultlist", results);
+			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+		} catch (IOException | PebbleException e) {
 			return error404(request);
 		}
 
@@ -192,25 +194,26 @@ public class NamesWebResource {
 	public Response doWebdirectory() {
 
 		try {
-			String content = readFile("web/index.mini.html",
-					StandardCharsets.UTF_8);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
+			pebbleHelper.getContextMap().put("resultlist", "");
+
 			
 			
 			List<Pair<String, String>> websitesByValue = NameUtils.getWebsitesByValue(null);
 			String results = generateHTMLSearchresults(websitesByValue);
 			
-			content = content.replace("<resultlist></resultlist>", results);
+			pebbleHelper.getContextMap().put("resultlist", results);
 
 
-			return Response.ok(content, "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 
-		} catch (IOException e) {
+		} catch (IOException | PebbleException e) {
 			return error404(request);
 		}
 
 	}
 
-	private Response handleBlogSearch(String content,
+	private String handleBlogSearch(
 			String searchResultTemplate, String blogSearchOpt) {
 		String results = "";
 		List<Triplet<String, String, String>> allEnabledBlogs = BlogUtils
@@ -228,9 +231,9 @@ public class NamesWebResource {
 					.replace("!Namelink!", "/blog.html?blogname=" + name)
 					.replace("!keyslink!", "/namepairs:" + name);
 		}
-		content = content.replace("<resultlist></resultlist>", results);
+		
 
-		return Response.ok(content, "text/html; charset=utf-8").build();
+		return results;
 	}
 
 	public static String selectTitleOpt(Document htmlDoc) {
