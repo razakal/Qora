@@ -172,7 +172,12 @@
           <warning></warning>
           <div class="col-lg-8">
             <div class="res-block"></div>
-            <ul class="list-unstyled">{{ resultlist }}
+            <ul class="list-unstyled">
+            	 {% for searchresult in searchresults %}
+             <li class="q"><a href="{{searchresult.titlelink}}">
+ 			<h5 class="r-t">{{searchresult.title}}</h5><a><a href="{{searchresult.namelink}}" class="r-l">{{searchresult.name}}</a><span class="label label-default"><a href="{{searchresult.keyslink}}"/>rawdata</a></span>
+			<p>{{searchresult.description}}</p></a></a></li>
+			{% endfor %}
               <jsonresults></jsonresults>
             </ul>
           </div>

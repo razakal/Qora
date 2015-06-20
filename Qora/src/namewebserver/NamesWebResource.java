@@ -52,6 +52,7 @@ import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
+import qora.web.HTMLSearchResult;
 import qora.web.blog.BlogEntry;
 import settings.Settings;
 import utils.AccountBalanceComparator;
@@ -95,7 +96,6 @@ public class NamesWebResource {
 			String searchValue = request.getParameter("search");
 			
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
-			pebbleHelper.getContextMap().put("resultlist", "");
 
 			if (searchValue == null) {
 
@@ -104,9 +104,9 @@ public class NamesWebResource {
 				List<Pair<String, String>> searchResults;
 				searchResults = NameUtils.getWebsitesByValue(searchValue);
 
-				String results = generateHTMLSearchresults(searchResults);
+				List<HTMLSearchResult> results = generateHTMLSearchresults(searchResults);
 
-				pebbleHelper.getContextMap().put("resultlist", results);
+				pebbleHelper.getContextMap().put("searchresults", results);
 
 			}
 
@@ -117,11 +117,9 @@ public class NamesWebResource {
 		}
 	}
 
-	public String generateHTMLSearchresults(
-			List<Pair<String, String>> searchResults) throws IOException {
-		String results = "";
-		String searchResultTemplate = readFile("web/searchresult",
-				StandardCharsets.UTF_8);
+	public List<HTMLSearchResult> generateHTMLSearchresults(
+			List<Pair<String, String>> searchResults) throws IOException, PebbleException {
+		List<HTMLSearchResult> results = new ArrayList<>();
 		for (Pair<String, String> result : searchResults) {
 			String name = result.getA();
 			String websitecontent = result.getB();
@@ -131,13 +129,7 @@ public class NamesWebResource {
 			String description = selectDescriptionOpt(htmlDoc);
 			description = description == null ? "" : description;
 			description = StringUtils.abbreviate(description, 150);
-
-			results += searchResultTemplate.replace("!Name!", name)
-					.replace("!Title!", title)
-					.replace("!Description!", description)
-					.replace("!Titlelink!", "/" + name)
-					.replace("!Namelink!", "/" + name)
-					.replace("!keyslink!", "/namepairs:" + name);
+			results.add(new HTMLSearchResult(title, description,name, "/"+ name, "/"+name, "/namepairs:" + name));
 
 		}
 		return results;
@@ -150,19 +142,16 @@ public class NamesWebResource {
 		String searchValue = request.getParameter("search");
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
-			pebbleHelper.getContextMap().put("resultlist", "");
 			if (StringUtil.isBlank(searchValue)) {
 
 				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 			}
 
-			String searchResultTemplate = readFile("web/searchresult",
-					StandardCharsets.UTF_8);
-			String results = handleBlogSearch( searchResultTemplate, searchValue);
-			pebbleHelper.getContextMap().put("resultlist", results);
+			List<HTMLSearchResult> results = handleBlogSearch(  searchValue);
+			pebbleHelper.getContextMap().put("searchresults", results);
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 
-		} catch (IOException | PebbleException e) {
+		} catch ( PebbleException e) {
 			e.printStackTrace();
 			return error404(request);
 		}
@@ -175,15 +164,12 @@ public class NamesWebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
-			pebbleHelper.getContextMap().put("resultlist", "");
 
-			String searchResultTemplate = readFile("web/searchresult",
-					StandardCharsets.UTF_8);
 
-			String results =  handleBlogSearch(searchResultTemplate, null);
-			pebbleHelper.getContextMap().put("resultlist", results);
+			List<HTMLSearchResult> results =  handleBlogSearch( null);
+			pebbleHelper.getContextMap().put("searchresults", results);
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
-		} catch (IOException | PebbleException e) {
+		} catch ( PebbleException e) {
 			return error404(request);
 		}
 
@@ -195,14 +181,12 @@ public class NamesWebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
-			pebbleHelper.getContextMap().put("resultlist", "");
-
 			
 			
 			List<Pair<String, String>> websitesByValue = NameUtils.getWebsitesByValue(null);
-			String results = generateHTMLSearchresults(websitesByValue);
+			List<HTMLSearchResult> results = generateHTMLSearchresults(websitesByValue);
 			
-			pebbleHelper.getContextMap().put("resultlist", results);
+			pebbleHelper.getContextMap().put("searchresults", results);
 
 
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
@@ -213,9 +197,9 @@ public class NamesWebResource {
 
 	}
 
-	private String handleBlogSearch(
-			String searchResultTemplate, String blogSearchOpt) {
-		String results = "";
+	private List<HTMLSearchResult> handleBlogSearch(
+			String blogSearchOpt) {
+		List<HTMLSearchResult> results = new ArrayList<>();
 		List<Triplet<String, String, String>> allEnabledBlogs = BlogUtils
 				.getEnabledBlogs(blogSearchOpt);
 		for (Triplet<String, String, String> triplet : allEnabledBlogs) {
@@ -224,12 +208,7 @@ public class NamesWebResource {
 			String description = triplet.getC();
 			description = StringUtils.abbreviate(description, 150);
 
-			results += searchResultTemplate.replace("!Name!", name)
-					.replace("!Title!", title)
-					.replace("!Description!", description)
-					.replace("!Titlelink!", "/blog.html?blogname=" + name)
-					.replace("!Namelink!", "/blog.html?blogname=" + name)
-					.replace("!keyslink!", "/namepairs:" + name);
+			results.add(new HTMLSearchResult(title, description,name, "/blog.html?blogname=" + name, "/blog.html?blogname=" + name, "/namepairs:" + name));
 		}
 		
 
