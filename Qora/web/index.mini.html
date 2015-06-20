@@ -178,7 +178,15 @@
  			<h5 class="r-t">{{searchresult.title}}</h5><a><a href="{{searchresult.namelink}}" class="r-l">{{searchresult.name}}</a><span class="label label-default"><a href="{{searchresult.keyslink}}"/>rawdata</a></span>
 			<p>{{searchresult.description}}</p></a></a></li>
 			{% endfor %}
-              <jsonresults></jsonresults>
+				
+				{% if keyvaluepairs is not empty %}
+              	<br><div ng-app="myApp" ng-controller="AppController"><div class="panel panel-default"><div class="panel-heading">Results on :{{ dataname }}</div>
+				<table class="table">
+	              {% for keyvalue in keyvaluepairs %}
+	              <tr><td>{{ keyvalue.key }}</td><td>{{ keyvalue.value }}</td></tr></div></div>
+	              {% endfor %}
+	              </table>
+				{% endif %}
             </ul>
           </div>
           <div class="col-lg-4"></div>

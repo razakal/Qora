@@ -1034,27 +1034,15 @@ public class NamesWebResource {
 	@GET
 	public Response showNamepairs(@PathParam("name") String name) {
 
+		try {
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/index.mini.html");
 		NameMap nameMap = DBSet.getInstance().getNameMap();
 
 		if (nameMap.contains(name)) {
-			String value = nameMap.get(name).getValue();
+			Name nameObj = nameMap.get(name);
+			String value = nameObj.getValue();
 
-			JSONObject resultJson = null;
-			try {
-
-				// WEBPAGE GZIP DECOMPRESSOR
-				value = GZIP.webDecompress(value);
-
-				JSONObject jsonObject = (JSONObject) JSONValue.parse(value);
-				if (jsonObject != null) {
-					// Looks like valid jSon
-					resultJson = jsonObject;
-
-				}
-
-			} catch (Exception e) {
-				// no json probably
-			}
+			JSONObject resultJson = NameUtils.getJsonForNameOpt(nameObj);
 
 			// BAD FORMAT --> NO KEYVALUE
 			if (resultJson == null) {
@@ -1064,22 +1052,20 @@ public class NamesWebResource {
 				value = jsonToFineSting(resultJson.toJSONString());
 			}
 
+			pebbleHelper.getContextMap().put("keyvaluepairs", resultJson);
+			pebbleHelper.getContextMap().put("dataname", name);
+			
 			return Response
 					.status(200)
 					.header("Content-Type", "text/html; charset=utf-8")
-					.entity(miniIndex()
-							.replace("<data></data>", "namepairs:" + name)
-							.replace(
-									"<jsonresults></jsonresults>",
-									"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-											+ "<div class=\"panel-heading\">Results on :"
-											+ name
-											+ "</div><table class=\"table\">" //
-											+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-							.replace("$scope.steps = {}",
-									"$scope.steps = " + value)).build();
+					.entity(pebbleHelper.evaluate()).build();
 
 		} else {
+			return error404(request);
+		}
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return error404(request);
 		}
 
