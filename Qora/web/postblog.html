@@ -52,7 +52,8 @@
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2"><br>
               <button type="reset" class="btn btn-default">Cancel</button>
-              <button type="submit" name="do" value="post" onclick="javascript:processpost()" class="btn btn-primary">Submit</button>
+              <button type="preview" name="do" value="post" onclick="javascript:processpost(true)" class="btn btn-primary">Preview</button>
+              <button type="submit" name="do" value="post" onclick="javascript:processpost(false)" class="btn btn-primary">Submit</button>
             </div>
           </div>
           <!--
@@ -61,7 +62,7 @@
           -->
         </div>
       </div>
-    </div><br>{{ font }}
+    </div><br>{{ font }}{{ preview }}
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="libs/angular/angular.min.1.4.0.js"></script>
@@ -73,7 +74,7 @@
           if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
               return decodeURIComponent(name[1]);
       }
-      processpost = function() {
+      processpost = function(preview) {
           var content, creator, fee, title, blogname;
           title = document.getElementById('title').value;
           content = document.getElementById('content').value;
@@ -98,7 +99,13 @@
           {
           		blogname = '';
           }
-          document.location.href = '/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee + '' + blogname + '';
+          if(preview){
+          	  preview = '&preview=' + preview;
+          }else
+          {
+          	preview = '';
+          }
+          document.location.href = '/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee + '' + blogname + '' + '' + preview + '';
           return 0;
       };
       

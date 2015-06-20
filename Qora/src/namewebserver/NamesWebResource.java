@@ -14,7 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -507,11 +509,13 @@ public class NamesWebResource {
 			pebbleHelper.getContextMap().put("oldcreator", "");
 			pebbleHelper.getContextMap().put("oldcontent", "");
 			pebbleHelper.getContextMap().put("oldfee", "");
+			pebbleHelper.getContextMap().put("preview", "");
 
 			String title = request.getParameter(BlogPostResource.TITLE_KEY);
 			String creator = request.getParameter("creator");
 			String contentparam = request.getParameter("content");
 			String fee = request.getParameter("fee");
+			String preview = request.getParameter("preview");
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
 
@@ -571,6 +575,21 @@ public class NamesWebResource {
 				json.put("title", title);
 				json.put("body", contentparam);
 
+				
+				if(StringUtils.isNotBlank(preview))
+				{
+					pebbleHelper.getContextMap().put("oldtitle", title);
+					pebbleHelper.getContextMap().put("oldfee", fee);
+					pebbleHelper.getContextMap().put("oldcontent", contentparam);
+					pebbleHelper.getContextMap().put("oldcreator", creator);
+					BlogEntry entry = new BlogEntry(title, contentparam, creator, new Date().getTime(), creator);
+					String htmlForBlogPosts = getHTMLForBlogPosts(Arrays.asList(entry));
+					
+					pebbleHelper.getContextMap().put("preview", htmlForBlogPosts);
+					
+					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+				}
+				
 				try {
 					String result = new BlogPostResource().addBlogEntry(
 							json.toJSONString(), blogname);
@@ -700,49 +719,7 @@ public class NamesWebResource {
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
 
-			String results = "<br>";
-
-			String entryTemplate = "<li><div class=\"timeline-badge primary\"><a>"
-					+ "<i class=\"glyphicon glyphicon-record\" rel=\"tooltip\" title=\"POST TIME\" id=\"\">"
-					+ "</i></a></div>"
-					+ "<div class=\"timeline-panel\"><div class=\"timeline-heading\">"
-					+ "<div class=\"media\"><div class=\"media-left media-middle\">"
-					+ "<a href=\"#\"><img class=\"media-object\" src=\"img/qora-user.png\" alt=\"\"></a></div>"
-					+ "<div class=\"media-body\">"
-					+ "<h6 class=\"media-heading\"><b>Name</b></h6>Time</div></div>"
-					+ "</div>"
-					+ "<div class=\"timeline-body\"><p class=\"post-header\"><b>TITLE</b></p><p class=\"post-content\">CONTENT</p></div></div></li>";
-
-			for (BlogEntry blogentry : blogPosts) {
-
-				String converted = entryTemplate;
-				String body = blogentry.getDescription();
-
-				body = Jsoup.clean(body, Whitelist.basic());
-				List<Pair<String, String>> linkList = createHtmlLinks(getAllLinks(body));
-
-				for (Pair<String, String> link : linkList) {
-					String originalLink = link.getA();
-					String newLink = link.getB();
-
-					body = body.replace(originalLink, newLink);
-				}
-				String nameOpt = blogentry.getNameOpt();
-				if (nameOpt != null) {
-					converted = converted.replaceAll("Name",
-							blogentry.getNameOpt());
-				} else {
-					converted = converted.replaceAll("Name",
-							blogentry.getCreator());
-				}
-				converted = converted.replaceAll("TITLE",
-						blogentry.getTitleOpt());
-				converted = converted.replaceAll("CONTENT", body);
-				converted = converted.replaceAll("Time",
-						blogentry.getCreationTime());
-
-				results += converted;
-			}
+			String results = getHTMLForBlogPosts(blogPosts);
 
 			content = content.replace("!blogposts!", results);
 
@@ -751,6 +728,53 @@ public class NamesWebResource {
 			e.printStackTrace();
 			return error404(request);
 		}
+	}
+
+	public String getHTMLForBlogPosts(List<BlogEntry> blogPosts) {
+		String results = "<br>";
+
+		String entryTemplate = "<li><div class=\"timeline-badge primary\"><a>"
+				+ "<i class=\"glyphicon glyphicon-record\" rel=\"tooltip\" title=\"POST TIME\" id=\"\">"
+				+ "</i></a></div>"
+				+ "<div class=\"timeline-panel\"><div class=\"timeline-heading\">"
+				+ "<div class=\"media\"><div class=\"media-left media-middle\">"
+				+ "<a href=\"#\"><img class=\"media-object\" src=\"img/qora-user.png\" alt=\"\"></a></div>"
+				+ "<div class=\"media-body\">"
+				+ "<h6 class=\"media-heading\"><b>Name</b></h6>Time</div></div>"
+				+ "</div>"
+				+ "<div class=\"timeline-body\"><p class=\"post-header\"><b>TITLE</b></p><p class=\"post-content\">CONTENT</p></div></div></li>";
+
+		for (BlogEntry blogentry : blogPosts) {
+
+			String converted = entryTemplate;
+			String body = blogentry.getDescription();
+
+			body = Jsoup.clean(body, Whitelist.basic());
+			List<Pair<String, String>> linkList = createHtmlLinks(getAllLinks(body));
+
+			for (Pair<String, String> link : linkList) {
+				String originalLink = link.getA();
+				String newLink = link.getB();
+
+				body = body.replace(originalLink, newLink);
+			}
+			String nameOpt = blogentry.getNameOpt();
+			if (nameOpt != null) {
+				converted = converted.replaceAll("Name",
+						blogentry.getNameOpt());
+			} else {
+				converted = converted.replaceAll("Name",
+						blogentry.getCreator());
+			}
+			converted = converted.replaceAll("TITLE",
+					blogentry.getTitleOpt());
+			converted = converted.replaceAll("CONTENT", body);
+			converted = converted.replaceAll("Time",
+					blogentry.getCreationTime());
+
+			results += converted;
+		}
+		return results;
 	}
 
 	private List<Pair<String, String>> createHtmlLinks(List<String> links) {
