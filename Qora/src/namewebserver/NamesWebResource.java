@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -111,7 +110,7 @@ public class NamesWebResource {
 			}
 
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
-		} catch (PebbleException | IOException e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request);
 		}
@@ -151,7 +150,7 @@ public class NamesWebResource {
 			pebbleHelper.getContextMap().put("searchresults", results);
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 
-		} catch ( PebbleException e) {
+		} catch ( Throwable e) {
 			e.printStackTrace();
 			return error404(request);
 		}
@@ -169,7 +168,7 @@ public class NamesWebResource {
 			List<HTMLSearchResult> results =  handleBlogSearch( null);
 			pebbleHelper.getContextMap().put("searchresults", results);
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
-		} catch ( PebbleException e) {
+		} catch ( Throwable e) {
 			return error404(request);
 		}
 
@@ -191,7 +190,7 @@ public class NamesWebResource {
 
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 
-		} catch (IOException | PebbleException e) {
+		} catch (Throwable e) {
 			return error404(request);
 		}
 
@@ -634,7 +633,7 @@ public class NamesWebResource {
 
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
-		} catch (PebbleException | UnsupportedEncodingException e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request);
 		}
@@ -739,7 +738,7 @@ public class NamesWebResource {
 			content = content.replace("!blogposts!", results);
 
 			return Response.ok(content, "text/html; charset=utf-8").build();
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request);
 		}
@@ -1472,7 +1471,7 @@ public class NamesWebResource {
 				Value = injectValues(Value);
 
 				return Response.ok(content, "text/html; charset=utf-8").build();
-			} catch (IOException e) {
+			} catch (Throwable e) {
 				return error404(request);
 			}
 
