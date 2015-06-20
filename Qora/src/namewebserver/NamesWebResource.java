@@ -126,6 +126,7 @@ public class NamesWebResource {
 					title = title == null ? "" : title;
 					String description = selectDescriptionOpt(htmlDoc);
 					description = description == null ? "" : description;
+					description =StringUtils.abbreviate(description, 150);
 
 					results += searchResultTemplate.replace("!Name!", name)
 							.replace("!Title!", title)
@@ -181,6 +182,7 @@ public class NamesWebResource {
 			String name = triplet.getA();
 			String title = triplet.getB();
 			String description = triplet.getC();
+			description =StringUtils.abbreviate(description, 150);
 
 			results += searchResultTemplate.replace("!Name!", name)
 					.replace("!Title!", title)
