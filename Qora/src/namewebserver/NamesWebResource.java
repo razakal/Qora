@@ -574,6 +574,10 @@ public class NamesWebResource {
 					&& StringUtil.isNotBlank(contentparam)
 					&& StringUtil.isNotBlank(fee)) {
 				JSONObject json = new JSONObject();
+				
+				
+				title = URLDecoder.decode(title, "UTF-8");
+				contentparam = URLDecoder.decode(contentparam, "UTF-8");
 
 				Pair<Account, NameResult> nameToAdress = NameUtils
 						.nameToAdress(creator);
@@ -594,10 +598,9 @@ public class NamesWebResource {
 				{
 					pebbleHelper.getContextMap().put("oldtitle", title);
 					pebbleHelper.getContextMap().put("oldfee", fee);
-					contentparam = URLDecoder.decode(contentparam, "UTF-8");
 					pebbleHelper.getContextMap().put("oldcontent", contentparam.replaceAll("\\n", "\\\\n"));
 					pebbleHelper.getContextMap().put("oldcreator", creator);
-					BlogEntry entry = new BlogEntry(title, contentparam.replaceAll("\n", "<br/>"), creator, new Date().getTime(), creator);
+					BlogEntry entry = new BlogEntry(title, contentparam, creator, new Date().getTime(), creator);
 					String htmlForBlogPosts = getHTMLForBlogPosts(Arrays.asList(entry));
 
 					pebbleHelper.getContextMap().put("preview", htmlForBlogPosts);
@@ -619,7 +622,7 @@ public class NamesWebResource {
 
 					pebbleHelper.getContextMap().put("oldtitle", title);
 					pebbleHelper.getContextMap().put("oldfee", fee);
-					pebbleHelper.getContextMap().put("oldcontent",contentparam);
+					pebbleHelper.getContextMap().put("oldcontent",contentparam.replaceAll("\\n", "\\\\n"));
 					pebbleHelper.getContextMap().put("oldcreator", creator);
 
 					pebbleHelper

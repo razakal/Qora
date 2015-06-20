@@ -21,6 +21,7 @@ public class BlogEntry {
 
 	public BlogEntry(String titleOpt, String description, String nameOpt, long timeOpt, String creator) {
 		this.titleOpt = titleOpt;
+		description	= description.replaceAll("\n", "<br/>");
 		this.description = description;
 		this.nameOpt = nameOpt;
 		this.time = timeOpt;

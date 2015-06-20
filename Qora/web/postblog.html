@@ -127,6 +127,7 @@
       processpost = function(preview) {
           var content, creator, fee, title, blogname;
           title = document.getElementById('title').value;
+          title = encodeURIComponent(title);
           content = document.getElementById('content').value;
           content = encodeURIComponent(content);
           creator = document.getElementById('addr').value;
