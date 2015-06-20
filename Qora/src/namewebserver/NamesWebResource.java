@@ -57,6 +57,7 @@ import utils.JSonWriter;
 import utils.NameUtils;
 import utils.NameUtils.NameResult;
 import utils.Pair;
+import utils.PebbleHelper;
 import utils.Qorakeys;
 import utils.Triplet;
 import api.ATResource;
@@ -67,6 +68,9 @@ import api.BlogPostResource;
 import api.NameSalesResource;
 import api.NamesResource;
 import api.TransactionsResource;
+
+import com.mitchellbosecke.pebble.error.PebbleException;
+
 import controller.Controller;
 import database.DBSet;
 import database.NameMap;
@@ -89,14 +93,13 @@ public class NamesWebResource {
 			String blogDirectory = request.getParameter("blogdirectory");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 
-			if (searchValue == null
-					&& webDirectory == null
-					&& blogDirectory == null ) {
+			if (searchValue == null && webDirectory == null
+					&& blogDirectory == null) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			} else if (searchValue != null || webDirectory != null
-					|| blogDirectory != null ) {
+					|| blogDirectory != null) {
 				List<Pair<String, String>> searchResults;
 				content = readFile("web/index.mini.html",
 						StandardCharsets.UTF_8);
@@ -108,7 +111,7 @@ public class NamesWebResource {
 					return handleBlogSearch(content, searchResultTemplate, null);
 				} else {
 					searchResults = NameUtils.getWebsitesByValue(searchValue);
-				} 
+				}
 
 				String results = "";
 				for (Pair<String, String> result : searchResults) {
@@ -139,36 +142,31 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
-	
-	
+
 	@Path("blogsearch.html")
 	@GET
 	public Response doBlogSearch() {
-		
+
 		String searchValue = request.getParameter("search");
 		String content;
 		try {
-			content = readFile("web/index.mini.html",
-					StandardCharsets.UTF_8);
-			if(StringUtil.isBlank(searchValue)) {
-				
+			content = readFile("web/index.mini.html", StandardCharsets.UTF_8);
+			if (StringUtil.isBlank(searchValue)) {
+
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
-			
+
 			String searchResultTemplate = readFile("web/searchresult",
 					StandardCharsets.UTF_8);
 			return handleBlogSearch(content, searchResultTemplate, searchValue);
-			
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			return error404(request);
 		}
-		
+
 	}
-	
-	
 
 	private Response handleBlogSearch(String content,
 			String searchResultTemplate, String blogSearchOpt) {
@@ -188,7 +186,7 @@ public class NamesWebResource {
 					.replace("!keyslink!", "/namepairs:" + name);
 		}
 		content = content.replace("<resultlist></resultlist>", results);
-		
+
 		return Response.ok(content, "text/html; charset=utf-8").build();
 	}
 
@@ -257,117 +255,137 @@ public class NamesWebResource {
 			String url = request.getParameter("apiurl");
 			String okmsg = request.getParameter("okmsg");
 			String errormsg = request.getParameter("errormsg");
-			
-			
-			
-			
-			if (StringUtils.isBlank(type) ||( !type.equalsIgnoreCase("get")
-					&& !type.equalsIgnoreCase("post")
-					&& !type.equalsIgnoreCase("delete"))) {
+
+			if (StringUtils.isBlank(type)
+					|| (!type.equalsIgnoreCase("get")
+							&& !type.equalsIgnoreCase("post") && !type
+								.equalsIgnoreCase("delete"))) {
 				content = content.replace("!title!", "An Api error occured");
-				content = content.replace("!apicall!", "You need a type parameter with value GET/POST or DELETE ");
+				content = content
+						.replace("!apicall!",
+								"You need a type parameter with value GET/POST or DELETE ");
 				content = content.replace("!errormessage!", "");
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
-			
+
 			if (StringUtils.isBlank(url)) {
 				content = content.replace("!title!", "An Api error occured");
-				content = content.replace("!apicall!", "You need to provide an apiurl parameter");
+				content = content.replace("!apicall!",
+						"You need to provide an apiurl parameter");
 				content = content.replace("!errormessage!", "");
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
 			url = url.startsWith("/") ? url.substring(1) : url;
-			
-			Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
-			
+
+			Map<String, String[]> parameterMap = new HashMap<String, String[]>(
+					request.getParameterMap());
+
 			parameterMap.remove("type");
 			parameterMap.remove("apiurl");
 			parameterMap.remove("okmsg");
 			parameterMap.remove("errormsg");
-			
+
 			Set<String> keySet = parameterMap.keySet();
-			
+
 			JSONObject json = new JSONObject();
-			
+
 			for (String key : keySet) {
 				String[] value = parameterMap.get(key);
 				json.put(key, value[0]);
 			}
-			
+
 			try {
-				//CREATE CONNECTION
-				URL urlToCall = new URL("http://127.0.0.1:" + Settings.getInstance().getRpcPort() + "/" + url);
-				HttpURLConnection connection = (HttpURLConnection) urlToCall.openConnection();
-				
-				//EXECUTE
+				// CREATE CONNECTION
+				URL urlToCall = new URL("http://127.0.0.1:"
+						+ Settings.getInstance().getRpcPort() + "/" + url);
+				HttpURLConnection connection = (HttpURLConnection) urlToCall
+						.openConnection();
+
+				// EXECUTE
 				connection.setRequestMethod(type.toUpperCase());
-				
-				if(type.equalsIgnoreCase("POST"))
-				{
+
+				if (type.equalsIgnoreCase("POST")) {
 					connection.setDoOutput(true);
-					connection.getOutputStream().write(json.toJSONString().getBytes("UTF-8"));
+					connection.getOutputStream().write(
+							json.toJSONString().getBytes("UTF-8"));
 					connection.getOutputStream().flush();
 					connection.getOutputStream().close();
 				}
-				
-				//READ RESULT
+
+				// READ RESULT
 				InputStream stream;
-				if(connection.getResponseCode() == 400)
-				{
+				if (connection.getResponseCode() == 400) {
 					stream = connection.getErrorStream();
-				}
-				else
-				{
+				} else {
 					stream = connection.getInputStream();
 				}
-				
-				InputStreamReader isReader = new InputStreamReader(stream, "UTF-8"); 
+
+				InputStreamReader isReader = new InputStreamReader(stream,
+						"UTF-8");
 				BufferedReader br = new BufferedReader(isReader);
-				String result = br.readLine(); 
-				
-				
-				if(result.contains("message") && result.contains("error"))
-				{
-					if(StringUtils.isNotBlank(errormsg))
-					{
-						content = content.replace("<customtext></customtext>", "<font color=red>" + errormsg + "</font>");
+				String result = br.readLine();
+
+				if (result.contains("message") && result.contains("error")) {
+					if (StringUtils.isNotBlank(errormsg)) {
+						content = content.replace("<customtext></customtext>",
+								"<font color=red>" + errormsg + "</font>");
 					}
-					content = content.replace("!title!", "An Api error occured");
-					content = content.replace("!apicall!", "apicall: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
-					content = content.replace("!errormessage!", "Result:" + result);
-					return Response.ok(content, "text/html; charset=utf-8").build();
-				}else
-				{
-					if(StringUtils.isNotBlank(okmsg))
-					{
-					content = content.replace("<customtext></customtext>", "<font color=green>" + okmsg + "</font>");
+					content = content
+							.replace("!title!", "An Api error occured");
+					content = content.replace("!apicall!",
+							"apicall: "
+									+ type.toUpperCase()
+									+ " "
+									+ url
+									+ (json.size() > 0 ? json.toJSONString()
+											: ""));
+					content = content.replace("!errormessage!", "Result:"
+							+ result);
+					return Response.ok(content, "text/html; charset=utf-8")
+							.build();
+				} else {
+					if (StringUtils.isNotBlank(okmsg)) {
+						content = content.replace("<customtext></customtext>",
+								"<font color=green>" + okmsg + "</font>");
 					}
-					content = content.replace("!title!", "The API Call was successful");
-					content = content.replace("!apicall!", "Submitted Api call: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
-					content = content.replace("!errormessage!", "Result:" + result);
-					return Response.ok(content, "text/html; charset=utf-8").build();
+					content = content.replace("!title!",
+							"The API Call was successful");
+					content = content.replace(
+							"!apicall!",
+							"Submitted Api call: "
+									+ type.toUpperCase()
+									+ " "
+									+ url
+									+ (json.size() > 0 ? json.toJSONString()
+											: ""));
+					content = content.replace("!errormessage!", "Result:"
+							+ result);
+					return Response.ok(content, "text/html; charset=utf-8")
+							.build();
 				}
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
-				String additionalHelp ="";
-				if(e instanceof FileNotFoundException)
-				{
-					additionalHelp = "The apicall with the following apiurl is not existing: " ;
+				String additionalHelp = "";
+				if (e instanceof FileNotFoundException) {
+					additionalHelp = "The apicall with the following apiurl is not existing: ";
 				}
 				content = content.replace("!title!", "An Api error occured");
-				content = content.replace("!apicall!", "You tried to submit the following apicall: " +  type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
-				content = content.replace("!errormessage!", additionalHelp + e.getMessage() );
+				content = content.replace(
+						"!apicall!",
+						"You tried to submit the following apicall: "
+								+ type.toUpperCase() + " " + url
+								+ (json.size() > 0 ? json.toJSONString() : ""));
+				content = content.replace("!errormessage!",
+						additionalHelp + e.getMessage());
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return error404(request);
-		
-		
 
 	}
 
@@ -477,8 +495,18 @@ public class NamesWebResource {
 	public Response postBlog() {
 
 		try {
-			String content = readFile("web/postblog.html",
-					StandardCharsets.UTF_8);
+
+			PebbleHelper pebbleHelper = PebbleHelper
+					.getPebbleHelper("web/postblog.html");
+			
+			pebbleHelper.getContextMap().put("errormessage", "");
+			pebbleHelper.getContextMap().put("font", "");
+			pebbleHelper.getContextMap().put("content", "");
+			pebbleHelper.getContextMap().put("option", "");
+			pebbleHelper.getContextMap().put("oldtitle", "");
+			pebbleHelper.getContextMap().put("oldcreator", "");
+			pebbleHelper.getContextMap().put("oldcontent", "");
+			pebbleHelper.getContextMap().put("oldfee", "");
 
 			String title = request.getParameter(BlogPostResource.TITLE_KEY);
 			String creator = request.getParameter("creator");
@@ -487,60 +515,58 @@ public class NamesWebResource {
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
 
-			
-			
-			BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(blogname);
-			
-			Pair<List<Account>, List<Name>> ownAllowedElements = blogBlackWhiteList.getOwnAllowedElements(true);
-			
-			List<Account> resultingAccounts = new ArrayList<Account>(ownAllowedElements.getA());
-			List<Name> resultingNames = ownAllowedElements.getB();
-			
+			BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList
+					.getBlogBlackWhiteList(blogname);
 
-			Collections.sort( resultingAccounts, new AccountBalanceComparator());
+			Pair<List<Account>, List<Name>> ownAllowedElements = blogBlackWhiteList
+					.getOwnAllowedElements(true);
+
+			List<Account> resultingAccounts = new ArrayList<Account>(
+					ownAllowedElements.getA());
+			List<Name> resultingNames = ownAllowedElements.getB();
+
+			Collections.sort(resultingAccounts, new AccountBalanceComparator());
 			Collections.reverse(resultingAccounts);
 
 			String accountStrings = "";
-			
+
 			for (Name name : resultingNames) {
 				accountStrings += "<option value=" + name.getName() + ">"
 						+ name.getNameBalanceString() + "</option>";
 			}
-			
+
 			for (Account account : resultingAccounts) {
 				accountStrings += "<option value=" + account.getAddress() + ">"
 						+ account + "</option>";
 			}
-			
-			//are we allowed to post
-			if(resultingNames.size() == 0 && resultingAccounts.size() == 0)
-			{
-				content = content.replaceAll("<errormessage></errormessage>", "<font color=red>You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!</font><br>");
-			}
-			
-			
 
-			content = content.replaceAll("<option></option>", accountStrings);
+			// are we allowed to post
+			if (resultingNames.size() == 0 && resultingAccounts.size() == 0) {
 
-			
-			
-			
+				pebbleHelper
+						.getContextMap()
+						.put("errormessage",
+								"<font color=red>You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!</font><br>");
+
+			} 
+
+			pebbleHelper.getContextMap().put("option", accountStrings);
+
 			if (StringUtil.isNotBlank(creator)
 					&& StringUtil.isNotBlank(contentparam)
 					&& StringUtil.isNotBlank(fee)) {
 				JSONObject json = new JSONObject();
-				
-				Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(creator);
-				
-				if(nameToAdress.getB() == NameResult.OK)
-				{
+
+				Pair<Account, NameResult> nameToAdress = NameUtils
+						.nameToAdress(creator);
+
+				if (nameToAdress.getB() == NameResult.OK) {
 					json.put(BlogPostResource.AUTHOR, creator);
 					json.put("creator", nameToAdress.getA().getAddress());
-				}else
-				{
+				} else {
 					json.put("creator", creator);
 				}
-				
+
 				json.put("fee", fee);
 				json.put("title", title);
 				json.put("body", contentparam);
@@ -549,16 +575,22 @@ public class NamesWebResource {
 					String result = new BlogPostResource().addBlogEntry(
 							json.toJSONString(), blogname);
 
-					content = content
-							.replaceAll(
-									"<font></font>",
+					pebbleHelper
+							.getContextMap()
+							.put("font",
 									"<div class=\"alert alert-success\" role=\"alert\">Your post was successful<br>"
 											+ result + "</div>");
 
 				} catch (WebApplicationException e) {
-					content = content
-							.replaceAll(
-									"<font></font>",
+					
+					pebbleHelper.getContextMap().put("oldtitle", title);
+					pebbleHelper.getContextMap().put("oldfee", fee);
+					pebbleHelper.getContextMap().put("oldcontent", contentparam);
+					pebbleHelper.getContextMap().put("oldcreator", creator);
+					
+					pebbleHelper
+							.getContextMap()
+							.put("font",
 									"<div class=\"alert alert-danger\" role=\"alert\">Your post was NOT successful<br>"
 											+ e.getResponse().getEntity()
 											+ "</div>");
@@ -567,8 +599,8 @@ public class NamesWebResource {
 
 			}
 
-			return Response.ok(content, "text/html; charset=utf-8").build();
-		} catch (IOException e) {
+			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+		} catch (PebbleException e) {
 			e.printStackTrace();
 			return error404(request);
 		}
@@ -637,17 +669,26 @@ public class NamesWebResource {
 								.containsKey(BlogPostResource.BLOGENABLE_KEY)) {
 					content = readFile("web/blogdisabled.html",
 							StandardCharsets.UTF_8);
-					if(Controller.getInstance().getAccountByAddress(name.getOwner().getAddress()) != null)
-					{
+					if (Controller.getInstance().getAccountByAddress(
+							name.getOwner().getAddress()) != null) {
 						String apiurl = "/names/key/" + name.getName();
 						String type = "POST";
-						String resultcall = "/API.html?"+ "apiurl=" + apiurl + "&type=" + type + "&key=" + BlogPostResource.BLOGENABLE_KEY + "&value=true&update=false&fee=1&okmsg=The blog will be available after the next block!";
+						String resultcall = "/API.html?"
+								+ "apiurl="
+								+ apiurl
+								+ "&type="
+								+ type
+								+ "&key="
+								+ BlogPostResource.BLOGENABLE_KEY
+								+ "&value=true&update=false&fee=1&okmsg=The blog will be available after the next block!";
 						String template = readFile("web/blogenabletemplate",
 								StandardCharsets.UTF_8);
 						template = template.replace("!TEXT!", "here");
 						template = template.replace("!LINK!", resultcall);
-						
-						content =content.replace("<enableblog></enableblog>", "You can activate the blog by clicking " + template);
+
+						content = content.replace("<enableblog></enableblog>",
+								"You can activate the blog by clicking "
+										+ template);
 					}
 					return Response.ok(content, "text/html; charset=utf-8")
 							.build();
@@ -657,8 +698,7 @@ public class NamesWebResource {
 						"postblog.html?blogname=" + blogname);
 			}
 
-			List<BlogEntry> blogPosts = BlogUtils
-					.getBlogPosts(blogname);
+			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
 
 			String results = "<br>";
 
@@ -672,7 +712,7 @@ public class NamesWebResource {
 					+ "<h6 class=\"media-heading\"><b>Name</b></h6>Time</div></div>"
 					+ "</div>"
 					+ "<div class=\"timeline-body\"><p class=\"post-header\"><b>TITLE</b></p><p class=\"post-content\">CONTENT</p></div></div></li>";
-					
+
 			for (BlogEntry blogentry : blogPosts) {
 
 				String converted = entryTemplate;
@@ -688,16 +728,18 @@ public class NamesWebResource {
 					body = body.replace(originalLink, newLink);
 				}
 				String nameOpt = blogentry.getNameOpt();
-				if(nameOpt != null)
-				{
-					converted = converted.replaceAll("Name", blogentry.getNameOpt());
-				}else
-				{
-					converted = converted.replaceAll("Name", blogentry.getCreator());
+				if (nameOpt != null) {
+					converted = converted.replaceAll("Name",
+							blogentry.getNameOpt());
+				} else {
+					converted = converted.replaceAll("Name",
+							blogentry.getCreator());
 				}
-				converted = converted.replaceAll("TITLE", blogentry.getTitleOpt());
+				converted = converted.replaceAll("TITLE",
+						blogentry.getTitleOpt());
 				converted = converted.replaceAll("CONTENT", body);
-				converted = converted.replaceAll("Time", blogentry.getCreationTime());
+				converted = converted.replaceAll("Time",
+						blogentry.getCreationTime());
 
 				results += converted;
 			}
@@ -1405,7 +1447,7 @@ public class NamesWebResource {
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(getWarning(request) + website).build();
 	}
-	
+
 	public static String injectValues(String value) {
 		// PROCESSING TAG INJ
 		Pattern pattern = Pattern.compile("(?i)(<inj.*>(.*?)</inj>)");

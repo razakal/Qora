@@ -23,7 +23,7 @@
           --><br>
           <legend>Create a new post</legend>
           <div class="form-group">
-          	<errormessage></errormessage>
+          	{{ errormessage}}
             <label for="title" class="col-lg-2 control-label">Title</label>
             <div class="col-lg-10">
               <input id="title" type="text" placeholder="Title (optional)" class="form-control">
@@ -39,7 +39,7 @@
             <label for="select" class="col-lg-2 control-label">Address</label>
             <div class="col-lg-10">
               <select id="addr" value="1" class="form-control">
-                <option></option>
+                {{ option }}
               </select>
             </div>
           </div>
@@ -61,7 +61,7 @@
           -->
         </div>
       </div>
-    </div><br><font></font>
+    </div><br>{{ font }}
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="libs/angular/angular.min.1.4.0.js"></script>
@@ -101,6 +101,20 @@
           document.location.href = '/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee + '' + blogname + '';
           return 0;
       };
+      
+        $(document).ready(function() {
+        $('#title').val('{{ oldtitle }}');
+        $('#content').val('{{ oldcontent }}');
+         {% if oldcreator is empty %}
+         {% else %}
+        $('#addr').val('{{ oldcreator }}');
+        {% endif %}
+        {% if oldfee is empty %}
+		{% else %}
+        $('#fee').val('{{ oldfee }}');
+		{% endif %}
+      });
+      
     </script>
     <script type="text/javascript">
     $("#content").keyup(function(){

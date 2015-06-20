@@ -84,5 +84,12 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/commons-lang3-3.4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="libs/pebble-1.5.0.jar" sourcepath="libs/sourceandjavadoc/pebble-1.5.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/pebble-1.5.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.7.12.jar"/>
+	<classpathentry kind="lib" path="libs/coverity-escapers-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
