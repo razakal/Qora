@@ -176,24 +176,20 @@
         return 0;
     };
     $(document).ready(function() {
-        if (getParameter('preview') == 'true') {
-            $('#prevmodal').show();
-        }
-        $('#title').val('{{ oldtitle }}');
-        $('#content').val('{{ oldcontent }}'); { %
-            if oldcreator is empty %
-        } { %
-            else %
-        }
-        $('#addr').val('{{ oldcreator }}'); { % endif %
-        } { %
-            if oldfee is empty %
-        } { %
-            else %
-        }
-        $('#fee').val('{{ oldfee }}'); { % endif %
-        }
-    });
+                if (getParameter('preview') == 'true') {
+                    $('#prevmodal').show();
+                }
+                $('#title').val('{{ oldtitle }}');
+                $('#content').val('{{ oldcontent }}');
+      {% if oldcreator is empty %}
+      {% else %}
+      $('#addr').val('{{ oldcreator }}');
+      {% endif %}
+      {% if oldfee is empty %}
+      {% else %}
+      $('#fee').val('{{ oldfee }}');
+      {% endif %}
+      });
     </script>
     <script type="text/javascript">
     $("#content").keyup(function() {
