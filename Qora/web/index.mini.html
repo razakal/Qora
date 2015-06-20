@@ -183,7 +183,9 @@
               	<br><div ng-app="myApp" ng-controller="AppController"><div class="panel panel-default"><div class="panel-heading">Results on :{{ dataname }}</div>
 				<table class="table">
 	              {% for keyvalue in keyvaluepairs %}
+	              {% autoescape true %}
 	              <tr><td>{{ keyvalue.key }}</td><td>{{ keyvalue.value }}</td></tr></div></div>
+	             {% endautoescape %}
 	              {% endfor %}
 	              </table>
 				{% endif %}
