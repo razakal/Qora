@@ -209,56 +209,56 @@
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript">
-      var transformToAssocArray;
-      transformToAssocArray = function(prmstr) {
-          var i, params, prmarr, tmparr;
-          params = {};
-          prmarr = prmstr.split('&');
-          i = 0;
-          while (i < prmarr.length) {
-              tmparr = prmarr[i].split('=');
-              params[tmparr[0]] = tmparr[1];
-              i++;
-          }
-          return params;
-      };
-      var getSearchParameters;
-      getSearchParameters = function() {
-          var prmstr;
-          prmstr = window.location.search.substr(1);
-          if (prmstr != null && prmstr != '') {
-              return transformToAssocArray(prmstr);
-          } else {
-              return {};
-          }
-      };
-      $(document).ready(function() {
-          $("#button").click(function() {
-              var searchval, url, value;
-              value = $("#kind")[0].selectedIndex;
-              if (value == 1) {
-                  url = $('#name').val();
-                  document.location.href = '/' + url;
-                  return 0;
-              } else {
-                  searchval = $('#name').val();
-                  document.location.href = '/?search=' + searchval;
-                  return 0;
-              }
-          });
-          $("#name").keypress(function(e) {
-              if (e.which == 13) {
-                  $("#button").trigger("click");
-              }
-          });
-          $("#name").val(getSearchParameters().search);
-          if (getSearchParameters().search == void 0) {
-              $('#name').val('');
-          }
-          var searchval = $("#name").val();
-          searchval = searchval.replace(/%20/g, " ");
-          $("#name").val(searchval);
-      });
+    var transformToAssocArray;
+    transformToAssocArray = function(prmstr) {
+        var i, params, prmarr, tmparr;
+        params = {};
+        prmarr = prmstr.split('&');
+        i = 0;
+        while (i < prmarr.length) {
+            tmparr = prmarr[i].split('=');
+            params[tmparr[0]] = tmparr[1];
+            i++;
+        }
+        return params;
+    };
+    var getSearchParameters;
+    getSearchParameters = function() {
+        var prmstr;
+        prmstr = window.location.search.substr(1);
+        if (prmstr != null && prmstr != '') {
+            return transformToAssocArray(prmstr);
+        } else {
+            return {};
+        }
+    };
+    $(document).ready(function() {
+        $("#button").click(function() {
+            var searchval, url, value;
+            value = $("#kind")[0].selectedIndex;
+            if (value == 1) {
+                url = $('#name').val();
+                document.location.href = '/' + url;
+                return 0;
+            } else {
+                searchval = $('#name').val();
+                document.location.href = '/?search=' + searchval;
+                return 0;
+            }
+        });
+        $("#name").keypress(function(e) {
+            if (e.which == 13) {
+                $("#button").trigger("click");
+            }
+        });
+        $("#name").val(getSearchParameters().search);
+        if (getSearchParameters().search == void 0) {
+            $('#name').val('');
+        }
+        var searchval = $("#name").val();
+        searchval = searchval.replace(/%20/g, " ");
+        $("#name").val(searchval);
+    });
     </script>
   </body>
 </html>

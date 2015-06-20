@@ -158,7 +158,7 @@
           <div class="container">
             <div class="row">
               <ul role="tablist" class="nav nav-tabs">
-                 <li class="active"><a href="javascript:window.location=webloc();">Web</a></li>
+                <li class="active"><a href="javascript:window.location=webloc();">Web</a></li>
                 <li><a href="javascript:window.location=blogloc();">Blog</a></li>
               </ul>
             </div>
@@ -172,8 +172,7 @@
           <warning></warning>
           <div class="col-lg-8">
             <div class="res-block"></div>
-            <ul class="list-unstyled">
-              {{ resultlist }}
+            <ul class="list-unstyled">{{ resultlist }}
               <jsonresults></jsonresults>
             </ul>
           </div>
@@ -186,79 +185,74 @@
     <script src="libs/angular/angular.min.1.4.0.js"></script>
     <script src="libs/js/sidebar.js"></script>
     <script type="text/javascript">
-      var transformToAssocArray;
-      transformToAssocArray = function(prmstr) {
-          var i, params, prmarr, tmparr;
-          params = {};
-          prmarr = prmstr.split('&');
-          i = 0;
-          while (i < prmarr.length) {
-              tmparr = prmarr[i].split('=');
-              params[tmparr[0]] = tmparr[1];
-              i++;
-          }
-          return params;
-      };
-      var getSearchParameters;
-      getSearchParameters = function() {
-          var prmstr;
-          prmstr = window.location.search.substr(1);
-          if (prmstr != null && prmstr != '') {
-              return transformToAssocArray(prmstr);
-          } else {
-              return {};
-          }
-      };
-      
-         var blogloc;
-      blogloc = function() {
-       var url;
-      		 	
-      
-          url = '/blogsearch.html?search=' + $("#name").val();
-          return url;
-      };
-      
-       var webloc;
-      webloc = function() {
-       var url;
-          url = '/?search=' + $("#name").val();
-          return url;
-      };
-      
-      $(document).ready(function() {
-          var searchval;
-          $('ul.nav-tabs > li').removeClass('active');
-          if (window.location.pathname === '/blogsearch.html') {
-              $('ul.nav-tabs > li:nth-child(2)').addClass('active');
-          } else {
-              $('ul.nav-tabs > li:nth-child(1)').addClass('active');
-          }
-          $('#name').val(getSearchParameters().search);
-          if (getSearchParameters().search === void 0) {
-              $('#name').val('');
-          }
-          searchval = $('#name').val();
-          searchval = searchval.replace(/%20/g, ' ');
-          $('#name').val(searchval);
-          $('#button').click(function() {
-              var url;
-              url = void 0;
-              searchval = $('#name').val();
-              document.location.href = '?search=' + searchval;
-          });
-          $('#name').keypress(function(e) {
-              if (e.which === 13) {
-                  $('#button').trigger('click');
-              }
-          });
-      });
+    var transformToAssocArray;
+    transformToAssocArray = function(prmstr) {
+        var i, params, prmarr, tmparr;
+        params = {};
+        prmarr = prmstr.split('&');
+        i = 0;
+        while (i < prmarr.length) {
+            tmparr = prmarr[i].split('=');
+            params[tmparr[0]] = tmparr[1];
+            i++;
+        }
+        return params;
+    };
+    var getSearchParameters;
+    getSearchParameters = function() {
+        var prmstr;
+        prmstr = window.location.search.substr(1);
+        if (prmstr != null && prmstr != '') {
+            return transformToAssocArray(prmstr);
+        } else {
+            return {};
+        }
+    };
+    var blogloc;
+    blogloc = function() {
+        var url;
+        url = '/blogsearch.html?search=' + $("#name").val();
+        return url;
+    };
+    var webloc;
+    webloc = function() {
+        var url;
+        url = '/?search=' + $("#name").val();
+        return url;
+    };
+    $(document).ready(function() {
+        var searchval;
+        $('ul.nav-tabs > li').removeClass('active');
+        if (window.location.pathname === '/blogsearch.html') {
+            $('ul.nav-tabs > li:nth-child(2)').addClass('active');
+        } else {
+            $('ul.nav-tabs > li:nth-child(1)').addClass('active');
+        }
+        $('#name').val(getSearchParameters().search);
+        if (getSearchParameters().search === void 0) {
+            $('#name').val('');
+        }
+        searchval = $('#name').val();
+        searchval = searchval.replace(/%20/g, ' ');
+        $('#name').val(searchval);
+        $('#button').click(function() {
+            var url;
+            url = void 0;
+            searchval = $('#name').val();
+            document.location.href = '?search=' + searchval;
+        });
+        $('#name').keypress(function(e) {
+            if (e.which === 13) {
+                $('#button').trigger('click');
+            }
+        });
+    });
     </script>
     <script type="text/javascript">
-      var myApp = angular.module('myApp', []);
-      myApp.controller('AppController', function($scope) {
-          $scope.steps = {};
-      });
+    var myApp = angular.module('myApp', []);
+    myApp.controller('AppController', function($scope) {
+        $scope.steps = {};
+    });
     </script>
   </body>
 </html>
