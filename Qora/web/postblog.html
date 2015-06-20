@@ -98,7 +98,8 @@
           </div>
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2"><br>
-              <button type="preview" name="do" value="post" onclick="javascript:processpost(true)" class="btn btn-primary">Preview</button>
+              <button type="preview" name="do" value="post" onclick="javascript:processpost(true)" class="btn btn-primary">Generate</button>
+              <button type="preview" data-toggle="modal" data-target="#prevmodal" name="do" value="post" class="btn btn-primary">Preview</button>
               <button type="submit" name="do" value="post" onclick="javascript:processpost(false)" class="btn btn-primary pull-right">Submit</button>
             </div>
           </div>
@@ -109,10 +110,27 @@
         </div>
       </div>
     </div><br>{{ font }}
-    		<div class="main">
+
+    <div class="modal" id="prevmodal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Post preview</h4>
+      </div>
+      <div class="modal-body">
+        <div class="main">
               <ul class="timeline">{{ preview }}
             <li style="float: none;" class="clearfix"></li>
           </ul></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="libs/angular/angular.min.1.4.0.js"></script>
