@@ -93,46 +93,19 @@ public class NamesWebResource {
 		try {
 
 			String searchValue = request.getParameter("search");
-			String webDirectory = request.getParameter("webdirectory");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 
-			if (searchValue == null && webDirectory == null
-					) {
+			if (searchValue == null) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
-			} else if (searchValue != null || webDirectory != null
-					) {
+			} else  {
 				List<Pair<String, String>> searchResults;
 				content = readFile("web/index.mini.html",
 						StandardCharsets.UTF_8);
-				String searchResultTemplate = readFile("web/searchresult",
-						StandardCharsets.UTF_8);
-				if (webDirectory != null) {
-					searchResults = NameUtils.getWebsitesByValue(null);
-				}  else {
-					searchResults = NameUtils.getWebsitesByValue(searchValue);
-				}
+				searchResults = NameUtils.getWebsitesByValue(searchValue);
 
-				String results = "";
-				for (Pair<String, String> result : searchResults) {
-					String name = result.getA();
-					String websitecontent = result.getB();
-					Document htmlDoc = Jsoup.parse(websitecontent);
-					String title = selectTitleOpt(htmlDoc);
-					title = title == null ? "" : title;
-					String description = selectDescriptionOpt(htmlDoc);
-					description = description == null ? "" : description;
-					description =StringUtils.abbreviate(description, 150);
-
-					results += searchResultTemplate.replace("!Name!", name)
-							.replace("!Title!", title)
-							.replace("!Description!", description)
-							.replace("!Titlelink!", "/" + name)
-							.replace("!Namelink!", "/" + name)
-							.replace("!keyslink!", "/namepairs:" + name);
-
-				}
+				String results = generateHTMLSearchresults(searchResults);
 
 				content = content.replace("<resultlist></resultlist>", results);
 
@@ -143,6 +116,32 @@ public class NamesWebResource {
 			e.printStackTrace();
 			return error404(request);
 		}
+	}
+
+	public String generateHTMLSearchresults(
+			List<Pair<String, String>> searchResults) throws IOException {
+		String results = "";
+		String searchResultTemplate = readFile("web/searchresult",
+				StandardCharsets.UTF_8);
+		for (Pair<String, String> result : searchResults) {
+			String name = result.getA();
+			String websitecontent = result.getB();
+			Document htmlDoc = Jsoup.parse(websitecontent);
+			String title = selectTitleOpt(htmlDoc);
+			title = title == null ? "" : title;
+			String description = selectDescriptionOpt(htmlDoc);
+			description = description == null ? "" : description;
+			description = StringUtils.abbreviate(description, 150);
+
+			results += searchResultTemplate.replace("!Name!", name)
+					.replace("!Title!", title)
+					.replace("!Description!", description)
+					.replace("!Titlelink!", "/" + name)
+					.replace("!Namelink!", "/" + name)
+					.replace("!keyslink!", "/namepairs:" + name);
+
+		}
+		return results;
 	}
 
 	@Path("blogsearch.html")
@@ -169,22 +168,45 @@ public class NamesWebResource {
 		}
 
 	}
-	
+
 	@Path("blogdirectory.html")
 	@GET
 	public Response doBlogdirectory() {
 
 		try {
-			String content = readFile("web/index.mini.html", StandardCharsets.UTF_8);
-			
+			String content = readFile("web/index.mini.html",
+					StandardCharsets.UTF_8);
+
 			String searchResultTemplate = readFile("web/searchresult",
 					StandardCharsets.UTF_8);
-			
+
 			return handleBlogSearch(content, searchResultTemplate, null);
 		} catch (IOException e) {
 			return error404(request);
 		}
-		
+
+	}
+
+	@Path("webdirectory.html")
+	@GET
+	public Response doWebdirectory() {
+
+		try {
+			String content = readFile("web/index.mini.html",
+					StandardCharsets.UTF_8);
+			
+			
+			List<Pair<String, String>> websitesByValue = NameUtils.getWebsitesByValue(null);
+			String results = generateHTMLSearchresults(websitesByValue);
+			
+			content = content.replace("<resultlist></resultlist>", results);
+
+
+			return Response.ok(content, "text/html; charset=utf-8").build();
+
+		} catch (IOException e) {
+			return error404(request);
+		}
 
 	}
 
@@ -197,7 +219,7 @@ public class NamesWebResource {
 			String name = triplet.getA();
 			String title = triplet.getB();
 			String description = triplet.getC();
-			description =StringUtils.abbreviate(description, 150);
+			description = StringUtils.abbreviate(description, 150);
 
 			results += searchResultTemplate.replace("!Name!", name)
 					.replace("!Title!", title)
@@ -494,33 +516,6 @@ public class NamesWebResource {
 		}
 	}
 
-	@Path("webdirectory.html")
-	@GET
-	public Response websites() {
-
-		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/webdirectory.html");
-			pebbleHelper.getContextMap().put("linkstoreplace", "");
-
-
-			List<Pair<String, String>> namesContainingWebsites = NameUtils
-					.getNamesContainingWebsites();
-			String linksAsHtml = "";
-			for (Pair<String, String> websitepair : namesContainingWebsites) {
-				String name = websitepair.getA();
-				linksAsHtml += "<a href=/" + name.replaceAll(" ", "%20") + ">"
-						+ name + "</a><br>";
-			}
-
-			pebbleHelper.getContextMap().put("linkstoreplace", linksAsHtml);
-
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
-		} catch (PebbleException e) {
-			e.printStackTrace();
-			return error404(request);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Path("postblog.html")
 	@GET
@@ -590,8 +585,7 @@ public class NamesWebResource {
 					&& StringUtil.isNotBlank(contentparam)
 					&& StringUtil.isNotBlank(fee)) {
 				JSONObject json = new JSONObject();
-				
-				
+
 				title = URLDecoder.decode(title, "UTF-8");
 				contentparam = URLDecoder.decode(contentparam, "UTF-8");
 
@@ -609,19 +603,22 @@ public class NamesWebResource {
 				json.put("title", title);
 				json.put("body", contentparam);
 
-
-				if(StringUtils.isNotBlank(preview))
-				{
+				if (StringUtils.isNotBlank(preview)) {
 					pebbleHelper.getContextMap().put("oldtitle", title);
 					pebbleHelper.getContextMap().put("oldfee", fee);
-					pebbleHelper.getContextMap().put("oldcontent", contentparam.replaceAll("\\n", "\\\\n"));
+					pebbleHelper.getContextMap().put("oldcontent",
+							contentparam.replaceAll("\\n", "\\\\n"));
 					pebbleHelper.getContextMap().put("oldcreator", creator);
-					BlogEntry entry = new BlogEntry(title, contentparam, creator, new Date().getTime(), creator);
-					String htmlForBlogPosts = getHTMLForBlogPosts(Arrays.asList(entry));
+					BlogEntry entry = new BlogEntry(title, contentparam,
+							creator, new Date().getTime(), creator);
+					String htmlForBlogPosts = getHTMLForBlogPosts(Arrays
+							.asList(entry));
 
-					pebbleHelper.getContextMap().put("preview", htmlForBlogPosts);
+					pebbleHelper.getContextMap().put("preview",
+							htmlForBlogPosts);
 
-					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+					return Response.ok(pebbleHelper.evaluate(),
+							"text/html; charset=utf-8").build();
 				}
 
 				try {
@@ -638,7 +635,8 @@ public class NamesWebResource {
 
 					pebbleHelper.getContextMap().put("oldtitle", title);
 					pebbleHelper.getContextMap().put("oldfee", fee);
-					pebbleHelper.getContextMap().put("oldcontent",contentparam.replaceAll("\\n", "\\\\n"));
+					pebbleHelper.getContextMap().put("oldcontent",
+							contentparam.replaceAll("\\n", "\\\\n"));
 					pebbleHelper.getContextMap().put("oldcreator", creator);
 
 					pebbleHelper
@@ -652,11 +650,12 @@ public class NamesWebResource {
 
 			}
 
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 		} catch (PebbleException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return error404(request);
-		} 
+		}
 	}
 
 	public String transformURLIntoLinks(String text) {
@@ -794,14 +793,13 @@ public class NamesWebResource {
 			}
 			String nameOpt = blogentry.getNameOpt();
 			if (nameOpt != null) {
-				converted = converted.replaceAll("Name",
-						blogentry.getNameOpt());
+				converted = converted
+						.replaceAll("Name", blogentry.getNameOpt());
 			} else {
-				converted = converted.replaceAll("Name",
-						blogentry.getCreator());
+				converted = converted
+						.replaceAll("Name", blogentry.getCreator());
 			}
-			converted = converted.replaceAll("TITLE",
-					blogentry.getTitleOpt());
+			converted = converted.replaceAll("TITLE", blogentry.getTitleOpt());
 			converted = converted.replaceAll("CONTENT", body);
 			converted = converted.replaceAll("Time",
 					blogentry.getCreationTime());
