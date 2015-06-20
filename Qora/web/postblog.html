@@ -129,6 +129,7 @@
           var content, creator, fee, title, blogname;
           title = document.getElementById('title').value;
           content = document.getElementById('content').value;
+          content = encodeURIComponent(content);
           creator = document.getElementById('addr').value;
           fee = document.getElementById('fee').value;
           blogname = getParameter('blogname');

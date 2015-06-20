@@ -6,9 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -592,9 +594,10 @@ public class NamesWebResource {
 				{
 					pebbleHelper.getContextMap().put("oldtitle", title);
 					pebbleHelper.getContextMap().put("oldfee", fee);
-					pebbleHelper.getContextMap().put("oldcontent", contentparam);
+					contentparam = URLDecoder.decode(contentparam, "UTF-8");
+					pebbleHelper.getContextMap().put("oldcontent", contentparam.replaceAll("\\n", "\\\\n"));
 					pebbleHelper.getContextMap().put("oldcreator", creator);
-					BlogEntry entry = new BlogEntry(title, contentparam, creator, new Date().getTime(), creator);
+					BlogEntry entry = new BlogEntry(title, contentparam.replaceAll("\n", "<br/>"), creator, new Date().getTime(), creator);
 					String htmlForBlogPosts = getHTMLForBlogPosts(Arrays.asList(entry));
 
 					pebbleHelper.getContextMap().put("preview", htmlForBlogPosts);
@@ -616,7 +619,7 @@ public class NamesWebResource {
 
 					pebbleHelper.getContextMap().put("oldtitle", title);
 					pebbleHelper.getContextMap().put("oldfee", fee);
-					pebbleHelper.getContextMap().put("oldcontent", contentparam);
+					pebbleHelper.getContextMap().put("oldcontent",contentparam);
 					pebbleHelper.getContextMap().put("oldcreator", creator);
 
 					pebbleHelper
@@ -631,10 +634,10 @@ public class NamesWebResource {
 			}
 
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
-		} catch (PebbleException e) {
+		} catch (PebbleException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return error404(request);
-		}
+		} 
 	}
 
 	public String transformURLIntoLinks(String text) {
