@@ -114,7 +114,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" " class="close"  onclick="javascript:hide()" data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title">Post preview</h4>
       </div>
       <div class="modal-body">
@@ -124,7 +124,7 @@
           </ul></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" name="close"  onclick="javascript:hide()" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -141,6 +141,11 @@
           if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
               return decodeURIComponent(name[1]);
       }
+      
+      function hide(){
+     	 $('#prevmodal').hide();
+      }
+      
       processpost = function(preview) {
           var content, creator, fee, title, blogname;
           title = document.getElementById('title').value;
