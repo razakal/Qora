@@ -94,16 +94,15 @@ public class NamesWebResource {
 
 			String searchValue = request.getParameter("search");
 			String webDirectory = request.getParameter("webdirectory");
-			String blogDirectory = request.getParameter("blogdirectory");
 			String content = readFile("web/index.html", StandardCharsets.UTF_8);
 
 			if (searchValue == null && webDirectory == null
-					&& blogDirectory == null) {
+					) {
 
 				content = replaceWarning(content);
 				return Response.ok(content, "text/html; charset=utf-8").build();
 			} else if (searchValue != null || webDirectory != null
-					|| blogDirectory != null) {
+					) {
 				List<Pair<String, String>> searchResults;
 				content = readFile("web/index.mini.html",
 						StandardCharsets.UTF_8);
@@ -111,9 +110,7 @@ public class NamesWebResource {
 						StandardCharsets.UTF_8);
 				if (webDirectory != null) {
 					searchResults = NameUtils.getWebsitesByValue(null);
-				} else if (blogDirectory != null) {
-					return handleBlogSearch(content, searchResultTemplate, null);
-				} else {
+				}  else {
 					searchResults = NameUtils.getWebsitesByValue(searchValue);
 				}
 
@@ -170,6 +167,24 @@ public class NamesWebResource {
 			e.printStackTrace();
 			return error404(request);
 		}
+
+	}
+	
+	@Path("blogdirectory.html")
+	@GET
+	public Response doBlogdirectory() {
+
+		try {
+			String content = readFile("web/index.mini.html", StandardCharsets.UTF_8);
+			
+			String searchResultTemplate = readFile("web/searchresult",
+					StandardCharsets.UTF_8);
+			
+			return handleBlogSearch(content, searchResultTemplate, null);
+		} catch (IOException e) {
+			return error404(request);
+		}
+		
 
 	}
 
@@ -484,10 +499,9 @@ public class NamesWebResource {
 	public Response websites() {
 
 		try {
-			String content = readFile("web/webdirectory.html",
-					StandardCharsets.UTF_8);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/webdirectory.html");
+			pebbleHelper.getContextMap().put("linkstoreplace", "");
 
-			content = replaceWarning(content);
 
 			List<Pair<String, String>> namesContainingWebsites = NameUtils
 					.getNamesContainingWebsites();
@@ -498,10 +512,10 @@ public class NamesWebResource {
 						+ name + "</a><br>";
 			}
 
-			content = content.replace("!linkstoreplace!", linksAsHtml);
+			pebbleHelper.getContextMap().put("linkstoreplace", linksAsHtml);
 
-			return Response.ok(content, "text/html; charset=utf-8").build();
-		} catch (IOException e) {
+			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+		} catch (PebbleException e) {
 			e.printStackTrace();
 			return error404(request);
 		}
