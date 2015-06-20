@@ -234,7 +234,7 @@ public class NamesWebResource {
 	@Path("favicon.ico")
 	@GET
 	public Response favicon() {
-		File file = new File("web/img/favicon.ico");
+		File file = new File("web/favicon.ico");
 
 		if (file.exists()) {
 			return Response.ok(file, "image/vnd.microsoft.icon").build();
@@ -451,6 +451,18 @@ public class NamesWebResource {
 		}
 	}
 
+	@Path("libs/css/timeline.css")
+	@GET
+	public Response timelinecss() {
+		File file = new File("web/libs/css/timeline.css");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/css").build();
+		} else {
+			return error404(request);
+		}
+	}
+
 	@Path("libs/js/sidebar.js")
 	@GET
 	public Response sidebarjs() {
@@ -500,7 +512,7 @@ public class NamesWebResource {
 
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/postblog.html");
-			
+
 			pebbleHelper.getContextMap().put("errormessage", "");
 			pebbleHelper.getContextMap().put("font", "");
 			pebbleHelper.getContextMap().put("content", "");
@@ -552,7 +564,7 @@ public class NamesWebResource {
 						.put("errormessage",
 								"<font color=red>You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!</font><br>");
 
-			} 
+			}
 
 			pebbleHelper.getContextMap().put("option", accountStrings);
 
@@ -575,7 +587,7 @@ public class NamesWebResource {
 				json.put("title", title);
 				json.put("body", contentparam);
 
-				
+
 				if(StringUtils.isNotBlank(preview))
 				{
 					pebbleHelper.getContextMap().put("oldtitle", title);
@@ -584,12 +596,12 @@ public class NamesWebResource {
 					pebbleHelper.getContextMap().put("oldcreator", creator);
 					BlogEntry entry = new BlogEntry(title, contentparam, creator, new Date().getTime(), creator);
 					String htmlForBlogPosts = getHTMLForBlogPosts(Arrays.asList(entry));
-					
+
 					pebbleHelper.getContextMap().put("preview", htmlForBlogPosts);
-					
+
 					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 				}
-				
+
 				try {
 					String result = new BlogPostResource().addBlogEntry(
 							json.toJSONString(), blogname);
@@ -601,12 +613,12 @@ public class NamesWebResource {
 											+ result + "</div>");
 
 				} catch (WebApplicationException e) {
-					
+
 					pebbleHelper.getContextMap().put("oldtitle", title);
 					pebbleHelper.getContextMap().put("oldfee", fee);
 					pebbleHelper.getContextMap().put("oldcontent", contentparam);
 					pebbleHelper.getContextMap().put("oldcreator", creator);
-					
+
 					pebbleHelper
 							.getContextMap()
 							.put("font",
