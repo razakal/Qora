@@ -891,17 +891,16 @@ public class NamesWebResource {
 	}
 
 	public Response error404(HttpServletRequest request) {
-		String pathInfo = request.getPathInfo();
-		pathInfo = pathInfo.substring(1, pathInfo.length());
 
-		return Response
-				.status(404)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex().replace("<data></data>", pathInfo)
-						+ "<h1>name \""
-						+ pathInfo
-						+ "\" does not exist</h1><hr>� <a href=http://www.qora.org>Qora</a></body></html>")
-				.build();
+		try {
+			return Response
+					.status(404)
+					.header("Content-Type", "text/html; charset=utf-8")
+					.entity(PebbleHelper.getPebbleHelper("web/404.html").evaluate()).build();
+		} catch (PebbleException e) {
+			e.printStackTrace();
+			return Response.status(404).build();
+		}
 	}
 
 	private String getWarning(HttpServletRequest request) {
