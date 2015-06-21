@@ -118,6 +118,12 @@
       .navbar-header {
       width: 110px;
       }
+      .col-centered {
+      float: none;
+      margin: 0 auto;
+      padding: 30px;
+      box-shadow: 0px 1px 1px 1px #ddd;
+      }
     </style>
   </head>
   <body>
@@ -168,47 +174,61 @@
     </div>
     <div class="container">
       <div class="row">
-        <legend>Settings</legend>
-        <div class="form-group">
-          <label for="select" class="col-lg-2 control-label">Name</label>
-          <div class="col-lg-10">
-            <select id="select" class="form-control">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox"/> Enable Profile
-              </label>
+        <div class="main">
+          <div class="col-lg-8 col-centered">
+        <form class="form-horizontal">
+          <fieldset>
+            <legend>Settings</legend>
+            <div class="form-group">
+              <label for="select" class="col-lg-2 control-label">Name</label>
+              <div class="col-lg-10">
+                <select class="form-control" id="select">
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox"> Enable Profile
+                  </label>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="checkbox">
-            <label>
-              <input type="checkbox"/> Enable Blog
-            </label>
-          </div>
-          <div class="form-group">
-            <label for="blogtitle" class="col-lg-2 control-label">Blog Title</label>
-            <div class="col-lg-10">
-              <input id="blogtitle" type="text" placeholder="Blog Title" class="form-control"/>
+            <div class="form-group">
+              <label for="avatar" class="col-lg-2 control-label">Profile Picture</label>
+              <div class="col-lg-10">
+                <input type="url" class="form-control" id="avatar" placeholder="Profile Picture">
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label for="blogdesc" class="col-lg-2 control-label">Blog Description</label>
-            <div class="col-lg-10">
-              <input id="blogdesc" type="text" placeholder="Blog Description" class="form-control"/>
+            <div class="form-group">
+              <label for="blogtitle" class="col-lg-2 control-label">Blog Title</label>
+              <div class="col-lg-10">
+                <input type="text" class="form-control" id="blogtitle" placeholder="Blog Title">
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="col-lg-10 col-lg-offset-2">
-              <button type="reset" class="btn btn-default">Cancel</button>
-              <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="form-group">
+              <label for="blogdescription" class="col-lg-2 control-label">Blog Description</label>
+              <div class="col-lg-10">
+                <input type="text" class="form-control" id="blogdescription" placeholder="Blog Description">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox"> Enable Blog
+                  </label>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+            <div class="form-group">
+              <div class="col-lg-10 col-lg-offset-2">
+                <button type="reset" class="btn btn-default">Cancel</button>
+                <button type="submit" class="btn btn-primary pull-right">Submit</button>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      </div>
       </div>
     </div>
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
