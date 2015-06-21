@@ -282,8 +282,7 @@ public class NamesWebResource {
 	public Response handleAPICall() {
 
 		try {
-			String content = readFile("web/apianswer.html",
-					StandardCharsets.UTF_8);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/apianswer.html");
 			// EXAMPLE POST/GET/DELETE
 			String type = request.getParameter("type");
 			// EXAMPLE /names/key/MyName
@@ -295,20 +294,17 @@ public class NamesWebResource {
 					|| (!type.equalsIgnoreCase("get")
 							&& !type.equalsIgnoreCase("post") && !type
 								.equalsIgnoreCase("delete"))) {
-				content = content.replace("!title!", "An Api error occured");
-				content = content
-						.replace("!apicall!",
-								"You need a type parameter with value GET/POST or DELETE ");
-				content = content.replace("!errormessage!", "");
-				return Response.ok(content, "text/html; charset=utf-8").build();
+				
+				pebbleHelper.getContextMap().put("title", "An Api error occured");
+				pebbleHelper.getContextMap().put("apicall", "You need a type parameter with value GET/POST or DELETE ");
+				
+				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 			}
 
 			if (StringUtils.isBlank(url)) {
-				content = content.replace("!title!", "An Api error occured");
-				content = content.replace("!apicall!",
-						"You need to provide an apiurl parameter");
-				content = content.replace("!errormessage!", "");
-				return Response.ok(content, "text/html; charset=utf-8").build();
+				pebbleHelper.getContextMap().put("title", "An Api error occured");
+				pebbleHelper.getContextMap().put("apicall", "You need to provide an apiurl parameter");
+				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 			}
 			url = url.startsWith("/") ? url.substring(1) : url;
 
@@ -362,40 +358,36 @@ public class NamesWebResource {
 
 				if (result.contains("message") && result.contains("error")) {
 					if (StringUtils.isNotBlank(errormsg)) {
-						content = content.replace("<customtext></customtext>",
-								"<font color=red>" + errormsg + "</font>");
+						
+						pebbleHelper.getContextMap().put("customtext", "<font color=red>" + errormsg + "</font>");
 					}
-					content = content
-							.replace("!title!", "An Api error occured");
-					content = content.replace("!apicall!",
-							"apicall: "
-									+ type.toUpperCase()
-									+ " "
-									+ url
-									+ (json.size() > 0 ? json.toJSONString()
-											: ""));
-					content = content.replace("!errormessage!", "Result:"
+					pebbleHelper.getContextMap().put("title", "An Api error occured");
+					pebbleHelper.getContextMap().put("apicall", "apicall: "
+							+ type.toUpperCase()
+							+ " "
+							+ url
+							+ (json.size() > 0 ? json.toJSONString()
+									: ""));
+					pebbleHelper.getContextMap().put("errormessage", "Result:"
 							+ result);
-					return Response.ok(content, "text/html; charset=utf-8")
+					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8")
 							.build();
 				} else {
 					if (StringUtils.isNotBlank(okmsg)) {
-						content = content.replace("<customtext></customtext>",
-								"<font color=green>" + okmsg + "</font>");
+						pebbleHelper.getContextMap().put("customtext", "<font color=green>" + okmsg + "</font>");
 					}
-					content = content.replace("!title!",
-							"The API Call was successful");
-					content = content.replace(
-							"!apicall!",
+					pebbleHelper.getContextMap().put("title", "The API Call was successful");
+					pebbleHelper.getContextMap().put(
+							"apicall",
 							"Submitted Api call: "
 									+ type.toUpperCase()
 									+ " "
 									+ url
 									+ (json.size() > 0 ? json.toJSONString()
 											: ""));
-					content = content.replace("!errormessage!", "Result:"
+					pebbleHelper.getContextMap().put("errormessage", "Result:"
 							+ result);
-					return Response.ok(content, "text/html; charset=utf-8")
+					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8")
 							.build();
 				}
 
@@ -405,18 +397,18 @@ public class NamesWebResource {
 				if (e instanceof FileNotFoundException) {
 					additionalHelp = "The apicall with the following apiurl is not existing: ";
 				}
-				content = content.replace("!title!", "An Api error occured");
-				content = content.replace(
-						"!apicall!",
+				pebbleHelper.getContextMap().put("title", "An Api error occured");
+				pebbleHelper.getContextMap().put(
+						"apicall",
 						"You tried to submit the following apicall: "
 								+ type.toUpperCase() + " " + url
 								+ (json.size() > 0 ? json.toJSONString() : ""));
-				content = content.replace("!errormessage!",
+				pebbleHelper.getContextMap().put("errormessage",
 						additionalHelp + e.getMessage());
-				return Response.ok(content, "text/html; charset=utf-8").build();
+				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 			}
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 
