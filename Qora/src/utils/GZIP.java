@@ -1,5 +1,7 @@
 package utils;
 
+import gui.models.KeyValueTableModel;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +33,10 @@ public class GZIP {
 			}
 		}
 		return outStr;
+	}
+	
+	public static String getZippedCharacterCount(KeyValueTableModel namesModel) {
+		return "Compressed Character Count:" + GZIP.compress(namesModel.getCurrentValueAsJsonStringOpt()).length() + "/4000";
 	}
       
 	public static String webDecompress(String value) 

@@ -141,16 +141,14 @@ public class RegisterNameFrame extends JFrame
             
  			@Override
  			public void changedUpdate(DocumentEvent arg0) {
- 				// TODO Auto-generated method stub
+ 				refreshReceiverDetails();
  			}
  			@Override
  			public void insertUpdate(DocumentEvent arg0) {
- 				// TODO Auto-generated method stub
  				refreshReceiverDetails();
  			}
  			@Override
  			public void removeUpdate(DocumentEvent arg0) {
- 				// TODO Auto-generated method stub
  				refreshReceiverDetails();
  			}
          });
@@ -385,6 +383,7 @@ public class RegisterNameFrame extends JFrame
 						
 						namesModel.setValueAt(newKey, selectedRow, 0);
 						namesModel.fireTableCellUpdated(selectedRow, 0);
+						countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
 						
 					}
 				});
@@ -404,19 +403,15 @@ public class RegisterNameFrame extends JFrame
             
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
 				update(namesModel, namesTable);
 			}
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				update(namesModel, namesTable);
-				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
 			}
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
 				update(namesModel, namesTable);
-				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
 			}
 			public void update(final KeyValueTableModel namesModel,
 					final JTable namesTable) {
@@ -428,6 +423,7 @@ public class RegisterNameFrame extends JFrame
 						String newValue = txtareaValue.getText();
 						namesModel.setValueAt(newValue, selectedRow, 1);
 						namesModel.fireTableCellUpdated(selectedRow, 1);
+						countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
 					}
 				});
 			}

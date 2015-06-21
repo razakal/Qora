@@ -235,13 +235,11 @@ public class UpdateNameFrame extends JFrame
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				update(namesModel, namesTable);
-				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
 			}
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				// TODO Auto-generated method stub
 				update(namesModel, namesTable);
-				countLabel.setText("Character count: "+String.valueOf(txtareaValue.getText().length())+"/4000");
 			}
 			public void update(final KeyValueTableModel namesModel,
 					final JTable namesTable) {
@@ -253,29 +251,12 @@ public class UpdateNameFrame extends JFrame
 						String newValue = txtareaValue.getText();
 						namesModel.setValueAt(newValue, selectedRow, 1);
 						namesModel.fireTableCellUpdated(selectedRow, 1);
+						countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
 					}
 				});
 			}
         });
 		
-			//PREVENT UPPERCASE FOR KEYS
-//		((AbstractDocument)	txtKey.getDocument()).setDocumentFilter(new DocumentFilter()
-//		{
-//			@Override
-//            public void insertString(FilterBypass fb, int offset,
-//                    String string, AttributeSet attr)
-//                    throws BadLocationException {
-//				super.insertString(fb, offset, string.toLowerCase(), attr);
-//            }
-//
-//
-//            @Override
-//            public void replace(FilterBypass fb, int offset, int length,
-//                    String text, AttributeSet attrs)
-//                    throws BadLocationException {
-//            	super.insertString(fb, offset, text.toLowerCase(), attrs);
-//            }
-//		});
 		
 		txtKey.getDocument().addDocumentListener(new DocumentListener() {
 			  public void changedUpdate(DocumentEvent e) {
@@ -298,6 +279,7 @@ public class UpdateNameFrame extends JFrame
 						
 						namesModel.setValueAt(newKey, selectedRow, 0);
 						namesModel.fireTableCellUpdated(selectedRow, 0);
+						countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
 						
 					}
 				});
@@ -644,4 +626,7 @@ public class UpdateNameFrame extends JFrame
 		//ENABLE
 		this.updateButton.setEnabled(true);
 	}
+
+
+	
 }
