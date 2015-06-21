@@ -184,9 +184,9 @@
           <fieldset>
             <legend>Settings</legend>
             <div class="form-group">
-              <label for="select" class="col-lg-2 control-label">Name</label>
+              <label for="select-name" class="col-lg-2 control-label">Name</label>
               <div class="col-lg-10">
-                <select class="form-control" id="select">
+                <select class="form-control" id="select-name">
                   <option>1</option>
                   <option>2</option>
                   <option>3</option>
@@ -195,7 +195,7 @@
                 </select>
                 <div class="checkbox">
                   <label>
-                    <input type="checkbox"> Enable Profile
+                    <input type="checkbox" id="profile-status"> Enable Profile
                   </label>
                 </div>
               </div>
@@ -203,16 +203,16 @@
             <div class="form-group">
               <label for="avatar" class="col-lg-2 control-label">Profile Picture</label>
               <div class="col-lg-10">
-                <input type="url" class="form-control" id="avatar" placeholder="Profile Picture">
+                <input type="url" class="form-control" id="avatar" placeholder="Profile Picture" disabled="">
               </div>
             </div>
             <div class="form-group">
               <label for="blogtitle" class="col-lg-2 control-label">Blog Title</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="blogtitle" placeholder="Blog Title">
+                <input type="text" class="form-control" id="blogtitle" placeholder="Blog Title" disabled="">
                 <div class="checkbox">
                   <label>
-                    <input type="checkbox"> Enable Blog
+                    <input type="checkbox" id="blog-status"> Enable Blog
                   </label>
                 </div>
               </div>
@@ -220,13 +220,13 @@
             <div class="form-group">
               <label for="blogdescription" class="col-lg-2 control-label">Blog Description</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="blogdescription" placeholder="Blog Description">
+                <input type="text" class="form-control" id="blogdescription" placeholder="Blog Description" disabled="">
               </div>
             </div>
             <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
                 <button type="reset" class="btn btn-default">Cancel</button>
-                <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                <button id="settings-submit" type="submit" class="btn btn-primary pull-right">Submit</button>
               </div>
             </div>
           </fieldset>
@@ -298,6 +298,32 @@
                 $('#button').trigger('click');
             }
         });
+        $('#select-name').val();
+        $('#profile-status').prop('checked');
+        $('#avatar').val();
+        $('#blogtitle').val();
+        $('#blog-status').prop('checked');
+        $('#blogdescription').val();
+
+        $('#profile-status').change(function() {
+            if ($('#profile-status').prop('checked') === false) {
+                $('#avatar').attr('disabled', true);
+            } else {
+                $('#avatar').removeAttr('disabled');
+            };
+        });
+        $('#blog-status').change(function() {
+            if ($('#blog-status').prop('checked') === false) {
+                $('#blogtitle').attr('disabled', true);
+                $('#blogdescription').attr('disabled', true);
+            } else {
+                $('#blogtitle').removeAttr('disabled');
+                $('#blogdescription').removeAttr('disabled');
+            };
+        });
+        $('#settings-submit').click(function() {
+
+        })
     });
     </script>
     <script type="text/javascript">
