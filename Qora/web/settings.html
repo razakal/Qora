@@ -168,8 +168,8 @@
           <div class="container">
             <div class="row">
               <ul role="tablist" class="nav nav-tabs">
-                <li class="active"><a href="javascript:window.location=webloc();">Web</a></li>
-                <li><a href="javascript:window.location=blogloc();">Blog</a></li>
+                <li class="active"><a href="#">Web</a></li>
+                <li><a href="#">Blog</a></li>
               </ul>
             </div>
           </div>
@@ -263,18 +263,6 @@
             return {};
         }
     };
-    var blogloc;
-    blogloc = function() {
-        var url;
-        url = '/blogsearch.html?search=' + $("#name").val();
-        return url;
-    };
-    var webloc;
-    webloc = function() {
-        var url;
-        url = '/?search=' + $("#name").val();
-        return url;
-    };
     $(document).ready(function() {
         var searchval;
         $('ul.nav-tabs > li').removeClass('active');
@@ -287,6 +275,15 @@
         if (getSearchParameters().search === void 0) {
             $('#name').val('');
         }
+        $('#name').bind('oninput', function() {
+            $('#name').val(this);
+        });
+        $('#name').change(function() {
+            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/?search=' + $('#name').val());
+            $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/blogsearch.html?search=' + $('#name').val());
+        });
+        $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/?search=' + $('#name').val());
+        $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/blogsearch.html?search=' + $('#name').val());
         searchval = $('#name').val();
         searchval = searchval.replace(/%20/g, ' ');
         $('#name').val(searchval);
