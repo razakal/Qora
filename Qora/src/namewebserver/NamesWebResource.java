@@ -33,7 +33,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONArray;
@@ -42,7 +41,6 @@ import org.json.simple.JSONValue;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import qora.account.Account;
@@ -242,10 +240,6 @@ public class NamesWebResource {
 		return result;
 	}
 
-	private String replaceWarning(String content) {
-		content = content.replace("<warning></warning>", getWarning(request));
-		return content;
-	}
 
 	@Path("index.html")
 	@GET
@@ -592,11 +586,10 @@ public class NamesWebResource {
 					pebbleHelper.getContextMap().put("oldcreator", creator);
 					BlogEntry entry = new BlogEntry(title, contentparam,
 							creator, new Date().getTime(), creator);
-					String htmlForBlogPosts = getHTMLForBlogPosts(Arrays
-							.asList(entry));
 
-					pebbleHelper.getContextMap().put("preview",
-							htmlForBlogPosts);
+					pebbleHelper.getContextMap().put("blogposts",
+							Arrays
+							.asList(entry));
 
 					return Response.ok(pebbleHelper.evaluate(),
 							"text/html; charset=utf-8").build();
@@ -639,34 +632,7 @@ public class NamesWebResource {
 		}
 	}
 
-	public String transformURLIntoLinks(String text) {
-		String urlValidationRegex = "(https?|ftp)://(www\\d?|[a-zA-Z0-9]+)?.[a-zA-Z0-9-]+(\\:|.)([a-zA-Z0-9.]+|(\\d+)?)([/?:].*)?";
-		Pattern p = Pattern.compile(urlValidationRegex);
-		Matcher m = p.matcher(text);
-		StringBuffer sb = new StringBuffer();
-		while (m.find()) {
-			String found = m.group(0);
-			m.appendReplacement(sb, "<a href='" + found + "'>" + found + "</a>");
-		}
-		m.appendTail(sb);
-		return sb.toString();
-	}
 
-	private ArrayList<String> getAllLinks(String text) {
-		ArrayList<String> links = new ArrayList<>();
-
-		String regex = "\\(?\\b(http(s?)://|www[.])[-A-Za-z0-9+&amp;@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&amp;@#/%=~_()|]";
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(text);
-		while (m.find()) {
-			String urlStr = m.group();
-			if (urlStr.startsWith("(") && urlStr.endsWith(")")) {
-				urlStr = urlStr.substring(1, urlStr.length() - 1);
-			}
-			links.add(urlStr);
-		}
-		return links;
-	}
 
 	@Path("blog.html")
 	@GET
@@ -675,33 +641,24 @@ public class NamesWebResource {
 		try {
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
-			String content = readFile("web/blog.html", StandardCharsets.UTF_8);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/blog.html");
+			pebbleHelper.getContextMap().put("postblogurl", "postblog.html");
 
-			content = replaceWarning(content);
 
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			if (blogname != null) {
 				if (!nameMap.contains(blogname)) {
-					content = readFile("web/blogdisabled.html",
-							StandardCharsets.UTF_8);
-					return Response.ok(content, "text/html; charset=utf-8")
+					return Response.ok(PebbleHelper.getPebbleHelper("web/blogdisabled.html").evaluate(), "text/html; charset=utf-8")
 							.build();
 				}
 
 				Name name = nameMap.get(blogname);
-				String value = GZIP.webDecompress(name.getValue());
+				JSONObject jsonObject = NameUtils.getJsonForNameOpt(name);
 
-				JSONObject jsonObject = null;
-				try {
-					jsonObject = (JSONObject) JSONValue.parse(value);
-				} catch (Exception e) {
-					// no valid json
-				}
 				if (jsonObject == null
 						|| !jsonObject
 								.containsKey(BlogPostResource.BLOGENABLE_KEY)) {
-					content = readFile("web/blogdisabled.html",
-							StandardCharsets.UTF_8);
+					pebbleHelper = PebbleHelper.getPebbleHelper("web/blogdisabled.html");
 					if (Controller.getInstance().getAccountByAddress(
 							name.getOwner().getAddress()) != null) {
 						String apiurl = "/names/key/" + name.getName();
@@ -718,113 +675,64 @@ public class NamesWebResource {
 								StandardCharsets.UTF_8);
 						template = template.replace("!TEXT!", "here");
 						template = template.replace("!LINK!", resultcall);
-
-						content = content.replace("<enableblog></enableblog>",
-								"You can activate the blog by clicking "
-										+ template);
+						pebbleHelper.getContextMap().put("enableblog", "You can activate the blog by clicking "
+								+ template);
 					}
-					return Response.ok(content, "text/html; charset=utf-8")
+					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8")
 							.build();
 				}
 
-				content = content.replace("postblog.html",
+				pebbleHelper.getContextMap().put("postblogurl", 
 						"postblog.html?blogname=" + blogname);
 			}
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
 
-			String results = getHTMLForBlogPosts(blogPosts);
 
-			content = content.replace("!blogposts!", results);
+			pebbleHelper.getContextMap().put("blogposts", 
+					blogPosts);
 
-			return Response.ok(content, "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request);
 		}
 	}
 
-	public String getHTMLForBlogPosts(List<BlogEntry> blogPosts) {
-		String results = "<br>";
+//	public String getHTMLForBlogPosts(List<BlogEntry> blogPosts) {
+//		String results = "<br>";
+//
+//		String entryTemplate = "<li><div class=\"timeline-badge primary\"><a>"
+//				+ "<i class=\"glyphicon glyphicon-record\" rel=\"tooltip\" title=\"POST TIME\" id=\"\">"
+//				+ "</i></a></div>"
+//				+ "<div class=\"timeline-panel\"><div class=\"timeline-heading\">"
+//				+ "<div class=\"media\"><div class=\"media-left media-middle\">"
+//				+ "<a href=\"#\"><img class=\"media-object\" src=\"img/qora-user.png\" alt=\"\"></a></div>"
+//				+ "<div class=\"media-body\">"
+//				+ "<h6 class=\"media-heading\"><b>Name</b></h6>Time</div></div>"
+//				+ "</div>"
+//				+ "<div class=\"timeline-body\"><p class=\"post-header\"><b>TITLE</b></p><p class=\"post-content\">CONTENT</p></div></div></li>";
+//
+//		for (BlogEntry blogentry : blogPosts) {
+//
+//			String converted = entryTemplate;
+//			String body = blogentry.getDescription();
+//			String nameOpt = blogentry.getNameOpt();
+//				converted = converted
+//						.replaceAll("Name", blogentry.getNameOrCreator());
+//			converted = converted.replaceAll("TITLE", blogentry.getTitleOpt());
+//			converted = converted.replaceAll("CONTENT", body);
+//			converted = converted.replaceAll("Time",
+//					blogentry.getCreationTime());
+//
+//			results += converted;
+//		}
+//		return results;
+//	}
 
-		String entryTemplate = "<li><div class=\"timeline-badge primary\"><a>"
-				+ "<i class=\"glyphicon glyphicon-record\" rel=\"tooltip\" title=\"POST TIME\" id=\"\">"
-				+ "</i></a></div>"
-				+ "<div class=\"timeline-panel\"><div class=\"timeline-heading\">"
-				+ "<div class=\"media\"><div class=\"media-left media-middle\">"
-				+ "<a href=\"#\"><img class=\"media-object\" src=\"img/qora-user.png\" alt=\"\"></a></div>"
-				+ "<div class=\"media-body\">"
-				+ "<h6 class=\"media-heading\"><b>Name</b></h6>Time</div></div>"
-				+ "</div>"
-				+ "<div class=\"timeline-body\"><p class=\"post-header\"><b>TITLE</b></p><p class=\"post-content\">CONTENT</p></div></div></li>";
 
-		for (BlogEntry blogentry : blogPosts) {
 
-			String converted = entryTemplate;
-			String body = blogentry.getDescription();
 
-			body = Jsoup.clean(body, Whitelist.basic());
-			List<Pair<String, String>> linkList = createHtmlLinks(getAllLinks(body));
-
-			for (Pair<String, String> link : linkList) {
-				String originalLink = link.getA();
-				String newLink = link.getB();
-
-				body = body.replace(originalLink, newLink);
-			}
-			String nameOpt = blogentry.getNameOpt();
-			if (nameOpt != null) {
-				converted = converted
-						.replaceAll("Name", blogentry.getNameOpt());
-			} else {
-				converted = converted
-						.replaceAll("Name", blogentry.getCreator());
-			}
-			converted = converted.replaceAll("TITLE", blogentry.getTitleOpt());
-			converted = converted.replaceAll("CONTENT", body);
-			converted = converted.replaceAll("Time",
-					blogentry.getCreationTime());
-
-			results += converted;
-		}
-		return results;
-	}
-
-	private List<Pair<String, String>> createHtmlLinks(List<String> links) {
-		List<Pair<String, String>> result = new ArrayList<>();
-		for (String link : links) {
-			String refurbishedlink = StringEscapeUtils.unescapeHtml4(link);
-			String youtubeWatchRegex = Pattern
-					.quote("https://www.youtube.com/watch?v=")
-					+ "([a-zA-Z0-9_-]+).*";
-			String youTubeSlashRegex = Pattern.quote("https://youtu.be/")
-					+ "([a-zA-Z0-9_-]+).*";
-			if (refurbishedlink.toLowerCase().matches(youtubeWatchRegex)) {
-				String vid = refurbishedlink
-						.replaceAll(youtubeWatchRegex, "$1");
-
-				result.add(new Pair<String, String>(link,
-						getYoutubeEmbedHtml(vid)));
-			} else if (refurbishedlink.toLowerCase().matches(youTubeSlashRegex)) {
-				String vid = refurbishedlink
-						.replaceAll(youTubeSlashRegex, "$1");
-
-				result.add(new Pair<String, String>(link,
-						getYoutubeEmbedHtml(vid)));
-			} else {
-				refurbishedlink = transformURLIntoLinks(refurbishedlink);
-				result.add(new Pair<String, String>(link, refurbishedlink));
-			}
-
-		}
-
-		return result;
-	}
-
-	private String getYoutubeEmbedHtml(String vid) {
-		return "<iframe width=\"320\" height=\"215\" src=\"https://www.youtube.com/embed/"
-				+ vid + "\" frameborder=\"0\" allowfullscreen></iframe>";
-	}
 
 	@Path("libs/jquery/jquery.{version}.js")
 	@GET
