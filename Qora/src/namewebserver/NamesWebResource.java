@@ -988,7 +988,6 @@ public class NamesWebResource {
 			return error404(request);
 		}
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return error404(request);
 		}
