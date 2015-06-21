@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Qora Web Server">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>Qora Web</title>
+    <link href="libs/bootstrap/3.3.4/css/theme.css" rel="stylesheet">
+    <link href="libs/css/style.css" rel="stylesheet">
+    <link href="libs/css/sidebar.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+      padding-top: 50px;
+      }
+      .sub-header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      }
+      .navbar-fixed-top {
+      border: 0;
+      z-index: 9999;
+      }
+      .sidebar {
+      display: none;
+      }
+      @media (min-width: 768px) {
+      .sidebar {
+      position: fixed;
+      top: 51px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee;
+      }
+      }
+      .nav-sidebar {
+      margin-right: -21px;
+      margin-bottom: 20px;
+      margin-left: -20px;
+      }
+      .nav-sidebar > li > a {
+      padding-right: 20px;
+      padding-left: 20px;
+      }
+      .nav-sidebar > .active > a,
+      .nav-sidebar > .active > a:hover,
+      .nav-sidebar > .active > a:focus {
+      color: #fff;
+      background-color: #428bca;
+      }
+      .main {
+      padding-top: 20px;
+      }
+      .main-tabs {
+      width: 100%;
+      padding-top: 15px;
+      padding-left: 0px;
+      padding-right: 0px;
+      background-color: lightgray;
+      }
+      img.logo-header {
+      background-color: transparent;
+      height: 100%;
+      }
+      .col-lg-8 {
+      padding-left: 0px;
+      }
+      @media (min-width: 768px) {
+      .main {
+      padding-right: 40px;
+      }
+      }
+      .main .page-header {
+      margin-top: 0;
+      }
+      .placeholders {
+      margin-bottom: 30px;
+      text-align: center;
+      }
+      .placeholders h4 {
+      margin-bottom: 0;
+      }
+      .placeholder {
+      margin-bottom: 20px;
+      }
+      .placeholder img {
+      display: inline-block;
+      border-radius: 50%;
+      }
+      .r-t {
+      margin: 0px;
+      }
+      .r-l {
+      margin: 0px;
+      }
+      span.label.label-default {
+      background-color: #fff;
+      color: lightgray;
+      font-size: 90%;
+      line-height: 1;
+      }
+      span.label.label-default a {
+      color: #ddd;
+      text-decoration: none;
+      }
+      a.r-l:hover,
+      a.r-l:focus {
+      color: #6467FF;
+      text-decoration: none;
+      }
+      .navbar-header {
+      width: 110px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#" class="navbar-brand"><img src="img/logo_header.png" alt="" class="logo-header"></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/webdirectory.html">Webdirectory</a></li>
+            <li><a href="/blogdirectory.html">Blogdirectory</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li class="dropdown-header">Profile name 01</li>
+                <li><a href="#">PROFILE</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Profile name 02</li>
+                <li><a href="#">PROFILE</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Help</a></li>
+          </ul>
+          <div class="navbar-form navbar-left">
+            <div class="input-group">
+              <label for="name" class="sr-only">Search</label>
+              <input id="name" size="55" type="text" value="" class="form-control"><span class="input-group-btn">
+                <button id="button" type="button" value="!searchval!" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="main-tabs">
+          <div class="container">
+            <div class="row">
+              <ul role="tablist" class="nav nav-tabs">
+                <li class="active"><a href="javascript:window.location=webloc();">Web</a></li>
+                <li><a href="javascript:window.location=blogloc();">Blog</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <legend>Settings</legend>
+        <div class="form-group">
+          <label for="select" class="col-lg-2 control-label">Name</label>
+          <div class="col-lg-10">
+            <select id="select" class="form-control">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"/> Enable Profile
+              </label>
+            </div>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox"/> Enable Blog
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="blogtitle" class="col-lg-2 control-label">Blog Title</label>
+            <div class="col-lg-10">
+              <input id="blogtitle" type="text" placeholder="Blog Title" class="form-control"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="blogdesc" class="col-lg-2 control-label">Blog Description</label>
+            <div class="col-lg-10">
+              <input id="blogdesc" type="text" placeholder="Blog Description" class="form-control"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
+              <button type="reset" class="btn btn-default">Cancel</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="libs/jquery/jquery.2.1.4.min.js"></script>
+    <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="libs/angular/angular.min.1.4.0.js"></script>
+    <script src="libs/js/sidebar.js"></script>
+    <script type="text/javascript">
+    var transformToAssocArray;
+    transformToAssocArray = function(prmstr) {
+        var i, params, prmarr, tmparr;
+        params = {};
+        prmarr = prmstr.split('&');
+        i = 0;
+        while (i < prmarr.length) {
+            tmparr = prmarr[i].split('=');
+            params[tmparr[0]] = tmparr[1];
+            i++;
+        }
+        return params;
+    };
+    var getSearchParameters;
+    getSearchParameters = function() {
+        var prmstr;
+        prmstr = window.location.search.substr(1);
+        if (prmstr != null && prmstr != '') {
+            return transformToAssocArray(prmstr);
+        } else {
+            return {};
+        }
+    };
+    var blogloc;
+    blogloc = function() {
+        var url;
+        url = '/blogsearch.html?search=' + $("#name").val();
+        return url;
+    };
+    var webloc;
+    webloc = function() {
+        var url;
+        url = '/?search=' + $("#name").val();
+        return url;
+    };
+    $(document).ready(function() {
+        var searchval;
+        $('ul.nav-tabs > li').removeClass('active');
+        if (window.location.pathname === '/blogsearch.html') {
+            $('ul.nav-tabs > li:nth-child(2)').addClass('active');
+        } else {
+            $('ul.nav-tabs > li:nth-child(1)').addClass('active');
+        }
+        $('#name').val(getSearchParameters().search);
+        if (getSearchParameters().search === void 0) {
+            $('#name').val('');
+        }
+        searchval = $('#name').val();
+        searchval = searchval.replace(/%20/g, ' ');
+        $('#name').val(searchval);
+        $('#button').click(function() {
+            var url;
+            url = void 0;
+            searchval = $('#name').val();
+            document.location.href = '?search=' + searchval;
+        });
+        $('#name').keypress(function(e) {
+            if (e.which === 13) {
+                $('#button').trigger('click');
+            }
+        });
+    });
+    </script>
+    <script type="text/javascript">
+    var myApp = angular.module('myApp', []);
+    myApp.controller('AppController', function($scope) {
+        $scope.steps = {};
+    });
+    </script>
+  </body>
+</html>
