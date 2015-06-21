@@ -920,33 +920,6 @@ public class NamesWebResource {
 		}
 	}
 
-	private String getWarning(HttpServletRequest request) {
-		if (Controller.getInstance().isWalletUnlocked()) {
-			String ipAddress = request.getHeader("X-FORWARDED-FOR");
-			if (ipAddress == null) {
-				ipAddress = request.getRemoteAddr();
-			}
-
-			if (ipAddress.equals("127.0.0.1")) {
-				return "<style type=\"text/css\">" //
-						+ "#message_box {" //
-						+ "position:absolute;" //
-						+ "left:0; right:0; top:0;" //
-						+ "z-index: 10;" //
-						+ "background:#ffc;" //
-						+ "padding:5px;" //
-						+ "border:1px solid #CCCCCC;" //
-						+ "text-align:center;" //
-						+ "font-weight:bold;" //
-						+ "width:auto;" //
-						+ "}" //
-						+ "</STYLE>" //
-						+ "<div id=message_box>Wallet is unlocked!</div>" //
-						+ "<div style='margin-top:50px'>";
-			}
-		}
-		return "";
-	}
 
 	static String readFile(String path, Charset encoding) throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
@@ -1339,47 +1312,32 @@ public class NamesWebResource {
 			return error404(request);
 		}
 
-		String Value = name.getValue().toString();
+		String value = name.getValue();
 
 		// REDIRECT
-		if (Value.startsWith("http://") || Value.startsWith("https://")) {
-			return Response.status(302).header("Location", Value).build();
+		if (value.toLowerCase().startsWith("http://") || value.toLowerCase().startsWith("https://")) {
+			return Response.status(302).header("Location", value).build();
 		}
 
-		// WEBPAGE GZIP DECOMPRESSOR
-		Value = GZIP.webDecompress(Value);
+		
+		JSONObject jsonObject = NameUtils.getJsonForNameOpt(name);
+		
 
 		String website = null;
-		try {
-			JSONObject jsonObject = (JSONObject) JSONValue.parse(Value);
-			if (jsonObject != null
-					&& jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname())) {
-				website = (String) jsonObject
-						.get(Qorakeys.WEBSITE.getKeyname());
-			}
-
-		} catch (Exception e) {
-			// no json probably
+		if(jsonObject != null && jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname()))
+		{
+			website = (String) jsonObject
+					.get(Qorakeys.WEBSITE.getKeyname());
 		}
+		
 
 		if (website == null) {
 			try {
-				String content = readFile("web/websitenotfound.html",
-						StandardCharsets.UTF_8);
-				content = content
-						.replaceAll(
-								"!websitenotfoundcontent!",
-								"<br><font color=\"red\">If this is your name, please do a name update for the name <a href=/name:"
-										+ nameName.replaceAll(" ", "%20")
-										+ ">"
-										+ nameName
-										+ "</a> and add the key \"website\" with webcontent as value to make this work.</font><br>You can see the current value <a href=/name:"
-										+ nameName.replaceAll(" ", "%20")
-										+ ">here</a>");
+				PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/websitenotfound.html");
+				pebbleHelper.getContextMap().put("name", nameName.replaceAll(" ", "%20"));
 
-				Value = injectValues(Value);
 
-				return Response.ok(content, "text/html; charset=utf-8").build();
+				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 			} catch (Throwable e) {
 				return error404(request);
 			}
@@ -1391,7 +1349,7 @@ public class NamesWebResource {
 		// SHOW WEB-PAGE
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(getWarning(request) + website).build();
+				.entity(website).build();
 	}
 
 	public static String injectValues(String value) {
