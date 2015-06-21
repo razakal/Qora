@@ -118,6 +118,43 @@
       .navbar-header {
       width: 110px;
       }
+      .error-template {
+      padding: 40px 15px;
+      text-align: center;
+      }
+      .error-actions {
+      margin-top: 15px;
+      margin-bottom: 15px;
+      width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+      }
+      .error-actions .btn {
+      margin-right: 10px;
+      }
+      .btn-link {
+      color: #6467ff;
+      font-weight: normal;
+      border-radius: 0;
+      }
+      .btn-link:hover, .btn-link:focus {
+      color: #6467ff;
+      }
+      .btn-link:hover, .btn-link:focus {
+        color: #ffffff;
+        background-color: #6467FF;
+        border-radius: 2px;
+        -webkit-transition: background-color 500ms linear;
+        -moz-transition: background-color 500ms linear;
+        -o-transition: background-color 500ms linear;
+        -ms-transition: background-color 500ms linear;
+        transition: background-color 500ms linear;
+        -webkit-transition: color 250ms linear;
+        -moz-transition: color 250ms linear;
+        -o-transition: color 250ms linear;
+        -ms-transition: color 250ms linear;
+        transition: color 250ms linear;
+      }
     </style>
   </head>
   <body>
@@ -142,44 +179,26 @@
             </li>
             <li><a href="#">Help</a></li>
           </ul>
-          <div class="navbar-form navbar-left">
-            <div class="input-group">
-              <label for="name" class="sr-only">Search</label>
-              <input id="name" size="55" type="text" value="" class="form-control"><span class="input-group-btn">
-                <button id="button" type="button" value="!searchval!" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
-            </div>
-          </div>
         </div>
       </div>
     </nav>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="main-tabs">
-          <div class="container">
-            <div class="row">
-              <ul role="tablist" class="nav nav-tabs">
-                <li class="active"><a href="javascript:window.location=webloc();">Web</a></li>
-                <li><a href="javascript:window.location=blogloc();">Blog</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="container">
       <div class="row">
         <div class="col-md-12">
             <div class="error-template">
                 <h1>
-                    Oops!</h1>
+                    </h1>
                 <h2>
-                    404 Not Found</h2>
+                    Sorry, that page doesn’t exist!</h2>
                 <div class="error-details">
-                    Sorry, an error has occured, Requested page not found!
-                </div>
+                    <h4>You can search Qora web using the search box below</h4>
+                </div><br>
                 <div class="error-actions">
-                    <a href="http://www.jquery2dotnet.com" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span>
-                        Take Me Home </a>
+                  <div class="input-group">
+                    <label for="name" class="sr-only">Search</label>
+                    <input id="name" size="35" autofocus="autofocus" type="text" value="" class="form-control"><span class="input-group-btn">
+                      <button id="button" type="button" value="!searchval!" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
+                  </div>
                 </div>
             </div>
         </div>
@@ -244,7 +263,7 @@
             var url;
             url = void 0;
             searchval = $('#name').val();
-            document.location.href = '?search=' + searchval;
+            document.location.href = "http://" + window.location.host + '/?search=' + searchval;
         });
         $('#name').keypress(function(e) {
             if (e.which === 13) {
