@@ -170,6 +170,23 @@ public class NamesWebResource {
 			return error404(request);
 		}
 
+		
+	}
+	@Path("settings.html")
+	@GET
+	public Response doProfileSettings() {
+		
+		try {
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/settings.html");
+			
+			
+//			List<HTMLSearchResult> results =  handleBlogSearch( null);
+//			pebbleHelper.getContextMap().put("searchresults", results);
+			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+		} catch ( Throwable e) {
+			return error404(request);
+		}
+		
 	}
 
 	@Path("webdirectory.html")
