@@ -180,8 +180,8 @@
       <div class="row">
         <div class="main">
           <div class="col-lg-8 col-centered">
-        <form class="form-horizontal">
-          <fieldset>
+        <div class="form-horizontal">
+          <!-- <fieldset> -->
             <legend>Settings</legend>
             <div class="form-group">
               <label for="select-name" class="col-lg-2 control-label">Name</label>
@@ -228,8 +228,8 @@
             	 <button type="submit" onclick="javascript:updateValue()" class="btn btn-primary pull-right">Submit</button>
               </div>
             </div>
-          </fieldset>
-        </form>
+          <!-- </fieldset> -->
+        </div>
       </div>
       </div>
       </div>
@@ -262,7 +262,7 @@
             return {};
         }
     };
-    
+
     var updateValue;
     updateValue = function() {
     	 var blogtitle, blogdescription, profilename ,profileenable, blogenable
@@ -275,7 +275,7 @@
         blogenable = document.getElementById('blog-status').value;
         document.location.href = '/settings.html?profilename=' + profilename + '&profileenable=' + profileenable + '&blogenable=' + blogenable + '&blogdescription=' + blogdescription + '&blogtitle=' + blogtitle + '';
     };
-    
+
       $(function(){
       // bind change event to select
       $('#select-name').on('change', function () {
@@ -286,7 +286,7 @@
           return false;
       });
     });
-    
+
     $(document).ready(function() {
         var searchval;
         $("#select-name").val('{{name}}');
