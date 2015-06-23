@@ -50,6 +50,7 @@ import qora.naming.Name;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
 import qora.web.HTMLSearchResult;
+import qora.web.Profile;
 import qora.web.blog.BlogEntry;
 import settings.Settings;
 import utils.AccountBalanceComparator;
@@ -178,10 +179,39 @@ public class NamesWebResource {
 		
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/settings.html");
+			List<Name> namesAsList = Controller.getInstance().getNamesAsList();
+			
+			pebbleHelper.getContextMap().put("names", namesAsList);
+			String profileName = request.getParameter("profilename");
+			
+			Name name = null;
+			if(profileName != null)
+			{
+				name = Controller.getInstance().getName(profileName);
+			}
+			
+			if(namesAsList.size() > 0)
+			{
+				
+				if(name == null)
+				{
+					name = namesAsList.get(0);
+				}
+				
+				Profile profile = Profile.getProfile(name);
+				pebbleHelper.getContextMap().put("profile", profile);
+				pebbleHelper.getContextMap().put("name", name);
+				
+				
+				
+			}else
+			{
+//				no name no chance
+			}
 			
 			
-//			List<HTMLSearchResult> results =  handleBlogSearch( null);
-//			pebbleHelper.getContextMap().put("searchresults", results);
+			
+
 			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 		} catch ( Throwable e) {
 			return error404(request);
@@ -666,7 +696,7 @@ public class NamesWebResource {
 
 				if (jsonObject == null
 						|| !jsonObject
-								.containsKey(BlogPostResource.BLOGENABLE_KEY)) {
+								.containsKey(Qorakeys.BLOGENABLE.toString())) {
 					pebbleHelper = PebbleHelper.getPebbleHelper("web/blogdisabled.html");
 					if (Controller.getInstance().getAccountByAddress(
 							name.getOwner().getAddress()) != null) {
@@ -678,7 +708,7 @@ public class NamesWebResource {
 								+ "&type="
 								+ type
 								+ "&key="
-								+ BlogPostResource.BLOGENABLE_KEY
+								+ Qorakeys.BLOGENABLE.toString()
 								+ "&value=true&update=false&fee=1&okmsg=The blog will be available after the next block!";
 						String template = readFile("web/blogenabletemplate",
 								StandardCharsets.UTF_8);

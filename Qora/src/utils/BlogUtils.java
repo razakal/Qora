@@ -48,12 +48,12 @@ public class BlogUtils {
 			}
 
 			if (jsonObject != null
-					&& jsonObject.containsKey(BlogPostResource.BLOGENABLE_KEY)) {
+					&& jsonObject.containsKey(Qorakeys.BLOGENABLE.toString())) {
 
 				String title = (String) jsonObject
-						.get(BlogPostResource.BLOGTITLE_KEY);
+						.get(Qorakeys.BLOGTITLE.toString());
 				String description = (String) jsonObject
-						.get(BlogPostResource.BLOGDESCRIPTION_KEY);
+						.get(Qorakeys.BLOGDESCRIPTION.toString());
 				if (searchvalueOpt != null) {
 					searchvalueOpt = searchvalueOpt.toLowerCase();
 					if (name.toLowerCase().contains(searchvalueOpt)

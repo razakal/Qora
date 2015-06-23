@@ -187,11 +187,10 @@
               <label for="select-name" class="col-lg-2 control-label">Name</label>
               <div class="col-lg-10">
                 <select class="form-control" id="select-name">
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
+                  {% for name in names %}
+					<option value={{name.name}}>
+						{{name.NameBalanceString}}</option>
+					{% endfor %}
                 </select>
                 <div class="checkbox">
                   <label>
@@ -226,7 +225,7 @@
             <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
                 <button type="reset" class="btn btn-default">Cancel</button>
-                <button id="settings-submit" type="submit" class="btn btn-primary pull-right">Submit</button>
+            	 <button type="submit" onclick="javascript:updateValue()" class="btn btn-primary pull-right">Submit</button>
               </div>
             </div>
           </fieldset>
@@ -263,8 +262,38 @@
             return {};
         }
     };
+    
+    var updateValue;
+    updateValue = function() {
+    	 var blogtitle, blogdescription, profilename ,profileenable, blogenable
+        blogtitle = document.getElementById('blogtitle').value;
+        blogtitle = encodeURIComponent(blogtitle);
+        blogdescription = document.getElementById('blogdescription').value;
+        blogdescription = encodeURIComponent(blogdescription);
+        profilename = document.getElementById('select-name').value;
+        profileenable = document.getElementById('profile-status').value;
+        blogenable = document.getElementById('blog-status').value;
+        document.location.href = '/settings.html?profilename=' + profilename + '&profileenable=' + profileenable + '&blogenable=' + blogenable + '&blogdescription=' + blogdescription + '&blogtitle=' + blogtitle + '';
+    };
+    
+      $(function(){
+      // bind change event to select
+      $('#select-name').on('change', function () {
+          var url = $(this).val(); // get selected value
+          if (url) { // require a URL
+              window.location = '/settings.html?profilename=' + url; // redirect
+          }
+          return false;
+      });
+    });
+    
     $(document).ready(function() {
         var searchval;
+        $("#select-name").val('{{name}}');
+        $( "#profile-status" ).prop( "checked", {{profile.isProfileEnabled}} );
+        $( "#blog-status" ).prop( "checked", {{profile.isBlogEnabled}} );
+        $("#blogdescription").val ("{{profile.getBlogDescriptionOpt}}");
+        $("#blogtitle").val ("{{profile.getBlogTitleOpt}}");
         $('ul.nav-tabs > li').removeClass('active');
         if (window.location.pathname === '/blogsearch.html') {
             $('ul.nav-tabs > li:nth-child(2)').addClass('active');

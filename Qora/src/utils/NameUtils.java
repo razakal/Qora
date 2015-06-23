@@ -104,6 +104,7 @@ public class NameUtils {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public static JSONObject getJsonForNameOpt( Name name)
 	{
 		String rawNameValue = name.getValue();
@@ -116,10 +117,13 @@ public class NameUtils {
 			
 		} catch (Exception e) {
 //			no valid json
+			
+			JSONObject jsonValue = new JSONObject();
+			jsonValue.put(Qorakeys.DEFAULT.toString(), decompressedNameValue);
+			return jsonValue;
 		}
 		
 		
-		return null;
 		
 	}
 

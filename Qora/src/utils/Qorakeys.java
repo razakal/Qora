@@ -2,10 +2,11 @@ package utils;
 
 public enum Qorakeys {
 
-	
-	DEFAULT("defaultkey"),WEBSITE("website"),BLOGWHITELIST("blogwhitelist"),BLOGBLACKLIST("blogblacklist")  ;
+	DEFAULT("defaultkey"), WEBSITE("website"), BLOGWHITELIST("blogwhitelist"), BLOGBLACKLIST(
+			"blogblacklist"), BLOGDESCRIPTION("blogdescription"), BLOGTITLE(
+			"blogtitle"), BLOGENABLE("blogenable"), PROFILEENABLE("profileenable");
 	private final String keyname;
-	
+
 	private Qorakeys(String keyname) {
 		this.keyname = keyname;
 	}
@@ -13,7 +14,7 @@ public enum Qorakeys {
 	public String getKeyname() {
 		return keyname;
 	}
-	
+
 	public String toString() {
 		return keyname;
 	}

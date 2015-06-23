@@ -21,6 +21,7 @@ import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.GZIP;
 import utils.Pair;
+import utils.Qorakeys;
 import controller.Controller;
 import database.DBSet;
 
@@ -32,9 +33,6 @@ public class BlogPostResource {
 	public static final String BLOGNAME_KEY = "blogname";
 	public static final String TITLE_KEY = "title";
 	public static final String POST_KEY = "post";
-	public static final String BLOGENABLE_KEY = "blogenable";
-	public static final String BLOGTITLE_KEY = "blogtitle";
-	public static final String BLOGDESCRIPTION_KEY = "blogdescription";
 
 	@Context
 	HttpServletRequest request;
@@ -174,7 +172,7 @@ public class BlogPostResource {
 		}
 
 		if (jsonObject == null
-				|| !jsonObject.containsKey(BlogPostResource.BLOGENABLE_KEY)) {
+				|| !jsonObject.containsKey(Qorakeys.BLOGENABLE.toString())) {
 
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_BLOG_DISABLED);
