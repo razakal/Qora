@@ -183,6 +183,7 @@
         <div class="form-horizontal">
           <!-- <fieldset> -->
             <legend>Settings</legend>
+            	{{result}}
             <div class="form-group">
               <label for="select-name" class="col-lg-2 control-label">Name</label>
               <div class="col-lg-10">
@@ -273,9 +274,9 @@
         profileavatar = document.getElementById('avatar').value;
         profileavatar = encodeURIComponent(profileavatar);
         profilename = document.getElementById('select-name').value;
-        profileenable = document.getElementById('profile-status').value;
-        blogenable = document.getElementById('blog-status').value;
-        document.location.href = '/settings.html?profilename=' + profilename + '&profileenable=' + profileenable + '&blogenable=' + blogenable + '&blogdescription=' + blogdescription + '&blogtitle=' + blogtitle + '' + '&profileavatar=' + profileavatar + '';
+        profileenable = document.getElementById('profile-status').checked;
+        blogenable = document.getElementById('blog-status').checked;
+        document.location.href = '/settingssave.html?profilename=' + profilename + '&profileenable=' + profileenable + '&blogenable=' + blogenable + '&blogdescription=' + blogdescription + '&blogtitle=' + blogtitle + '' + '&profileavatar=' + profileavatar + '';
     };
 
       $(function(){
