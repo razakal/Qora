@@ -35,6 +35,11 @@ public class Profile {
 		return (String) jsonRepresenation.get(Qorakeys.BLOGTITLE.toString());
 	}
 	
+	public String getAvatarOpt()
+	{
+		return (String) jsonRepresenation.get(Qorakeys.PROFILEAVATAR.toString());
+	}
+	
 	public boolean isProfileEnabled()
 	{
 		return jsonRepresenation.containsKey(Qorakeys.PROFILEENABLE.toString());
