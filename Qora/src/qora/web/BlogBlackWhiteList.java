@@ -31,7 +31,7 @@ public class BlogBlackWhiteList {
 	/**
 	 * 
 	 * @param blogname the blog to check for white/blacklist
-	 * @return An object containing all names or accounts that are allowed/forbidden the blogowner is not part of the list!!!
+	 * @return An object containing all names or accounts that are allowed/forbidden the blogowner is always part of the whitelist
 	 */
 	public static BlogBlackWhiteList getBlogBlackWhiteList(String blogname)
 	{
@@ -59,7 +59,8 @@ public class BlogBlackWhiteList {
 					String whitelist = (String) jsonForNameOpt.get(Qorakeys.BLOGWHITELIST.toString());
 					
 					String[] whiteListEntries = StringUtils.split(whitelist, ",");
-					return new BlogBlackWhiteList(true, Arrays.asList(whiteListEntries), blogname);
+					List<String> result = new ArrayList<String>(Arrays.asList(whiteListEntries));
+					return new BlogBlackWhiteList(true, result , blogname);
 					
 				}
 				
@@ -105,10 +106,49 @@ public class BlogBlackWhiteList {
 		return blogname;
 	}
 	
+	/**
+	 * Checks if post is allowed in blog.
+	 * @param accountOrName name if post by name, creator else
+	 * @param creator the creator of that post
+	 * @return true if post is allowed, false else
+	 */
+	public boolean isAllowedPost(String accountOrName, String creator)
+	{
+		
+		
+		Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(accountOrName);
+		if(nameToAdress.getB() == NameResult.OK)
+		{
+			String address = nameToAdress.getA().getAddress();
+			//Name is not matching creator, maybe name sold or someone tried to fake a post.
+			if(!address.equals(creator))
+			{
+				return false;
+			}
+			
+			//blogowner can always post
+			if(accountOrName.equals(blogname))
+			{
+				return true;
+			}
+			
+		}
+		
+		
+		if(isWhitelist())
+		{
+			return (blackwhiteList.contains(accountOrName));
+		}else
+		{
+			return !blackwhiteList.contains(accountOrName);
+		}
+	}
+	
 	
 	/**
 	 * 
 	 * @return a pair containing every account and every name that current user owns and that is allowed to post in the blog.
+	 * In case of a whitelist the blogowner is always part of that
 	 */
 	public Pair<List<Account>, List<Name>> getOwnAllowedElements(boolean removeZeroBalance)
 	{

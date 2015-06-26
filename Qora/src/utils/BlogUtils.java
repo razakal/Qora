@@ -12,6 +12,7 @@ import org.json.simple.JSONValue;
 import qora.block.Block;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
+import qora.web.BlogBlackWhiteList;
 import qora.web.blog.BlogEntry;
 import api.BlogPostResource;
 import controller.Controller;
@@ -116,10 +117,13 @@ public class BlogUtils {
 						String nameOpt = (String) jsonObject
 								.get(BlogPostResource.AUTHOR);
 
-						if (StringUtil.isNotBlank(post)) {
+						String creator = transaction
+								.getCreator().getAddress();
+						BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(blogOpt);
+						//POST NEEDS TO BE FILLED AND POST MUST BE ALLOWED
+						if (StringUtil.isNotBlank(post) && blogBlackWhiteList.isAllowedPost(nameOpt != null ? nameOpt : creator, creator)) {
 							results.add(new BlogEntry(title, post, nameOpt,
-									transaction.getTimestamp(), transaction
-											.getCreator().getAddress()));
+									transaction.getTimestamp(), creator));
 
 						}
 					}
