@@ -143,11 +143,12 @@
             <li><a href="/blog.html">Blog</a></li>
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
-                <li class="dropdown-header">Profile name 01</li>
-                <li><a href="#">PROFILE</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Profile name 02</li>
-                <li><a href="#">PROFILE</a></li>
+              	 {% for profile in profiles %}
+                	<li><a href="/blog.html?blogname={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
+                	{% if  loop.index   != profiles.size()  - 1 %}
+                	<li class="divider"></li>
+                	{% endif %}
+				{% endfor %}
               </ul>
             </li>
             <li><a href="#">Help</a></li>

@@ -120,6 +120,8 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
+	
+	
 
 	public List<HTMLSearchResult> generateHTMLSearchresults(
 			List<Pair<String, String>> searchResults) throws IOException,
@@ -180,6 +182,7 @@ public class NamesWebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
+			e.printStackTrace();
 			return error404(request);
 		}
 
@@ -193,6 +196,8 @@ public class NamesWebResource {
 
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/settings.html");
+			
+			
 			Map<String, String[]> parameterMap = request.getParameterMap();
 			String profileName = request.getParameter("profilename");
 
@@ -242,6 +247,7 @@ public class NamesWebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
+			e.printStackTrace();
 			return error404(request);
 		}
 
@@ -255,6 +261,8 @@ public class NamesWebResource {
 
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/settings.html");
+			
+			
 			String profileName = request.getParameter("profilename");
 
 			List<Name> namesAsList = Controller.getInstance().getNamesAsList();
@@ -283,6 +291,7 @@ public class NamesWebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
+			e.printStackTrace();
 			return error404(request);
 		}
 
@@ -333,6 +342,7 @@ public class NamesWebResource {
 					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
+			e.printStackTrace();
 			return error404(request);
 		}
 
@@ -1045,10 +1055,11 @@ public class NamesWebResource {
 	public Response error404(HttpServletRequest request) {
 
 		try {
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/404.html");
 			return Response
 					.status(404)
 					.header("Content-Type", "text/html; charset=utf-8")
-					.entity(PebbleHelper.getPebbleHelper("web/404.html")
+					.entity(pebbleHelper
 							.evaluate()).build();
 		} catch (PebbleException e) {
 			e.printStackTrace();
@@ -1473,6 +1484,7 @@ public class NamesWebResource {
 				return Response.ok(pebbleHelper.evaluate(),
 						"text/html; charset=utf-8").build();
 			} catch (Throwable e) {
+				e.printStackTrace();
 				return error404(request);
 			}
 

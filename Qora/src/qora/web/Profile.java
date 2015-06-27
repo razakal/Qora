@@ -1,16 +1,19 @@
 package qora.web;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
 import org.json.simple.JSONObject;
 
-import api.NamesResource;
+import controller.Controller;
 import qora.naming.Name;
 import utils.GZIP;
 import utils.NameUtils;
 import utils.Qorakeys;
+import api.NamesResource;
 
 @SuppressWarnings("unchecked")
 public class Profile {
@@ -31,6 +34,21 @@ public class Profile {
 		this.name = name;
 		blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(name.toString());
 		jsonRepresenation = NameUtils.getJsonForNameOpt(name);
+	}
+	
+	public static List<Profile> getActiveProfiles()
+	{
+		List<Name> namesAsList = Controller.getInstance().getNamesAsList();
+		List<Profile> results = new ArrayList<Profile>();
+		for (Name name : namesAsList) {
+			Profile profile = Profile.getProfile(name);
+			if(profile.isProfileEnabled())
+			{
+				results.add(profile);
+			}
+		}
+		
+		return results;
 	}
 	
 	
@@ -112,6 +130,10 @@ public class Profile {
 		
 		return new NamesResource().updateName(jsonObject.toJSONString(), name.getName());
 	}
-	
+
+	public Name getName() {
+		return name;
+	}
+
 	
 }

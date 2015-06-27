@@ -6,6 +6,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import qora.web.Profile;
+
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.escaper.EscaperExtension;
@@ -31,7 +33,9 @@ public class PebbleHelper {
 		EscaperExtension escaper = engine.getExtension(EscaperExtension.class);
 		escaper.setAutoEscaping(false);
 		PebbleTemplate compiledTemplate = engine.getTemplate(htmlTemplate);
-		return new PebbleHelper(compiledTemplate, new HashMap<String, Object>());
+		PebbleHelper pebbleHelper = new PebbleHelper(compiledTemplate, new HashMap<String, Object>());
+		pebbleHelper.getContextMap().put("profiles", Profile.getActiveProfiles());
+		return pebbleHelper;
 		
 	}
 	

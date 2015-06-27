@@ -113,6 +113,12 @@ public class NameUtils {
 		try {
 			JSONObject jsonValue = (JSONObject) JSONValue.parse(decompressedNameValue);
 			
+			if(jsonValue == null)
+			{
+				jsonValue = new JSONObject();
+				jsonValue.put(Qorakeys.DEFAULT.toString(), decompressedNameValue);
+			}
+			
 			return jsonValue;
 			
 		} catch (Exception e) {
