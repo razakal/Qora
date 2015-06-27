@@ -226,7 +226,7 @@
             </div>
             <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
-                <button type="reset" class="btn btn-default">Cancel</button>
+                <button type="reset" onclick="javascript:reload()" class="btn btn-default">Cancel</button>
             	 <button type="submit" onclick="javascript:updateValue()" class="btn btn-primary pull-right">Submit</button>
               </div>
             </div>
@@ -278,6 +278,13 @@
         profileenable = document.getElementById('profile-status').checked;
         blogenable = document.getElementById('blog-status').checked;
         document.location.href = '/settingssave.html?profilename=' + profilename + '&profileenable=' + profileenable + '&blogenable=' + blogenable + '&blogdescription=' + blogdescription + '&blogtitle=' + blogtitle + '' + '&profileavatar=' + profileavatar + '';
+    };
+    
+      var updateValue;
+    reload = function() {
+    var profilename;
+    profilename = document.getElementById('select-name').value;
+        document.location.href = '/settings.html?profilename=' + profilename;
     };
 
       $(function(){
