@@ -813,26 +813,16 @@ public class NamesWebResource {
 							"text/html; charset=utf-8").build();
 				}
 
+				
 				Name name = nameMap.get(blogname);
-				JSONObject jsonObject = NameUtils.getJsonForNameOpt(name);
+				Profile profile = Profile.getProfile(name);
 
-				if (jsonObject == null
-						|| !jsonObject.containsKey(Qorakeys.BLOGENABLE
-								.toString())) {
+				if (!profile.isBlogEnabled()) {
 					pebbleHelper = PebbleHelper
 							.getPebbleHelper("web/blogdisabled.html");
 					if (Controller.getInstance().getAccountByAddress(
 							name.getOwner().getAddress()) != null) {
-						String apiurl = "/names/key/" + name.getName();
-						String type = "POST";
-						String resultcall = "/API.html?"
-								+ "apiurl="
-								+ apiurl
-								+ "&type="
-								+ type
-								+ "&key="
-								+ Qorakeys.BLOGENABLE.toString()
-								+ "&value=true&update=false&fee=1&okmsg=The blog will be available after the next block!";
+						String resultcall = "/settings.html?profilename=" + blogname;
 						String template = readFile("web/blogenabletemplate",
 								StandardCharsets.UTF_8);
 						template = template.replace("!TEXT!", "here");
