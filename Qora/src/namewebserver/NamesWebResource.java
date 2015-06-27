@@ -729,8 +729,10 @@ public class NamesWebResource {
 				Pair<Account, NameResult> nameToAdress = NameUtils
 						.nameToAdress(creator);
 
+				String authorOpt = null;
 				if (nameToAdress.getB() == NameResult.OK) {
-					json.put(BlogPostResource.AUTHOR, creator);
+					authorOpt = creator;
+					json.put(BlogPostResource.AUTHOR, authorOpt);
 					json.put("creator", nameToAdress.getA().getAddress());
 				} else {
 					json.put("creator", creator);
@@ -747,7 +749,7 @@ public class NamesWebResource {
 							contentparam.replaceAll("\\n", "\\\\n"));
 					pebbleHelper.getContextMap().put("oldcreator", creator);
 					BlogEntry entry = new BlogEntry(title, contentparam,
-							creator, new Date().getTime(), creator);
+							authorOpt, new Date().getTime(), creator);
 
 					pebbleHelper.getContextMap().put("blogposts",
 							Arrays.asList(entry));
