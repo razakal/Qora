@@ -176,7 +176,11 @@ public class BlogBlackWhiteList {
 					{
 						if(!resultingNames.contains(name))
 						{
-							resultingNames.add(name);
+							//YOU CAN ONLY POST BY NAME IF PROFILE IS ENABLED
+							if(Profile.getProfile(name).isProfileEnabled())
+							{
+								resultingNames.add(name);
+							}
 						}
 					}
 					
@@ -209,8 +213,13 @@ public class BlogBlackWhiteList {
 			}
 		}else
 		{
-			
-			resultingNames.addAll(myNames);
+			List<Profile> activeProfiles = Profile.getActiveProfiles();
+			for (Profile profile : activeProfiles) {
+				if(profile.isProfileEnabled())
+				{
+					resultingNames.add(profile.getName());
+				}
+			}
 			resultingAccounts.addAll(myaccounts);
 			
 			for (String accountOrName : blackwhiteList) {
