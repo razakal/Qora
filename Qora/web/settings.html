@@ -205,17 +205,17 @@
               <label for="avatar" class="col-lg-2 control-label">Profile Picture</label>
               <div class="col-lg-10">
                 <input type="url" class="form-control" id="avatar" placeholder="Profile Picture" disabled="">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="blog-status"> Enable Blog
+                  </label>
+                </div>
               </div>
             </div>
             <div class="form-group">
               <label for="blogtitle" class="col-lg-2 control-label">Blog Title</label>
               <div class="col-lg-10">
                 <input type="text" class="form-control" id="blogtitle" placeholder="Blog Title" disabled="">
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" id="blog-status"> Enable Blog
-                  </label>
-                </div>
               </div>
             </div>
             <div class="form-group">
@@ -339,6 +339,11 @@
         $('#blog-status').prop('checked');
         $('#blogdescription').val();
 
+		if ($('#profile-status').prop('checked') === false) {
+                $('#avatar').attr('disabled', true);
+            } else {
+                $('#avatar').removeAttr('disabled');
+            };
         $('#profile-status').change(function() {
             if ($('#profile-status').prop('checked') === false) {
                 $('#avatar').attr('disabled', true);
@@ -346,6 +351,13 @@
                 $('#avatar').removeAttr('disabled');
             };
         });
+            if ($('#blog-status').prop('checked') === false) {
+                $('#blogtitle').attr('disabled', true);
+                $('#blogdescription').attr('disabled', true);
+            } else {
+                $('#blogtitle').removeAttr('disabled');
+                $('#blogdescription').removeAttr('disabled');
+            };
         $('#blog-status').change(function() {
             if ($('#blog-status').prop('checked') === false) {
                 $('#blogtitle').attr('disabled', true);
