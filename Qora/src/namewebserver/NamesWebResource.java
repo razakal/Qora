@@ -234,9 +234,12 @@ public class NamesWebResource {
 			profile.setProfileEnabled(profileenable);
 
 			try {
-				pebbleHelper.getContextMap().put("result", profile.saveProfile());
+				
+				pebbleHelper.getContextMap().put("result","<center><div class=\"alert alert-success\" role=\"alert\">Settings saved<br>"
+						+ profile.saveProfile() + "</div></center>");
 			} catch (WebApplicationException e) {
-				pebbleHelper.getContextMap().put("result", e.getResponse().getEntity());
+				pebbleHelper.getContextMap().put("result","<center><div class=\"alert alert-danger\" role=\"alert\">Settings not saved<br>"
+						+ e.getResponse().getEntity() + "</div></center>");
 			}
 			pebbleHelper.getContextMap().put("profile", profile);
 			pebbleHelper.getContextMap().put("name", name);
