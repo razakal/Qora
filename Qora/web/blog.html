@@ -205,7 +205,7 @@
           	{% for blogpost in blogposts %}
 				<li><div class="timeline-badge primary"><a><i class="glyphicon glyphicon-record" rel="tooltip" title="POST TIME" id=""></i></a></div><div class="timeline-panel"><div class="timeline-heading">
 				<div class="media"><div class="media-left media-middle">
-				<a href="#"><img class="media-object" src="img/qora-user.png" alt=""></a></div>
+				<a href="#"><img class="media-object" src="{{blogpost.avatar}}" alt=""></a></div>
 				<div class="media-body">
 				<h6 class="media-heading"><b>{{blogpost.nameOrCreator}}</b></h6>{{blogpost.creationTime}}</div></div>
 				</div>
