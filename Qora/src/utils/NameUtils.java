@@ -110,8 +110,18 @@ public class NameUtils {
 		String rawNameValue = name.getValue();
 		
 		String decompressedNameValue = GZIP.webDecompress(rawNameValue);
+		
+		JSONObject jsonValue;
+		//THIS SIGNIFICANTLY INCREASES SPEED!
+		if(!decompressedNameValue.startsWith("{"))
+		{
+			jsonValue = new JSONObject();
+			jsonValue.put(Qorakeys.DEFAULT.toString(), decompressedNameValue);
+			return jsonValue;
+		}
+		
 		try {
-			JSONObject jsonValue = (JSONObject) JSONValue.parse(decompressedNameValue);
+			jsonValue = (JSONObject) JSONValue.parse(decompressedNameValue);
 			
 			if(jsonValue == null)
 			{
@@ -124,7 +134,7 @@ public class NameUtils {
 		} catch (Exception e) {
 //			no valid json
 			
-			JSONObject jsonValue = new JSONObject();
+			jsonValue = new JSONObject();
 			jsonValue.put(Qorakeys.DEFAULT.toString(), decompressedNameValue);
 			return jsonValue;
 		}

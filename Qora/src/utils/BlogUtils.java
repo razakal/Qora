@@ -10,9 +10,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import qora.block.Block;
+import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
+import qora.web.Profile;
 import qora.web.blog.BlogEntry;
 import api.BlogPostResource;
 import controller.Controller;
@@ -33,28 +35,14 @@ public class BlogUtils {
 		Set<String> names = nameMap.getKeys();
 
 		for (String name : names) {
-			String value = nameMap.get(name).getValue();
+			Name nameObj = nameMap.get(name);
 
-			value = GZIP.webDecompress(value);
+			Profile profile = Profile.getProfile(nameObj);
 
-			if (!value.startsWith("{")) {
-				continue;
-			}
+			if (profile.isProfileEnabled() && profile.isBlogEnabled()) {
 
-			JSONObject jsonObject = null;
-			try {
-				jsonObject = (JSONObject) JSONValue.parse(value);
-			} catch (Exception e) {
-				// no valid json
-			}
-
-			if (jsonObject != null
-					&& jsonObject.containsKey(Qorakeys.BLOGENABLE.toString())) {
-
-				String title = (String) jsonObject
-						.get(Qorakeys.BLOGTITLE.toString());
-				String description = (String) jsonObject
-						.get(Qorakeys.BLOGDESCRIPTION.toString());
+				String title = profile.getBlogTitleOpt();
+				String description = profile.getBlogDescriptionOpt();
 				if (searchvalueOpt != null) {
 					searchvalueOpt = searchvalueOpt.toLowerCase();
 					if (name.toLowerCase().contains(searchvalueOpt)

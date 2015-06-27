@@ -817,7 +817,7 @@ public class NamesWebResource {
 				Name name = nameMap.get(blogname);
 				Profile profile = Profile.getProfile(name);
 
-				if (!profile.isBlogEnabled()) {
+				if (!profile.isProfileEnabled() || !profile.isBlogEnabled()) {
 					pebbleHelper = PebbleHelper
 							.getPebbleHelper("web/blogdisabled.html");
 					if (Controller.getInstance().getAccountByAddress(
