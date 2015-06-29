@@ -1,8 +1,15 @@
 package qora.web.blog;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import namewebserver.NamesWebResource;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jsoup.Jsoup;
@@ -16,55 +23,82 @@ import database.DBSet;
 
 /**
  * This is the representation of an entry in a blog.
+ * 
  * @author Skerberus
  *
  */
 public class BlogEntry {
-	
-	
+
 	private String titleOpt;
 	private String description;
 	private String nameOpt;
 	private final long time;
 	private final String creator;
 	private String avatar;
+	private List<String> imagelinks = new ArrayList<String>();
 
-	public BlogEntry(String titleOpt, String description, String nameOpt, long timeOpt, String creator) {
+	public BlogEntry(String titleOpt, String description, String nameOpt,
+			long timeOpt, String creator) {
 		this.titleOpt = titleOpt;
-		description	= description.replaceAll("\n", "<br/>");
-		this.description = Jsoup.clean(description, Whitelist.basic());
+		this.description = description.replaceAll("\n", "<br/>");
+		this.description = Jsoup.clean(this.description, Whitelist.basic());
+		handleImages();
 		handleLinks();
 		this.nameOpt = nameOpt;
 		addAvatar();
 		this.time = timeOpt;
 		this.creator = creator;
 	}
-	
-	private void addAvatar()
-	{
-		avatar="img/qora-user.png";
-		if(nameOpt != null)
-		{
+
+	private void addAvatar() {
+		avatar = "img/qora-user.png";
+		if (nameOpt != null) {
 			Name name = DBSet.getInstance().getNameMap().get(nameOpt);
 			Profile profile = Profile.getProfile(name);
 			String avatarOpt = profile.getAvatarOpt();
-			if(avatarOpt != null)
-			{
+			if (avatarOpt != null) {
 				avatar = avatarOpt;
 			}
 		}
 	}
 
+	private void handleImages() {
+		Pattern pattern = Pattern.compile(Pattern.quote("[img]") + "(.+)" + Pattern.quote("[/img]"));
+		Matcher matcher = pattern.matcher(description);
+		while (matcher.find()) {
+			String url = matcher.group(1);
+			imagelinks.add(url);
+			description = description.replace(matcher.group(), getImgHtml(url));
+		}
+
+	}
+	
+	
+	private String getImgHtml(String url)
+	{
+		try {
+			String template = NamesWebResource.readFile("web/imgtemplate",
+					StandardCharsets.UTF_8);
+			return template.replace("{{url}}", url);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 	private void handleLinks() {
-		List<Pair<String, String>> linkList = LinkUtils.createHtmlLinks(LinkUtils.getAllLinks(description));
+		List<Pair<String, String>> linkList = LinkUtils
+				.createHtmlLinks(LinkUtils.getAllLinks(description));
 
 		for (Pair<String, String> link : linkList) {
 			String originalLink = link.getA();
 			String newLink = link.getB();
-
-			description = description.replace(originalLink, newLink);
+			if(!imagelinks.contains(originalLink))
+			{
+				description = description.replace(originalLink, newLink);
+			}
 		}
-		
+
 	}
 
 	public String getTitleOpt() {
@@ -75,37 +109,33 @@ public class BlogEntry {
 		return description;
 	}
 
-
 	public String getNameOpt() {
 		return nameOpt;
 	}
-	
-	
+
 	/**
 	 * Returns name if name not null creator else
+	 * 
 	 * @return
 	 */
-	public String getNameOrCreator()
-	{
-		return nameOpt == null? creator : nameOpt;
+	public String getNameOrCreator() {
+		return nameOpt == null ? creator : nameOpt;
 	}
-
 
 	public long getTime() {
 		return time;
 	}
 
-
 	public String getCreator() {
 		return creator;
 	}
-	public String getCreationTime()
-	{
-		Date date = new Date( time );
+
+	public String getCreationTime() {
+		Date date = new Date(time);
 		DateFormat format = DateFormat.getDateTimeInstance();
 		return format.format(date);
 	}
-	
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
@@ -115,6 +145,4 @@ public class BlogEntry {
 		return avatar;
 	}
 
-	
-	
 }
