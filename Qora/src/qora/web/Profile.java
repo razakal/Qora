@@ -36,7 +36,7 @@ public class Profile {
 		jsonRepresenation = NameUtils.getJsonForNameOpt(name);
 	}
 	
-	public static List<Profile> getActiveProfiles()
+	public static List<Profile> getEnabledProfiles()
 	{
 		List<Name> namesAsList = Controller.getInstance().getNamesAsList();
 		List<Profile> results = new ArrayList<Profile>();

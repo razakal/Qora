@@ -144,7 +144,7 @@
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
               	 {% for profile in profiles %}
-                	<li><a href="/blog.html?blogname={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
+                	<li><a href="/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
                 	{% if  loop.index   != profiles.size()  - 1 %}
                 	<li class="divider"></li>
                 	{% endif %}
@@ -152,6 +152,11 @@
               </ul>
             </li>
             <li><a href="/settings.html">Settings</a></li>
+            	{% if activeProfile is null %}
+             	<li><a href="#">No active Profile</a></li>
+             	{% else %}
+             	<li><a href="#">current Profile:{{activeProfile.getName().getName()}}</a></li>
+             	{% endif %}
           </ul>
           <div class="navbar-form navbar-left">
             <div class="input-group">

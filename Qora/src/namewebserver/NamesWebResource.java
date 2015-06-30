@@ -52,6 +52,7 @@ import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
 import qora.web.HTMLSearchResult;
 import qora.web.Profile;
+import qora.web.ProfileHelper;
 import qora.web.blog.BlogEntry;
 import settings.Settings;
 import utils.AccountBalanceComparator;
@@ -805,6 +806,11 @@ public class NamesWebResource {
 		try {
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
+			String switchprofile = request
+					.getParameter("switchprofile");
+			
+			ProfileHelper.getInstance().switchProfileOpt(switchprofile);
+			
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/blog.html");
 			pebbleHelper.getContextMap().put("postblogurl", "postblog.html");

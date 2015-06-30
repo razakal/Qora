@@ -213,7 +213,7 @@ public class BlogBlackWhiteList {
 			}
 		}else
 		{
-			List<Profile> activeProfiles = Profile.getActiveProfiles();
+			List<Profile> activeProfiles = Profile.getEnabledProfiles();
 			for (Profile profile : activeProfiles) {
 				if(profile.isProfileEnabled())
 				{

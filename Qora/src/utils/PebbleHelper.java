@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import qora.web.Profile;
+import qora.web.ProfileHelper;
 
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
@@ -34,7 +35,10 @@ public class PebbleHelper {
 		escaper.setAutoEscaping(false);
 		PebbleTemplate compiledTemplate = engine.getTemplate(htmlTemplate);
 		PebbleHelper pebbleHelper = new PebbleHelper(compiledTemplate, new HashMap<String, Object>());
-		pebbleHelper.getContextMap().put("profiles", Profile.getActiveProfiles());
+		pebbleHelper.getContextMap().put("profiles", Profile.getEnabledProfiles());
+		pebbleHelper.getContextMap().put("activeProfile",
+				ProfileHelper.getInstance().getActiveProfileOpt());
+		
 		return pebbleHelper;
 		
 	}

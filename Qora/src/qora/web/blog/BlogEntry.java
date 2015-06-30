@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import namewebserver.NamesWebResource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -34,7 +35,8 @@ public class BlogEntry {
 	private String nameOpt;
 	private final long time;
 	private final String creator;
-	private String avatar;
+	private String 	avatar = "img/qora-user.png";
+
 	private List<String> imagelinks = new ArrayList<String>();
 
 	public BlogEntry(String titleOpt, String description, String nameOpt,
@@ -51,12 +53,11 @@ public class BlogEntry {
 	}
 
 	private void addAvatar() {
-		avatar = "img/qora-user.png";
 		if (nameOpt != null) {
 			Name name = DBSet.getInstance().getNameMap().get(nameOpt);
 			Profile profile = Profile.getProfile(name);
 			String avatarOpt = profile.getAvatarOpt();
-			if (avatarOpt != null) {
+			if (avatarOpt != null && StringUtils.isNotBlank(avatarOpt)) {
 				avatar = avatarOpt;
 			}
 		}

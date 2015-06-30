@@ -169,7 +169,7 @@
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 {% for profile in profiles %}
-                	<li><a href="/blog.html?blogname={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
+                	<li><a href="/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
                 	{% if  loop.index   != profiles.size()  - 1 %}
                 	<li class="divider"></li>
                 	{% endif %}
@@ -177,6 +177,11 @@
               </ul>
             </li>
             <li><a href="/settings.html">Settings</a></li>
+            	{% if activeProfile is null %}
+             	<li><a href="#">No active Profile</a></li>
+             	{% else %}
+             	<li><a href="#">current Profile:{{activeProfile.getName().getName()}}</a></li>
+             	{% endif %}
           </ul>
           <div class="navbar-form navbar-left">
             <button type="button" data-toggle="modal" data-target="#PostModal" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-edit"></span></button>
@@ -205,7 +210,7 @@
           	{% for blogpost in blogposts %}
 				<li><div class="timeline-badge primary"><a><i class="glyphicon glyphicon-record" rel="tooltip" title="POST TIME" id=""></i></a></div><div class="timeline-panel"><div class="timeline-heading">
 				<div class="media"><div class="media-left media-middle">
-				<a href="#"><img class="media-object" src="{{blogpost.avatar}}" alt=""></a></div>
+				<a href="#"><img class="media-object" src="{{blogpost.getAvatar()}}" alt=""></a></div>
 				<div class="media-body">
 				<h6 class="media-heading"><b>{{blogpost.nameOrCreator}}</b></h6>{{blogpost.creationTime}}</div></div>
 				</div>
