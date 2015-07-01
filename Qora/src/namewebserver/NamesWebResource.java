@@ -121,8 +121,6 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
-	
-	
 
 	public List<HTMLSearchResult> generateHTMLSearchresults(
 			List<Pair<String, String>> searchResults) throws IOException,
@@ -197,8 +195,7 @@ public class NamesWebResource {
 
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/settings.html");
-			
-			
+
 			Map<String, String[]> parameterMap = request.getParameterMap();
 			String profileName = request.getParameter("profilename");
 
@@ -235,12 +232,18 @@ public class NamesWebResource {
 			profile.setProfileEnabled(profileenable);
 
 			try {
-				
-				pebbleHelper.getContextMap().put("result","<center><div class=\"alert alert-success\" role=\"alert\">Settings saved<br>"
-						+ profile.saveProfile() + "</div></center>");
+
+				pebbleHelper.getContextMap().put(
+						"result",
+						"<center><div class=\"alert alert-success\" role=\"alert\">Settings saved<br>"
+								+ profile.saveProfile() + "</div></center>");
 			} catch (WebApplicationException e) {
-				pebbleHelper.getContextMap().put("result","<center><div class=\"alert alert-danger\" role=\"alert\">Settings not saved<br>"
-						+ e.getResponse().getEntity() + "</div></center>");
+				pebbleHelper
+						.getContextMap()
+						.put("result",
+								"<center><div class=\"alert alert-danger\" role=\"alert\">Settings not saved<br>"
+										+ e.getResponse().getEntity()
+										+ "</div></center>");
 			}
 			pebbleHelper.getContextMap().put("profile", profile);
 			pebbleHelper.getContextMap().put("name", name);
@@ -265,8 +268,7 @@ public class NamesWebResource {
 
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/settings.html");
-			
-			
+
 			String profileName = request.getParameter("profilename");
 
 			List<Name> namesAsList = Controller.getInstance().getNamesAsList();
@@ -799,21 +801,96 @@ public class NamesWebResource {
 		}
 	}
 
+	@Path("followblog.html")
+	@GET
+	public Response followBlog() {
+		try {
+			String blogname = request
+					.getParameter(BlogPostResource.BLOGNAME_KEY);
+			String followString = request.getParameter("follow");
+			NameMap nameMap = DBSet.getInstance().getNameMap();
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt();
+
+			if (followString != null && activeProfileOpt != null && blogname != null
+					&& nameMap.contains(blogname)) {
+				boolean follow = Boolean.valueOf(followString);
+				Name name = nameMap.get(blogname);
+				Profile profile = Profile.getProfile(name);
+				if (activeProfileOpt.isProfileEnabled()) {
+
+					if (follow) {
+						if (profile.isProfileEnabled()
+								&& profile.isBlogEnabled()
+								&& !activeProfileOpt.getFollowedBlogs()
+										.contains(blogname)) {
+							activeProfileOpt.addFollowedBlog(blogname);
+							String result;
+							try {
+								
+								result = activeProfileOpt.saveProfile();
+								result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
+										+ result + "</div>";
+							} catch (WebApplicationException e) {
+								result =
+										"<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+												+ e.getResponse().getEntity()
+												+ "</div></center>";
+							}
+							
+							return getBlog(result);
+						}
+							
+					}else
+					{
+						if(activeProfileOpt.getFollowedBlogs()
+										.contains(blogname))
+						{
+							activeProfileOpt.removeFollowedBlog(blogname);
+							String result;
+							try {
+								result = activeProfileOpt.saveProfile();
+								result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
+										+ result + "</div>";
+							} catch (WebApplicationException e) {
+								result =
+										"<center><div class=\"alert alert-danger\" role=\"alert\">Blog unfollow not successful<br>"
+												+ e.getResponse().getEntity()
+												+ "</div></center>";
+							}
+							
+							return getBlog(result);
+							
+						}
+					}
+					
+
+				}
+			}
+
+			return getBlog(null);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request);
+		}
+
+	}
+
 	@Path("blog.html")
 	@GET
-	public Response getBlog() {
+	public Response getBlog(String messageOpt) {
 
 		try {
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
-			String switchprofile = request
-					.getParameter("switchprofile");
-			
+			String switchprofile = request.getParameter("switchprofile");
+
 			ProfileHelper.getInstance().switchProfileOpt(switchprofile);
-			
+
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/blog.html");
 			pebbleHelper.getContextMap().put("postblogurl", "postblog.html");
+			pebbleHelper.getContextMap().put("apimessage", messageOpt);
 
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			if (blogname != null) {
@@ -824,7 +901,6 @@ public class NamesWebResource {
 							"text/html; charset=utf-8").build();
 				}
 
-				
 				Name name = nameMap.get(blogname);
 				Profile profile = Profile.getProfile(name);
 
@@ -833,7 +909,8 @@ public class NamesWebResource {
 							.getPebbleHelper("web/blogdisabled.html");
 					if (Controller.getInstance().getAccountByAddress(
 							name.getOwner().getAddress()) != null) {
-						String resultcall = "/settings.html?profilename=" + blogname;
+						String resultcall = "/settings.html?profilename="
+								+ blogname;
 						String template = readFile("web/blogenabletemplate",
 								StandardCharsets.UTF_8);
 						template = template.replace("!TEXT!", "here");
@@ -851,6 +928,9 @@ public class NamesWebResource {
 						"postblog.html?blogname=" + blogname);
 			}
 
+			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
+				pebbleHelper.getContextMap().put("isFollowing", activeProfileOpt != null && !activeProfileOpt.getFollowedBlogs().contains(blogname));
+			
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
@@ -862,40 +942,6 @@ public class NamesWebResource {
 			return error404(request);
 		}
 	}
-
-	// public String getHTMLForBlogPosts(List<BlogEntry> blogPosts) {
-	// String results = "<br>";
-	//
-	// String entryTemplate = "<li><div class=\"timeline-badge primary\"><a>"
-	// +
-	// "<i class=\"glyphicon glyphicon-record\" rel=\"tooltip\" title=\"POST TIME\" id=\"\">"
-	// + "</i></a></div>"
-	// + "<div class=\"timeline-panel\"><div class=\"timeline-heading\">"
-	// + "<div class=\"media\"><div class=\"media-left media-middle\">"
-	// +
-	// "<a href=\"#\"><img class=\"media-object\" src=\"img/qora-user.png\" alt=\"\"></a></div>"
-	// + "<div class=\"media-body\">"
-	// + "<h6 class=\"media-heading\"><b>Name</b></h6>Time</div></div>"
-	// + "</div>"
-	// +
-	// "<div class=\"timeline-body\"><p class=\"post-header\"><b>TITLE</b></p><p class=\"post-content\">CONTENT</p></div></div></li>";
-	//
-	// for (BlogEntry blogentry : blogPosts) {
-	//
-	// String converted = entryTemplate;
-	// String body = blogentry.getDescription();
-	// String nameOpt = blogentry.getNameOpt();
-	// converted = converted
-	// .replaceAll("Name", blogentry.getNameOrCreator());
-	// converted = converted.replaceAll("TITLE", blogentry.getTitleOpt());
-	// converted = converted.replaceAll("CONTENT", body);
-	// converted = converted.replaceAll("Time",
-	// blogentry.getCreationTime());
-	//
-	// results += converted;
-	// }
-	// return results;
-	// }
 
 	@Path("libs/jquery/jquery.{version}.js")
 	@GET
@@ -1056,19 +1102,19 @@ public class NamesWebResource {
 	public Response error404(HttpServletRequest request) {
 
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/404.html");
-			return Response
-					.status(404)
+			PebbleHelper pebbleHelper = PebbleHelper
+					.getPebbleHelper("web/404.html");
+			return Response.status(404)
 					.header("Content-Type", "text/html; charset=utf-8")
-					.entity(pebbleHelper
-							.evaluate()).build();
+					.entity(pebbleHelper.evaluate()).build();
 		} catch (PebbleException e) {
 			e.printStackTrace();
 			return Response.status(404).build();
 		}
 	}
 
- public	static String readFile(String path, Charset encoding) throws IOException {
+	public static String readFile(String path, Charset encoding)
+			throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
 	}

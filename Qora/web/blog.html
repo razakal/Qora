@@ -165,7 +165,20 @@
           <ul class="nav navbar-nav navbar-right">
             <li><a href="/webdirectory.html">Webdirectory</a></li>
             <li><a href="/blogdirectory.html">Blogdirectory</a></li>
+            {% if blogfollows.size > 0 %}
+            <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Blog <span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                {% for blogfollow in blogfollows %}
+                	<li><a href="/blog.html?blogname={{blogfollow}}">{{blogfollow}}</a></li>
+                	{% if  loop.index   != blogfollows.size()  - 1 %}
+                	<li class="divider"></li>
+                	{% endif %}
+				{% endfor %}
+              </ul>
+            </li>
+            {% else%}
             <li><a href="/blog.html">Blog</a></li>
+             {% endif%}
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 {% for profile in profiles %}
@@ -185,6 +198,7 @@
           </ul>
           <div class="navbar-form navbar-left">
             <button type="button" data-toggle="modal" data-target="#PostModal" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-edit"></span></button>
+          	 <button type="button" onclick="javascript:processfollow()" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-random"></span></button>
           </div>
         </div>
       </div>
@@ -206,6 +220,7 @@
     <div class="container">
       <div class="row">
         <div class="main">
+        	{{apimessage}}
           <ul class="timeline">
           	{% for blogpost in blogposts %}
 				<li><div class="timeline-badge primary"><a><i class="glyphicon glyphicon-record" rel="tooltip" title="POST TIME" id=""></i></a></div><div class="timeline-panel"><div class="timeline-heading">
@@ -224,6 +239,34 @@
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript">
+    
+    
+       function getParameter(name) {
+        if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
+            return decodeURIComponent(name[1]);
+    	}
+    
+    	function processfollow() {
+        var  blogname;
+        
+        
+        blogname = getParameter('blogname');
+        
+        if (!blogname) {
+        
+        alert("You can't follow the Mainblog");
+        return 0;
+        }
+        
+        {% if activeProfile is null %}
+        alert("This feature can only be used with an active profile.\nPlease choose a Profile first!");
+        return 0;
+        {%  endif %}
+        
+        document.location.href = 'followblog.html?blogname=' + blogname + '&follow={{isFollowing}}';
+        return 0;
+   		 }
+    
     $('ul.nav-tabs > li').removeClass('active');
     if (window.location.pathname === '/blogsearch.html') {
         $('ul.nav-tabs > li:nth-child(2)').addClass('active');
@@ -249,6 +292,7 @@
             }
         }
     });
+    
     </script>
   </body>
 </html>

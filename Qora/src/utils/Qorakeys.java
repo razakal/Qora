@@ -4,7 +4,7 @@ public enum Qorakeys {
 
 	DEFAULT("defaultkey"), WEBSITE("website"), BLOGWHITELIST("blogwhitelist"), BLOGBLACKLIST(
 			"blogblacklist"), BLOGDESCRIPTION("blogdescription"), BLOGTITLE(
-			"blogtitle"), BLOGENABLE("blogenable"), PROFILEENABLE("profileenable"), PROFILEAVATAR("profileavatar");
+			"blogtitle"), BLOGENABLE("blogenable"), PROFILEENABLE("profileenable"), PROFILEAVATAR("profileavatar"), PROFILEFOLLOW("profilefollow");
 	private final String keyname;
 
 	private Qorakeys(String keyname) {

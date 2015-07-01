@@ -2,13 +2,18 @@ package qora.web;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.json.simple.JSONObject;
 
 import controller.Controller;
+import database.DBSet;
 import qora.naming.Name;
 import utils.GZIP;
 import utils.NameUtils;
@@ -28,6 +33,7 @@ public class Profile {
 	{
 		return new Profile(name);
 	}
+	
 	
 	private Profile(Name name)
 	{
@@ -81,6 +87,60 @@ public class Profile {
 		return (String) jsonRepresenation.get(Qorakeys.PROFILEAVATAR.toString());
 	}
 	
+	public List<String> getFollowedBlogs()
+	{
+		return Collections.unmodifiableList(getFollowedBlogsInternal());
+	}
+
+
+	private List<String> getFollowedBlogsInternal() {
+		String profileFollowString = (String) jsonRepresenation.get(Qorakeys.PROFILEFOLLOW.toString());
+		if(profileFollowString != null)
+		{
+			String[] profileFollowArray = StringUtils.split(profileFollowString, ",");
+			return  new ArrayList<String>( Arrays.asList(profileFollowArray));
+		}
+		
+		return new ArrayList<String>();
+	}
+	
+	public void addFollowedBlog(String blogname)
+	{
+		addRemoveFollowedInternal(blogname, false);
+	}
+	
+	public void removeFollowedBlog(String blogname)
+	{
+		addRemoveFollowedInternal(blogname, true);
+	}
+
+
+	public void addRemoveFollowedInternal(String blogname, boolean isRemove) {
+		Name blogName = DBSet.getInstance().getNameMap().get(blogname);
+		if(blogName != null)
+		{
+			Profile profile = Profile.getProfile(blogName);
+			//ADDING ONLY IF ENABLED REMOVE ALWAYS
+			if(isRemove ||( profile.isProfileEnabled() && profile.isBlogEnabled()))
+			{
+				List<String> followedBlogsInternal = getFollowedBlogsInternal();
+					if(isRemove)
+					{
+						followedBlogsInternal.remove(blogname);
+					}else
+					{
+						if(!followedBlogsInternal.contains(blogname))
+						{
+							followedBlogsInternal.add(blogname);
+						}
+					}
+					String joinResult = StringUtils.join(followedBlogsInternal, ",");
+					jsonRepresenation.put(Qorakeys.PROFILEFOLLOW, joinResult);
+			}
+		}
+	}
+	
+	
 	public boolean isProfileEnabled()
 	{
 		return jsonRepresenation.containsKey(Qorakeys.PROFILEENABLE.toString());
@@ -133,6 +193,11 @@ public class Profile {
 
 	public Name getName() {
 		return name;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 	

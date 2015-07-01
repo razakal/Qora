@@ -36,8 +36,15 @@ public class PebbleHelper {
 		PebbleTemplate compiledTemplate = engine.getTemplate(htmlTemplate);
 		PebbleHelper pebbleHelper = new PebbleHelper(compiledTemplate, new HashMap<String, Object>());
 		pebbleHelper.getContextMap().put("profiles", Profile.getEnabledProfiles());
+		Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
 		pebbleHelper.getContextMap().put("activeProfile",
-				ProfileHelper.getInstance().getActiveProfileOpt());
+				activeProfileOpt);
+		
+		if(activeProfileOpt != null)
+		{
+			pebbleHelper.getContextMap().put("blogfollows",
+					activeProfileOpt.getFollowedBlogs());
+		}
 		
 		return pebbleHelper;
 		
