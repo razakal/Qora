@@ -97,7 +97,7 @@ public class Profile {
 		String profileFollowString = (String) jsonRepresenation.get(Qorakeys.PROFILEFOLLOW.toString());
 		if(profileFollowString != null)
 		{
-			String[] profileFollowArray = StringUtils.split(profileFollowString, ",");
+			String[] profileFollowArray = StringUtils.split(profileFollowString, ", ");
 			return  new ArrayList<String>( Arrays.asList(profileFollowArray));
 		}
 		
@@ -134,7 +134,7 @@ public class Profile {
 							followedBlogsInternal.add(blogname);
 						}
 					}
-					String joinResult = StringUtils.join(followedBlogsInternal, ",");
+					String joinResult = StringUtils.join(followedBlogsInternal, ", ");
 					jsonRepresenation.put(Qorakeys.PROFILEFOLLOW, joinResult);
 			}
 		}
