@@ -898,6 +898,10 @@ public class Controller extends Observable {
 		return DBSet.getInstance().getPollMap().getValues();
 	}
 
+	public Collection<Asset> getAllAssets() {
+		return DBSet.getInstance().getAssetMap().getValues();
+	}
+	
 	public void onDatabaseCommit() {
 		this.wallet.commit();
 	}
