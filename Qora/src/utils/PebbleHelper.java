@@ -3,6 +3,7 @@ package utils;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +45,10 @@ public class PebbleHelper {
 		{
 			pebbleHelper.getContextMap().put("blogfollows",
 					activeProfileOpt.getFollowedBlogs());
+		}else
+		{
+			pebbleHelper.getContextMap().put("blogfollows",
+					new ArrayList<String>());
 		}
 		
 		return pebbleHelper;
