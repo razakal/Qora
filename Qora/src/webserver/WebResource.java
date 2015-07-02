@@ -965,6 +965,21 @@ public class WebResource {
 		}
 	}
 
+	@Path("index/libs/Base58.js")
+	@GET
+	public Response Base58js()
+	{
+		File file = new File("web/libs/js/Base58.js");
+		
+		if(file.exists()){
+			return Response.ok(file, "text/javascript").build();
+		}
+		else
+		{
+			return error404(request);
+		}
+	}
+	
 	@Path("libs/jquery/jquery.{version}.js")
 	@GET
 	public Response jquery(@PathParam("version") String version) {
