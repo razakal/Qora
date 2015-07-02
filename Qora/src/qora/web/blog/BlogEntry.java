@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import namewebserver.NamesWebResource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jsoup.Jsoup;
@@ -20,6 +18,7 @@ import qora.naming.Name;
 import qora.web.Profile;
 import utils.LinkUtils;
 import utils.Pair;
+import webserver.WebResource;
 import database.DBSet;
 
 /**
@@ -78,7 +77,7 @@ public class BlogEntry {
 	private String getImgHtml(String url)
 	{
 		try {
-			String template = NamesWebResource.readFile("web/imgtemplate",
+			String template = WebResource.readFile("web/imgtemplate",
 					StandardCharsets.UTF_8);
 			return template.replace("{{url}}", url);
 		} catch (IOException e) {

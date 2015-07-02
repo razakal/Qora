@@ -1,4 +1,4 @@
-package namewebserver;
+package webserver;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +20,7 @@ public class WebService {
 	{
 		//CREATE CONFIG
 		Set<Class<?>> s = new HashSet<Class<?>>();
-        s.add(NamesWebResource.class);
+        s.add(WebResource.class);
         
         ResourceConfig config = new ResourceConfig(s);
 		

@@ -1,4 +1,4 @@
-package namewebserver;
+package webserver;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -81,7 +81,7 @@ import database.DBSet;
 import database.NameMap;
 
 @Path("/")
-public class NamesWebResource {
+public class WebResource {
 	@Context
 	HttpServletRequest request;
 

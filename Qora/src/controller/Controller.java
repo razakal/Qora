@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.JOptionPane;
 
-import namewebserver.WebService;
 import network.Network;
 import network.Peer;
 import network.message.BlockMessage;
@@ -59,6 +58,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import utils.SysTray;
+import webserver.WebService;
 import api.ApiClient;
 import api.ApiService;
 import at.AT;

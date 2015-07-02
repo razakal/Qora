@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import namewebserver.NamesWebResource;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import qora.account.Account;
 import qora.naming.Name;
+import webserver.WebResource;
 import api.ApiErrorFactory;
 import database.DBSet;
 import database.NameMap;
@@ -157,7 +156,7 @@ public class NameUtils {
 			String value = nameMap.get(key).getValue();
 
 			value = GZIP.webDecompress(value);
-			value = NamesWebResource.injectValues(value);
+			value = WebResource.injectValues(value);
 
 				try {
 					if(value.startsWith("{"))
@@ -171,7 +170,7 @@ public class NameUtils {
 //								Another website is injected into this page, to avoid both in the searchengine we don't allow this!
 								continue;
 							}
-							websitevalue =	NamesWebResource.injectValues(websitevalue);
+							websitevalue =	WebResource.injectValues(websitevalue);
 							if(searchValueOpt == null)
 							{
 								results.add(new Pair<String,String>(key,websitevalue));
