@@ -15,6 +15,9 @@ import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -56,12 +59,13 @@ public class RegisterNameFrame extends JFrame
 	private JTextArea txtareaValue;
 	private JLabel countLabel;
 	private JButton registerButton;
-//	private JButton CompressButton;
 	private JTextField txtRecDetails;
 	private JTextField txtKey;
 	private KeyValueTableModel namesModel;
 	private JButton removeButton;
 	private JButton addButton;
+	private boolean changed;
+	private int selectedRow;
 	
 	public RegisterNameFrame()
 	{
@@ -256,54 +260,54 @@ public class RegisterNameFrame extends JFrame
 		});
 		
 		//ADD NAMING SERVICE TABLE
-				this.add(new JScrollPane(scrollPane), tableGBC);
-		
-				
-				
-				//BUTTON REMOVE
-		        buttonGBC.gridy = 7;
-		        buttonGBC.gridx = 1;
-		        buttonGBC.fill = GridBagConstraints.EAST;
-		        buttonGBC.anchor = GridBagConstraints.EAST;
-		        
-		        removeButton = new JButton("Remove");
-		        removeButton.setPreferredSize(new Dimension(150, 25));
-		        this.add(removeButton, buttonGBC);
-		        
-		        buttonGBC.gridx = 0;
-		        addButton = new JButton("Add");
-		        addButton.setPreferredSize(new Dimension(150, 25));
-		        this.add(addButton, buttonGBC);
-		    
-		        removeButton.addActionListener(new ActionListener()
-			    {
-					public void actionPerformed(ActionEvent e)
+		this.add(new JScrollPane(scrollPane), tableGBC);
+
+		//BUTTON REMOVE
+        buttonGBC.gridy = 7;
+        buttonGBC.gridx = 1;
+        buttonGBC.fill = GridBagConstraints.EAST;
+        buttonGBC.anchor = GridBagConstraints.EAST;
+        
+        removeButton = new JButton("Remove");
+        removeButton.setPreferredSize(new Dimension(150, 25));
+        this.add(removeButton, buttonGBC);
+        
+        buttonGBC.gridx = 0;
+        buttonGBC.fill = GridBagConstraints.WEST;
+        buttonGBC.anchor = GridBagConstraints.WEST;
+        addButton = new JButton("Add");
+        addButton.setPreferredSize(new Dimension(150, 25));
+        this.add(addButton, buttonGBC);
+    
+        removeButton.addActionListener(new ActionListener()
+	    {
+			public void actionPerformed(ActionEvent e)
+			{
+				int index = namesTable.getSelectionModel().getMinSelectionIndex();
+				if(index != -1)
+				{
+					namesModel.removeEntry(index);
+					
+					if(namesModel.getRowCount() > index)
 					{
-						int index = namesTable.getSelectionModel().getMinSelectionIndex();
-						if(index != -1)
-						{
-							namesModel.removeEntry(index);
-							
-							if(namesModel.getRowCount() > index)
-							{
-								namesTable.requestFocus();
-								namesTable.changeSelection(index,index,false, false);
-							}
-						}
-				    }
-				});
-		        
-		        
-		        addButton.addActionListener(new ActionListener()
-			    {
-					public void actionPerformed(ActionEvent e)
-					{
-						namesModel.addAtEnd();
 						namesTable.requestFocus();
-						int index = namesModel.getRowCount();
-						namesTable.changeSelection(index-1,index-1,false, false);
-				    }
-				});		
+						namesTable.changeSelection(index, index, false, false);
+					}
+				}
+		    }
+		});
+        
+        
+        addButton.addActionListener(new ActionListener()
+	    {
+			public void actionPerformed(ActionEvent e)
+			{
+				namesModel.addAtEnd();
+				namesTable.requestFocus();
+				int index = namesModel.getRowCount();
+				namesTable.changeSelection(index-1, index-1, false, false);
+		    }
+		});		
 		
 
 		//LABEL FEE
@@ -331,23 +335,6 @@ public class RegisterNameFrame extends JFrame
 		});
     	this.add(registerButton, buttonGBC);
         
-    	//BUTTON COMPRESS
-        buttonGBC.gridy = 5;
-        buttonGBC.gridx = 2;
-        buttonGBC.fill = GridBagConstraints.EAST;
-        buttonGBC.anchor = GridBagConstraints.EAST;
-        
-//        CompressButton = new JButton("Compress/Decompress");
-//        CompressButton.setPreferredSize(new Dimension(150, 25));
-//        CompressButton.addActionListener(new ActionListener()
-//        {
-//		    public void actionPerformed(ActionEvent e)
-//		    {
-//		    	txtareaValue.setText(GZIP.autoDecompress(txtareaValue.getText()));
-//		    }
-//		});
-//    	this.add(CompressButton, buttonGBC);
-    	
         //PACK
 		this.pack();
         this.setResizable(false);
@@ -361,33 +348,24 @@ public class RegisterNameFrame extends JFrame
       	MenuPopupUtil.installContextMenu(this.txtFee);
       	
       	
-      	
-    	txtKey.getDocument().addDocumentListener(new DocumentListener() {
-			  public void changedUpdate(DocumentEvent e) {
-			    valueChanged(e);
-			  }
-			  public void removeUpdate(DocumentEvent e) {
-			    valueChanged(e);
-			  }
-			  public void insertUpdate(DocumentEvent e) {
-			    valueChanged(e);
-			  }
+		txtKey.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				valueChanged(e);
+			}
+			
+			public void removeUpdate(DocumentEvent e) {
+				valueChanged(e);
+			}
+			
+			public void insertUpdate(DocumentEvent e) {
+				valueChanged(e);
+			}
+		
+			public void valueChanged(final DocumentEvent e) {
+				selectedRow = namesTable.getSelectedRow();
 
-			  public void valueChanged(final DocumentEvent e) {
-				  SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						final int selectedRow = namesTable.getSelectedRow();
-						String newKey = txtKey.getText().toLowerCase();
-						
-						namesModel.setValueAt(newKey, selectedRow, 0);
-						namesModel.fireTableCellUpdated(selectedRow, 0);
-						countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
-						
-					}
-				});
-			  }
+				changed = true;
+			}
 			});
 		
     	ArrayList<Pair<String, String>> list = new ArrayList<>();
@@ -415,22 +393,28 @@ public class RegisterNameFrame extends JFrame
 			}
 			public void update(final KeyValueTableModel namesModel,
 					final JTable namesTable) {
-				final int selectedRow = namesTable.getSelectedRow();
-				SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						String newValue = txtareaValue.getText();
-						namesModel.setValueAt(newValue, selectedRow, 1);
-						namesModel.fireTableCellUpdated(selectedRow, 1);
-						countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
-					}
-				});
+				selectedRow = namesTable.getSelectedRow();
+				changed = true;
 			}
       	 });
 		
-      	
-      	
+		changed = true;
+
+		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleWithFixedDelay(	new Runnable() { 
+			public void run() {
+				if(changed)
+				{
+					String newValue = txtareaValue.getText();
+					String newKey = txtKey.getText().toLowerCase();
+					namesModel.setValueAt(newValue, selectedRow, 1);
+					namesModel.fireTableCellUpdated(selectedRow, 1);
+					namesModel.setValueAt(newKey, selectedRow, 0);
+					namesModel.fireTableCellUpdated(selectedRow, 0);
+					countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
+					changed = false;
+				}
+			}}, 0, 500, TimeUnit.MILLISECONDS);
 	}
 	
 	private void refreshReceiverDetails()

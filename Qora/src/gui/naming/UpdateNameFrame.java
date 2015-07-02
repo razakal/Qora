@@ -18,6 +18,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -62,12 +65,13 @@ public class UpdateNameFrame extends JFrame
 	private JTextArea txtareaValue;	
 	private JTextField txtFee;
 	private JButton updateButton;
-//	private JButton CompressButton;
 	private JButton removeButton;
 	private JButton addButton;
 	private JLabel countLabel;
 	private KeyValueTableModel namesModel;
-	
+	private boolean changed;
+	private int selectedRow;
+
 	public UpdateNameFrame(Name name)
 	{
 		super("Qora - Update Name");
@@ -181,25 +185,25 @@ public class UpdateNameFrame extends JFrame
 		this.add(countLabel, labelGBC);
 		
 		//TABLE GBC
-				GridBagConstraints tableGBC = new GridBagConstraints();
-				tableGBC.fill = GridBagConstraints.BOTH; 
-				tableGBC.anchor = GridBagConstraints.NORTHWEST;
-				tableGBC.weightx = 1;
-				tableGBC.weighty = 1;
-				tableGBC.gridwidth = 10;
-				tableGBC.gridx = 0;	
-				tableGBC.gridy= 6;	
+		GridBagConstraints tableGBC = new GridBagConstraints();
+		tableGBC.fill = GridBagConstraints.BOTH; 
+		tableGBC.anchor = GridBagConstraints.NORTHWEST;
+		tableGBC.weightx = 1;
+		tableGBC.weighty = 1;
+		tableGBC.gridwidth = 10;
+		tableGBC.gridx = 0;	
+		tableGBC.gridy= 6;	
+
+		namesModel = new KeyValueTableModel();
+		final JTable namesTable = new JTable(namesModel);
 		
-				namesModel = new KeyValueTableModel();
-				final JTable namesTable = new JTable(namesModel);
-				
-				JScrollPane scrollPane = new JScrollPane(namesTable);
-		        scrollPane.setPreferredSize(new Dimension(100, 150));
-		        scrollPane.setWheelScrollingEnabled(true);
-		
-				namesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-				namesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		JScrollPane scrollPane = new JScrollPane(namesTable);
+        scrollPane.setPreferredSize(new Dimension(100, 150));
+        scrollPane.setWheelScrollingEnabled(true);
+
+		namesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		namesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			
 			@Override
 			public void valueChanged(final ListSelectionEvent e) {
@@ -225,71 +229,56 @@ public class UpdateNameFrame extends JFrame
 		});
 		
 		
-			this.txtareaValue.getDocument().addDocumentListener(new DocumentListener() {
+		this.txtareaValue.getDocument().addDocumentListener(new DocumentListener() {
             
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
 				update(namesModel, namesTable);
 			}
+			
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				update(namesModel, namesTable);
 			}
+			
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
 				update(namesModel, namesTable);
 			}
+			
 			public void update(final KeyValueTableModel namesModel,
 					final JTable namesTable) {
-				final int selectedRow = namesTable.getSelectedRow();
-				SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						String newValue = txtareaValue.getText();
-						namesModel.setValueAt(newValue, selectedRow, 1);
-						namesModel.fireTableCellUpdated(selectedRow, 1);
-						countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
-					}
-				});
+				selectedRow = namesTable.getSelectedRow();
+				
+				changed = true;
 			}
         });
 		
 		
 		txtKey.getDocument().addDocumentListener(new DocumentListener() {
-			  public void changedUpdate(DocumentEvent e) {
-			    valueChanged(e);
-			  }
-			  public void removeUpdate(DocumentEvent e) {
-			    valueChanged(e);
-			  }
-			  public void insertUpdate(DocumentEvent e) {
-			    valueChanged(e);
-			  }
+			
+			public void changedUpdate(DocumentEvent e) {
+				valueChanged(e);
+			}
+			
+			public void removeUpdate(DocumentEvent e) {
+				valueChanged(e);
+			}
 
-			  public void valueChanged(final DocumentEvent e) {
-				  SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						final int selectedRow = namesTable.getSelectedRow();
-						String newKey = txtKey.getText().toLowerCase();
+			public void insertUpdate(DocumentEvent e) {
+				valueChanged(e);
+			}
+
+			public void valueChanged(final DocumentEvent e) {
+				selectedRow = namesTable.getSelectedRow();
 						
-						namesModel.setValueAt(newKey, selectedRow, 0);
-						namesModel.fireTableCellUpdated(selectedRow, 0);
-						countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
-						
-					}
-				});
-			  }
-			});
+				changed = true;
+			}
+		});
 		
 		
 		txtareaValue.setEnabled(namesTable.getSelectedRow() != -1);
 		txtKey.setEnabled(namesTable.getSelectedRow() != -1);
-		
 		
 		this.cbxName.addItemListener(new ItemListener()
       	{
@@ -302,46 +291,13 @@ public class UpdateNameFrame extends JFrame
       	 
 //      				txtareaValue.setText(name.getValue());
 //      				txtOwner.setText(name.getOwner().getAddress());
-      				
-      				String value = GZIP.webDecompress(name.getValue());
-      				JSONObject jsonObject;
-      				try {
-						jsonObject = (JSONObject) JSONValue.parse(value);
-						
-					} catch (Exception e) {
-						jsonObject = null;
-					}
-      				
-      				List<Pair<String, String>> keyvaluepairs = new ArrayList<>();
-      				if(jsonObject != null)
-      				{
-      					@SuppressWarnings("unchecked")
-						Set<String> keySet = jsonObject.keySet();
-      					for (String key : keySet) {
-      						Object object = jsonObject.get(key);
-      						if(object instanceof Long)
-      						{
-      							object = ""+object;
-      						}
-							keyvaluepairs.add(new Pair<String, String>(key, (String) object));
-      					}
-      					
-      				}else
-      				{
-      					keyvaluepairs.add(new Pair<String, String>(Qorakeys.DEFAULT.toString(), value));
-      				}
-      				
-      				namesModel.setData(keyvaluepairs);
-      				namesTable.requestFocus();
-      				namesTable.changeSelection(0,0,false, false);
+      				loadName(name, namesTable);
       				
       			}
       	    }    
       	});
 		
 		
-		
-
 		//ADD NAMING SERVICE TABLE
 		this.add(new JScrollPane(scrollPane), tableGBC);
 		
@@ -370,26 +326,7 @@ public class UpdateNameFrame extends JFrame
 		});
     	this.add(updateButton, buttonGBC);
              
-    	//BUTTON COMPRESS
-//        buttonGBC.gridy = 5;
-//        buttonGBC.gridx = 1;
-//        buttonGBC.fill = GridBagConstraints.EAST;
-//        buttonGBC.anchor = GridBagConstraints.EAST;
-//        
-//        CompressButton = new JButton("Compress/Decompress");
-//        CompressButton.setPreferredSize(new Dimension(150, 25));
-//    
-//        CompressButton.addActionListener(new ActionListener()
-//	    {
-//			public void actionPerformed(ActionEvent e)
-//			{
-//		    	txtareaValue.setText(GZIP.autoDecompress(txtareaValue.getText()));
-//		    }
-//		});
-//    	this.add(CompressButton, buttonGBC);
-    	
-    	
-    	//BUTTON REMOVE
+     	//BUTTON REMOVE
         buttonGBC.gridy = 7;
         buttonGBC.gridx = 1;
         buttonGBC.fill = GridBagConstraints.EAST;
@@ -400,6 +337,8 @@ public class UpdateNameFrame extends JFrame
         this.add(removeButton, buttonGBC);
         
         buttonGBC.gridx = 0;
+        buttonGBC.fill = GridBagConstraints.WEST;
+        buttonGBC.anchor = GridBagConstraints.WEST;
         addButton = new JButton("Add");
         addButton.setPreferredSize(new Dimension(150, 25));
         this.add(addButton, buttonGBC);
@@ -416,7 +355,7 @@ public class UpdateNameFrame extends JFrame
 					if(namesModel.getRowCount() > index)
 					{
 						namesTable.requestFocus();
-						namesTable.changeSelection(index,index,false, false);
+						namesTable.changeSelection(index, index, false, false);
 					}
 				}
 		    }
@@ -430,7 +369,7 @@ public class UpdateNameFrame extends JFrame
 				namesModel.addAtEnd();
 				namesTable.requestFocus();
 				int index = namesModel.getRowCount();
-				namesTable.changeSelection(index-1,index-1,false, false);
+				namesTable.changeSelection(index-1, index-1, false, false);
 		    }
 		});
 
@@ -438,7 +377,7 @@ public class UpdateNameFrame extends JFrame
     	if(this.cbxName.getItemCount() > 0)
     	{
     		this.cbxName.setSelectedItem(name);
-    		this.txtareaValue.setText(name.getValue());
+    		//this.txtareaValue.setText(name.getValue());
 			this.txtOwner.setText(name.getOwner().getAddress());
     	}
     	
@@ -452,8 +391,64 @@ public class UpdateNameFrame extends JFrame
       	MenuPopupUtil.installContextMenu(txtOwner);
       	MenuPopupUtil.installContextMenu(txtareaValue);
       	MenuPopupUtil.installContextMenu(txtFee);
+      	
+		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleWithFixedDelay(	new Runnable() { 
+			public void run() {
+				if(changed)
+				{
+					String newValue = txtareaValue.getText();
+					String newKey = txtKey.getText().toLowerCase();
+					namesModel.setValueAt(newValue, selectedRow, 1);
+					namesModel.fireTableCellUpdated(selectedRow, 1);
+					namesModel.setValueAt(newKey, selectedRow, 0);
+					namesModel.fireTableCellUpdated(selectedRow, 0);
+					countLabel.setText(GZIP.getZippedCharacterCount(namesModel));
+					changed = false;
+				}
+			}}, 0, 500, TimeUnit.MILLISECONDS);
+		
+		//cbxName.setSelectedIndex(0);
+		//cbxName.revalidate();
+		//this.cbxName.setSelectedItem(this.cbxName.getSelectedItem());
+		
+		loadName((Name)this.cbxName.getSelectedItem(), namesTable);
 	}
 	
+	public void loadName(Name name, JTable namesTable)
+	{
+		String value = GZIP.webDecompress(name.getValue());
+			JSONObject jsonObject;
+			try {
+			jsonObject = (JSONObject) JSONValue.parse(value);
+			
+		} catch (Exception e) {
+			jsonObject = null;
+		}
+			
+		List<Pair<String, String>> keyvaluepairs = new ArrayList<>();
+		if(jsonObject != null)
+		{
+			@SuppressWarnings("unchecked")
+		Set<String> keySet = jsonObject.keySet();
+			for (String key : keySet) {
+				Object object = jsonObject.get(key);
+				if(object instanceof Long)
+				{
+					object = "" + object;
+				}
+			keyvaluepairs.add(new Pair<String, String>(key, (String) object));
+			}
+			
+		}else
+		{
+			keyvaluepairs.add(new Pair<String, String>(Qorakeys.DEFAULT.toString(), value));
+		}
+		
+		namesModel.setData(keyvaluepairs);
+		namesTable.requestFocus();
+		namesTable.changeSelection(0, 0, false, false);
+	}
 	
 	public void onUpdateClick()
 	{
