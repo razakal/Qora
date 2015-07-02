@@ -52,6 +52,7 @@ public class Settings {
 	private static final boolean DEFAULT_SOUND_MESSAGE = true;
 	private static final boolean DEFAULT_SOUND_NEW_TRANSACTION = true;
 	
+	private static final boolean DEFAULT_BLOCKEXPLORER_BOOST = false;
 	
 	private static final int DEFAULT_MAX_BYTE_PER_FEE = 512;
 	private static final BigDecimal DEFAULT_BIG_FEE = new BigDecimal(1000);
@@ -442,5 +443,15 @@ public class Settings {
 		}
 		
 		return DEFAULT_GUI_ENABLED;
+	}
+	
+	public boolean isBlockExplorerBoost() 
+	{
+		if(this.settingsJSON.containsKey("blockexplorerboost"))
+		{
+			return ((Boolean) this.settingsJSON.get("blockexplorerboost")).booleanValue();
+		}
+		
+		return DEFAULT_BLOCKEXPLORER_BOOST;
 	}
 }
