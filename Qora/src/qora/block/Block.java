@@ -143,9 +143,14 @@ public class Block {
 			fee = fee.add(transaction.getFee());
 		}
 		
-		fee = fee.add(BigDecimal.valueOf(this.atFees,8));
+		fee = fee.add(BigDecimal.valueOf(this.atFees, 8));
 
 		return fee;
+	}
+	
+	public BigDecimal getATfee()
+	{
+		return BigDecimal.valueOf(this.atFees, 8);
 	}
 	
 	public void setTransactionData(int transactionCount, byte[] rawTransactions)
