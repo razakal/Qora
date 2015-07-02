@@ -722,6 +722,15 @@ public class Block {
 			db.getTransactionMap().delete(transaction);
 		}
 		
+		//DELETE CONFIRMED TRANSACTIONS FROM UNCONFIRMED TRANSACTIONS LIST
+		List<Transaction> unconfirmedTransactions = new ArrayList<Transaction>(db.getTransactionMap().getValues());
+		for (Transaction transaction : unconfirmedTransactions) {
+			if(db.getTransactionParentMap().contains(transaction.getSignature()))
+			{
+				db.getTransactionMap().delete(transaction);
+			}
+		}
+		
 		//PROCESS FEE
 		BigDecimal blockFee = this.getTotalFee();
 		if(blockFee.compareTo(BigDecimal.ZERO) == 1)
@@ -803,10 +812,13 @@ public class Block {
 		//SET PARENT AS LAST BLOCK
 		db.getBlockMap().setLastBlock(this.getParent(db));
 				
-		//ADD ORPHANED TRANASCTIONS BACK TO DATABASE
 		for(Transaction transaction: this.getTransactions())
 		{
+			//ADD ORPHANED TRANASCTIONS BACK TO DATABASE
 			db.getTransactionMap().add(transaction);
+			
+			//DELETE ORPHANED TRANASCTIONS FROM PARETN DATABASE
+			db.getTransactionParentMap().delete(transaction.getSignature());
 		}
 	}
 	

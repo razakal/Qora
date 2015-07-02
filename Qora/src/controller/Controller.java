@@ -529,9 +529,10 @@ public class Controller extends Observable {
 					return;
 				}
 
-				// CHECK IF TRANSACTION HAS MINIMUM FEE AND MINIMUM FEE PER BYTE
+				// CHECK IF TRANSACTION HAS MINIMUM FEE AND MINIMUM FEE PER BYTE AND UNCONFIRMED
 				if (transaction.hasMinimumFee()
-						&& transaction.hasMinimumFeePerByte()) {
+						&& transaction.hasMinimumFeePerByte()
+						&& ! DBSet.getInstance().getTransactionParentMap().contains(transaction.getSignature())) {
 					// ADD TO UNCONFIRMED TRANSACTIONS
 					this.blockGenerator.addUnconfirmedTransaction(transaction);
 
@@ -577,13 +578,16 @@ public class Controller extends Observable {
 
 	private void broadcastTransaction(Transaction transaction) {
 
-		// CREATE MESSAGE
-		Message message = MessageFactory.getInstance()
-				.createTransactionMessage(transaction);
-
-		// BROADCAST MESSAGE
-		List<Peer> excludes = new ArrayList<Peer>();
-		this.network.broadcast(message, excludes);
+		if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+		{
+			// CREATE MESSAGE
+			Message message = MessageFactory.getInstance()
+					.createTransactionMessage(transaction);
+	
+			// BROADCAST MESSAGE
+			List<Peer> excludes = new ArrayList<Peer>();
+			this.network.broadcast(message, excludes);
+		}
 	}
 
 	// SYNCHRONIZE
