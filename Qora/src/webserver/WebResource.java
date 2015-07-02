@@ -418,6 +418,64 @@ public class WebResource {
 		}
 	}
 
+	
+	String[] imgsArray = {"qora.png", "logo_header.png", "qora-user.png", "logo_bottom.png", "loading.gif",
+			"00_generating.png", "01_genesis.jpg", "02_payment_in.png", 
+			"02_payment_out.png", "03_name_registration.png",  "04_name_update.png", 
+			"05_name_sale.png", "06_cancel_name_sale.png", "07_name_purchase_in.png", "07_name_purchase_out.png",
+			"08_poll_creation.jpg", "09_poll_vote.jpg", "10_arbitrary_transaction.png", "11_asset_issue.png",
+			"12_asset_transfer_in.png", "12_asset_transfer_out.png", "13_order_creation.png", "14_cancel_order.png", 
+			"15_multi_payment_in.png", "15_multi_payment_out.png", "16_deploy_at.png", 
+			"17_message_in.png", "17_message_out.png", "asset_trade.png", "at_tx_in.png", 
+			"at_tx_out.png", "grleft.png", "grright.png", "redleft.png", "redright.png",
+			"bar.gif", "bar_left.gif", "bar_right.gif"
+			};
+	
+	@Path("index/img/{filename}")
+	@GET
+	public Response image(@PathParam("filename") String filename)
+	{
+		ArrayList<String> imgs = new ArrayList<String>();
+
+		imgs.addAll(Arrays.asList(imgsArray));
+
+		int imgnum = imgs.indexOf(filename);
+		
+		if(imgnum == -1)
+		{
+			return error404(request);
+		}
+		
+		File file = new File("web/img/"+ imgs.get(imgnum));
+		String type = "";
+		
+		switch(getFileExtention(imgs.get(imgnum)))
+		{
+			case "png":
+				type = "image/png";
+				break;
+			case "gif":
+				type = "image/gif";
+				break;
+			case "jpg":
+				type = "image/jpeg";
+				break;
+		}
+		
+		if(file.exists()){
+			return Response.ok(file, type).build();
+		}
+		else
+		{
+			return error404(request);
+		}
+	}
+	
+	public static String getFileExtention(String filename){
+		int dotPos = filename.lastIndexOf(".") + 1;
+		return filename.substring(dotPos);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Path("/API.html")
 	@GET
@@ -573,42 +631,6 @@ public class WebResource {
 
 		return error404(request);
 
-	}
-
-	@Path("img/qora.png")
-	@GET
-	public Response qorapng() {
-		File file = new File("web/img/qora.png");
-
-		if (file.exists()) {
-			return Response.ok(file, "image/png").build();
-		} else {
-			return error404(request);
-		}
-	}
-
-	@Path("img/logo_header.png")
-	@GET
-	public Response logo_header() {
-		File file = new File("web/img/logo_header.png");
-
-		if (file.exists()) {
-			return Response.ok(file, "image/png").build();
-		} else {
-			return error404(request);
-		}
-	}
-
-	@Path("img/qora-user.png")
-	@GET
-	public Response qorauserpng() {
-		File file = new File("web/img/qora-user.png");
-
-		if (file.exists()) {
-			return Response.ok(file, "image/png").build();
-		} else {
-			return error404(request);
-		}
 	}
 
 	@Path("libs/css/style.css")
