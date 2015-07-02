@@ -255,7 +255,7 @@ public abstract class Transaction {
 	
 	public boolean isConfirmed(DBSet db)
 	{
-		return DBSet.getInstance().getTransactionMap().contains(this);
+		return DBSet.getInstance().getTransactionParentMap().contains(this.getSignature());
 	}
 	
 	public int getConfirmations()
