@@ -161,10 +161,10 @@ public class MessageTransaction extends Transaction {
 		//ADD CREATOR/SERVICE/DATA
 		transaction.put("creator", this.creator.getAddress());
 		transaction.put("recipient", this.recipient.getAddress());
-		transaction.put("amount", this.amount);
+		transaction.put("amount", this.amount.toPlainString());
 		transaction.put("data", Base58.encode(this.data));
-		transaction.put("encrypted", ( this.isEncrypted() ) ? "true" : "false");
-		transaction.put("isText", ( this.isText() ) ? "true" : "false");
+		transaction.put("encrypted", this.isEncrypted());
+		transaction.put("isText", this.isText());
 		
 		return transaction;	
 	}

@@ -116,7 +116,7 @@ public class BuyNameTransaction extends Transaction
 		//ADD REGISTRANT/NAME/VALUE
 		transaction.put("buyer", this.buyer.getAddress());
 		transaction.put("name", this.nameSale.getKey());
-		transaction.put("amount", this.nameSale.getAmount());
+		transaction.put("amount", this.nameSale.getAmount().toPlainString());
 		transaction.put("seller", this.seller.getAddress());
 								
 		return transaction;	

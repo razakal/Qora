@@ -102,7 +102,7 @@ public class SellNameTransaction extends Transaction
 		//ADD REGISTRANT/NAME/VALUE
 		transaction.put("owner", this.owner.getAddress());
 		transaction.put("name", this.nameSale.getKey());
-		transaction.put("amount", this.nameSale.getAmount());
+		transaction.put("amount", this.nameSale.getAmount().toPlainString());
 						
 		return transaction;	
 	}
