@@ -90,7 +90,9 @@ public class WebResource {
 
 	@GET
 	public Response Default() {
-		return handleDefault();
+	
+		// REDIRECT
+		return Response.status(302).header("Location", "index/index.html").build();
 	}
 
 	public Response handleDefault() {
@@ -180,7 +182,7 @@ public class WebResource {
 		}
 	}
 	
-	@Path("blogsearch.html")
+	@Path("index/blogsearch.html")
 	@GET
 	public Response doBlogSearch() {
 
@@ -206,7 +208,7 @@ public class WebResource {
 
 	}
 
-	@Path("blogdirectory.html")
+	@Path("index/blogdirectory.html")
 	@GET
 	public Response doBlogdirectory() {
 
@@ -225,7 +227,7 @@ public class WebResource {
 
 	}
 
-	@Path("settingssave.html")
+	@Path("index/settingssave.html")
 	@GET
 	public Response saveProfileSettings() {
 
@@ -298,7 +300,7 @@ public class WebResource {
 
 	}
 
-	@Path("settings.html")
+	@Path("index/settings.html")
 	@GET
 	public Response doProfileSettings() {
 
@@ -368,7 +370,7 @@ public class WebResource {
 		return result;
 	}
 
-	@Path("webdirectory.html")
+	@Path("index/webdirectory.html")
 	@GET
 	public Response doWebdirectory() {
 
@@ -438,7 +440,7 @@ public class WebResource {
 		return result;
 	}
 
-	@Path("index.html")
+	@Path("index/index.html")
 	@GET
 	public Response handleIndex() {
 		return handleDefault();
@@ -515,7 +517,7 @@ public class WebResource {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Path("/API.html")
+	@Path("index/API.html")
 	@GET
 	public Response handleAPICall() {
 
@@ -720,7 +722,7 @@ public class WebResource {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Path("postblog.html")
+	@Path("index/postblog.html")
 	@GET
 	public Response postBlog() {
 
@@ -861,7 +863,7 @@ public class WebResource {
 		}
 	}
 
-	@Path("followblog.html")
+	@Path("index/followblog.html")
 	@GET
 	public Response followBlog() {
 		try {
@@ -936,7 +938,7 @@ public class WebResource {
 
 	}
 
-	@Path("blog.html")
+	@Path("index/blog.html")
 	@GET
 	public Response getBlog(String messageOpt) {
 
