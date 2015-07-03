@@ -33,6 +33,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
@@ -46,6 +47,7 @@ import org.jsoup.select.Elements;
 
 import qora.account.Account;
 import qora.block.Block;
+import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
@@ -64,6 +66,7 @@ import utils.NameUtils.NameResult;
 import utils.Pair;
 import utils.PebbleHelper;
 import utils.Qorakeys;
+import utils.StrJSonFine;
 import utils.Triplet;
 import api.ATResource;
 import api.AddressesResource;
@@ -142,6 +145,41 @@ public class WebResource {
 		return results;
 	}
 
+	
+	@SuppressWarnings("rawtypes")
+	@Path("index/blockexplorer.json")
+	@GET
+	public Response jsonQueryMain(@Context UriInfo info)
+	{		
+		Map output = BlockExplorer.getInstance().jsonQueryMain(info);
+		
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.entity(StrJSonFine.StrJSonFine(JSONValue.toJSONString(output)))
+				.build();
+	}
+	
+	@Path("index/blockexplorer")
+	@GET
+	public Response blockexplorer()
+	{
+		return blockexplorerhtml();
+	}
+	
+	@Path("index/blockexplorer.html")
+	@GET
+	public Response blockexplorerhtml()
+	{
+		try {
+			String content = readFile("web/blockexplorer.html", StandardCharsets.UTF_8);
+		
+			return Response.ok(content, "text/html; charset=utf-8").build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return error404(request);
+		}
+	}
+	
 	@Path("blogsearch.html")
 	@GET
 	public Response doBlogSearch() {
@@ -633,7 +671,7 @@ public class WebResource {
 
 	}
 
-	@Path("libs/css/style.css")
+	@Path("index/libs/css/style.css")
 	@GET
 	public Response style() {
 		File file = new File("web/libs/css/style.css");
@@ -645,7 +683,7 @@ public class WebResource {
 		}
 	}
 
-	@Path("libs/css/sidebar.css")
+	@Path("index/libs/css/sidebar.css")
 	@GET
 	public Response sidebarcss() {
 		File file = new File("web/libs/css/sidebar.css");
@@ -657,7 +695,7 @@ public class WebResource {
 		}
 	}
 
-	@Path("libs/css/timeline.css")
+	@Path("index/libs/css/timeline.css")
 	@GET
 	public Response timelinecss() {
 		File file = new File("web/libs/css/timeline.css");
@@ -669,7 +707,7 @@ public class WebResource {
 		}
 	}
 
-	@Path("libs/js/sidebar.js")
+	@Path("index/libs/js/sidebar.js")
 	@GET
 	public Response sidebarjs() {
 		File file = new File("web/libs/js/sidebar.js");
@@ -980,7 +1018,7 @@ public class WebResource {
 		}
 	}
 	
-	@Path("libs/jquery/jquery.{version}.js")
+	@Path("index/libs/jquery/jquery.{version}.js")
 	@GET
 	public Response jquery(@PathParam("version") String version) {
 		File file;
@@ -999,7 +1037,7 @@ public class WebResource {
 		}
 	}
 
-	@Path("libs/angular/angular.min.{version}.js")
+	@Path("index/libs/angular/angular.min.{version}.js")
 	@GET
 	public Response angular(@PathParam("version") String version) {
 		File file;
@@ -1018,7 +1056,7 @@ public class WebResource {
 		}
 	}
 
-	@Path("libs/bootstrap/{version}/{folder}/{filename}")
+	@Path("index/libs/bootstrap/{version}/{folder}/{filename}")
 	@GET
 	public Response bootstrap(@PathParam("version") String version,
 			@PathParam("folder") String folder,
