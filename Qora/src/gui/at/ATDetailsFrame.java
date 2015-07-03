@@ -51,6 +51,18 @@ public class ATDetailsFrame extends JFrame {
 		detailGBC.gridwidth = 2;
 		detailGBC.gridx = 1;
 
+		//LABEL ADDRESS
+		labelGBC.gridy = 0;
+		JLabel addressLabel = new JLabel("Address:");
+		this.add(addressLabel, labelGBC);
+
+		//OWNER
+		detailGBC.gridy = 0;
+		JTextField address = new JTextField(new Account(Base58.encode(at.getId())).getAddress().toString());
+		address.setEditable(false);
+		this.add(address, detailGBC);
+
+		
 		//LABEL AT TYPE
 		labelGBC.gridy = 1;
 		JLabel keyLabel = new JLabel("Type:");
@@ -93,7 +105,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//OWNER
 		detailGBC.gridy = 4;
-		JTextField owner = new JTextField(new Account(Base58.encode(at.getId())).getAddress().toString());
+		JTextField owner = new JTextField(new Account(Base58.encode(at.getCreator())).getAddress().toString());
 		owner.setEditable(false);
 		this.add(owner, detailGBC);
 
