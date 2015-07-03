@@ -138,13 +138,13 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="/webdirectory.html">Webdirectory</a></li>
-            <li><a href="/blogdirectory.html">Blogdirectory</a></li>
+            <li><a href="/index/webdirectory.html">Webdirectory</a></li>
+            <li><a href="/index/blogdirectory.html">Blogdirectory</a></li>
              {% if blogfollows.size > 0 %}
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Blog <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 {% for blogfollow in blogfollows %}
-                	<li><a href="/blog.html?blogname={{blogfollow}}">{{blogfollow}}</a></li>
+                	<li><a href="/index/blog.html?blogname={{blogfollow}}">{{blogfollow}}</a></li>
                 	{% if  loop.index   != blogfollows.size()  - 1 %}
                 	<li class="divider"></li>
                 	{% endif %}
@@ -157,14 +157,14 @@
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
               	 {% for profile in profiles %}
-                	<li><a href="/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
+                	<li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
                 	{% if  loop.index   != profiles.size()  - 1 %}
                 	<li class="divider"></li>
                 	{% endif %}
 				{% endfor %}
               </ul>
             </li>
-            <li><a href="/settings.html">Settings</a></li>
+            <li><a href="/index/settings.html">Settings</a></li>
             	{% if activeProfile is null %}
              	<li><a href="#">No active Profile</a></li>
              	{% else %}
@@ -325,7 +325,7 @@
         $("#blogtitle").val ("{{profile.getBlogTitleOpt}}");
         $("#avatar").val ("{{profile.getAvatarOpt}}");
         $('ul.nav-tabs > li').removeClass('active');
-        if (window.location.pathname === '/blogsearch.html') {
+        if (window.location.pathname === '/index/blogsearch.html') {
             $('ul.nav-tabs > li:nth-child(2)').addClass('active');
         } else {
             $('ul.nav-tabs > li:nth-child(1)').addClass('active');
@@ -338,11 +338,11 @@
             $('#name').val(this);
         });
         $('#name').change(function() {
-            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/?search=' + $('#name').val());
-            $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/blogsearch.html?search=' + $('#name').val());
+            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
+            $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
         });
-        $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/?search=' + $('#name').val());
-        $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/blogsearch.html?search=' + $('#name').val());
+        $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
+        $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/index.html?blogsearch.html?search=' + $('#name').val());
         searchval = $('#name').val();
         searchval = searchval.replace(/%20/g, ' ');
         $('#name').val(searchval);

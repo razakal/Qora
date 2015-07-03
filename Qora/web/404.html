@@ -165,13 +165,13 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="/webdirectory.html">Webdirectory</a></li>
-            <li><a href="/blogdirectory.html">Blogdirectory</a></li>
+            <li><a href="/index/webdirectory.html">Webdirectory</a></li>
+            <li><a href="/index/blogdirectory.html">Blogdirectory</a></li>
              {% if blogfollows.size > 0 %}
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Blog <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 {% for blogfollow in blogfollows %}
-                	<li><a href="/blog.html?blogname={{blogfollow}}">{{blogfollow}}</a></li>
+                	<li><a href="/index/blog.html?blogname={{blogfollow}}">{{blogfollow}}</a></li>
                 	{% if  loop.index   != blogfollows.size()  - 1 %}
                 	<li class="divider"></li>
                 	{% endif %}
@@ -179,19 +179,19 @@
               </ul>
             </li>
             {% else%}
-            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/index/blog.html">Blog</a></li>
              {% endif%}
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 {% for profile in profiles %}
-                	<li><a href="/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
+                	<li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
                 	{% if  loop.index   != profiles.size()  - 1 %}
                 	<li class="divider"></li>
                 	{% endif %}
 				{% endfor %}
               </ul>
             </li>
-           <li><a href="/settings.html">Settings</a></li>
+           <li><a href="/index/settings.html">Settings</a></li>
             	{% if activeProfile is null %}
              	<li><a href="#">No active Profile</a></li>
              	{% else %}
@@ -254,7 +254,7 @@
     var blogloc;
     blogloc = function() {
         var url;
-        url = '/blogsearch.html?search=' + $("#name").val();
+        url = '/index/blogsearch.html?search=' + $("#name").val();
         return url;
     };
     var webloc;
