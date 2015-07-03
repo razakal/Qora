@@ -260,15 +260,15 @@ function blocks(data)
 	{
 		if(data.lastBlock.height < data.maxHeight + 21)
 		{
-			output += '<a href=?startBlock='+(data.lastBlock.height)+'>next page';
+			output += '<a href=?startBlock='+(data.lastBlock.height)+'>Later';
 		}
 		else
 		{
-			output += '<a href=?startBlock='+(data.maxHeight+21)+'>next page';
+			output += '<a href=?startBlock='+(data.maxHeight+21)+'>Later';
 		}
 	}
 	
-	output += '<td colspan=4 align=right><a href=?startBlock='+(data.maxHeight-21)+'>prev page';
+	output += '<td colspan=4 align=right><a href=?startBlock='+(data.maxHeight-21)+'>Previous';
 	
 	return output;
 }
