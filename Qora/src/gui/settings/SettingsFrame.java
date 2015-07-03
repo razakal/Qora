@@ -335,6 +335,7 @@ public class SettingsFrame extends JFrame{
 			Controller.getInstance().webServiceRestart();
 			
 			Menu.webServerItem.setVisible(Settings.getInstance().isWebEnabled());
+			Menu.blockExplorerItem.setVisible(Settings.getInstance().isWebEnabled());
 		}
 		
 		if(changeDataDir || changeWallet)
