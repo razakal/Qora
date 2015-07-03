@@ -2613,6 +2613,11 @@ function search(data)
 {
 	var output = "";
 
+	if(data.hasOwnProperty('error'))
+	{
+		return '<h2>' + data.error + '</h2>';
+	}
+		
 	var foundList = "";
 	var foundOne = "";
 	

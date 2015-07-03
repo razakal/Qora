@@ -571,7 +571,7 @@ public class BlockExplorer extends Observable implements Observer
 		}
 		
 		
-		if(!signatureBytes.equals(null) && DBSet.getInstance().getBlockMap().contains(signatureBytes))
+		if(!(signatureBytes == null) && DBSet.getInstance().getBlockMap().contains(signatureBytes))
 		{
 			i++;
 			foundList.put(i, "blockSignature");
@@ -588,7 +588,7 @@ public class BlockExplorer extends Observable implements Observer
 		}
 		else
 		{
-			if(!signatureBytes.equals(null) && (DBSet.getInstance().getTransactionParentMap().contains(signatureBytes)))
+			if(!(signatureBytes == null) && (DBSet.getInstance().getTransactionParentMap().contains(signatureBytes)))
 			{
 				i++;
 				foundList.put(i, "transactionSignature");
