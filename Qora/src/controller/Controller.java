@@ -32,6 +32,7 @@ import network.message.TransactionMessage;
 import network.message.VersionMessage;
 
 import org.apache.commons.io.FileUtils;
+import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 
 import qora.BlockChain;
@@ -45,6 +46,7 @@ import qora.assets.Asset;
 import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.Block;
+import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -179,6 +181,17 @@ public class Controller extends Observable {
 			}
 		}
 
+		// BLOCKEXPLORER BOOST
+		if(Settings.getInstance().isBlockExplorerBoost())
+		{
+			BlockExplorer.getInstance().setIndexing(true);
+		}
+		else
+		{
+			BlockExplorer.getInstance().setIndexing(false);
+			BlockExplorer.getInstance().ResetBase();
+		}
+		
 		// CREATE SYNCHRONIZOR
 		this.synchronizer = new Synchronizer();
 
@@ -219,6 +232,19 @@ public class Controller extends Observable {
 		// REGISTER DATABASE OBSERVER
 		this.addObserver(DBSet.getInstance().getTransactionMap());
 		this.addObserver(DBSet.getInstance());
+		
+		// BLOCKEXPLORER BOOST
+		if(Settings.getInstance().isBlockExplorerBoost()) {
+			Block lastBlock = Controller.getInstance().getLastBlock();
+			 
+			if(!(
+					DBSet.getInstance().getBlocksOfAddressMap().getValues().size() == Controller.getInstance().getHeight()
+					&&
+					DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature())))
+				)) {
+				BlockExplorer.getInstance().synchronize();
+			}
+      	}
 	}
 
 	private File getDataBakDir(File dataDir) {

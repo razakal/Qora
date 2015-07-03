@@ -28,6 +28,7 @@ import network.Network;
 
 import org.json.simple.JSONObject;
 
+import qora.blockexplorer.BlockExplorer;
 import controller.Controller;
 import settings.Settings;
 import utils.JSonWriter;
@@ -286,7 +287,7 @@ public class SettingsFrame extends JFrame{
 		
 		if(settingsTabPane.settingsAllowedPanel.chckbxWebAllowForAll.isSelected())
 		{
-			settingsJSONbuf.put("weballowed",new ArrayList<String>());
+			settingsJSONbuf.put("weballowed", new ArrayList<String>());
 		}
 		else
 		{
@@ -295,12 +296,14 @@ public class SettingsFrame extends JFrame{
 		
 		if(settingsTabPane.settingsAllowedPanel.chckbxRpcAllowForAll.isSelected())
 		{
-			settingsJSONbuf.put("rpcallowed",new ArrayList<String>());
+			settingsJSONbuf.put("rpcallowed", new ArrayList<String>());
 		}
 		else
 		{
 			settingsJSONbuf.put("rpcallowed",settingsTabPane.settingsAllowedPanel.rpcAllowedTableModel.getPeers());
 		}
+		
+		settingsJSONbuf.put("blockexplorerboost", (BlockExplorer.getInstance().getBoostStatus().equals("ok") && BlockExplorer.getInstance().getIndexing()));
 		
 		try {
 	        Writer writer = new JSonWriter();

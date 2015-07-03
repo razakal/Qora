@@ -4,15 +4,17 @@ import gui.models.KnownPeersTableModel;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.border.EmptyBorder;
-
+import qora.blockexplorer.BlockExplorer;
 import settings.Settings;
 
 
@@ -33,7 +35,10 @@ public class SettingsParametersPanel extends JPanel
 	public JCheckBox chckbxSoundReceivePayment;
 	public JTextField textMinConnections;
 	public JTextField textMaxConnections;
-
+	public JButton btnBoost;
+	public JLabel lblBoostStatus;
+	public JDialog waitDialog;
+	
 	public SettingsParametersPanel()
 	{
 		
@@ -360,7 +365,140 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxSoundNewTransaction.gridy = 14;
         add(chckbxSoundNewTransaction, gbc_chckbxSoundNewTransaction);
 
-	}
+        JLabel lblExplorer = new JLabel("Built-in BlockExplorer:");
+        lblSounds.setVerticalAlignment(SwingConstants.TOP);
+        GridBagConstraints gbc_lblExplorer = new GridBagConstraints();
+        gbc_lblExplorer.fill = GridBagConstraints.BOTH;
+        gbc_lblExplorer.gridwidth = 4;
+        gbc_lblExplorer.insets = new Insets(5, 0, 5, 5);
+        gbc_lblExplorer.gridx = 1;
+        gbc_lblExplorer.gridy = 15;
+        add(lblExplorer, gbc_lblExplorer);
+        
+        lblBoostStatus = new JLabel();
+        lblSounds.setVerticalAlignment(SwingConstants.TOP);
+        GridBagConstraints gbc_lblBoostStatus = new GridBagConstraints();
+        gbc_lblBoostStatus.fill = GridBagConstraints.BOTH;
+        gbc_lblBoostStatus.gridwidth = 1;
+        gbc_lblBoostStatus.insets = new Insets(0, 0, 0, 5);
+        gbc_lblBoostStatus.gridx = 1;
+        gbc_lblBoostStatus.gridy = 16;
+        add(lblBoostStatus, gbc_lblBoostStatus);
+
+        String boostStatus = BlockExplorer.getInstance().getBoostStatus();
+        lblBoostStatus.setText("<html>Boost status: <b>" + boostStatus+"</b></html>");
+        lblBoostStatus.setHorizontalAlignment(SwingConstants.RIGHT);
+        
+        btnBoost = new JButton();
+        
+        GridBagConstraints gbc_btnBoost = new GridBagConstraints();
+        gbc_btnBoost.gridwidth = 2;
+        gbc_btnBoost.fill = GridBagConstraints.BOTH;
+        gbc_btnBoost.anchor = GridBagConstraints.NORTHWEST;
+        gbc_btnBoost.insets = new Insets(3, 0, 0, 3);
+        gbc_btnBoost.gridx = 3;
+        gbc_btnBoost.gridy = 16;
+        add(btnBoost, gbc_btnBoost);
+        
+        if(boostStatus.equals("lost") || boostStatus.equals("off"))
+        {
+        	btnBoost.setText("Enable Boost");
+        }
+        else
+        {
+        	btnBoost.setText("Disable Boost");
+        }
+        
+        btnBoost.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				
+				//CREATE WAIT DIALOG
+				JOptionPane optionPane = new JOptionPane("Scanning blockchain please wait...", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+				waitDialog = new JDialog();
+				List<Image> icons = new ArrayList<Image>();
+				icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon16.png"));
+				icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon32.png"));
+				icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon64.png"));
+				icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon128.png"));
+				waitDialog.setIconImages(icons);
+				waitDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);	
+				waitDialog.setTitle("Please Wait");
+				waitDialog.setContentPane(optionPane);	
+				waitDialog.setModal(true);
+				waitDialog.pack();
+				waitDialog.setLocationRelativeTo(null);	
+				
+				//RUN WAIT DIALOG IN THREAD SO IT DOES NOT BLOCK MAIN THREAD
+				new Thread()
+				{
+					public void run() 
+					{
+						waitDialog.setVisible(true);
+					}
+				}.start();
+				
+				String boostStatus = BlockExplorer.getInstance().getBoostStatus();
+				
+				if(boostStatus.equals("lost") || boostStatus.equals("off"))
+				{
+					BlockExplorer.getInstance().setIndexing(true);
+					BlockExplorer.getInstance().synchronize();
+
+					boostStatus = BlockExplorer.getInstance().getBoostStatus();
+
+			        if(boostStatus.equals("lost") || boostStatus.equals("off"))
+			        {
+			        	btnBoost.setText("Enable Boost");
+			        }
+			        else
+			        {
+			        	btnBoost.setText("Disable Boost");
+			        }
+					
+					lblBoostStatus.setText("<html>Boost status: <b>" + boostStatus + "</b></html>");
+				}
+				else
+				{
+					BlockExplorer.getInstance().setIndexing(false);
+					BlockExplorer.getInstance().ResetBase();
+					
+					boostStatus = BlockExplorer.getInstance().getBoostStatus();
+
+					if(boostStatus.equals("lost") || boostStatus.equals("off"))
+			        {
+			        	btnBoost.setText("Enable Boost");
+			        }
+			        else
+			        {
+			        	btnBoost.setText("Disable Boost");
+			        }
+					
+					lblBoostStatus.setText("<html>Boost status: <b>" + boostStatus + "</b></html>");
+				}
+				
+				//CLOSE DIALOG
+				waitDialog.dispose();
+			}
+		});	  
+        
+        JLabel lblBoostExplanatoryText = new JLabel("It accelerates the display of addresses, but Boost requires a lot of disk space.");
+        lbllimitConnections.setVerticalAlignment(SwingConstants.TOP);
+        GridBagConstraints gbc_BoostExplanatoryText = new GridBagConstraints();
+        gbc_BoostExplanatoryText.fill = GridBagConstraints.BOTH;
+        gbc_BoostExplanatoryText.gridwidth = 4;
+        gbc_BoostExplanatoryText.insets = new Insets(5, 0, 5, 5);
+        gbc_BoostExplanatoryText.gridx = 1;
+        gbc_BoostExplanatoryText.gridy = 17;
+        add(lblBoostExplanatoryText, gbc_BoostExplanatoryText);
+        
+        GridBagConstraints gbc_bottom = new GridBagConstraints();
+        gbc_bottom.gridy = 18;
+        gbc_bottom.weighty = 1;
+      	this.add(new JPanel(), gbc_bottom);
+        
+ 	}
 	public void close() 
 	{
 		//REMOVE OBSERVERS/HANLDERS
