@@ -23,182 +23,167 @@ import api.NamesResource;
 @SuppressWarnings("unchecked")
 public class Profile {
 
-	
-	
+	public static boolean isAllowedProfileName(String name) {
+		// RULES FOR PROFILES
+		if (name == null || name.length() < 3 || name.contains(";")
+				|| name.endsWith(" ") || name.startsWith(" ")) {
+			return false;
+		}
+
+		return true;
+	}
+
 	private final BlogBlackWhiteList blogBlackWhiteList;
 	private JSONObject jsonRepresenation;
 	private Name name;
 
-	public static Profile getProfile(Name name)
-	{
+	public static Profile getProfileOpt(Name name) {
+		if (!isAllowedProfileName(name.getName())) {
+			return null;
+		}
 		return new Profile(name);
 	}
-	
-	
-	private Profile(Name name)
-	{
+
+	private Profile(Name name) {
 		this.name = name;
-		blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(name.toString());
+		blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(name
+				.toString());
 		jsonRepresenation = NameUtils.getJsonForNameOpt(name);
 	}
-	
-	public static List<Profile> getEnabledProfiles()
-	{
+
+	public static List<Profile> getEnabledProfiles() {
 		List<Name> namesAsList = Controller.getInstance().getNamesAsList();
 		List<Profile> results = new ArrayList<Profile>();
 		for (Name name : namesAsList) {
-			Profile profile = Profile.getProfile(name);
-			if(profile.isProfileEnabled())
-			{
+			Profile profile = Profile.getProfileOpt(name);
+			if (profile != null && profile.isProfileEnabled()) {
 				results.add(profile);
 			}
 		}
-		
+
 		return results;
 	}
-	
-	
-	public String getBlogDescriptionOpt()
-	{
-		return (String) jsonRepresenation.get(Qorakeys.BLOGDESCRIPTION.toString());
+
+	public String getBlogDescriptionOpt() {
+		return (String) jsonRepresenation.get(Qorakeys.BLOGDESCRIPTION
+				.toString());
 	}
-	
-	public void saveBlogDescription(String blogDescription)
-	{
-		jsonRepresenation.put(Qorakeys.BLOGDESCRIPTION.toString(), blogDescription);
+
+	public void saveBlogDescription(String blogDescription) {
+		jsonRepresenation.put(Qorakeys.BLOGDESCRIPTION.toString(),
+				blogDescription);
 	}
-	
-	public void saveBlogTitle(String blogTitle)
-	{
+
+	public void saveBlogTitle(String blogTitle) {
 		jsonRepresenation.put(Qorakeys.BLOGTITLE.toString(), blogTitle);
 	}
-	public void saveAvatarTitle(String profileavatar)
-	{
+
+	public void saveAvatarTitle(String profileavatar) {
 		jsonRepresenation.put(Qorakeys.PROFILEAVATAR.toString(), profileavatar);
 	}
-	
-	public String getBlogTitleOpt()
-	{
+
+	public String getBlogTitleOpt() {
 		return (String) jsonRepresenation.get(Qorakeys.BLOGTITLE.toString());
 	}
-	
-	public String getAvatarOpt()
-	{
-		return (String) jsonRepresenation.get(Qorakeys.PROFILEAVATAR.toString());
+
+	public String getAvatarOpt() {
+		return (String) jsonRepresenation
+				.get(Qorakeys.PROFILEAVATAR.toString());
 	}
-	
-	public List<String> getFollowedBlogs()
-	{
+
+	public List<String> getFollowedBlogs() {
 		return Collections.unmodifiableList(getFollowedBlogsInternal());
 	}
 
-
 	private List<String> getFollowedBlogsInternal() {
-		String profileFollowString = (String) jsonRepresenation.get(Qorakeys.PROFILEFOLLOW.toString());
-		if(profileFollowString != null)
-		{
-			String[] profileFollowArray = StringUtils.split(profileFollowString, ", ");
-			return  new ArrayList<String>( Arrays.asList(profileFollowArray));
+		String profileFollowString = (String) jsonRepresenation
+				.get(Qorakeys.PROFILEFOLLOW.toString());
+		if (profileFollowString != null) {
+			String[] profileFollowArray = StringUtils.split(
+					profileFollowString, ";");
+			return new ArrayList<String>(Arrays.asList(profileFollowArray));
 		}
-		
+
 		return new ArrayList<String>();
 	}
-	
-	public void addFollowedBlog(String blogname)
-	{
+
+	public void addFollowedBlog(String blogname) {
 		addRemoveFollowedInternal(blogname, false);
 	}
-	
-	public void removeFollowedBlog(String blogname)
-	{
+
+	public void removeFollowedBlog(String blogname) {
 		addRemoveFollowedInternal(blogname, true);
 	}
 
-
 	public void addRemoveFollowedInternal(String blogname, boolean isRemove) {
 		Name blogName = DBSet.getInstance().getNameMap().get(blogname);
-		if(blogName != null)
-		{
-			Profile profile = Profile.getProfile(blogName);
-			//ADDING ONLY IF ENABLED REMOVE ALWAYS
-			if(isRemove ||( profile.isProfileEnabled() && profile.isBlogEnabled()))
-			{
+		if (blogName != null) {
+			Profile profile = Profile.getProfileOpt(blogName);
+			// ADDING ONLY IF ENABLED REMOVE ALWAYS
+			if (isRemove
+					|| (profile != null && profile.isProfileEnabled() && profile.isBlogEnabled())) {
 				List<String> followedBlogsInternal = getFollowedBlogsInternal();
-					if(isRemove)
-					{
-						followedBlogsInternal.remove(blogname);
-					}else
-					{
-						if(!followedBlogsInternal.contains(blogname))
-						{
-							followedBlogsInternal.add(blogname);
-						}
+				if (isRemove) {
+					followedBlogsInternal.remove(blogname);
+				} else {
+					if (!followedBlogsInternal.contains(blogname)) {
+						followedBlogsInternal.add(blogname);
 					}
-					String joinResult = StringUtils.join(followedBlogsInternal, ", ");
-					jsonRepresenation.put(Qorakeys.PROFILEFOLLOW, joinResult);
+				}
+				String joinResult = StringUtils.join(followedBlogsInternal,
+						";");
+				jsonRepresenation.put(Qorakeys.PROFILEFOLLOW, joinResult);
 			}
 		}
 	}
-	
-	
-	public boolean isProfileEnabled()
-	{
+
+	public boolean isProfileEnabled() {
 		return jsonRepresenation.containsKey(Qorakeys.PROFILEENABLE.toString());
 	}
-	
-	
-	public void setProfileEnabled(boolean enabled)
-	{
-		if(enabled)
-		{
+
+	public void setProfileEnabled(boolean enabled) {
+		if (enabled) {
 			jsonRepresenation.put(Qorakeys.PROFILEENABLE.toString(), "");
-		}else
-		{
+		} else {
 			jsonRepresenation.remove(Qorakeys.PROFILEENABLE.toString());
 		}
 	}
-	
-	public void setBlogEnabled(boolean enabled)
-	{
-		if(enabled)
-		{
+
+	public void setBlogEnabled(boolean enabled) {
+		if (enabled) {
 			jsonRepresenation.put(Qorakeys.BLOGENABLE.toString(), "");
-		}else
-		{
+		} else {
 			jsonRepresenation.remove(Qorakeys.BLOGENABLE.toString());
 		}
 	}
-	
-	public boolean isBlogEnabled()
-	{
+
+	public boolean isBlogEnabled() {
 		return jsonRepresenation.containsKey(Qorakeys.BLOGENABLE.toString());
 	}
-
 
 	public BlogBlackWhiteList getBlogBlackWhiteList() {
 		return blogBlackWhiteList;
 	}
-	
-	public String saveProfile() throws WebApplicationException
-	{
+
+	public String saveProfile() throws WebApplicationException {
 		String jsonString = jsonRepresenation.toJSONString();
 		String compressValue = GZIP.compress(jsonString);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("fee", BigDecimal.ONE.setScale(8).toPlainString());
 		jsonObject.put("newowner", name.getOwner().getAddress());
 		jsonObject.put("newvalue", compressValue);
-		
-		return new NamesResource().updateName(jsonObject.toJSONString(), name.getName());
+
+		return new NamesResource().updateName(jsonObject.toJSONString(),
+				name.getName());
 	}
 
 	public Name getName() {
 		return name;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
 
-	
 }

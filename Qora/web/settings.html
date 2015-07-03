@@ -302,7 +302,7 @@
     reload = function() {
     var profilename;
     profilename = document.getElementById('select-name').value;
-        document.location.href = '/settings.html?profilename=' + profilename;
+        document.location.href = '/index/settings.html?profilename=' + profilename;
     };
 
       $(function(){
@@ -310,7 +310,7 @@
       $('#select-name').on('change', function () {
           var url = $(this).val(); // get selected value
           if (url) { // require a URL
-              window.location = '/settings.html?profilename=' + url; // redirect
+              window.location = '/index/settings.html?profilename=' + url; // redirect
           }
           return false;
       });

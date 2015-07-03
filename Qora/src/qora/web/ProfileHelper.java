@@ -32,9 +32,9 @@ public class ProfileHelper {
 		if (currentProfile != null) {
 			Name name = currentProfile.getName();
 			// RELOADING CURRENT VALUES
-			Profile profile = Profile.getProfile(name);
+			Profile profile = Profile.getProfileOpt(name);
 			// PROFILE STILL ENABLED AND DO I OWN IT?
-			if (profile.isProfileEnabled()
+			if (profile != null && profile.isProfileEnabled()
 					&& Controller.getInstance().getName(name.getName()) != null) {
 				currentProfile = profile;
 			} else {
@@ -52,8 +52,8 @@ public class ProfileHelper {
 			Name name = Controller.getInstance().getName(profileString);
 			if(name != null)
 			{
-				Profile profile = Profile.getProfile(name);
-				if(profile.isProfileEnabled())
+				Profile profile = Profile.getProfileOpt(name);
+				if(profile != null && profile.isProfileEnabled())
 				{
 					currentProfile = profile;
 				}

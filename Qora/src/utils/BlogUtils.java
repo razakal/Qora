@@ -37,9 +37,9 @@ public class BlogUtils {
 		for (String name : names) {
 			Name nameObj = nameMap.get(name);
 
-			Profile profile = Profile.getProfile(nameObj);
+			Profile profile = Profile.getProfileOpt(nameObj);
 
-			if (profile.isProfileEnabled() && profile.isBlogEnabled()) {
+			if (profile != null && profile.isProfileEnabled() && profile.isBlogEnabled()) {
 
 				String title = profile.getBlogTitleOpt();
 				String description = profile.getBlogDescriptionOpt();

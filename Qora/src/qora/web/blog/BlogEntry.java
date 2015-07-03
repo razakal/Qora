@@ -54,10 +54,13 @@ public class BlogEntry {
 	private void addAvatar() {
 		if (nameOpt != null) {
 			Name name = DBSet.getInstance().getNameMap().get(nameOpt);
-			Profile profile = Profile.getProfile(name);
-			String avatarOpt = profile.getAvatarOpt();
-			if (avatarOpt != null && StringUtils.isNotBlank(avatarOpt)) {
-				avatar = avatarOpt;
+			Profile profile = Profile.getProfileOpt(name);
+			if(profile != null)
+			{
+				String avatarOpt = profile.getAvatarOpt();
+				if (avatarOpt != null && StringUtils.isNotBlank(avatarOpt)) {
+					avatar = avatarOpt;
+				}
 			}
 		}
 	}

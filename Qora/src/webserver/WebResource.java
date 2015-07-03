@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -246,7 +247,7 @@ public class WebResource {
 			Name name = null;
 			name = Controller.getInstance().getName(profileName);
 
-			if (name == null) {
+			if (name == null || !Profile.isAllowedProfileName(profileName)) {
 				return error404(request);
 			}
 
@@ -264,7 +265,7 @@ public class WebResource {
 					.getParameter(Qorakeys.PROFILEAVATAR.toString());
 			profileAvatarOpt = decodeIfNotNull(profileAvatarOpt);
 
-			Profile profile = Profile.getProfile(name);
+			Profile profile = Profile.getProfileOpt(name);
 			profile.saveAvatarTitle(profileAvatarOpt);
 			profile.saveBlogDescription(blogDescrOpt);
 			profile.saveBlogTitle(titleOpt);
@@ -311,8 +312,16 @@ public class WebResource {
 
 			String profileName = request.getParameter("profilename");
 
-			List<Name> namesAsList = Controller.getInstance().getNamesAsList();
+			List<Name> namesAsList = new CopyOnWriteArrayList<Name>( Controller.getInstance().getNamesAsList());
 
+			for (Name name : namesAsList) {
+				if(!Profile.isAllowedProfileName(name.getName()))
+				{
+					namesAsList.remove(name);
+				}
+			}
+			
+			
 			pebbleHelper.getContextMap().put("names", namesAsList);
 
 			Name name = null;
@@ -326,7 +335,9 @@ public class WebResource {
 					name = namesAsList.get(0);
 				}
 
-				Profile profile = Profile.getProfile(name);
+				// WE HAVE HERE ONLY ALLOWED NAMES SO PROFILE CAN'T BE NULL HERE
+				Profile profile = Profile.getProfileOpt(name);
+				
 				pebbleHelper.getContextMap().put("profile", profile);
 				pebbleHelper.getContextMap().put("name", name);
 
@@ -878,11 +889,11 @@ public class WebResource {
 					&& nameMap.contains(blogname)) {
 				boolean follow = Boolean.valueOf(followString);
 				Name name = nameMap.get(blogname);
-				Profile profile = Profile.getProfile(name);
+				Profile profile = Profile.getProfileOpt(name);
 				if (activeProfileOpt.isProfileEnabled()) {
 
 					if (follow) {
-						if (profile.isProfileEnabled()
+						if (profile != null && profile.isProfileEnabled()
 								&& profile.isBlogEnabled()
 								&& !activeProfileOpt.getFollowedBlogs()
 										.contains(blogname)) {
@@ -964,9 +975,9 @@ public class WebResource {
 				}
 
 				Name name = nameMap.get(blogname);
-				Profile profile = Profile.getProfile(name);
+				Profile profile = Profile.getProfileOpt(name);
 
-				if (!profile.isProfileEnabled() || !profile.isBlogEnabled()) {
+				if (profile == null || !profile.isProfileEnabled() || !profile.isBlogEnabled()) {
 					pebbleHelper = PebbleHelper
 							.getPebbleHelper("web/blogdisabled.html");
 					if (Controller.getInstance().getAccountByAddress(

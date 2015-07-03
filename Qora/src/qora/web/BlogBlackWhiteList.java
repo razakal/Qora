@@ -58,7 +58,7 @@ public class BlogBlackWhiteList {
 				{
 					String whitelist = (String) jsonForNameOpt.get(Qorakeys.BLOGWHITELIST.toString());
 					
-					String[] whiteListEntries = StringUtils.split(whitelist, ", ");
+					String[] whiteListEntries = StringUtils.split(whitelist, ";");
 					List<String> result = new ArrayList<String>(Arrays.asList(whiteListEntries));
 					return new BlogBlackWhiteList(true, result , blogname);
 					
@@ -68,7 +68,7 @@ public class BlogBlackWhiteList {
 				{
 					String blackList = (String) jsonForNameOpt.get(Qorakeys.BLOGBLACKLIST.toString());
 					
-					String[] blackListEntries = StringUtils.split(blackList, ", ");
+					String[] blackListEntries = StringUtils.split(blackList, ";");
 					return new BlogBlackWhiteList(false, Arrays.asList(blackListEntries), blogname);
 				}
 				
@@ -177,7 +177,8 @@ public class BlogBlackWhiteList {
 						if(!resultingNames.contains(name))
 						{
 							//YOU CAN ONLY POST BY NAME IF PROFILE IS ENABLED
-							if(Profile.getProfile(name).isProfileEnabled())
+							Profile profileOpt = Profile.getProfileOpt(name);
+							if(profileOpt != null && profileOpt.isProfileEnabled())
 							{
 								resultingNames.add(name);
 							}
