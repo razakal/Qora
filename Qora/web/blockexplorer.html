@@ -615,7 +615,7 @@ function trades(data)
 		output += '<td>' + addCommas(data.sells[key].sellingAmount) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
 	}
 	
-	output += '<tr bgcolor="#e7e7e7">';
+	output += '<tr bgcolor="#f9f9f9">';
 	
 	output += '<td colspan=2><b>Total:<td>' + addCommas(data.sellsSumAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
 	output += '<td>' + addCommas(data.sellsSumTotal) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
@@ -634,7 +634,7 @@ function trades(data)
 		output += '<td>' + addCommas(data.buys[key].amount) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
 	}
 
-	output += '<tr bgcolor="#e7e7e7">';
+	output += '<tr bgcolor="#f9f9f9">';
 	
 	output += '<td colspan=2><b>Total:<td>' + addCommas(data.buysSumAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
 	output += '<td>' + addCommas(data.buysSumTotal) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
