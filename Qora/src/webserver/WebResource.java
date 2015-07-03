@@ -332,7 +332,14 @@ public class WebResource {
 			if (namesAsList.size() > 0) {
 
 				if (name == null) {
-					name = namesAsList.get(0);
+					Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
+					if(activeProfileOpt != null)
+					{
+						name = activeProfileOpt.getName();
+					}else
+					{
+						name = namesAsList.get(0);
+					}
 				}
 
 				// WE HAVE HERE ONLY ALLOWED NAMES SO PROFILE CAN'T BE NULL HERE
