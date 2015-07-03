@@ -1787,22 +1787,7 @@ public class BlockExplorer extends Observable implements Observer
 		for (Object unit : all) {
 		    if(counter >= size - start)
 		    {
-				Map transactionJSON = new LinkedHashMap();
-				Map transactionDataJSON = new LinkedHashMap();
-				
-				Transaction transaction = (Transaction)unit;
-				
-				transactionDataJSON = transaction.toJson();
-				
-				transactionDataJSON.put("block", Base58.encode(transaction.getParent().getSignature()));
-				transactionDataJSON.put("blockHeight", transaction.getParent().getHeight());
-				
-				transactionDataJSON.put("dateTime", BlockExplorer.timestampToStr(transaction.getTimestamp()));
-				
-				transactionJSON.put("type", "transaction");
-				transactionJSON.put("transaction", transactionDataJSON);
-				
-				output.put(size - counter, transactionJSON);
+				output.put(size - counter, jsonUnitPrint(unit, new AssetNamesByKey()));
 		    }
 		    
 		    if(counter > size - end)
