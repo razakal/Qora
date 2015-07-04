@@ -272,8 +272,8 @@
             </div>
             <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
-                <button type="reset" onclick="javascript:reload()" class="btn btn-default">Cancel</button>
-            	 <button type="submit" onclick="javascript:updateValue()" class="btn btn-primary pull-right">Submit</button>
+                <button type="reset" id="btncancel" onclick="javascript:reload()" class="btn btn-default">Cancel</button>
+            	 <button type="submit" id="btnsubmit" onclick="javascript:updateValue()" class="btn btn-primary pull-right">Submit</button>
               </div>
             </div>
           <!-- </fieldset> -->
@@ -346,7 +346,7 @@
 
     $(document).ready(function() {
         var searchval;
-        
+        {%if profile is not null%}
 		$("#select-name").val('{{name}}');
         $( "#profile-status" ).prop( "checked", {{profile.isProfileEnabled}} );
         $( "#blog-status" ).prop( "checked", {{profile.isBlogEnabled}} );
@@ -436,6 +436,55 @@
 		
 		
 		$("#btnShow").bind("click", showAllValue);
+		{%else%}
+		var searchval
+		$('#name').change(function() {
+            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
+            $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
+        });
+		  $('#name').val(getSearchParameters().search);
+        if (getSearchParameters().search === void 0) {
+            $('#name').val('');
+        }
+        $('#name').bind('oninput', function() {
+            $('#name').val(this);
+        });
+		
+		searchval = $('#name').val();
+        searchval = searchval.replace(/%20/g, ' ');
+        $('#name').val(searchval);
+        $('#button').click(function() {
+            var url;
+            url = void 0;
+            searchval = $('#name').val();
+            document.location.href = '/index/index.html?search=' + searchval;
+        });
+        
+        $('#button').click(function() {
+            var url;
+            url = void 0;
+            searchval = $('#name').val();
+            document.location.href = '/index/index.html?search=' + searchval;
+        });
+        $('#name').keypress(function(e) {
+            if (e.which === 13) {
+                $('#button').trigger('click');
+            }
+        });
+		 $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
+        	$('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
+		  $('#avatar').attr('disabled', true);
+		  $('#blogtitle').attr('disabled', true);
+          $('#blogdescription').attr('disabled', true);
+          $('#select-name').attr('disabled', true);
+          $('#profile-status').attr('disabled', true);
+          $('#blog-status').attr('disabled', true);
+          $('#btnAddd').attr('disabled', true);
+          $('#select-list-type').attr('disabled', true);
+          $('#btnsubmit').attr('disabled', true);
+          $('#btncancel').attr('disabled', true);
+          $('#btnShow').attr('disabled', true);
+		{%endif%}
     });
 	
 	function Add(){
