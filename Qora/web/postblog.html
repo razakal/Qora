@@ -180,7 +180,7 @@
         } else {
             preview = '';
         }
-        document.location.href = '/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee + '' + blogname + '' + '' + preview + '';
+        document.location.href = '/index/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee + '' + blogname + '' + '' + preview + '';
         return 0;
     };
     $(document).ready(function() {
@@ -190,6 +190,9 @@
                 $('#title').val('{{ oldtitle }}');
                 $('#content').val('{{ oldcontent }}');
       {% if oldcreator is empty %}
+      	{% if primaryname is not null %}
+     	 $('#addr').val('{{ primaryname }}');
+      	{% endif %}
       {% else %}
       $('#addr').val('{{ oldcreator }}');
       {% endif %}

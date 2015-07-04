@@ -795,13 +795,21 @@ public class WebResource {
 			// are we allowed to post
 			if (resultingNames.size() == 0 && resultingAccounts.size() == 0) {
 
+				// TODO SHOW STANDARD ALERT NOT THIS
 				pebbleHelper
 						.getContextMap()
 						.put("errormessage",
 								"<font color=red>You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!</font><br>");
 
 			}
+			
+			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
 
+			if(activeProfileOpt != null && resultingNames.contains(activeProfileOpt.getName()))
+			{
+				pebbleHelper.getContextMap().put("primaryname", activeProfileOpt.getName().getName());
+			}
+			
 			pebbleHelper.getContextMap().put("option", accountStrings);
 
 			if (StringUtil.isNotBlank(creator)
