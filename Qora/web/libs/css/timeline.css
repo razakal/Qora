@@ -128,11 +128,23 @@ margin-top: 5px;
 }
 .timeline-footer{
 padding:20px;
-background-color:#f4f4f4;
+border-top: 1px solid #ddd;
 }
 .timeline-footer > a{
 cursor: pointer;
 text-decoration: none;
+}
+i.glyphicon.glyphicon-heart:hover {
+color: #6474ff;
+}
+i.glyphicon.glyphicon-heart {
+color: #ddd;
+}
+i.glyphicon.glyphicon-share:hover {
+color: #6474ff;
+}
+i.glyphicon.glyphicon-share {
+color: #ddd;
 }
 .tooltip{
 position:absolute;
