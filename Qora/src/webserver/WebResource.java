@@ -496,7 +496,7 @@ public class WebResource {
 	}
 
 	
-	String[] imgsArray = {"qora.png", "logo_header.png", "qora-user.png", "logo_bottom.png", "loading.gif",
+	String[] imgsArray = {"qora.png", "logo_header.png", "qora-user.png", "logo_bottom.png", "banner_01.png", "loading.gif",
 			"00_generating.png", "01_genesis.jpg", "02_payment_in.png", 
 			"02_payment_out.png", "03_name_registration.png",  "04_name_update.png", 
 			"05_name_sale.png", "06_cancel_name_sale.png", "07_name_purchase_in.png", "07_name_purchase_out.png",
