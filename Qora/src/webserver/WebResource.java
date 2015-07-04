@@ -423,7 +423,7 @@ public class WebResource {
 			description = StringUtils.abbreviate(description, 150);
 
 			results.add(new HTMLSearchResult(title, description, name,
-					"/blog.html?blogname=" + name, "/blog.html?blogname="
+					"/index/blog.html?blogname=" + name, "/index/blog.html?blogname="
 							+ name, "/namepairs:" + name));
 		}
 
@@ -795,11 +795,10 @@ public class WebResource {
 			// are we allowed to post
 			if (resultingNames.size() == 0 && resultingAccounts.size() == 0) {
 
-				// TODO SHOW STANDARD ALERT NOT THIS
 				pebbleHelper
 						.getContextMap()
 						.put("errormessage",
-								"<font color=red>You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!</font><br>");
+								"<div class=\"alert alert-danger\" role=\"alert\">You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!<br></div>");
 
 			}
 			
