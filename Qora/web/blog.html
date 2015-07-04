@@ -146,6 +146,37 @@
       height: 600px;
       width: 100%;
       }
+      .tl-profile {
+      border: 1px solid #ddd;
+      -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+      margin-bottom: 20px;
+      margin-top: 20px;
+      }
+      .tl-profile img.tl-image-lg{
+      z-index: 0;
+      width: 100%;
+      margin-bottom: 10px;
+      }
+      .tl-image-profile
+      {
+      margin: -90px 10px 0px 50px;
+      z-index: 9;
+      width: 20%;
+      }
+      @media (max-width:768px)
+      {
+      .tl-profile-text>h1{
+      font-weight: 700;
+      font-size:16px;
+      }
+      .tl-image-profile
+      {
+      margin: -45px 10px 0px 25px;
+      z-index: 9;
+      width: 20%;
+      }
+      }
     </style>
   </head>
   <body>
@@ -164,41 +195,29 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="/index/webdirectory.html">Webdirectory</a></li>
-            <li><a href="/index/blogdirectory.html">Blogdirectory</a></li>
-            {% if blogfollows.size > 0 %}
+            <li><a href="/index/blogdirectory.html">Blogdirectory</a></li>            {% if blogfollows.size > 0 %}
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Blog <span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
-                {% for blogfollow in blogfollows %}
-                	<li><a href="/index/blog.html?blogname={{blogfollow}}">{{blogfollow}}</a></li>
-                	{% if  loop.index   != blogfollows.size()  - 1 %}
-                	<li class="divider"></li>
-                	{% endif %}
-				{% endfor %}
+              <ul role="menu" class="dropdown-menu">{% for blogfollow in blogfollows %}
+                <li><a href="/index/blog.html?blogname={{blogfollow}}">{{blogfollow}}</a></li>                	{% if  loop.index   != blogfollows.size()  - 1 %}
+                <li class="divider"></li>                	{% endif %}
+                				{% endfor %}
               </ul>
-            </li>
-            {% else%}
-            <li><a href="/index/blog.html">Blog</a></li>
-             {% endif%}
+            </li>            {% else%}
+            <li><a href="/index/blog.html">Blog</a></li>             {% endif%}
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
-              <ul role="menu" class="dropdown-menu">
-                {% for profile in profiles %}
-                	<li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
-                	{% if  loop.index   != profiles.size()  - 1 %}
-                	<li class="divider"></li>
-                	{% endif %}
-				{% endfor %}
+              <ul role="menu" class="dropdown-menu">{% for profile in profiles %}
+                <li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&amp;switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>                	{% if  loop.index   != profiles.size()  - 1 %}
+                <li class="divider"></li>                	{% endif %}
+                				{% endfor %}
               </ul>
             </li>
-            <li><a href="/index/settings.html">Settings</a></li>
-            	{% if activeProfile is null %}
-             	<li><a href="#">No active Profile</a></li>
-             	{% else %}
-             	<li><a href="#">current Profile:{{activeProfile.getName().getName()}}</a></li>
-             	{% endif %}
+            <li><a href="/index/settings.html">Settings</a></li>            	{% if activeProfile is null %}
+            <li><a href="#">No active Profile</a></li>             	{% else %}
+            <li><a href="#">current Profile:{{activeProfile.getName().getName()}}</a></li>             	{% endif %}
           </ul>
           <div class="navbar-form navbar-left">
             <button type="button" data-toggle="modal" data-target="#PostModal" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-edit"></span></button>
-          	 <button type="button" onclick="javascript:processfollow()" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-random"></span></button>
+            <button type="button" onclick="javascript:processfollow()" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-random"></span></button>
           </div>
         </div>
       </div>
@@ -220,17 +239,30 @@
     <div class="container">
       <div class="row">
         <div class="main">
-        	{{apimessage}}
-          <ul class="timeline">
-          	{% for blogpost in blogposts %}
-				<li><div class="timeline-badge primary"><a><i class="glyphicon glyphicon-record" rel="tooltip" title="POST TIME" id=""></i></a></div><div class="timeline-panel"><div class="timeline-heading">
-				<div class="media"><div class="media-left media-middle">
-				<a href="#"><img class="media-object" src="{{blogpost.getAvatar()}}" alt=""></a></div>
-				<div class="media-body">
-				<h6 class="media-heading"><b>{{blogpost.nameOrCreator}}</b></h6>{{blogpost.creationTime}}</div></div>
-				</div>
-				<div class="timeline-body"><p class="post-header"><b>{{blogpost.titleOpt}}</b></p><p class="post-content">{{blogpost.description}}</p></div></div></li>
-			{% endfor %}
+          <div class="tl-profile"><img align="left" src="http://www.qora.org/img/banner_01.png" alt="" class="tl-image-lg"><img align="left" src="img/qora-user.png" alt="" class="tl-image-profile thumbnail">
+            <div class="tl-profile-text">
+              <h1>Name</h1>
+              <p>Description</p>
+            </div>
+          </div>        	{{apimessage}}
+          <ul class="timeline">{% for blogpost in blogposts %}
+            <li>
+              <div class="timeline-badge primary"><a><i rel="tooltip" title="POST TIME" id="" class="glyphicon glyphicon-record"></i></a></div>
+              <div class="timeline-panel">
+                <div class="timeline-heading">
+                  <div class="media">
+                    <div class="media-left media-middle"><a href="#"><img src="{{blogpost.getAvatar()}}" alt="" class="media-object"></a></div>
+                    <div class="media-body">
+                      <h6 class="media-heading"><b>{{blogpost.nameOrCreator}}</b></h6>{{blogpost.creationTime}}
+                    </div>
+                  </div>
+                </div>
+                <div class="timeline-body">
+                  <p class="post-header"><b>{{blogpost.titleOpt}}</b></p>
+                  <p class="post-content">{{blogpost.description}}</p>
+                </div>
+              </div>
+            </li>			{% endfor %}
             <li style="float: none;" class="clearfix"></li>
           </ul>
         </div>
@@ -239,34 +271,34 @@
     <script src="libs/jquery/jquery.2.1.4.min.js"></script>
     <script src="libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript">
-    
-    
+
+
        function getParameter(name) {
         if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
             return decodeURIComponent(name[1]);
     	}
-    
+
     	function processfollow() {
         var  blogname;
-        
-        
+
+
         blogname = getParameter('blogname');
-        
+
         if (!blogname) {
-        
+
         alert("You can't follow the Mainblog");
         return 0;
         }
-        
+
         {% if activeProfile is null %}
         alert("This feature can only be used with an active profile.\nPlease choose a Profile first!");
         return 0;
         {%  endif %}
-        
+
         document.location.href = '/index/followblog.html?blogname=' + blogname + '&follow={{isFollowing}}';
         return 0;
    		 }
-    
+
     $('ul.nav-tabs > li').removeClass('active');
     if (window.location.pathname === '/index/blogsearch.html') {
         $('ul.nav-tabs > li:nth-child(2)').addClass('active');
@@ -292,7 +324,7 @@
             }
         }
     });
-    
+
     </script>
   </body>
 </html>
