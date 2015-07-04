@@ -1086,7 +1086,7 @@ public class WebResource {
 		}
 	}
 
-	@Path("index/libs/angular/angular.min.{version}.js")
+	@Path("index/libs/angular/angular.{version}.js")
 	@GET
 	public Response angular(@PathParam("version") String version) {
 		File file;
