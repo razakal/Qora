@@ -54,7 +54,7 @@ public class PebbleHelper {
 		}
 		
 		addDataToPebbleHelper(pebbleHelper, enabledProfiles, activeProfileOpt, followedBlogs);
-		String navbar = generateNavbar( enabledProfiles, activeProfileOpt, followedBlogs);
+		String navbar = generateNavbar( enabledProfiles, activeProfileOpt, followedBlogs, htmlTemplate);
 		pebbleHelper.getContextMap().put("navbar", navbar);
 		
 
@@ -69,10 +69,17 @@ public class PebbleHelper {
 		pebbleHelper.getContextMap().put("blogfollows", followedBlogs);
 	}
 
-	private static String generateNavbar(List<Profile> enabledProfiles, Profile activeProfileOpt, List<String> followedBlogs) throws PebbleException {
+	private static String generateNavbar(List<Profile> enabledProfiles, Profile activeProfileOpt, List<String> followedBlogs, String rootTemplate) throws PebbleException {
 		
 		PebbleHelper pebbleHelper = getRawPebbleHelper("web/navbar.html");
 		addDataToPebbleHelper(pebbleHelper, enabledProfiles, activeProfileOpt, followedBlogs);
+		if(rootTemplate.endsWith("blog.html"))
+		{
+			pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/blogleftnavbar.html").evaluate());
+		}else
+		{
+			pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/searchnavbar.html").evaluate());
+		}
 		
 		
 		return pebbleHelper.evaluate();
