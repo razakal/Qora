@@ -329,6 +329,7 @@ public class WebResource {
 				name = Controller.getInstance().getName(profileName);
 			}
 
+			
 			if (namesAsList.size() > 0) {
 
 				if (name == null) {
@@ -349,7 +350,7 @@ public class WebResource {
 				pebbleHelper.getContextMap().put("name", name);
 
 			} else {
-				// no name no chance
+				pebbleHelper.getContextMap().put("result", "<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a profile.<br></div>");
 			}
 
 			return Response.ok(pebbleHelper.evaluate(),
