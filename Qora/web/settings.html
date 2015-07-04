@@ -152,7 +152,7 @@
               </ul>
             </li>
             {% else%}
-            <li><a href="/index//blog.html">Blog</a></li>
+            <li><a href="/index/blog.html">Blog</a></li>
              {% endif%}
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
@@ -214,7 +214,7 @@
                 </select>
                 <div class="checkbox">
                   <label>
-                    <input type="checkbox" id="profile-status"> Enable Profile
+                    <br><input type="checkbox" id="profile-status"> Enable Profile
                   </label>
                 </div>
               </div>
@@ -225,7 +225,7 @@
                 <input type="url" class="form-control" id="avatar" placeholder="Profile Picture" disabled="">
                 <div class="checkbox">
                   <label>
-                    <input type="checkbox" id="blog-status"> Enable Blog
+                    <br><input type="checkbox" id="blog-status"> Enable Blog
                   </label>
                 </div>
               </div>
@@ -241,6 +241,34 @@
               <div class="col-lg-10">
                 <input type="text" class="form-control" id="blogdescription" placeholder="Blog Description" disabled="">
               </div>
+            </div>
+			
+			<div class="form-group">
+              <label for="blogdescription" class="col-lg-2 control-label">Black/Whitelist </label>
+			  
+              <div class="col-lg-10">
+                <select class="form-control" id="select-list-type">
+					<option value=black>Black-list</option>
+					<option value=white>White-list</option>
+                </select>
+				<br>
+				<div style="border: 2px solid #ddd;  border-radius: 6px; padding: 10px;">
+				<table id="tblData">	
+				<thead> 
+				<tr> 
+				<th>Addresses:</th> 
+				<th></th> 
+				</tr> 
+				</thead> 
+				<tbody> 
+				</tbody> 
+				</table>
+				<br>
+				<button id="btnAddd" class="btn btn-default">New Address</button>
+				<br><br>
+				<button id="btnShow" class="btn btn-default">Show Addresses</button>
+				</div>
+				<br><br>
             </div>
             <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
@@ -318,7 +346,8 @@
 
     $(document).ready(function() {
         var searchval;
-        $("#select-name").val('{{name}}');
+        
+		$("#select-name").val('{{name}}');
         $( "#profile-status" ).prop( "checked", {{profile.isProfileEnabled}} );
         $( "#blog-status" ).prop( "checked", {{profile.isBlogEnabled}} );
         $("#blogdescription").val ("{{profile.getBlogDescriptionOpt}}");
@@ -395,7 +424,42 @@
         $('#settings-submit').click(function() {
 
         })
+		
+		$("#btnAddd").bind("click", Add);
+		AddValue("test");
+		
+		$("#btnShow").bind("click", showAllValue);
     });
+	
+	function Add(){
+		AddValue("");
+	}; 
+	
+	function AddValue(value){
+	$("#tblData tbody").append(
+		"<tr>"+
+		"<td><input size=63 type='text'/ value='"+value+"'></td>"+
+		"<td>&nbsp;<span class=btnDelete style='cursor: pointer;'>&#10006;</span></td>"+
+		"</tr>");
+		$(".btnDelete").bind("click", Delete);
+	};
+	
+	function Delete(){ 
+		var par = $(this).parent().parent(); 
+		par.remove(); 
+	}; 
+
+	function showAllValue(){
+		var allData = "";
+		var MyRows = $('table#tblData').find('tr');
+			for (var i = 1; i < MyRows.length; i++){
+					allData += $(MyRows[i]).find('td:eq(0)').children("input[type=text]").val() + "; ";
+			}
+		
+		alert(allData);
+	
+	};
+	
     </script>
     <script type="text/javascript">
     var myApp = angular.module('myApp', []);
