@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.json.simple.JSONObject;
 
 import qora.account.Account;
@@ -80,12 +81,12 @@ public class BlogBlackWhiteList {
 	}
 	
 	
-	private final boolean whitelist;
+	private boolean whitelist;
 	private final List<String> blackwhiteList;
 	private final String blogname;
 	
 	private BlogBlackWhiteList(boolean isWhiteList, List<String> blackwhiteList, String blogname) {
-		whitelist = isWhiteList;
+		setWhitelist(isWhiteList);
 		this.blackwhiteList = blackwhiteList;
 		this.blogname = blogname;
 	}
@@ -99,7 +100,7 @@ public class BlogBlackWhiteList {
 	}
 	
 	public boolean isBlacklist() {
-		return !whitelist;
+		return !isWhitelist();
 	}
 	
 	public String getBlogname() {
@@ -277,6 +278,41 @@ public class BlogBlackWhiteList {
 		
 		
 	}
+	
+	public void addAddressOrName(String nameOrAddress) {
+		if(!blackwhiteList.contains(nameOrAddress))
+		{
+			blackwhiteList.add(nameOrAddress);
+		}
+	}
+	
+	public void clearList()
+	{
+		blackwhiteList.clear();
+	}
+
+	public void removeAddressOrName(String nameOrAddress) {
+		blackwhiteList.remove(nameOrAddress);
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	};
+	
+	public Pair<String, String> getJsonKeyPairRepresentation()
+	{
+		String results = StringUtils.join(blackwhiteList, ";");
+		return new Pair<>(isWhitelist() ? Qorakeys.BLOGWHITELIST.toString() : Qorakeys.BLOGBLACKLIST.toString(), results);
+	}
+
+	public void setWhitelist(boolean whitelist) {
+		this.whitelist = whitelist;
+	}
+	
+	
+	
+
 
 	
 	

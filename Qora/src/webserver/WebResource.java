@@ -241,6 +241,7 @@ public class WebResource {
 			String profileName = request.getParameter("profilename");
 
 			if (!isCompleteSubmit(parameterMap)) {
+				//TODO better tell that some parameters are missing
 				return error404(request);
 			}
 
@@ -263,6 +264,13 @@ public class WebResource {
 			blogDescrOpt = decodeIfNotNull(blogDescrOpt);
 			String profileAvatarOpt = request
 					.getParameter(Qorakeys.PROFILEAVATAR.toString());
+			
+			String bwlistkind = request
+					.getParameter("bwlistkind");
+			String blackwhitelist = request
+					.getParameter("blackwhitelist");
+			blackwhitelist = URLDecoder.decode(blackwhitelist, "UTF-8");
+			
 			profileAvatarOpt = decodeIfNotNull(profileAvatarOpt);
 
 			Profile profile = Profile.getProfileOpt(name);
@@ -271,6 +279,17 @@ public class WebResource {
 			profile.saveBlogTitle(titleOpt);
 			profile.setBlogEnabled(blogenable);
 			profile.setProfileEnabled(profileenable);
+			
+			profile.getBlogBlackWhiteList().clearList();
+			profile.getBlogBlackWhiteList().setWhitelist(!bwlistkind.equals("black"));
+			String[] bwList = StringUtils.split(blackwhitelist, ";");
+			for (String listentry : bwList) {
+				profile.getBlogBlackWhiteList().addAddressOrName(listentry);
+			}
+			
+			
+			
+			
 
 			try {
 
@@ -368,8 +387,7 @@ public class WebResource {
 	}
 
 	private boolean isCompleteSubmit(Map<String, String[]> parameterMap) {
-
-		if (!parameterMap.containsKey("profilename")) {
+		if (!parameterMap.containsKey("profilename") || !parameterMap.containsKey("bwlistkind") || !parameterMap.containsKey("blackwhitelist")) {
 			return false;
 		}
 

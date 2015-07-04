@@ -17,6 +17,7 @@ import database.DBSet;
 import qora.naming.Name;
 import utils.GZIP;
 import utils.NameUtils;
+import utils.Pair;
 import utils.Qorakeys;
 import api.NamesResource;
 
@@ -166,12 +167,25 @@ public class Profile {
 	}
 
 	public String saveProfile() throws WebApplicationException {
+		Pair<String,String> jsonKeyPairRepresentation = blogBlackWhiteList.getJsonKeyPairRepresentation();
+		jsonRepresenation.put(jsonKeyPairRepresentation.getA(), jsonKeyPairRepresentation.getB());
+		if(blogBlackWhiteList.isWhitelist())
+		{
+			jsonRepresenation.remove(Qorakeys.BLOGBLACKLIST.toString());
+		}else
+		{
+			jsonRepresenation.remove(Qorakeys.BLOGWHITELIST.toString());
+		}
+		
+		
 		String jsonString = jsonRepresenation.toJSONString();
 		String compressValue = GZIP.compress(jsonString);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("fee", BigDecimal.ONE.setScale(8).toPlainString());
 		jsonObject.put("newowner", name.getOwner().getAddress());
 		jsonObject.put("newvalue", compressValue);
+		
+		
 
 		return new NamesResource().updateName(jsonObject.toJSONString(),
 				name.getName());

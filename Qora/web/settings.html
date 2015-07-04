@@ -250,7 +250,7 @@
 
     var updateValue;
     updateValue = function() {
-    	 var blogtitle, blogdescription, profilename ,profileenable, blogenable, profileavatar
+    	 var blogtitle, blogdescription, profilename ,profileenable, blogenable, profileavatar, bwlistval, allData
         blogtitle = document.getElementById('blogtitle').value;
         blogtitle = encodeURIComponent(blogtitle);
         blogdescription = document.getElementById('blogdescription').value;
@@ -260,7 +260,17 @@
         profilename = document.getElementById('select-name').value;
         profileenable = document.getElementById('profile-status').checked;
         blogenable = document.getElementById('blog-status').checked;
-        document.location.href = '/index/settingssave.html?profilename=' + profilename + '&profileenable=' + profileenable + '&blogenable=' + blogenable + '&blogdescription=' + blogdescription + '&blogtitle=' + blogtitle + '' + '&profileavatar=' + profileavatar + '';
+        
+        allData = "";
+		var MyRows = $('table#tblData').find('tr');
+			for (var i = 1; i < MyRows.length; i++){
+					allData += $(MyRows[i]).find('td:eq(0)').children("input[type=text]").val() + ";";
+			}
+		allData = encodeURIComponent(allData);
+		
+        
+        bwlistval = document.getElementById('select-list-type').value;
+        document.location.href = '/index/settingssave.html?profilename=' + profilename + '&profileenable=' + profileenable + '&blogenable=' + blogenable + '&blogdescription=' + blogdescription + '&blogtitle=' + blogtitle + '' + '&profileavatar=' + profileavatar + '&blackwhitelist=' + allData + '&bwlistkind=' + bwlistval + '';
     };
     
       var updateValue;
@@ -368,7 +378,7 @@
 		 $("#select-list-type").val("white");
 		{% endif %}
 		 {% for bwlistentry in profile.getBlogBlackWhiteList().getBlackwhiteList() %}
-			AddValue({{bwlistentry}});
+			AddValue('{{bwlistentry}}');
 		{% endfor %}
 		
 		
