@@ -5,61 +5,83 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import qora.web.Profile;
-import qora.web.ProfileHelper;
 
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.escaper.EscaperExtension;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 
+import qora.web.Profile;
+import qora.web.ProfileHelper;
+
 public class PebbleHelper {
-	
-	
+
 	private PebbleTemplate template;
 	private Map<String, Object> contextMap;
 
-	private PebbleHelper(PebbleTemplate template, Map<String, Object> contextMap)
-	{
+	private PebbleHelper(PebbleTemplate template, Map<String, Object> contextMap) {
 		this.contextMap = contextMap;
 		this.template = template;
-		
+
 	}
-	
-	
-	public static PebbleHelper getPebbleHelper(String htmlTemplate) throws PebbleException
-	{
+
+	private static PebbleTemplate getRawPebbleTemplate(String htmlTemplate) throws PebbleException {
 		PebbleEngine engine = new PebbleEngine();
 		EscaperExtension escaper = engine.getExtension(EscaperExtension.class);
 		escaper.setAutoEscaping(false);
 		PebbleTemplate compiledTemplate = engine.getTemplate(htmlTemplate);
+		return compiledTemplate;
+	}
+
+	private static PebbleHelper getRawPebbleHelper(String htmlTemplate) throws PebbleException {
+		PebbleTemplate compiledTemplate = getRawPebbleTemplate(htmlTemplate);
 		PebbleHelper pebbleHelper = new PebbleHelper(compiledTemplate, new HashMap<String, Object>());
-		pebbleHelper.getContextMap().put("profiles", Profile.getEnabledProfiles());
+		return pebbleHelper;
+	}
+
+	public static PebbleHelper getPebbleHelper(String htmlTemplate) throws PebbleException {
+		PebbleHelper pebbleHelper = getRawPebbleHelper(htmlTemplate);
+
+		List<Profile> enabledProfiles = Profile.getEnabledProfiles();
 		Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
-		pebbleHelper.getContextMap().put("activeProfile",
-				activeProfileOpt);
-		
-		if(activeProfileOpt != null)
-		{
-			pebbleHelper.getContextMap().put("blogfollows",
-					activeProfileOpt.getFollowedBlogs());
-		}else
-		{
-			pebbleHelper.getContextMap().put("blogfollows",
-					new ArrayList<String>());
+		List<String> followedBlogs;
+		if (activeProfileOpt != null) {
+			followedBlogs = activeProfileOpt.getFollowedBlogs();
+		} else {
+			followedBlogs = new ArrayList<>();
 		}
 		
-		return pebbleHelper;
+		addDataToPebbleHelper(pebbleHelper, enabledProfiles, activeProfileOpt, followedBlogs);
+		String navbar = generateNavbar( enabledProfiles, activeProfileOpt, followedBlogs);
+		pebbleHelper.getContextMap().put("navbar", navbar);
 		
+
+		return pebbleHelper;
+
 	}
-	
-	
-	public String evaluate() throws PebbleException
-	{
-		try(Writer writer = new StringWriter();)
-		{
+
+	private static void addDataToPebbleHelper(PebbleHelper pebbleHelper, List<Profile> enabledProfiles,
+			Profile activeProfileOpt, List<String> followedBlogs) {
+		pebbleHelper.getContextMap().put("profiles", enabledProfiles);
+		pebbleHelper.getContextMap().put("activeProfile", activeProfileOpt);
+		pebbleHelper.getContextMap().put("blogfollows", followedBlogs);
+	}
+
+	private static String generateNavbar(List<Profile> enabledProfiles, Profile activeProfileOpt, List<String> followedBlogs) throws PebbleException {
+		
+		PebbleHelper pebbleHelper = getRawPebbleHelper("web/navbar.html");
+		addDataToPebbleHelper(pebbleHelper, enabledProfiles, activeProfileOpt, followedBlogs);
+		
+		
+		return pebbleHelper.evaluate();
+		
+
+	}
+
+	public String evaluate() throws PebbleException {
+		try (Writer writer = new StringWriter();) {
 			template.evaluate(writer, contextMap);
 			return writer.toString();
 		} catch (IOException e) {
@@ -67,10 +89,8 @@ public class PebbleHelper {
 		}
 	}
 
-
 	public Map<String, Object> getContextMap() {
 		return contextMap;
 	}
 
-	
 }
