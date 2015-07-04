@@ -34,6 +34,7 @@ import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.payment.Payment;
+import qora.transaction.ArbitraryTransaction;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelOrderTransaction;
 import qora.transaction.CancelSellNameTransaction;
@@ -483,6 +484,16 @@ public class BlockExplorer extends Observable implements Observer
 				return output;
 			}
 			
+			if(info.getQueryParameters().containsKey("blogposts"))
+			{
+				output.put("lastBlock", jsonQueryLastBlock());
+				
+				output.putAll(jsonQueryBlogPostsTx(info.getQueryParameters().getFirst("blogposts")));
+				
+				output.put("queryTimeMs", stopwatchAll.elapsedTime());
+				return output;
+			}
+			
 			output.put("queryTimeMs", stopwatchAll.elapsedTime());
 			
 		} catch (Exception e1) {
@@ -527,6 +538,7 @@ public class BlockExplorer extends Observable implements Observer
 		help.put("Assets List", "blockexplorer.json?assets");
 		help.put("AT List", "blockexplorer.json?aTs");
 		help.put("Names List", "blockexplorer.json?names");
+		help.put("BlogPosts of Address", "blockexplorer.json?blogposts={addr}");
 		
 		return help;
 	}
@@ -653,6 +665,57 @@ public class BlockExplorer extends Observable implements Observer
 		return output;
 	}
 
+	public Map jsonQueryBlogPostsTx(String addr) {
+	
+		Map output=new LinkedHashMap();
+		try {
+
+			List<Transaction> transactions = new ArrayList<Transaction>();
+			
+			if (Crypto.getInstance().isValidAddress(addr)) {
+				Account account = new Account(addr);
+
+				byte[] signatureBytes = DBSet.getInstance().getReferenceMap().get(account);
+
+				do{
+					Transaction transaction = Controller.getInstance().getTransaction(signatureBytes);
+					if(transaction == null)
+					{
+						break;
+					}
+					if(!transaction.getCreator().getAddress().equals(account.getAddress()))
+					{
+						break;
+					}
+					
+					if(transaction.getType() == Transaction.ARBITRARY_TRANSACTION
+							&& ((ArbitraryTransaction)transaction).getService() == 777
+						)
+					{
+						transactions.add(transaction);
+					}
+					signatureBytes = transaction.getReference();
+
+				}while(true);
+				
+				int count = transactions.size();
+				
+				output.put("count", count);
+				
+				int i = 0; 
+				for (Transaction transaction : transactions) {
+					output.put(count - i, jsonUnitPrint(transaction, new AssetNamesByKey()));
+					i++;
+				}
+			}
+			
+		} catch (Exception e1) {
+			output=new LinkedHashMap();
+			output.put("error", e1.getLocalizedMessage());
+		}
+		return output;
+	}
+	
 	public Map jsonQueryAssetsLite()
 	{
 		Map output=new LinkedHashMap();
