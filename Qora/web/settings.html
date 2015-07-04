@@ -248,8 +248,8 @@
 			  
               <div class="col-lg-10">
                 <select class="form-control" id="select-list-type">
-					<option value=black>Black-list</option>
-					<option value=white>White-list</option>
+					<option selected="selected" value=black>Blacklist</option>
+					<option value=white>Whitelist</option>
                 </select>
 				<br>
 				<div style="border: 2px solid #ddd;  border-radius: 6px; padding: 10px;">
@@ -426,7 +426,14 @@
         })
 		
 		$("#btnAddd").bind("click", Add);
-		AddValue("test");
+		
+		{% if profile.getBlogBlackWhiteList().isWhitelist() %}
+		 $("#select-list-type").val("white");
+		{% endif %}
+		 {% for bwlistentry in profile.getBlogBlackWhiteList().getBlackwhiteList() %}
+			AddValue({{bwlistentry}});
+		{% endfor %}
+		
 		
 		$("#btnShow").bind("click", showAllValue);
     });
