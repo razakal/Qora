@@ -3,8 +3,121 @@
 	<head>
 	<title>Qora BlockExplorer</title>
 	<link href="/index/libs/bootstrap/3.3.4/css/theme.css" rel="stylesheet">
-	<link href="/index/libs/css/style.css1" rel="stylesheet">
+	<link href="/index/libs/bootstrap/3.3.4/css/theme.css" rel="stylesheet">
+	<script src="/index/libs/jquery/jquery.2.js"></script>
+	<link href="/index/libs/css/style.css" rel="stylesheet">
+	<script src="libs/js/sidebar.js"></script>
+	<link href="libs/css/sidebar.css" rel="stylesheet">
 	<script src="/index/libs/Base58.js" charset="utf-8"></script>
+	<style type="text/css">
+      body {
+      padding-top: 50px;
+      }
+      .sub-header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      }
+      .navbar-fixed-top {
+      border: 0;
+      z-index: 9999;
+      }
+      .sidebar {
+      display: none;
+      }
+      @media (min-width: 768px) {
+      .sidebar {
+      position: fixed;
+      top: 51px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee;
+      }
+      }
+      .nav-sidebar {
+      margin-right: -21px;
+      margin-bottom: 20px;
+      margin-left: -20px;
+      }
+      .nav-sidebar > li > a {
+      padding-right: 20px;
+      padding-left: 20px;
+      }
+      .nav-sidebar > .active > a,
+      .nav-sidebar > .active > a:hover,
+      .nav-sidebar > .active > a:focus {
+      color: #fff;
+      background-color: #428bca;
+      }
+      .main {
+      padding-top: 20px;
+      }
+      .main-tabs {
+      width: 100%;
+      padding-top: 15px;
+      padding-left: 0px;
+      padding-right: 0px;
+      background-color: lightgray;
+      }
+      img.logo-header {
+      background-color: transparent;
+      height: 100%;
+      }
+      .col-lg-8 {
+      padding-left: 0px;
+      }
+      @media (min-width: 768px) {
+      .main {
+      padding-right: 40px;
+      }
+      }
+      .main .page-header {
+      margin-top: 0;
+      }
+      .placeholders {
+      margin-bottom: 30px;
+      text-align: center;
+      }
+      .placeholders h4 {
+      margin-bottom: 0;
+      }
+      .placeholder {
+      margin-bottom: 20px;
+      }
+      .placeholder img {
+      display: inline-block;
+      border-radius: 50%;
+      }
+      .r-t {
+      margin: 0px;
+      }
+      .r-l {
+      margin: 0px;
+      }
+      span.label.label-default {
+      background-color: #fff;
+      color: lightgray;
+      font-size: 90%;
+      line-height: 1;
+      }
+      span.label.label-default a {
+      color: #ddd;
+      text-decoration: none;
+      }
+      a.r-l:hover,
+      a.r-l:focus {
+      color: #6467FF;
+      text-decoration: none;
+      }
+      .navbar-header {
+      width: 110px;
+      }
+	</style>
 	<script type="text/javascript">
 	
 var loading = true;
@@ -2736,6 +2849,13 @@ function start() {
 	document.getElementById('main').innerHTML = '';
 	 
 	document.getElementById('home').href = document.location.pathname;
+	document.getElementById('home2').href = document.location.pathname;
+	
+	document.getElementById('menuBlocks').setAttribute('class', '');
+	document.getElementById('menuTop100Richest').setAttribute('class', '');
+	document.getElementById('menuPolls').setAttribute('class', '');
+	document.getElementById('menuAssets').setAttribute('class', '');
+	document.getElementById('menuATs').setAttribute('class', '');
 	
 	var params = parseUrlQuery();
 	
@@ -2746,6 +2866,8 @@ function start() {
 		asyncAjax('blockexplorer.json?aTs', 'aTs')
 		
 		document.title = title + ' - AT';
+	
+		document.getElementById('menuATs').setAttribute('class', 'active');
 		
 		return;
 	}
@@ -2756,6 +2878,8 @@ function start() {
 		
 		document.title = title + ' - Polls';
 		
+		document.getElementById('menuPolls').setAttribute('class', 'active');
+		
 		return;
 	}
 	
@@ -2764,6 +2888,8 @@ function start() {
 		asyncAjax('blockexplorer.json?assets', 'assets')
 		
 		document.title = title + ' - Assets';
+		
+		document.getElementById('menuAssets').setAttribute('class', 'active');
 		
 		return;
 	}
@@ -2799,6 +2925,8 @@ function start() {
 		asyncAjax('blockexplorer.json?top='+limit+'&asset='+asset, 'topRichest')
 		
 		document.title = title + ' - Top ' + limit;
+	
+		document.getElementById('menuTop100Richest').setAttribute('class', 'active');
 		
 		return;
 	}
@@ -2919,6 +3047,8 @@ function start() {
 		
 		document.getElementById('q').value = decodeURIComponent(params['poll']);
 		
+		document.getElementById('menuPolls').setAttribute('class', 'active');
+		
 		return;
 	}
 	
@@ -2939,6 +3069,8 @@ function start() {
 			
 			document.getElementById('q').value = decodeURIComponent(params['asset']);
 		}
+		
+		document.getElementById('menuAssets').setAttribute('class', 'active');
 		
 		return;
 	}
@@ -2987,6 +3119,9 @@ function start() {
 	asyncAjax('blockexplorer.json?blocks', 'blocks');
 	
 	document.title = title;
+	
+	document.getElementById('menuBlocks').setAttribute('class', 'active');
+	
 }
 	</script>
 </head>
@@ -2994,20 +3129,56 @@ function start() {
 	<div align="center" style='height:100%'>
 <table width="100%" height=85% cellspacing="0" cellpadding="0" border="0">
 <tr>
-<td valign="top" align="center" nowrap colspan="3" height="1" style='padding:10px;'>
-<img src=img/logo_header.png>
-</td>
-</tr>
-<tr>
 <td valign="top" align="center" colspan="3" height="1" nowrap>
-<b><a id=home href=''>BlockExplorer</a></b> | <b><a href=?top=100>Top 100 Richest</a></b> | <b><a href=?polls>Polls</a></b> | <b><a href=?assets>Assets</a></b> | <b><a href=?aTs>ATs</a></b>
-<br><br>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#" class="navbar-brand"><img src="img/logo_header.png" alt="" class="logo-header"></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a id=home href=''>BlockExplorer</a></li>
+			
+			<li><a href="webdirectory.html">Webdirectory</a></li>
+            <li><a href="blogdirectory.html">Blogdirectory</a></li>
+			<li><a href="blog.html">Blog</a></li>
+			
+          </ul>
+          <div class="navbar-form navbar-left">
+            <div class="input-group">
+              <label for="name" class="sr-only">Search</label>
+              <input id="q" size="55" type="text" value="" class="form-control" onkeydown="if (event.keyCode == 13) buttonSearch()"><span class="input-group-btn">
+                <button id="button" type="button" value="!searchval!" class="btn btn-link" onClick="buttonSearch()"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+	
+ <div class="container-fluid">
+      <div class="row">
+        <div class="main-tabs">
+          <div class="container">
+            <div class="row">
+              <ul role="tablist" class="nav nav-tabs">
+                <li id=menuBlocks><a href="#" id=home2>Blocks</a></li>
+				<li id=menuTop100Richest><a href="?top=100">Top 100 Richest</a></li>
+				<li id=menuPolls><a href="?polls">Polls</a></li>
+				<li id=menuAssets><a href="?assets">Assets</a></li>
+				<li id=menuATs><a href="?aTs">ATs</a></li>				
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 </td>
 </tr>
 <tr>
 <td colspan="3" valign="top" align="center" width="100%">
-<input id="q" value="" size="148" onkeydown="if (event.keyCode == 13) buttonSearch()">
- <input type="button" value="get" style="width:70" onClick="buttonSearch()"><br><br>
+
+<br> 
 
 <div id="loading" style='display:none;'><img src="img/loading.gif" alt="Banner" /></div>
 
@@ -3027,9 +3198,5 @@ function start() {
 </table>
 
 </table>
-</body>
-</html>
-
-	
 </body>
 </html>
