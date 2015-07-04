@@ -985,28 +985,19 @@ public class WebResource {
 				if (!nameMap.contains(blogname)) {
 					return Response.ok(
 							PebbleHelper.getPebbleHelper(
-									"web/blogdisabled.html").evaluate(),
+									"web/profiledisabled.html").evaluate(),
 							"text/html; charset=utf-8").build();
 				}
 
 				Name name = nameMap.get(blogname);
 				Profile profile = Profile.getProfileOpt(name);
 
-				if (profile == null || !profile.isProfileEnabled() || !profile.isBlogEnabled()) {
+				if (profile == null || !profile.isProfileEnabled() ) {
 					pebbleHelper = PebbleHelper
-							.getPebbleHelper("web/blogdisabled.html");
+							.getPebbleHelper("web/profiledisabled.html");
 					if (Controller.getInstance().getAccountByAddress(
 							name.getOwner().getAddress()) != null) {
-						String resultcall = "/settings.html?profilename="
-								+ blogname;
-						String template = readFile("web/blogenabletemplate",
-								StandardCharsets.UTF_8);
-						template = template.replace("!TEXT!", "here");
-						template = template.replace("!LINK!", resultcall);
-						pebbleHelper.getContextMap().put(
-								"enableblog",
-								"You can activate the blog by clicking "
-										+ template);
+						pebbleHelper.getContextMap().put("ownProfileName", blogname);
 					}
 					return Response.ok(pebbleHelper.evaluate(),
 							"text/html; charset=utf-8").build();
@@ -1014,7 +1005,19 @@ public class WebResource {
 
 				pebbleHelper.getContextMap().put("postblogurl",
 						"postblog.html?blogname=" + blogname);
+				
+				pebbleHelper.getContextMap().put("blogenabled", profile.isBlogEnabled());
+				if (Controller.getInstance().getAccountByAddress(
+						name.getOwner().getAddress()) != null) {
+					pebbleHelper.getContextMap().put("ownProfileName", blogname);
+				}
+				
+			}else
+			{
+				pebbleHelper.getContextMap().put("blogenabled", true);
 			}
+			
+			
 
 			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
 				pebbleHelper.getContextMap().put("isFollowing", activeProfileOpt != null && !activeProfileOpt.getFollowedBlogs().contains(blogname));

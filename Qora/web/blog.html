@@ -220,6 +220,8 @@
               </ul>
             </div>
           </div>        	{{apimessage}}
+          
+          {% if blogenabled %}
           <ul class="timeline">{% for blogpost in blogposts %}
             <li>
               <div class="timeline-badge primary"><a><i rel="tooltip" title="POST TIME" id="" class="glyphicon glyphicon-record"></i></a></div>
@@ -242,6 +244,13 @@
                 </div>
               </div>
             </li>			{% endfor %}
+            {%else%}
+             <h1 style="font-family: Verdana;">This blog is currently disabled.<br>
+             {% if ownProfileName is not null %}
+        	You can enable the blog <a href="/index/settings.html?profilename={{ownProfileName}}">here</a>
+        	{%endif%}
+      		</h1><br>
+            {% endif %}
             <li style="float: none;" class="clearfix"></li>
           </ul>
         </div>
