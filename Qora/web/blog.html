@@ -161,7 +161,7 @@
       {
       margin: -90px 10px 0px 50px;
       z-index: 9;
-      width: 20%;
+      width: 21%;
       margin-bottom: 20px;
       }
       @media (max-width:768px)
@@ -176,6 +176,24 @@
       z-index: 9;
       width: 20%;
       }
+      }
+      .profile-options
+      {
+      width:100%;
+      font-size: 20px;
+      }
+      .po-tabs
+      {
+      border: 1px solid #ddd;
+      }
+      li.po-tabs a
+      {
+      color: #ddd;
+      }
+      li.po-tabs a:hover
+      {
+      color: #6467ff;
+      text-decoration: none;
       }
     </style>
   </head>
@@ -239,10 +257,15 @@
     <div class="container">
       <div class="row">
         <div class="main">
-          <div class="tl-profile"><img align="left" src="http://www.qora.org/img/banner_01.png" alt="" class="tl-image-lg"><img align="left" src="img/qora-user.png" alt="" class="tl-image-profile thumbnail">
+          <div class="tl-profile"><img align="left" src="http://www.qora.org/img/banner_01.png" alt="" class="tl-image-lg">
+            <img align="left" src="img/qora-user.png" alt="" class="tl-image-profile thumbnail">
             <div class="tl-profile-text">
               <h1>Name</h1>
               <p>Description</p>
+              <ul class="profile-options list-inline">
+              <li class="po-tabs"><a><i class="glyphicon glyphicon-heart"></i> Like</a></li>
+              <li class="po-tabs"><a><i class="glyphicon glyphicon-user"></i> Follow</a></li>
+              </ul>
             </div>
           </div>        	{{apimessage}}
           <ul class="timeline">{% for blogpost in blogposts %}
