@@ -71,7 +71,7 @@ public class BlogUtils {
 
 	public static List<BlogEntry> getBlogPosts(String blogOpt) {
 		int height = Controller.getInstance().getHeight();
-		int floor = 0;
+		int floor = 1;
 		if (height > 10000) {
 			floor = height - 10000;
 		}
