@@ -210,9 +210,13 @@
       <div class="row">
         <div class="main">
           <div class="tl-profile"><img align="left" src="/index/img/banner_01.png" alt="" class="tl-image-lg">
+          {% if blogprofile.getAvatarOpt() is empty%}
             <img align="left" src="/index/img/qora-user.png" alt="" class="tl-image-profile thumbnail">
+          {%else%}
+            <img align="left" src="{{blogprofile.getAvatarOpt()}}" alt="" class="tl-image-profile thumbnail">
+            {%endif%}
             <div class="tl-profile-text">
-              <h1>Name</h1>
+              <h1>{{blogprofile.getName().getName()}}</h1>
               <p>Description</p>
               <ul class="profile-options list-inline">
               <li class="po-tabs"><a><div class="glyphicon glyphicon-heart"></div> Like</a></li>

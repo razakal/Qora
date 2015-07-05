@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +49,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.mitchellbosecke.pebble.error.PebbleException;
+
+import api.ATResource;
+import api.AddressesResource;
+import api.ApiErrorFactory;
+import api.BlocksResource;
+import api.BlogPostResource;
+import api.NameSalesResource;
+import api.NamesResource;
+import api.TransactionsResource;
+import controller.Controller;
+import database.DBSet;
+import database.NameMap;
 import qora.account.Account;
 import qora.block.Block;
 import qora.blockexplorer.BlockExplorer;
@@ -73,20 +85,6 @@ import utils.PebbleHelper;
 import utils.Qorakeys;
 import utils.StrJSonFine;
 import utils.Triplet;
-import api.ATResource;
-import api.AddressesResource;
-import api.ApiErrorFactory;
-import api.BlocksResource;
-import api.BlogPostResource;
-import api.NameSalesResource;
-import api.NamesResource;
-import api.TransactionsResource;
-
-import com.mitchellbosecke.pebble.error.PebbleException;
-
-import controller.Controller;
-import database.DBSet;
-import database.NameMap;
 
 @Path("/")
 public class WebResource {
@@ -1041,6 +1039,7 @@ public class WebResource {
 				pebbleHelper.getContextMap().put("postblogurl",
 						"postblog.html?blogname=" + blogname);
 				
+				pebbleHelper.getContextMap().put("blogprofile", profile);
 				pebbleHelper.getContextMap().put("blogenabled", profile.isBlogEnabled());
 				if (Controller.getInstance().getAccountByAddress(
 						name.getOwner().getAddress()) != null) {
