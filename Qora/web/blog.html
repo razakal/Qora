@@ -294,10 +294,17 @@
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
     $(document).ready(function() {
-        $("ul.timeline li:odd").addClass("timeline-inverted");
+        
         var my_posts = $("[rel=tooltip]");
-        var size = $(window).width();
-        for (i = 0; i < my_posts.length; i++) {
+		
+		var size = $(window).width();
+        
+		if(my_posts.length > 1)
+		{
+			$("ul.timeline li:odd").addClass("timeline-inverted");
+		}
+		
+		for (i = 0; i < my_posts.length; i++) {
             the_post = $(my_posts[i]);
             if (the_post.hasClass('invert') && size >= 767) {
                 the_post.tooltip({
