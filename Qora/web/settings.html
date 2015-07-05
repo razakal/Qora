@@ -139,6 +139,7 @@
         <div class="form-horizontal">
           <!-- <fieldset> -->
             <legend>Settings</legend>
+			<div id=result></div>
             	{{result}}
             <div class="form-group">
               <label for="select-name" class="col-lg-2 control-label">Name</label>
@@ -250,27 +251,52 @@
 
     var updateValue;
     updateValue = function() {
-    	 var blogtitle, blogdescription, profilename ,profileenable, blogenable, profileavatar, bwlistval, allData
-        blogtitle = document.getElementById('blogtitle').value;
-        blogtitle = encodeURIComponent(blogtitle);
-        blogdescription = document.getElementById('blogdescription').value;
-        blogdescription = encodeURIComponent(blogdescription);
-        profileavatar = document.getElementById('avatar').value;
-        profileavatar = encodeURIComponent(profileavatar);
-        profilename = document.getElementById('select-name').value;
-        profileenable = document.getElementById('profile-status').checked;
-        blogenable = document.getElementById('blog-status').checked;
-        
-        allData = "";
+
+		document.getElementById('result').innerHTML = '<div class=\"alert alert-info\" role=\"alert\">Saving...<br></div>';
+
+		allbwlistData = "";
 		var MyRows = $('table#tblData').find('tr');
 			for (var i = 1; i < MyRows.length; i++){
-					allData += $(MyRows[i]).find('td:eq(0)').children("input[type=text]").val() + ";";
+					allbwlistData += $(MyRows[i]).find('td:eq(0)').children("input[type=text]").val() + ";";
 			}
-		allData = encodeURIComponent(allData);
 		
-        
-        bwlistval = document.getElementById('select-list-type').value;
-        document.location.href = '/index/settingssave.html?profilename=' + profilename + '&profileenable=' + profileenable + '&blogenable=' + blogenable + '&blogdescription=' + blogdescription + '&blogtitle=' + blogtitle + '' + '&profileavatar=' + profileavatar + '&blackwhitelist=' + allData + '&bwlistkind=' + bwlistval + '';
+		$.post(
+			"/index/settingssave.html",
+			{
+				profilename: document.getElementById('select-name').value, 
+				profileenable: document.getElementById('profile-status').checked,
+				blogenable: document.getElementById('blog-status').checked,
+				blogdescription: document.getElementById('blogdescription').value,
+				blogtitle: document.getElementById('blogtitle').value,
+				profileavatar: document.getElementById('avatar').value,
+				blackwhitelist: allbwlistData,
+				bwlistkind: document.getElementById('select-list-type').value
+			})
+			.done( function(data) {
+				if(data.type == 'parametersMissing')
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Some parameters are missing.<br></div>";
+				}
+				else if(data.type == 'profileNameisnotAllowed')
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Profile Name is not Allowed.<br></div>";
+				}
+				else if (data.type == 'settingsSuccessfullySaved')
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Settings successfully saved.<br></div>";
+				}
+				else if (data.type == 'error')
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occurred while saving settings.<br>"+data.error+"<br></div>";
+				}
+				else
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Unknown response:<br>"+data+"<br></div>";
+				}
+			})
+			.fail( function(xhr, textStatus, errorThrown) {
+				document.getElementById('result').innerHTML = '<div class=\"alert alert-danger\" role=\"alert\">ERROR<br>'+xhr.responseText+'<br></div>';
+			});
     };
     
       var updateValue;

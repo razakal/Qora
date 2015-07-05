@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,11 +29,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -228,47 +232,59 @@ public class WebResource {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@POST
 	@Path("index/settingssave.html")
-	@GET
-	public Response saveProfileSettings() {
+	@Consumes("application/x-www-form-urlencoded")
+	public Response saveProfileSettings(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
 
+		JSONObject json = new JSONObject();
+		
 		try {
+			
+			String profileName = form.getFirst("profilename");
 
-			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/settings.html");
-
-			Map<String, String[]> parameterMap = request.getParameterMap();
-			String profileName = request.getParameter("profilename");
-
-			if (!isCompleteSubmit(parameterMap)) {
-				//TODO better tell that some parameters are missing
-				return error404(request);
+			if (!isCompleteSubmit(form)) {
+				
+				json.put("type", "parametersMissing");
+				
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(json.toJSONString())
+						.build();
 			}
 
 			Name name = null;
 			name = Controller.getInstance().getName(profileName);
 
 			if (name == null || !Profile.isAllowedProfileName(profileName)) {
-				return error404(request);
+			
+				json.put("type", "profileNameisnotAllowed");
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(json.toJSONString())
+						.build();
 			}
 
-			boolean blogenable = Boolean.valueOf(request
-					.getParameter(Qorakeys.BLOGENABLE.toString()));
-			boolean profileenable = Boolean.valueOf(request
-					.getParameter(Qorakeys.PROFILEENABLE.toString()));
-			String titleOpt = request.getParameter(Qorakeys.BLOGTITLE
+			boolean blogenable = Boolean.valueOf(form
+					.getFirst(Qorakeys.BLOGENABLE.toString()));
+			boolean profileenable = Boolean.valueOf(form
+					.getFirst(Qorakeys.PROFILEENABLE.toString()));
+			String titleOpt = form
+					.getFirst(Qorakeys.BLOGTITLE
 					.toString());
 			titleOpt = decodeIfNotNull(titleOpt);
-			String blogDescrOpt = request.getParameter(Qorakeys.BLOGDESCRIPTION
+			String blogDescrOpt = form
+					.getFirst(Qorakeys.BLOGDESCRIPTION
 					.toString());
 			blogDescrOpt = decodeIfNotNull(blogDescrOpt);
-			String profileAvatarOpt = request
-					.getParameter(Qorakeys.PROFILEAVATAR.toString());
+			String profileAvatarOpt = form
+					.getFirst(Qorakeys.PROFILEAVATAR.toString());
 			
-			String bwlistkind = request
-					.getParameter("bwlistkind");
-			String blackwhitelist = request
-					.getParameter("blackwhitelist");
+			String bwlistkind = form
+					.getFirst("bwlistkind");
+			String blackwhitelist = form
+					.getFirst("blackwhitelist");
 			blackwhitelist = URLDecoder.decode(blackwhitelist, "UTF-8");
 			
 			profileAvatarOpt = decodeIfNotNull(profileAvatarOpt);
@@ -287,35 +303,25 @@ public class WebResource {
 				profile.getBlogBlackWhiteList().addAddressOrName(listentry);
 			}
 			
+			profile.saveProfile();
 			
 			
+			json.put("type", "settingsSuccessfullySaved");
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(json.toJSONString())
+					.build();
 			
-
-			try {
-
-				pebbleHelper.getContextMap().put(
-						"result",
-						"<center><div class=\"alert alert-success\" role=\"alert\">Settings saved<br>"
-								+ profile.saveProfile() + "</div></center>");
-			} catch (WebApplicationException e) {
-				pebbleHelper
-						.getContextMap()
-						.put("result",
-								"<center><div class=\"alert alert-danger\" role=\"alert\">Settings not saved<br>"
-										+ e.getResponse().getEntity()
-										+ "</div></center>");
-			}
-			pebbleHelper.getContextMap().put("profile", profile);
-			pebbleHelper.getContextMap().put("name", name);
-
-			List<Name> namesAsList = Controller.getInstance().getNamesAsList();
-			pebbleHelper.getContextMap().put("names", namesAsList);
-
-			return Response.ok(pebbleHelper.evaluate(),
-					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+
+			json.put("type", "error");
+			json.put("error", e.getMessage());
+			
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(json.toJSONString())
+					.build();
 		}
 
 	}
@@ -386,8 +392,19 @@ public class WebResource {
 		return parameter != null ? URLDecoder.decode(parameter, "UTF-8") : null;
 	}
 
-	private boolean isCompleteSubmit(Map<String, String[]> parameterMap) {
-		if (!parameterMap.containsKey("profilename") || !parameterMap.containsKey("bwlistkind") || !parameterMap.containsKey("blackwhitelist")) {
+	private boolean isCompleteSubmit(MultivaluedMap<String, String> parameterMap) {
+		if (
+				!parameterMap.containsKey("profilename")
+				||
+				 parameterMap.getFirst("profilename").equals("")
+				|| 
+				!parameterMap.containsKey("bwlistkind")
+				||
+				parameterMap.getFirst("bwlistkind").equals("") 
+				||
+				!parameterMap.containsKey("blackwhitelist")
+				||
+				parameterMap.getFirst("blackwhitelist").equals("") ) {
 			return false;
 		}
 
