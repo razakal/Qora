@@ -1235,19 +1235,26 @@ public class Controller extends Observable {
 	}
 
 	public byte[] getPublicKeyByAddress(String address) {
-		// CHECK ACCOUNT IN WALLET
+		
 		if(!Crypto.getInstance().isValidAddress(address)) {
 			return null;
 		}
 		
+		// CHECK ACCOUNT IN OWN WALLET
 		Account account = Controller.getInstance().getAccountByAddress(address);
+		if (account != null) {
+			if (Controller.getInstance().isWalletUnlocked()) {
+				return Controller.getInstance()
+						.getPrivateKeyAccountByAddress(address).getPublicKey();
+			}
+		}
 		
-		if(!DBSet.getInstance().getReferenceMap().contains(account.getAddress()))
+		if(!DBSet.getInstance().getReferenceMap().contains(address))
 		{
 			return null;
 		}
 		
-		Transaction transaction = Controller.getInstance().getTransaction(DBSet.getInstance().getReferenceMap().get(account));
+		Transaction transaction = Controller.getInstance().getTransaction(DBSet.getInstance().getReferenceMap().get(address));
 		
 		if(transaction == null)
 		{
