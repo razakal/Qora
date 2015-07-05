@@ -459,7 +459,7 @@ function polls(data)
 	
 	var table = '<table id=top100 BORDER=0 cellpadding=10 cellspacing=0 class="table table-striped" style="border: 1px solid #ddd; width: auto;">';
 	
-	table += '<tr><td><b>Poll<td><b>Voites'; 
+	table += '<tr><td><b>Poll<td><b>Votes'; 
 	
 	for(key in data.pools) {
 		table += '<tr>';
@@ -500,7 +500,7 @@ function poll(data)
 	}
 	
 	output += '<table border="0" cellspacing="5" class="table">';
-	output += '<tr><td><b>Option</b></td><td><b>Voites</b></td><td width="390"><b>% of total</b></td></tr>';
+	output += '<tr><td><b>Option</b></td><td><b>Votes</b></td><td width="390"><b>% of total</b></td></tr>';
 
 	for(key in data.pool.options) {
 		output += '<tr>';
@@ -523,20 +523,20 @@ function poll(data)
 	}
 
 	//output += '<tr><td colspan="3"></td></tr>';
-	output += '<tr><td><b>All voites:</b></td><td align="left" colspan="2">';
+	output += '<tr><td><b>All Votes:</b></td><td align="left" colspan="2">';
 	output += addCommas(data.pool.totalVotes);
 	output += '</td></tr></tbody></table>';
 	
 	output += '<br>';
 	
 	output += '<table border="0" cellspacing="5" class="table table-condensed">';
-	output += '<tr><td><b>Address</b></td><td><b>Option</b></td><td><b>Voites</b></td></tr>';
+	output += '<tr><td><b>Address</b></td><td><b>Option</b></td><td><b>Votes</b></td></tr>';
 	
-	for(key in data.pool.voites) {
+	for(key in data.pool.votes) {
 		output += '<tr>';
 		output += '<td>'+'<a href=?addr='+key+'>'+key+'</a>';
-		output += '<td>'+htmlFilter(data.pool.voites[key].option);
-		output += '<td>'+addCommas(data.pool.voites[key].voites);
+		output += '<td>'+htmlFilter(data.pool.votes[key].option);
+		output += '<td>'+addCommas(data.pool.votes[key].votes);
 	}
 	output += '</table>';
 	

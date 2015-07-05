@@ -875,7 +875,7 @@ public class BlockExplorer extends Observable implements Observer
 		    }
 		};
 		
-		Map voitesJSON = new LinkedHashMap();
+		Map votesJSON = new LinkedHashMap();
 		
 		List<Pair<Account, PollOption>> votes = poll.getVotes(); 
 		
@@ -883,13 +883,13 @@ public class BlockExplorer extends Observable implements Observer
 		
 		for(Pair<Account, PollOption> vote: votes)
 		{
-			Map voiteJSON = new LinkedHashMap();
-			voiteJSON.put("option", vote.getB().getName());
-			voiteJSON.put("voites", vote.getA().getConfirmedBalance().toPlainString());
+			Map voteJSON = new LinkedHashMap();
+			voteJSON.put("option", vote.getB().getName());
+			voteJSON.put("votes", vote.getA().getConfirmedBalance().toPlainString());
 			
-			voitesJSON.put(vote.getA().getAddress(), voiteJSON);
+			votesJSON.put(vote.getA().getAddress(), voteJSON);
 		}
-		pollJSON.put("voites", voitesJSON);
+		pollJSON.put("votes", votesJSON);
 		
 		output.put("pool", pollJSON);
 		
