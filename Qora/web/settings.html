@@ -158,6 +158,12 @@
               </div>
             </div>
             <div class="form-group">
+              <label for="Banner" class="col-lg-2 control-label">Profile Banner</label>
+              <div class="col-lg-10">
+                <input type="url" class="form-control" id="banner" placeholder="Profile Banner" disabled="">
+              </div>
+            </div>
+            <div class="form-group">
               <label for="avatar" class="col-lg-2 control-label">Profile Picture</label>
               <div class="col-lg-10">
                 <input type="url" class="form-control" id="avatar" placeholder="Profile Picture" disabled="">
@@ -269,6 +275,7 @@
 				blogdescription: document.getElementById('blogdescription').value,
 				blogtitle: document.getElementById('blogtitle').value,
 				profileavatar: document.getElementById('avatar').value,
+				profilemaingraphic: document.getElementById('banner').value,
 				blackwhitelist: allbwlistData,
 				bwlistkind: document.getElementById('select-list-type').value
 			})
@@ -326,6 +333,7 @@
         $("#blogdescription").val ("{{profile.getBlogDescriptionOpt}}");
         $("#blogtitle").val ("{{profile.getBlogTitleOpt}}");
         $("#avatar").val ("{{profile.getAvatarOpt}}");
+        $("#banner").val ("{{profile.getProfileGraphicOpt()}}");
         $('ul.nav-tabs > li').removeClass('active');
         if (window.location.pathname === '/index/blogsearch.html') {
             $('ul.nav-tabs > li:nth-child(2)').addClass('active');
@@ -362,20 +370,26 @@
         $('#select-name').val();
         $('#profile-status').prop('checked');
         $('#avatar').val();
+        $('#banner').val();
         $('#blogtitle').val();
         $('#blog-status').prop('checked');
         $('#blogdescription').val();
 
 		if ($('#profile-status').prop('checked') === false) {
                 $('#avatar').attr('disabled', true);
+                $('#banner').attr('disabled', true);
             } else {
                 $('#avatar').removeAttr('disabled');
+                $('#banner').removeAttr('disabled');
             };
+		
         $('#profile-status').change(function() {
             if ($('#profile-status').prop('checked') === false) {
                 $('#avatar').attr('disabled', true);
+                $('#banner').attr('disabled', true);
             } else {
                 $('#avatar').removeAttr('disabled');
+                $('#banner').removeAttr('disabled');
             };
         });
             if ($('#blog-status').prop('checked') === false) {
@@ -447,6 +461,7 @@
 		 $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
         	$('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
 		  $('#avatar').attr('disabled', true);
+		  $('#banner').attr('disabled', true);
 		  $('#blogtitle').attr('disabled', true);
           $('#blogdescription').attr('disabled', true);
           $('#select-name').attr('disabled', true);

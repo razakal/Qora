@@ -60,7 +60,7 @@ public class BlogBlackWhiteList {
 					String whitelist = (String) jsonForNameOpt.get(Qorakeys.BLOGWHITELIST.toString());
 					
 					String[] whiteListEntries = StringUtils.split(whitelist, ";");
-					List<String> result = new ArrayList<String>(Arrays.asList(whiteListEntries));
+					List<String> result = new ArrayList<String>( new ArrayList<>( Arrays.asList(whiteListEntries)));
 					return new BlogBlackWhiteList(true, result , blogname);
 					
 				}
@@ -70,7 +70,7 @@ public class BlogBlackWhiteList {
 					String blackList = (String) jsonForNameOpt.get(Qorakeys.BLOGBLACKLIST.toString());
 					
 					String[] blackListEntries = StringUtils.split(blackList, ";");
-					return new BlogBlackWhiteList(false, Arrays.asList(blackListEntries), blogname);
+					return new BlogBlackWhiteList(false, new ArrayList<>( Arrays.asList(blackListEntries)), blogname);
 				}
 				
 			}

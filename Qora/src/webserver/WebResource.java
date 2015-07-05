@@ -278,6 +278,8 @@ public class WebResource {
 			blogDescrOpt = decodeIfNotNull(blogDescrOpt);
 			String profileAvatarOpt = form
 					.getFirst(Qorakeys.PROFILEAVATAR.toString());
+			String profileBannerOpt = form
+					.getFirst(Qorakeys.PROFILEMAINGRAPHIC.toString());
 			
 			String bwlistkind = form
 					.getFirst("bwlistkind");
@@ -286,9 +288,11 @@ public class WebResource {
 			blackwhitelist = URLDecoder.decode(blackwhitelist, "UTF-8");
 			
 			profileAvatarOpt = decodeIfNotNull(profileAvatarOpt);
+			profileBannerOpt = decodeIfNotNull(profileBannerOpt);
 
 			Profile profile = Profile.getProfileOpt(name);
 			profile.saveAvatarTitle(profileAvatarOpt);
+			profile.saveProfileMainGraphicOpt(profileBannerOpt);
 			profile.saveBlogDescription(blogDescrOpt);
 			profile.saveBlogTitle(titleOpt);
 			profile.setBlogEnabled(blogenable);
@@ -323,6 +327,9 @@ public class WebResource {
 		}
 
 	}
+
+
+
 
 	@Path("index/settings.html")
 	@GET
@@ -408,7 +415,7 @@ public class WebResource {
 
 		List<Qorakeys> list = Arrays.asList(Qorakeys.BLOGENABLE,
 				Qorakeys.PROFILEENABLE, Qorakeys.BLOGTITLE,
-				Qorakeys.PROFILEAVATAR, Qorakeys.BLOGDESCRIPTION);
+				Qorakeys.PROFILEAVATAR, Qorakeys.BLOGDESCRIPTION, Qorakeys.PROFILEMAINGRAPHIC);
 		boolean result = true;
 
 		for (Qorakeys qorakey : list) {

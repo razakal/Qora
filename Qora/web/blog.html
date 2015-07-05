@@ -209,7 +209,12 @@
     <div class="container">
       <div class="row">
         <div class="main">
+         	{%if blogprofile.getProfileGraphicOpt() is empty%}
           <div class="tl-profile"><img align="left" src="/index/img/banner_01.png" alt="" class="tl-image-lg">
+          {%else%}
+          <div class="tl-profile"><img align="left" src="{{blogprofile.getProfileGraphicOpt()}}" alt="" class="tl-image-lg">
+          {%endif%}
+
           {% if blogprofile.getAvatarOpt() is empty%}
             <img align="left" src="/index/img/qora-user.png" alt="" class="tl-image-profile thumbnail">
           {%else%}

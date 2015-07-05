@@ -82,6 +82,10 @@ public class Profile {
 	public void saveAvatarTitle(String profileavatar) {
 		jsonRepresenation.put(Qorakeys.PROFILEAVATAR.toString(), profileavatar);
 	}
+	
+	public void saveProfileMainGraphicOpt(String maingraphicurl) {
+		jsonRepresenation.put(Qorakeys.PROFILEMAINGRAPHIC.toString(), maingraphicurl);
+	}
 
 	public String getBlogTitleOpt() {
 		return (String) jsonRepresenation.get(Qorakeys.BLOGTITLE.toString());
@@ -90,6 +94,11 @@ public class Profile {
 	public String getAvatarOpt() {
 		return (String) jsonRepresenation
 				.get(Qorakeys.PROFILEAVATAR.toString());
+	}
+	
+	public String getProfileGraphicOpt() {
+		return (String) jsonRepresenation
+				.get(Qorakeys.PROFILEMAINGRAPHIC.toString());
 	}
 
 	public List<String> getFollowedBlogs() {
