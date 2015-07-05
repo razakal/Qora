@@ -2,8 +2,12 @@ package gui.at;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -25,6 +29,15 @@ public class ATDetailsFrame extends JFrame {
 	public ATDetailsFrame(AT at)
 	{	
 		super("Qora - AT Details");
+		
+		//ICON
+		List<Image> icons = new ArrayList<Image>();
+		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon16.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon32.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon64.png"));
+		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon128.png"));
+		this.setIconImages(icons);
+		
 		//CLOSE
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
