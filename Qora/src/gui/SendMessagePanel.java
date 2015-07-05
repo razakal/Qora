@@ -619,7 +619,7 @@ public class SendMessagePanel extends JPanel
 					byte[] privateKey = account.getPrivateKey();		
 
 					//recipient
-					byte[] publicKey = Controller.getInstance().getPublicKeyFromAddress(recipient.getAddress());
+					byte[] publicKey = Controller.getInstance().getPublicKeyByAddress(recipient.getAddress());
 					if(publicKey == null)
 					{
 						JOptionPane.showMessageDialog(new JFrame(), "The recipient has not yet performed any action in the blockchain.\nYou can't send an encrypted message to him.", "Error", JOptionPane.ERROR_MESSAGE);

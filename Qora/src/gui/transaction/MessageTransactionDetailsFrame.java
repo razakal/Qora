@@ -197,7 +197,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 	            		PrivateKeyAccount accountRecipient = Controller.getInstance().getPrivateKeyAccountByAddress(account.getAddress());
 	    				privateKey = accountRecipient.getPrivateKey();		
 	    				
-	    				publicKey = Controller.getInstance().getPublicKeyFromAddress(messageTransaction.getRecipient().getAddress());    				
+	    				publicKey = Controller.getInstance().getPublicKeyByAddress(messageTransaction.getRecipient().getAddress());    				
 	        		}
 	        		
 	        		try {

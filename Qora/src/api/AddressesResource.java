@@ -377,14 +377,13 @@ public class AddressesResource {
 					ApiErrorFactory.ERROR_INVALID_ADDRESS);
 		}
 
-		String publicKey = Base58.encode(Controller.getInstance()
-				.getPublicKeyFromAddress(address));
+		byte[] publicKey = Controller.getInstance().getPublicKeyByAddress(address);
 
-		if (publicKey.equals("")) {
+		if (publicKey == null) {
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_PUBLIC_KEY_NOT_FOUND);
 		} else {
-			return publicKey;
+			return Base58.encode(publicKey);
 		}
 	}
 }

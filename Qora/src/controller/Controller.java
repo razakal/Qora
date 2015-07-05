@@ -47,6 +47,7 @@ import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.Block;
 import qora.blockexplorer.BlockExplorer;
+import qora.crypto.Crypto;
 import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -1233,35 +1234,26 @@ public class Controller extends Observable {
 		return DBSet.getInstance().getBlockMap().getBlockByHeight(parseInt);
 	}
 
-	public byte[] getPublicKeyFromAddress(String address) {
+	public byte[] getPublicKeyByAddress(String address) {
 		// CHECK ACCOUNT IN WALLET
+		if(!Crypto.getInstance().isValidAddress(address)) {
+			return null;
+		}
+		
 		Account account = Controller.getInstance().getAccountByAddress(address);
-		if (account != null) {
-			if (Controller.getInstance().isWalletUnlocked()) {
-				return Controller.getInstance()
-						.getPrivateKeyAccountByAddress(address).getPublicKey();
-			}
+		
+		if(!DBSet.getInstance().getReferenceMap().contains(account.getAddress()))
+		{
+			return null;
 		}
-
-		// WE ARE LOOKING IN ITS OWN TRANSACTIONS
-		for (Pair<Account, Transaction> transactions : Controller.getInstance()
-				.getLastTransactions(100)) {
-			if (transactions.getB().getCreator().getAddress().equals(address)) {
-				return transactions.getB().getCreator().getPublicKey();
-			}
+		
+		Transaction transaction = Controller.getInstance().getTransaction(DBSet.getInstance().getReferenceMap().get(account));
+		
+		if(transaction == null)
+		{
+			return null;
 		}
-
-		// FOR FOREIGN ADDRESSES, SLOW SEARCH THROUGHOUT THE BLOCKCHAIN
-		Block block = Controller.getInstance().getLastBlock();
-		do {
-			for (Transaction transaction : block.getTransactions()) {
-				if (transaction.getCreator().getAddress().equals(address)) {
-					return transaction.getCreator().getPublicKey();
-				}
-			}
-			block = block.getParent();
-		} while (block.getHeight() > 1);
-
-		return null;
+		
+		return transaction.getCreator().getPublicKey();
 	}
 }

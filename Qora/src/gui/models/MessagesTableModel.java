@@ -481,7 +481,7 @@ public class MessagesTableModel extends JTable implements Observer{
 					
 					if( messageBufs.get(row).getToPublicKey() == null )
 					{
-						messageBufs.get(row).setRecipientPublicKey(Controller.getInstance().getPublicKeyFromAddress( messageBufs.get(row).getRecipient()));
+						messageBufs.get(row).setRecipientPublicKey(Controller.getInstance().getPublicKeyByAddress( messageBufs.get(row).getRecipient()));
 					}
 					publicKey = messageBufs.get(row).getToPublicKey();    				
 				}
