@@ -225,7 +225,9 @@
               <p>Description</p>
               <ul class="profile-options list-inline">
               <li class="po-tabs"><a><div class="glyphicon glyphicon-heart"></div> Like</a></li>
-              <li class="po-tabs"><a><div class="glyphicon glyphicon-user"></div> Follow</a></li>
+          		{% if blogprofile.isBlogEnabled() %}
+              <li class="po-tabs"><button onclick="javascript:processfollow()" type="button"><a><div class="glyphicon glyphicon-user"></div> Follow</a></button></li>
+              {%endif%}
               </ul>
             </div>
           </div>        	{{apimessage}}
