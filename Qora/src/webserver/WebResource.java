@@ -774,6 +774,87 @@ public class WebResource {
 	}
 
 	@SuppressWarnings("unchecked")
+	@POST
+	@Path("index/postblogprocessing.html")
+	@Consumes("application/x-www-form-urlencoded")
+	public Response postBlogProcessing(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+		JSONObject json = new JSONObject();
+		
+		String title = form.getFirst(BlogPostResource.TITLE_KEY);
+		String creator = form.getFirst("creator");
+		String contentparam = form.getFirst("content");
+		String fee = form.getFirst("fee");
+		String preview = form.getFirst("preview");
+		String blogname = form.
+				getFirst(BlogPostResource.BLOGNAME_KEY);
+
+		if (StringUtil.isNotBlank(creator)
+				&& StringUtil.isNotBlank(contentparam)
+				&& StringUtil.isNotBlank(fee)) {
+
+			JSONObject jsonBlogPost = new JSONObject();
+
+			Pair<Account, NameResult> nameToAdress = NameUtils
+					.nameToAdress(creator);
+			
+			String authorOpt = null;
+			if (nameToAdress.getB() == NameResult.OK) {
+				authorOpt = creator;
+				jsonBlogPost.put(BlogPostResource.AUTHOR, authorOpt);
+				jsonBlogPost.put("creator", nameToAdress.getA().getAddress());
+			} else {
+				jsonBlogPost.put("creator", creator);
+			}
+			
+			jsonBlogPost.put("fee", fee);
+			jsonBlogPost.put("title", title);
+			jsonBlogPost.put("body", contentparam);
+			
+			if (StringUtils.isNotBlank(preview) && preview.equals("true")) {
+				json.put("type", "preview");
+				
+				BlogEntry entry = new BlogEntry(title, contentparam,
+					authorOpt, new Date().getTime(), creator);
+			
+				json.put("previewBlogpost", entry.toJson());
+				
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(json.toJSONString())
+						.build();
+			}
+			
+			try {
+				String result = new BlogPostResource().addBlogEntry(
+					jsonBlogPost.toJSONString(), blogname);
+			
+				json.put("type", "postSuccessful");
+				json.put("result", result);
+				
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(json.toJSONString())
+						.build();
+			
+			} catch (WebApplicationException e) {
+				
+				json = new JSONObject();
+				json.put("type", "error");
+				json.put("error", e.getResponse().getEntity());
+				
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(json.toJSONString())
+						.build();
+			}
+		}
+
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.entity(json.toJSONString())
+				.build();
+	}
+	
 	@Path("index/postblog.html")
 	@GET
 	public Response postBlog() {
@@ -793,11 +874,6 @@ public class WebResource {
 			pebbleHelper.getContextMap().put("oldfee", "");
 			pebbleHelper.getContextMap().put("preview", "");
 
-			String title = request.getParameter(BlogPostResource.TITLE_KEY);
-			String creator = request.getParameter("creator");
-			String contentparam = request.getParameter("content");
-			String fee = request.getParameter("fee");
-			String preview = request.getParameter("preview");
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
 
@@ -844,75 +920,6 @@ public class WebResource {
 			}
 			
 			pebbleHelper.getContextMap().put("option", accountStrings);
-
-			if (StringUtil.isNotBlank(creator)
-					&& StringUtil.isNotBlank(contentparam)
-					&& StringUtil.isNotBlank(fee)) {
-				JSONObject json = new JSONObject();
-
-				title = URLDecoder.decode(title, "UTF-8");
-				contentparam = URLDecoder.decode(contentparam, "UTF-8");
-
-				Pair<Account, NameResult> nameToAdress = NameUtils
-						.nameToAdress(creator);
-
-				String authorOpt = null;
-				if (nameToAdress.getB() == NameResult.OK) {
-					authorOpt = creator;
-					json.put(BlogPostResource.AUTHOR, authorOpt);
-					json.put("creator", nameToAdress.getA().getAddress());
-				} else {
-					json.put("creator", creator);
-				}
-
-				json.put("fee", fee);
-				json.put("title", title);
-				json.put("body", contentparam);
-
-				if (StringUtils.isNotBlank(preview)) {
-					pebbleHelper.getContextMap().put("oldtitle", title);
-					pebbleHelper.getContextMap().put("oldfee", fee);
-					pebbleHelper.getContextMap().put("oldcontent",
-							contentparam.replaceAll("\\n", "\\\\n"));
-					pebbleHelper.getContextMap().put("oldcreator", creator);
-					BlogEntry entry = new BlogEntry(title, contentparam,
-							authorOpt, new Date().getTime(), creator);
-
-					pebbleHelper.getContextMap().put("blogposts",
-							Arrays.asList(entry));
-
-					return Response.ok(pebbleHelper.evaluate(),
-							"text/html; charset=utf-8").build();
-				}
-
-				try {
-					String result = new BlogPostResource().addBlogEntry(
-							json.toJSONString(), blogname);
-
-					pebbleHelper
-							.getContextMap()
-							.put("font",
-									"<div class=\"alert alert-success\" role=\"alert\">Your post was successful<br>"
-											+ result + "</div>");
-
-				} catch (WebApplicationException e) {
-
-					pebbleHelper.getContextMap().put("oldtitle", title);
-					pebbleHelper.getContextMap().put("oldfee", fee);
-					pebbleHelper.getContextMap().put("oldcontent",
-							contentparam.replaceAll("\\n", "\\\\n"));
-					pebbleHelper.getContextMap().put("oldcreator", creator);
-
-					pebbleHelper
-							.getContextMap()
-							.put("font",
-									"<div class=\"alert alert-danger\" role=\"alert\">Your post was NOT successful<br>"
-											+ e.getResponse().getEntity()
-											+ "</div>");
-
-				}
-
-			}
 
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
@@ -1068,11 +1075,26 @@ public class WebResource {
 		}
 	}
 
-	@Path("index/libs/Base58.js")
+	@Path("index/libs/js/Base58.js")
 	@GET
 	public Response Base58js()
 	{
 		File file = new File("web/libs/js/Base58.js");
+		
+		if(file.exists()){
+			return Response.ok(file, "text/javascript").build();
+		}
+		else
+		{
+			return error404(request);
+		}
+	}
+	
+	@Path("index/libs/js/common.js")
+	@GET
+	public Response commonjs()
+	{
+		File file = new File("web/libs/js/common.js");
 		
 		if(file.exists()){
 			return Response.ok(file, "text/javascript").build();

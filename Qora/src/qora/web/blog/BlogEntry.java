@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
@@ -148,4 +149,17 @@ public class BlogEntry {
 		return avatar;
 	}
 
+	@SuppressWarnings("unchecked")
+	public JSONObject toJson() {
+		
+		JSONObject json = new JSONObject();
+		
+		json.put("nameOrCreator", this.getNameOrCreator());
+		json.put("creationTime", this.getCreationTime());
+		json.put("titleOpt", this.getTitleOpt());
+		json.put("description", this.getDescription());
+		json.put("avatar", this.getAvatar());
+		
+		return json;	
+	}
 }

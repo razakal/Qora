@@ -12,6 +12,10 @@
     <link href="/index/libs/css/sidebar.css" rel="stylesheet">
     <link href="/index/libs/css/timeline.css" rel="stylesheet">
     <style type="text/css">
+	  html, body{
+		height: 100%;
+		width: 100%;
+	  }
       .media:first-child {
       margin-top: 0;
       padding-left: 20px;
@@ -57,10 +61,19 @@
       margin-left: auto;
       margin-right: auto;
       }
+	  
+	  .textalign{
+		display: table-cell;
+		vertical-align: middle;
+		width: 700px;
+		height: 690px;
+	}
+	  
     </style>
   </head>
   <body>
-    <div class="container">
+    <div class="textalign">
+	<div class="container">
       <div class="postblog">
         <div class="col-lg-8">
           <input name="newpost" value="" type="hidden">
@@ -69,7 +82,7 @@
           <fieldset>
           --><br>
           <legend>Create a new post</legend>
-          <div class="form-group">{{ errormessage}}
+          <div class="form-group"><div id=result></div>{{ errormessage}}
             <label for="title" class="col-lg-2 control-label">Title</label>
             <div class="col-lg-10">
               <input id="title" type="text" placeholder="Title (optional)" class="form-control">
@@ -115,15 +128,14 @@
           </div>
           <div class="modal-body">
             <div class="main">
-              <ul class="timeline">{% for blogpost in blogposts %}
-				<li><div class="timeline-badge primary"><a><i class="glyphicon glyphicon-record" rel="tooltip" title="POST TIME" id=""></i></a></div><div class="timeline-panel"><div class="timeline-heading">
+              <ul class="timeline" id=previewPost>
+				<li style='width: 100%;'><div class="timeline-badge primary"><a><i class="glyphicon glyphicon-record" rel="tooltip" title="POST TIME" id=""></i></a></div><div class="timeline-panel"><div class="timeline-heading">
 				<div class="media"><div class="media-left media-middle">
-				<a href="#"><img class="media-object" src="{{blogpost.avatar}}" alt=""></a></div>
+				<a href="#"><img class="media-object" id=previewAvatar src="" alt=""></a></div>
 				<div class="media-body">
-				<h6 class="media-heading"><b>{{blogpost.nameOrCreator}}</b></h6>{{blogpost.creationTime}}</div></div>
+				<h6 class="media-heading"><b><span id=previewNameOrCreator></span></b></h6><span id=previewCreationTime></span></div></div>
 				</div>
-				<div class="timeline-body"><p class="post-header"><b>{{blogpost.titleOpt}}</b></p><p class="post-content">{{blogpost.description}}</p></div></div></li>
-			{% endfor %}
+				<div class="timeline-body"><p class="post-header"><b><span id=previewTitleOpt></span></b></p><p class="post-content"><span id=previewDescription></span></p></div></div></li>
                 <li style="float: none;" class="clearfix"></li>
               </ul>
             </div>
@@ -134,10 +146,13 @@
         </div>
       </div>
     </div>
+	
+	</div>
     <script src="/index/libs/jquery/jquery.2.js"></script>
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
     <script src="/index/libs/angular/angular.1.4.js"></script>
     <script src="/index/libs/js/sidebar.js"></script>
+	<script src="/index/libs/js/common.js"></script>
     <script type="text/javascript">
     var processpost;
 
@@ -152,36 +167,56 @@
     processpost = function(preview) {
         var content, creator, fee, title, blogname;
         title = document.getElementById('title').value;
-        title = encodeURIComponent(title);
         content = document.getElementById('content').value;
-        content = encodeURIComponent(content);
         creator = document.getElementById('addr').value;
         fee = document.getElementById('fee').value;
         blogname = getParameter('blogname');
-        if (content == '') {
-            alert('Entering text is mandatory');
+        
+		if (content == '') {
+			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Entering text is mandatory.<br></div>");
             return 0;
         }
         if (fee == '') {
-            alert('Entering fee is mandatory');
+			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Entering fee is mandatory.<br></div>");
             return 0;
         }
         if (creator == '') {
-            alert('Entering creator is mandatory');
+			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Entering creator is mandatory.<br></div>");
             return 0;
         }
-        if (blogname) {
-            blogname = '&blogname=' + blogname;
-        } else {
-            blogname = '';
-        }
-        if (preview) {
-            preview = '&preview=' + preview;
-        } else {
-            preview = '';
-        }
-        document.location.href = '/index/postblog.html?title=' + title + '&content=' + content + '&creator=' + creator + '&fee=' + fee + '' + blogname + '' + '' + preview + '';
-        return 0;
+        
+		$("#result").html('<div class=\"alert alert-info\" role=\"alert\">Sending...<br></div>');
+		
+		$.post(
+			"/index/postblogprocessing.html",
+			{
+				title: title, 
+				content: content, 
+				creator: creator, 
+				fee: fee, 
+				blogname: blogname, 
+				preview: preview
+			}).done( function(data) {
+				if(data.type == 'preview')
+				{
+					$('#prevmodal').show();
+					$("#previewAvatar").attr("src", data.previewBlogpost.avatar);
+					$("#previewNameOrCreator").html(data.previewBlogpost.nameOrCreator);
+					$("#previewCreationTime").html(data.previewBlogpost.creationTime);
+					$("#previewTitleOpt").html(data.previewBlogpost.titleOpt);
+					$("#previewDescription").html(data.previewBlogpost.description);
+					$("#result").html('');
+				} else if (data.type == 'postSuccessful') {
+					$("#result").html('<div class=\"alert alert-success\" role=\"alert\">Your post was successful<br>'+wordwrap(data.result, 50, '<br>', true)+'<br></div>');
+				} else if (data.type == 'error') {
+					var error = JSON.parse(data.error);
+					$("#result").html('<div class=\"alert alert-danger\" role=\"alert\">Your post was NOT successful<br>'+error.message+'<br></div>');
+				}
+				
+			}).fail( function(xhr, textStatus, errorThrown) {
+				$("#result").html('<div class=\"alert alert-danger\" role=\"alert\">ERROR<br>'+xhr.responseText+'<br></div>');
+			});;
+		return 0;
     };
     $(document).ready(function() {
                 if (getParameter('preview') == 'true') {
