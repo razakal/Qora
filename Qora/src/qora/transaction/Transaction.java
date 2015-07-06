@@ -170,6 +170,18 @@ public abstract class Transaction {
 		return this.feePerByte().compareTo(minFeePerByte) >= 0;
 	}
 	
+	public BigDecimal calcRecommendedFee()
+	{
+		BigDecimal recommendedFee = BigDecimal.valueOf(this.getDataLength()).divide(BigDecimal.valueOf(Settings.getInstance().getMaxBytePerFee()), MathContext.DECIMAL32).setScale(8);
+
+		if(recommendedFee.compareTo(MINIMUM_FEE) < 0)
+		{
+			recommendedFee = MINIMUM_FEE;
+		}
+		
+		return recommendedFee.setScale(8);
+	}
+	
 	public Block getParent() {
 		
 		return DBSet.getInstance().getTransactionParentMap().getParent(this.signature);

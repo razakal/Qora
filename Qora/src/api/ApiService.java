@@ -36,6 +36,7 @@ public class ApiService {
 		s.add(ATResource.class);
 		s.add(VersionResource.class);
 		s.add(BlogPostResource.class);
+		s.add(CalcFeeResource.class);
 		ResourceConfig config = new ResourceConfig(s);
 		
         //CREATE CONTAINER

@@ -134,6 +134,27 @@ public class TransactionCreator
 		//VALIDATE AND PROCESS
 		return this.afterCreate(nameRegistration);
 	}
+	 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameRegistration(Name name) 
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+				
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		byte[] signature = new byte[64];
+		
+		//GENESIS ACCOUNT
+		PublicKeyAccount registrant = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1}); 
+		
+		//CREATE NAME UPDATE
+		RegisterNameTransaction nameRegistration = new RegisterNameTransaction(registrant, name, Transaction.MINIMUM_FEE, time, registrant.getLastReference(this.fork), signature);
+		
+		return new Pair(nameRegistration.calcRecommendedFee(), nameRegistration.getDataLength());
+	}
 	
 	public Pair<Transaction, Integer> createNameUpdate(PrivateKeyAccount owner, Name name, BigDecimal fee)
 	{
@@ -151,6 +172,27 @@ public class TransactionCreator
 		
 		//VALIDATE AND PROCESS
 		return this.afterCreate(nameUpdate);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameUpdate(Name name) 
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+		
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		byte[] signature = new byte[64];
+		
+		//GENESIS ACCOUNT
+		PublicKeyAccount owner = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
+		
+		//CREATE NAME UPDATE
+		UpdateNameTransaction nameUpdate = new UpdateNameTransaction(owner, name, Transaction.MINIMUM_FEE, time, owner.getLastReference(this.fork), signature);
+				
+		return new Pair(nameUpdate.calcRecommendedFee(), nameUpdate.getDataLength());
 	}
 	
 	public Pair<Transaction, Integer> createNameSale(PrivateKeyAccount owner, NameSale nameSale, BigDecimal fee)
@@ -259,6 +301,27 @@ public class TransactionCreator
 								
 		//VALIDATE AND PROCESS
 		return this.afterCreate(arbitraryTransaction);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(byte[] data) 
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+		
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		byte[] signature = new byte[64];
+		
+		//GENESIS ACCOUNT
+		PublicKeyAccount creator = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
+		
+		//CREATE ARBITRARY TRANSACTION
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(creator, 0, data, Transaction.MINIMUM_FEE, time, creator.getLastReference(this.fork), signature);
+		
+		return new Pair(arbitraryTransaction.calcRecommendedFee(), arbitraryTransaction.getDataLength());
 	}
 	
 	public Pair<Transaction, Integer> createIssueAssetTransaction(PrivateKeyAccount creator, String name, String description, long quantity, boolean divisible, BigDecimal fee) 

@@ -1087,6 +1087,20 @@ public class Controller extends Observable {
 		}
 	}
 
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameRegistration(String name, String value) {
+		return this.transactionCreator.calcRecommendedFeeForNameRegistration(
+			new Name(new Account("QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, value)); // FOR GENESIS ADDRESS
+	}
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameUpdate(String name, String value) {
+		return this.transactionCreator.calcRecommendedFeeForNameUpdate(
+				new Name(new Account("QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, value)); // FOR GENESIS ADDRESS
+	}
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(byte[] data) {
+		return this.transactionCreator.calcRecommendedFeeForArbitraryTransaction(data);
+	}
+	
 	public Pair<Transaction, Integer> updateName(PrivateKeyAccount owner,
 			Account newOwner, String name, String value, BigDecimal fee) {
 		// CREATE ONLY ONE TRANSACTION AT A TIME
