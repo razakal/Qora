@@ -1644,9 +1644,6 @@ function mainQuery(data) {
 						output += '</td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-						output += '<tr><td>';
-						output += '<table width="100%"><tr><td width="70" align="center">';
-
 						output += '<b>Action</b></td><td width="290"><b>New Owner</b></td><td width=100><b>Fee</b></td>';
 						output += '<td><b>Name:</b> <a href="?name='+encodeURIComponent(data[i].transaction.name)+'">'+htmlFilter(data[i].transaction.name)+'</a></td>';
 						output += '<td><b>Site:</b> <a href=/' + encodeURIComponent(data[i].transaction.name) + '>http://'+ document.location.host + '/' + htmlFilter(data[i].transaction.name) +'</a></td>';
