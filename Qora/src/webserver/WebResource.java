@@ -529,6 +529,18 @@ public class WebResource {
 			return error404(request);
 		}
 	}
+	
+	@Path("index/favicon.ico")
+	@GET
+	public Response indexfavicon() {
+		File file = new File("web/favicon.ico");
+
+		if (file.exists()) {
+			return Response.ok(file, "image/vnd.microsoft.icon").build();
+		} else {
+			return error404(request);
+		}
+	}
 
 	
 	String[] imgsArray = {"qora.png", "logo_header.png", "qora-user.png", "logo_bottom.png", "banner_01.png", "loading.gif",
