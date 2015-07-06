@@ -95,7 +95,7 @@ public class WebResource {
 	public Response Default() {
 	
 		// REDIRECT
-		return Response.status(302).header("Location", "index/index.html").build();
+		return Response.status(302).header("Location", "index/main.html").build();
 	}
 
 	public Response handleDefault() {
@@ -104,12 +104,12 @@ public class WebResource {
 			String searchValue = request.getParameter("search");
 
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/index.mini.html");
+					.getPebbleHelper("web/main.mini.html");
 
 			if (searchValue == null) {
 
 				return Response.ok(
-						PebbleHelper.getPebbleHelper("web/index.html")
+						PebbleHelper.getPebbleHelper("web/main.html")
 								.evaluate(), "text/html; charset=utf-8")
 						.build();
 			} else {
@@ -192,7 +192,7 @@ public class WebResource {
 		String searchValue = request.getParameter("search");
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/index.mini.html");
+					.getPebbleHelper("web/main.mini.html");
 			if (StringUtil.isBlank(searchValue)) {
 
 				return Response.ok(pebbleHelper.evaluate(),
@@ -217,7 +217,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/index.mini.html");
+					.getPebbleHelper("web/main.mini.html");
 
 			List<HTMLSearchResult> results = handleBlogSearch(null);
 			pebbleHelper.getContextMap().put("searchresults", results);
@@ -435,7 +435,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/index.mini.html");
+					.getPebbleHelper("web/main.mini.html");
 
 			List<Pair<String, String>> websitesByValue = NameUtils
 					.getWebsitesByValue(null);
@@ -499,7 +499,7 @@ public class WebResource {
 		return result;
 	}
 
-	@Path("index/index.html")
+	@Path("index/main.html")
 	@GET
 	public Response handleIndex() {
 		return handleDefault();
@@ -1295,7 +1295,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/index.mini.html");
+					.getPebbleHelper("web/main.mini.html");
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 
 			if (nameMap.contains(name)) {
@@ -1635,7 +1635,7 @@ public class WebResource {
 
 	public String miniIndex() {
 		try {
-			return readFile("web/index.mini.html", StandardCharsets.UTF_8);
+			return readFile("web/main.mini.html", StandardCharsets.UTF_8);
 
 		} catch (IOException e) {
 			e.printStackTrace();

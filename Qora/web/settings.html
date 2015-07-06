@@ -348,10 +348,10 @@
             $('#name').val(this);
         });
         $('#name').change(function() {
-            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
+            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
             $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
         });
-        $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
+        $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
         $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
         searchval = $('#name').val();
         searchval = searchval.replace(/%20/g, ' ');
@@ -360,7 +360,7 @@
             var url;
             url = void 0;
             searchval = $('#name').val();
-            document.location.href = '/index/index.html?search=' + searchval;
+            document.location.href = '/index/main.html?search=' + searchval;
         });
         $('#name').keypress(function(e) {
             if (e.which === 13) {
@@ -426,7 +426,7 @@
 		{%else%}
 		var searchval
 		$('#name').change(function() {
-            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
+            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
             $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
         });
 		  $('#name').val(getSearchParameters().search);
@@ -444,21 +444,21 @@
             var url;
             url = void 0;
             searchval = $('#name').val();
-            document.location.href = '/index/index.html?search=' + searchval;
+            document.location.href = '/index/main.html?search=' + searchval;
         });
         
         $('#button').click(function() {
             var url;
             url = void 0;
             searchval = $('#name').val();
-            document.location.href = '/index/index.html?search=' + searchval;
+            document.location.href = '/index/main.html?search=' + searchval;
         });
         $('#name').keypress(function(e) {
             if (e.which === 13) {
                 $('#button').trigger('click');
             }
         });
-		 $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/index.html?search=' + $('#name').val());
+		 $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
         	$('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
 		  $('#avatar').attr('disabled', true);
 		  $('#banner').attr('disabled', true);
