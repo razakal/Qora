@@ -280,7 +280,11 @@
 				bwlistkind: document.getElementById('select-list-type').value
 			})
 			.done( function(data) {
-				if(data.type == 'parametersMissing')
+				if (data.type == 'settingsSuccessfullySaved')
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Settings successfully saved.<br></div>";
+				}
+				else if(data.type == 'parametersMissing')
 				{
 					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Some parameters are missing.<br></div>";
 				}
@@ -288,13 +292,16 @@
 				{
 					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Profile Name is not Allowed.<br></div>";
 				}
-				else if (data.type == 'settingsSuccessfullySaved')
-				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Settings successfully saved.<br></div>";
-				}
 				else if (data.type == 'error')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occurred while saving settings.<br>"+data.error+"<br></div>";
+					try {
+						var error = JSON.parse(data.error);
+						message = error.message;
+					} catch (e) {
+						message = data.error;
+					}
+
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occurred while saving settings.<br>"+message+"<br></div>";
 				}
 				else
 				{

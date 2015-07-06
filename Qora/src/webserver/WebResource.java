@@ -305,14 +305,27 @@ public class WebResource {
 				profile.getBlogBlackWhiteList().addAddressOrName(listentry);
 			}
 			
-			profile.saveProfile();
-			
-			
-			json.put("type", "settingsSuccessfullySaved");
-			return Response.status(200)
-					.header("Content-Type", "application/json; charset=utf-8")
-					.entity(json.toJSONString())
-					.build();
+			try {
+				
+				profile.saveProfile();
+	
+				json.put("type", "settingsSuccessfullySaved");
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(json.toJSONString())
+						.build();
+
+			} catch (WebApplicationException e) {
+				
+				json = new JSONObject();
+				json.put("type", "error");
+				json.put("error", e.getResponse().getEntity());
+				
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(json.toJSONString())
+						.build();
+			}
 			
 		} catch (Throwable e) {
 			e.printStackTrace();
