@@ -74,12 +74,12 @@ public class Profile {
 		for (Name name : values) {
 			Profile profileOpt = Profile.getProfileOpt(name);
 			//FOLLOWING ONLY WITH ENABLED PROFILE AND IF NOT OWN NAME
-			if(profileOpt != null && profileOpt.isProfileEnabled() && Controller.getInstance().getName(name.getName()) != null)
+			if(profileOpt != null && profileOpt.isProfileEnabled())
 			{
-				if(profileOpt.getFollowedBlogs().contains(this.name.getName()))
-				{
-					results.add(profileOpt.getName());
-				}
+					if(profileOpt.getFollowedBlogs().contains(this.name.getName()))
+					{
+						results.add(profileOpt.getName());
+					}
 			}
 		}
 		
