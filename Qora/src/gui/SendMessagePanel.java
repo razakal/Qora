@@ -613,7 +613,7 @@ public class SendMessagePanel extends JPanel
 					
 					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
 					{
-						this.txtAmount.setText("1.00000000"); // Return to the default fee for the next message.
+						this.txtFee.setText("1.00000000"); // Return to the default fee for the next message.
 					}
 					
 					fee = recommendedFee; // Set recommended fee for this message.
@@ -685,7 +685,7 @@ public class SendMessagePanel extends JPanel
 				
 				if(amount.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
 				{
-					this.txtAmount.setText("0.00000000");
+					this.txtAmount.setText("1.00000000");
 				}
 				
 				if(this.txtTo.getText().startsWith("A"))

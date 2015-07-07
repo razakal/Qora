@@ -555,6 +555,38 @@ public class UpdateNameFrame extends JFrame
 			
 			currentValueAsJsonStringOpt = GZIP.compress(currentValueAsJsonStringOpt);
 			
+			
+			BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForNameUpdate(name.getName(), currentValueAsJsonStringOpt).getA();
+			if(fee.compareTo(recommendedFee) < 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
+									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
+									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
+		                "Confirmation",
+		                JOptionPane.YES_NO_CANCEL_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+					{
+						this.txtFee.setText("1"); // Return to the default fee for the next name.
+					}
+					
+					fee = recommendedFee; // Set recommended fee for this name.
+					
+				}
+				else if (n == JOptionPane.NO_OPTION) {
+					
+				}	
+				else {
+					
+					//ENABLE
+					this.updateButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
 			Pair<Transaction, Integer> result = Controller.getInstance().updateName(owner, new Account(this.txtOwner.getText()), name.getName(), currentValueAsJsonStringOpt, fee);
 			
 			//CHECK VALIDATE MESSAGE
