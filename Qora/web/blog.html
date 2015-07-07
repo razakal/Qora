@@ -228,6 +228,9 @@
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled() and ownProfileName is empty %}
               <li class="po-tabs"><button onclick="javascript:processfollow()" type="button"><a><div class="glyphicon glyphicon-user"></div> Follow</a></button></li>
               {%endif%}
+              {% if follower is not null%}
+              {{ follower.size() }} follower
+              {%endif%}
               </ul>
             </div>
           </div>        	{{apimessage}}

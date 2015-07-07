@@ -2,6 +2,7 @@ package qora.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,6 +50,25 @@ public class Profile {
 		blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(name
 				.toString());
 		jsonRepresenation = NameUtils.getJsonForNameOpt(name);
+	}
+	
+	public List<Name> getFollower()
+	{
+		List<Name> results = new ArrayList<>();
+		Collection<Name> values = DBSet.getInstance().getNameMap().getValues();
+		
+		for (Name name : values) {
+			Profile profileOpt = Profile.getProfileOpt(name);
+			if(profileOpt != null && profileOpt.isProfileEnabled())
+			{
+				if(profileOpt.getFollowedBlogs().contains(this.name.getName()))
+				{
+					results.add(profileOpt.getName());
+				}
+			}
+		}
+		
+		return results;
 	}
 
 	public static List<Profile> getEnabledProfiles() {

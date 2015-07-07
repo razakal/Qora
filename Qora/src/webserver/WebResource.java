@@ -1057,6 +1057,7 @@ public class WebResource {
 						name.getOwner().getAddress()) != null) {
 					pebbleHelper.getContextMap().put("ownProfileName", blogname);
 				}
+				pebbleHelper.getContextMap().put("follower", profile.getFollower());
 				
 			}else
 			{
