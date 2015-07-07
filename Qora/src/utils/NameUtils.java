@@ -125,6 +125,7 @@ public class NameUtils {
 					if(updateNameTx.getName().getName().equals(name.getName()))
 					{
 						rawNameValue =  updateNameTx.getName().getValue();
+						break;
 					}
 					
 				}
@@ -186,6 +187,7 @@ public class NameUtils {
 			
 		//SORT THEM BY TIMESTAMP
 		Collections.sort(accountTransactions, new TransactionTimestampComparator());
+		Collections.reverse(accountTransactions);
 		return accountTransactions;
 	}
 
