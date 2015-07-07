@@ -94,9 +94,10 @@ public class WebResource {
 
 	@GET
 	public Response Default() {
-	
+
 		// REDIRECT
-		return Response.status(302).header("Location", "index/main.html").build();
+		return Response.status(302).header("Location", "index/main.html")
+				.build();
 	}
 
 	public Response handleDefault() {
@@ -151,41 +152,39 @@ public class WebResource {
 		return results;
 	}
 
-	
 	@SuppressWarnings("rawtypes")
 	@Path("index/blockexplorer.json")
 	@GET
-	public Response jsonQueryMain(@Context UriInfo info)
-	{		
+	public Response jsonQueryMain(@Context UriInfo info) {
 		Map output = BlockExplorer.getInstance().jsonQueryMain(info);
-		
-		return Response.status(200)
+
+		return Response
+				.status(200)
 				.header("Content-Type", "application/json; charset=utf-8")
 				.entity(StrJSonFine.StrJSonFine(JSONValue.toJSONString(output)))
 				.build();
 	}
-	
+
 	@Path("index/blockexplorer")
 	@GET
-	public Response blockexplorer()
-	{
+	public Response blockexplorer() {
 		return blockexplorerhtml();
 	}
-	
+
 	@Path("index/blockexplorer.html")
 	@GET
-	public Response blockexplorerhtml()
-	{
+	public Response blockexplorerhtml() {
 		try {
-			String content = readFile("web/blockexplorer.html", StandardCharsets.UTF_8);
-		
+			String content = readFile("web/blockexplorer.html",
+					StandardCharsets.UTF_8);
+
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return error404(request);
 		}
 	}
-	
+
 	@Path("index/blogsearch.html")
 	@GET
 	public Response doBlogSearch() {
@@ -235,62 +234,56 @@ public class WebResource {
 	@POST
 	@Path("index/settingssave.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response saveProfileSettings(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+	public Response saveProfileSettings(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 
 		JSONObject json = new JSONObject();
-		
-	
-		
-		try {
-			
-			String profileName = form.getFirst("profilename");
-			
-			if(StringUtils.isBlank(profileName))
-			{
-				json.put("type", "parametersMissing");
-				
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(json.toJSONString())
-						.build();
-			}
 
+		try {
+
+			String profileName = form.getFirst("profilename");
+
+			if (StringUtils.isBlank(profileName)) {
+				json.put("type", "parametersMissing");
+
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
+						.entity(json.toJSONString()).build();
+			}
 
 			Name name = null;
 			name = Controller.getInstance().getName(profileName);
 
 			if (name == null || !Profile.isAllowedProfileName(profileName)) {
-			
+
 				json.put("type", "profileNameisnotAllowed");
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(json.toJSONString())
-						.build();
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
+						.entity(json.toJSONString()).build();
 			}
 
 			boolean blogenable = Boolean.valueOf(form
 					.getFirst(Qorakeys.BLOGENABLE.toString()));
 			boolean profileenable = Boolean.valueOf(form
 					.getFirst(Qorakeys.PROFILEENABLE.toString()));
-			String titleOpt = form
-					.getFirst(Qorakeys.BLOGTITLE
-					.toString());
+			String titleOpt = form.getFirst(Qorakeys.BLOGTITLE.toString());
 			titleOpt = decodeIfNotNull(titleOpt);
-			String blogDescrOpt = form
-					.getFirst(Qorakeys.BLOGDESCRIPTION
+			String blogDescrOpt = form.getFirst(Qorakeys.BLOGDESCRIPTION
 					.toString());
 			blogDescrOpt = decodeIfNotNull(blogDescrOpt);
-			String profileAvatarOpt = form
-					.getFirst(Qorakeys.PROFILEAVATAR.toString());
-			String profileBannerOpt = form
-					.getFirst(Qorakeys.PROFILEMAINGRAPHIC.toString());
-			
-			String bwlistkind = form
-					.getFirst("bwlistkind");
-			String blackwhitelist = form
-					.getFirst("blackwhitelist");
+			String profileAvatarOpt = form.getFirst(Qorakeys.PROFILEAVATAR
+					.toString());
+			String profileBannerOpt = form.getFirst(Qorakeys.PROFILEMAINGRAPHIC
+					.toString());
+
+			String bwlistkind = form.getFirst("bwlistkind");
+			String blackwhitelist = form.getFirst("blackwhitelist");
 			blackwhitelist = URLDecoder.decode(blackwhitelist, "UTF-8");
-			
+
 			profileAvatarOpt = decodeIfNotNull(profileAvatarOpt);
 			profileBannerOpt = decodeIfNotNull(profileBannerOpt);
 
@@ -301,52 +294,51 @@ public class WebResource {
 			profile.saveBlogTitle(titleOpt);
 			profile.setBlogEnabled(blogenable);
 			profile.setProfileEnabled(profileenable);
-			
+
 			profile.getBlogBlackWhiteList().clearList();
-			profile.getBlogBlackWhiteList().setWhitelist(!bwlistkind.equals("black"));
+			profile.getBlogBlackWhiteList().setWhitelist(
+					!bwlistkind.equals("black"));
 			String[] bwList = StringUtils.split(blackwhitelist, ";");
 			for (String listentry : bwList) {
 				profile.getBlogBlackWhiteList().addAddressOrName(listentry);
 			}
-			
+
 			try {
-				
+
 				profile.saveProfile();
-	
+
 				json.put("type", "settingsSuccessfullySaved");
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(json.toJSONString())
-						.build();
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
+						.entity(json.toJSONString()).build();
 
 			} catch (WebApplicationException e) {
-				
+
 				json = new JSONObject();
 				json.put("type", "error");
 				json.put("error", e.getResponse().getEntity());
-				
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(json.toJSONString())
-						.build();
+
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
+						.entity(json.toJSONString()).build();
 			}
-			
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 
 			json.put("type", "error");
 			json.put("error", e.getMessage());
-			
+
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
-					.entity(json.toJSONString())
-					.build();
+					.entity(json.toJSONString()).build();
 		}
 
 	}
-
-
-
 
 	@Path("index/settings.html")
 	@GET
@@ -359,16 +351,15 @@ public class WebResource {
 
 			String profileName = request.getParameter("profilename");
 
-			List<Name> namesAsList = new CopyOnWriteArrayList<Name>( Controller.getInstance().getNamesAsList());
+			List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller
+					.getInstance().getNamesAsList());
 
 			for (Name name : namesAsList) {
-				if(!Profile.isAllowedProfileName(name.getName()))
-				{
+				if (!Profile.isAllowedProfileName(name.getName())) {
 					namesAsList.remove(name);
 				}
 			}
-			
-			
+
 			pebbleHelper.getContextMap().put("names", namesAsList);
 
 			Name name = null;
@@ -376,28 +367,29 @@ public class WebResource {
 				name = Controller.getInstance().getName(profileName);
 			}
 
-			
 			if (namesAsList.size() > 0) {
 
 				if (name == null) {
-					Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
-					if(activeProfileOpt != null)
-					{
+					Profile activeProfileOpt = ProfileHelper.getInstance()
+							.getActiveProfileOpt();
+					if (activeProfileOpt != null) {
 						name = activeProfileOpt.getName();
-					}else
-					{
+					} else {
 						name = namesAsList.get(0);
 					}
 				}
 
 				// WE HAVE HERE ONLY ALLOWED NAMES SO PROFILE CAN'T BE NULL HERE
 				Profile profile = Profile.getProfileOpt(name);
-				
+
 				pebbleHelper.getContextMap().put("profile", profile);
 				pebbleHelper.getContextMap().put("name", name);
 
 			} else {
-				pebbleHelper.getContextMap().put("result", "<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a profile.<br></div>");
+				pebbleHelper
+						.getContextMap()
+						.put("result",
+								"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a profile.<br></div>");
 			}
 
 			return Response.ok(pebbleHelper.evaluate(),
@@ -413,7 +405,6 @@ public class WebResource {
 			throws UnsupportedEncodingException {
 		return parameter != null ? URLDecoder.decode(parameter, "UTF-8") : null;
 	}
-
 
 	@Path("index/webdirectory.html")
 	@GET
@@ -450,8 +441,8 @@ public class WebResource {
 			description = StringUtils.abbreviate(description, 150);
 
 			results.add(new HTMLSearchResult(title, description, name,
-					"/index/blog.html?blogname=" + name, "/index/blog.html?blogname="
-							+ name, "/namepairs:" + name));
+					"/index/blog.html?blogname=" + name,
+					"/index/blog.html?blogname=" + name, "/namepairs:" + name));
 		}
 
 		return results;
@@ -502,7 +493,7 @@ public class WebResource {
 			return error404(request);
 		}
 	}
-	
+
 	@Path("index/favicon.ico")
 	@GET
 	public Response indexfavicon() {
@@ -515,64 +506,63 @@ public class WebResource {
 		}
 	}
 
-	
-	String[] imgsArray = {"qora.png", "logo_header.png", "qora-user.png", "logo_bottom.png", "banner_01.png", "loading.gif",
-			"00_generating.png", "01_genesis.jpg", "02_payment_in.png", 
-			"02_payment_out.png", "03_name_registration.png",  "04_name_update.png", 
-			"05_name_sale.png", "06_cancel_name_sale.png", "07_name_purchase_in.png", "07_name_purchase_out.png",
-			"08_poll_creation.jpg", "09_poll_vote.jpg", "10_arbitrary_transaction.png", "11_asset_issue.png",
-			"12_asset_transfer_in.png", "12_asset_transfer_out.png", "13_order_creation.png", "14_cancel_order.png", 
-			"15_multi_payment_in.png", "15_multi_payment_out.png", "16_deploy_at.png", 
-			"17_message_in.png", "17_message_out.png", "asset_trade.png", "at_tx_in.png", 
-			"at_tx_out.png", "grleft.png", "grright.png", "redleft.png", "redright.png",
-			"bar.gif", "bar_left.gif", "bar_right.gif"
-			};
-	
+	String[] imgsArray = { "qora.png", "logo_header.png", "qora-user.png",
+			"logo_bottom.png", "banner_01.png", "loading.gif",
+			"00_generating.png", "01_genesis.jpg", "02_payment_in.png",
+			"02_payment_out.png", "03_name_registration.png",
+			"04_name_update.png", "05_name_sale.png",
+			"06_cancel_name_sale.png", "07_name_purchase_in.png",
+			"07_name_purchase_out.png", "08_poll_creation.jpg",
+			"09_poll_vote.jpg", "10_arbitrary_transaction.png",
+			"11_asset_issue.png", "12_asset_transfer_in.png",
+			"12_asset_transfer_out.png", "13_order_creation.png",
+			"14_cancel_order.png", "15_multi_payment_in.png",
+			"15_multi_payment_out.png", "16_deploy_at.png",
+			"17_message_in.png", "17_message_out.png", "asset_trade.png",
+			"at_tx_in.png", "at_tx_out.png", "grleft.png", "grright.png",
+			"redleft.png", "redright.png", "bar.gif", "bar_left.gif",
+			"bar_right.gif" };
+
 	@Path("index/img/{filename}")
 	@GET
-	public Response image(@PathParam("filename") String filename)
-	{
+	public Response image(@PathParam("filename") String filename) {
 		ArrayList<String> imgs = new ArrayList<String>();
 
 		imgs.addAll(Arrays.asList(imgsArray));
 
 		int imgnum = imgs.indexOf(filename);
-		
-		if(imgnum == -1)
-		{
+
+		if (imgnum == -1) {
 			return error404(request);
 		}
-		
-		File file = new File("web/img/"+ imgs.get(imgnum));
+
+		File file = new File("web/img/" + imgs.get(imgnum));
 		String type = "";
-		
-		switch(getFileExtention(imgs.get(imgnum)))
-		{
-			case "png":
-				type = "image/png";
-				break;
-			case "gif":
-				type = "image/gif";
-				break;
-			case "jpg":
-				type = "image/jpeg";
-				break;
+
+		switch (getFileExtention(imgs.get(imgnum))) {
+		case "png":
+			type = "image/png";
+			break;
+		case "gif":
+			type = "image/gif";
+			break;
+		case "jpg":
+			type = "image/jpeg";
+			break;
 		}
-		
-		if(file.exists()){
+
+		if (file.exists()) {
 			return Response.ok(file, type).build();
-		}
-		else
-		{
+		} else {
 			return error404(request);
 		}
 	}
-	
-	public static String getFileExtention(String filename){
+
+	public static String getFileExtention(String filename) {
 		int dotPos = filename.lastIndexOf(".") + 1;
 		return filename.substring(dotPos);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Path("index/API.html")
 	@GET
@@ -782,16 +772,16 @@ public class WebResource {
 	@POST
 	@Path("index/postblogprocessing.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response postBlogProcessing(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+	public Response postBlogProcessing(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 		JSONObject json = new JSONObject();
-		
+
 		String title = form.getFirst(BlogPostResource.TITLE_KEY);
 		String creator = form.getFirst("creator");
 		String contentparam = form.getFirst("content");
 		String fee = form.getFirst("fee");
 		String preview = form.getFirst("preview");
-		String blogname = form.
-				getFirst(BlogPostResource.BLOGNAME_KEY);
+		String blogname = form.getFirst(BlogPostResource.BLOGNAME_KEY);
 
 		if (StringUtil.isNotBlank(creator)
 				&& StringUtil.isNotBlank(contentparam)
@@ -801,7 +791,7 @@ public class WebResource {
 
 			Pair<Account, NameResult> nameToAdress = NameUtils
 					.nameToAdress(creator);
-			
+
 			String authorOpt = null;
 			if (nameToAdress.getB() == NameResult.OK) {
 				authorOpt = creator;
@@ -810,56 +800,58 @@ public class WebResource {
 			} else {
 				jsonBlogPost.put("creator", creator);
 			}
-			
+
 			jsonBlogPost.put("fee", fee);
 			jsonBlogPost.put("title", title);
 			jsonBlogPost.put("body", contentparam);
-			
+
 			if (StringUtils.isNotBlank(preview) && preview.equals("true")) {
 				json.put("type", "preview");
-				
-				BlogEntry entry = new BlogEntry(title, contentparam,
-					authorOpt, new Date().getTime(), creator);
-			
+
+				BlogEntry entry = new BlogEntry(title, contentparam, authorOpt,
+						new Date().getTime(), creator);
+
 				json.put("previewBlogpost", entry.toJson());
-				
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(json.toJSONString())
-						.build();
+
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
+						.entity(json.toJSONString()).build();
 			}
-			
+
 			try {
 				String result = new BlogPostResource().addBlogEntry(
-					jsonBlogPost.toJSONString(), blogname);
-			
+						jsonBlogPost.toJSONString(), blogname);
+
 				json.put("type", "postSuccessful");
 				json.put("result", result);
-				
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(json.toJSONString())
-						.build();
-			
+
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
+						.entity(json.toJSONString()).build();
+
 			} catch (WebApplicationException e) {
-				
+
 				json = new JSONObject();
 				json.put("type", "error");
 				json.put("error", e.getResponse().getEntity());
-				
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(json.toJSONString())
-						.build();
+
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
+						.entity(json.toJSONString()).build();
 			}
 		}
 
 		return Response.status(200)
 				.header("Content-Type", "application/json; charset=utf-8")
-				.entity(json.toJSONString())
-				.build();
+				.entity(json.toJSONString()).build();
 	}
-	
+
 	@Path("index/postblog.html")
 	@GET
 	public Response postBlog() {
@@ -916,14 +908,16 @@ public class WebResource {
 								"<div class=\"alert alert-danger\" role=\"alert\">You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!<br></div>");
 
 			}
-			
-			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
 
-			if(activeProfileOpt != null && resultingNames.contains(activeProfileOpt.getName()))
-			{
-				pebbleHelper.getContextMap().put("primaryname", activeProfileOpt.getName().getName());
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt();
+
+			if (activeProfileOpt != null
+					&& resultingNames.contains(activeProfileOpt.getName())) {
+				pebbleHelper.getContextMap().put("primaryname",
+						activeProfileOpt.getName().getName());
 			}
-			
+
 			pebbleHelper.getContextMap().put("option", accountStrings);
 
 			return Response.ok(pebbleHelper.evaluate(),
@@ -945,52 +939,55 @@ public class WebResource {
 			Profile activeProfileOpt = ProfileHelper.getInstance()
 					.getActiveProfileOpt();
 
-			if (followString != null && activeProfileOpt != null && blogname != null
-					&& nameMap.contains(blogname)) {
+			if (followString != null && activeProfileOpt != null
+					&& blogname != null && nameMap.contains(blogname)) {
 				boolean follow = Boolean.valueOf(followString);
 				Name name = nameMap.get(blogname);
 				Profile profile = Profile.getProfileOpt(name);
 				if (activeProfileOpt.isProfileEnabled()) {
 
 					if (follow) {
-						if (profile != null && profile.isProfileEnabled()
+						if (profile != null
+								&& profile.isProfileEnabled()
 								&& profile.isBlogEnabled()
-								&& !activeProfileOpt.getFollowedBlogs()
-										.contains(blogname)) {
-							activeProfileOpt.addFollowedBlog(blogname);
+								) {
 							String result;
+
 							
-							//Prevent following of own profiles
-							if(Controller.getInstance().getName(blogname) != null)
+							if(activeProfileOpt.getFollowedBlogs()
+										.contains(blogname))
 							{
-								result =
-										"<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
-												+ "You can't follow your own profiles"
-												+ "</div></center>";
-							}else
-							{
+								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+										+ "You already follow this blog"
+										+ "</div></center>";
+								return getBlog(result);
+							}
+							
+							// Prevent following of own profiles
+							if (Controller.getInstance().getNamesAsListAsString().contains(blogname)) {
+								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+										+ "You can't follow your own profiles"
+										+ "</div></center>";
+								return getBlog(result);
+							} 
 								try {
-									
+
+									activeProfileOpt.addFollowedBlog(blogname);
 									result = activeProfileOpt.saveProfile();
 									result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
 											+ result + "</div>";
 								} catch (WebApplicationException e) {
-									result =
-											"<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
-													+ e.getResponse().getEntity()
-													+ "</div></center>";
+									result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+											+ e.getResponse().getEntity()
+											+ "</div></center>";
 								}
-							}
-							
-							
+
 							return getBlog(result);
 						}
-							
-					}else
-					{
-						if(activeProfileOpt.getFollowedBlogs()
-										.contains(blogname))
-						{
+
+					} else {
+						if (activeProfileOpt.getFollowedBlogs().contains(
+								blogname)) {
 							activeProfileOpt.removeFollowedBlog(blogname);
 							String result;
 							try {
@@ -998,17 +995,97 @@ public class WebResource {
 								result = "<div class=\"alert alert-success\" role=\"alert\">Unfollow successful<br>"
 										+ result + "</div>";
 							} catch (WebApplicationException e) {
-								result =
-										"<center><div class=\"alert alert-danger\" role=\"alert\">Blog unfollow not successful<br>"
-												+ e.getResponse().getEntity()
-												+ "</div></center>";
+								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog unfollow not successful<br>"
+										+ e.getResponse().getEntity()
+										+ "</div></center>";
 							}
-							
+
 							return getBlog(result);
-							
+
 						}
 					}
-					
+
+				}
+			}
+
+			return getBlog(null);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request);
+		}
+
+	}
+
+	@Path("index/likeprofile.html")
+	@GET
+	public Response likeProfile() {
+		try {
+			String profilename = request.getParameter(BlogPostResource.BLOGNAME_KEY);
+			String likeString = request.getParameter("like");
+			NameMap nameMap = DBSet.getInstance().getNameMap();
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt();
+
+			if (likeString != null && activeProfileOpt != null
+					&& profilename != null && nameMap.contains(profilename)) {
+				boolean like = Boolean.valueOf(likeString);
+				Profile profile = Profile.getProfileOpt(profilename);
+				if (activeProfileOpt.isProfileEnabled()) {
+
+					if (like) {
+						if (profile != null && profile.isProfileEnabled()
+								&& profile.isBlogEnabled()) {
+							String result;
+
+							if (activeProfileOpt.getLikedProfiles().contains(
+									profilename)) {
+								result = "<center><div class=\"alert alert-danger\" role=\"alert\">You already like this profile<br>"
+										+ "</div></center>";
+								return getBlog(result);
+							}
+
+							// Prevent liking of own profiles
+							if (Controller.getInstance().getNamesAsListAsString().contains(profilename)) {
+								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>"
+										+ "You can't like your own profiles"
+										+ "</div></center>";
+								return getBlog(result);
+							}
+							
+							activeProfileOpt.addLikeProfile(profilename);
+							try {
+
+								result = activeProfileOpt.saveProfile();
+								result = "<div class=\"alert alert-success\" role=\"alert\">Like successful<br>"
+										+ result + "</div>";
+							} catch (WebApplicationException e) {
+								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>"
+										+ e.getResponse().getEntity()
+										+ "</div></center>";
+							}
+
+							return getBlog(result);
+						}
+
+					} else {
+						if (activeProfileOpt.getLikedProfiles().contains(
+								profilename)) {
+							activeProfileOpt.removeLikeProfile(profilename);
+							String result;
+							try {
+								result = activeProfileOpt.saveProfile();
+								result = "<div class=\"alert alert-success\" role=\"alert\">Like removed successful<br>"
+										+ result + "</div>";
+							} catch (WebApplicationException e) {
+								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Like remove not successful<br>"
+										+ e.getResponse().getEntity()
+										+ "</div></center>";
+							}
+
+							return getBlog(result);
+
+						}
+					}
 
 				}
 			}
@@ -1049,12 +1126,13 @@ public class WebResource {
 				Name name = nameMap.get(blogname);
 				Profile profile = Profile.getProfileOpt(name);
 
-				if (profile == null || !profile.isProfileEnabled() ) {
+				if (profile == null || !profile.isProfileEnabled()) {
 					pebbleHelper = PebbleHelper
 							.getPebbleHelper("web/profiledisabled.html");
 					if (Controller.getInstance().getAccountByAddress(
 							name.getOwner().getAddress()) != null) {
-						pebbleHelper.getContextMap().put("ownProfileName", blogname);
+						pebbleHelper.getContextMap().put("ownProfileName",
+								blogname);
 					}
 					return Response.ok(pebbleHelper.evaluate(),
 							"text/html; charset=utf-8").build();
@@ -1062,25 +1140,38 @@ public class WebResource {
 
 				pebbleHelper.getContextMap().put("postblogurl",
 						"postblog.html?blogname=" + blogname);
-				
+
 				pebbleHelper.getContextMap().put("blogprofile", profile);
-				pebbleHelper.getContextMap().put("blogenabled", profile.isBlogEnabled());
+				pebbleHelper.getContextMap().put("blogenabled",
+						profile.isBlogEnabled());
 				if (Controller.getInstance().getAccountByAddress(
 						name.getOwner().getAddress()) != null) {
-					pebbleHelper.getContextMap().put("ownProfileName", blogname);
+					pebbleHelper.getContextMap()
+							.put("ownProfileName", blogname);
 				}
-				pebbleHelper.getContextMap().put("follower", profile.getFollower());
-				
-			}else
-			{
+				pebbleHelper.getContextMap().put("follower",
+						profile.getFollower());
+				pebbleHelper.getContextMap().put("likes",
+						profile.getLikes());
+
+			} else {
 				pebbleHelper.getContextMap().put("blogenabled", true);
 			}
-			
-			
 
-			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
-				pebbleHelper.getContextMap().put("isFollowing", activeProfileOpt != null && !activeProfileOpt.getFollowedBlogs().contains(blogname));
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt();
+			pebbleHelper.getContextMap().put(
+					"isFollowing",
+					activeProfileOpt != null
+							&& !activeProfileOpt.getFollowedBlogs().contains(
+									blogname));
 			
+			pebbleHelper.getContextMap().put(
+					"isLikeing",
+					activeProfileOpt != null
+					&& !activeProfileOpt.getLikedProfiles().contains(
+							blogname));
+
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
@@ -1095,34 +1186,28 @@ public class WebResource {
 
 	@Path("index/libs/js/Base58.js")
 	@GET
-	public Response Base58js()
-	{
+	public Response Base58js() {
 		File file = new File("web/libs/js/Base58.js");
-		
-		if(file.exists()){
+
+		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
-		}
-		else
-		{
+		} else {
 			return error404(request);
 		}
 	}
-	
+
 	@Path("index/libs/js/common.js")
 	@GET
-	public Response commonjs()
-	{
+	public Response commonjs() {
 		File file = new File("web/libs/js/common.js");
-		
-		if(file.exists()){
+
+		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
-		}
-		else
-		{
+		} else {
 			return error404(request);
 		}
 	}
-	
+
 	@Path("index/libs/jquery/jquery.{version}.js")
 	@GET
 	public Response jquery(@PathParam("version") String version) {

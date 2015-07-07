@@ -884,6 +884,17 @@ public class Controller extends Observable {
 		
 	}
 	
+	public List<String> getNamesAsListAsString()
+	{
+		List<Name> namesAsList = getNamesAsList();
+		List<String> results = new ArrayList<String>();
+		for (Name name : namesAsList) {
+			results.add(name.getName());
+		}
+		return results;
+		
+	}
+	
 
 	public List<Name> getNames(Account account) {
 		return this.wallet.getNames(account);

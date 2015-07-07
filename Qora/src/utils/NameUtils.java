@@ -112,9 +112,6 @@ public class NameUtils {
 	{
 		
 		String rawNameValue = null;
-		//CHECK UNCONFIRMED ONLY FOR OWN NAMES
-		if(Controller.getInstance().getName(name.getName()) != null)
-		{
 			List<Transaction> accountTransactions = getOwnUnconfirmedTX();
 			
 			for (Transaction transaction : accountTransactions) {
@@ -130,7 +127,6 @@ public class NameUtils {
 					
 				}
 			}
-		}
 		
 		
 		if(rawNameValue == null)
