@@ -1102,7 +1102,7 @@ public class Controller extends Observable {
 	}
 	
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForMessage(byte[] message) {
-		return this.transactionCreator.calcRecommendedFeeForArbitraryTransaction(message);
+		return this.transactionCreator.calcRecommendedFeeForMessage(message);
 	}
 	
 	public Pair<Transaction, Integer> updateName(PrivateKeyAccount owner,
