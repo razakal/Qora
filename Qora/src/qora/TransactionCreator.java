@@ -324,6 +324,27 @@ public class TransactionCreator
 		return new Pair(arbitraryTransaction.calcRecommendedFee(), arbitraryTransaction.getDataLength());
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForMessage(byte[] message) 
+	{
+		//CHECK FOR UPDATES
+		this.checkUpdate();
+		
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		byte[] signature = new byte[64];
+		
+		//GENESIS ACCOUNT
+		PublicKeyAccount sender = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
+		
+		//CREATE MESSAGE TRANSACTION
+		MessageTransaction messageTx = new MessageTransaction(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, sender.getLastReference(this.fork), signature );
+		
+		return new Pair(messageTx.calcRecommendedFee(), messageTx.getDataLength());
+	}
+	
 	public Pair<Transaction, Integer> createIssueAssetTransaction(PrivateKeyAccount creator, String name, String description, long quantity, boolean divisible, BigDecimal fee) 
 	{
 		//CHECK FOR UPDATES

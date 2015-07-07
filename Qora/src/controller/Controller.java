@@ -1101,6 +1101,10 @@ public class Controller extends Observable {
 		return this.transactionCreator.calcRecommendedFeeForArbitraryTransaction(data);
 	}
 	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForMessage(byte[] message) {
+		return this.transactionCreator.calcRecommendedFeeForArbitraryTransaction(message);
+	}
+	
 	public Pair<Transaction, Integer> updateName(PrivateKeyAccount owner,
 			Account newOwner, String name, String value, BigDecimal fee) {
 		// CREATE ONLY ONE TRANSACTION AT A TIME

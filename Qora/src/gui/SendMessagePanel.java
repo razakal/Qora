@@ -553,10 +553,9 @@ public class SendMessagePanel extends JPanel
 		                JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION) {
 					
-				}
-				if (n == JOptionPane.NO_OPTION) {
+				} else {
 					
-					txtFee.setText("1");
+					txtFee.setText("1.00000000");
 					
 					//ENABLE
 					this.sendButton.setEnabled(true);
@@ -600,6 +599,38 @@ public class SendMessagePanel extends JPanel
 				
 				return;
 			}
+
+			BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForMessage(messageBytes).getA();
+			if(fee.compareTo(recommendedFee) < 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
+								+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
+								+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
+		                "Confirmation",
+		                JOptionPane.YES_NO_CANCEL_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+					{
+						this.txtAmount.setText("1.00000000"); // Return to the default fee for the next message.
+					}
+					
+					fee = recommendedFee; // Set recommended fee for this message.
+					
+				}
+				else if (n == JOptionPane.NO_OPTION) {
+					
+				}	
+				else {
+					
+					//ENABLE
+					this.sendButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
 			
 			boolean encryptMessage = encrypted.isSelected();
 		
