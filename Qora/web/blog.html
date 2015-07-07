@@ -223,12 +223,12 @@
             <div class="tl-profile-text">
               <h1>{{blogprofile.getName().getName()}}</h1>
               <p>Description</p>
-              <ul class="profile-options list-inline">
+              <ul class="profile-options list-inline">&nbsp;&nbsp;
               {% if blogprofile is not empty and  blogprofile.isProfileEnabled() and ownProfileName is empty %}
-              <li class="po-tabs"><a><button onclick="javascript:processLike()" type="button"><div class="glyphicon glyphicon-heart"></div> Like</button></a></li>
+              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()"><div class="glyphicon glyphicon-heart"></div> Like</span></a></li>
               {%endif%}
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled() and ownProfileName is empty %}
-              <li class="po-tabs"><a><button onclick="javascript:processfollow()" type="button"><div class="glyphicon glyphicon-user"></div> Follow</button></a></li>
+              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()"><div class="glyphicon glyphicon-user"></div> Follow</span></a></li>
               {%endif%}
               {% if follower is not null%}
               {{ follower.size() }} follower
