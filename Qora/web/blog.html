@@ -225,10 +225,10 @@
               <p>Description</p>
               <ul class="profile-options list-inline">
               {% if blogprofile is not empty and  blogprofile.isProfileEnabled() and ownProfileName is empty %}
-              <li class="po-tabs"><button onclick="javascript:processLike()" type="button"><a><div class="glyphicon glyphicon-heart"></div> Like</a></button></li>
+              <li class="po-tabs"><a><button onclick="javascript:processLike()" type="button"><div class="glyphicon glyphicon-heart"></div> Like</button></a></li>
               {%endif%}
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled() and ownProfileName is empty %}
-              <li class="po-tabs"><button onclick="javascript:processfollow()" type="button"><a><div class="glyphicon glyphicon-user"></div> Follow</a></button></li>
+              <li class="po-tabs"><a><button onclick="javascript:processfollow()" type="button"><div class="glyphicon glyphicon-user"></div> Follow</button></a></li>
               {%endif%}
               {% if follower is not null%}
               {{ follower.size() }} follower
