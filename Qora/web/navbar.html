@@ -36,7 +36,7 @@
             	{% if activeProfile is null %}
              	<li><a href="#">No active Profile</a></li>
              	{% else %}
-             	<li><a href="#">current Profile:{{activeProfile.getName().getName()}}</a></li>
+             	<li><a href="/index/blog.html?blogname={{activeProfile.getName().getName()}}">current Profile:{{activeProfile.getName().getName()}}</a></li>
              	{% endif %}
           </ul>
           <div class="navbar-form navbar-left">
