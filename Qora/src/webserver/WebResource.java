@@ -77,6 +77,7 @@ import api.AddressesResource;
 import api.ApiErrorFactory;
 import api.BlocksResource;
 import api.BlogPostResource;
+import api.CalcFeeResource;
 import api.NameSalesResource;
 import api.NamesResource;
 import api.TransactionsResource;
@@ -781,6 +782,7 @@ public class WebResource {
 		String contentparam = form.getFirst("content");
 		String fee = form.getFirst("fee");
 		String preview = form.getFirst("preview");
+		String calcfee = form.getFirst("calcfee");
 		String blogname = form.getFirst(BlogPostResource.BLOGNAME_KEY);
 
 		if (StringUtil.isNotBlank(creator)
@@ -821,11 +823,26 @@ public class WebResource {
 			}
 
 			try {
-				String result = new BlogPostResource().addBlogEntry(
-						jsonBlogPost.toJSONString(), blogname);
-
-				json.put("type", "postSuccessful");
-				json.put("result", result);
+				
+				if (StringUtils.isNotBlank(calcfee) && calcfee.equals("true")) {
+					
+					jsonBlogPost.put("blogname", blogname);
+					
+					String result = new CalcFeeResource().calcFeeForBlogPost(
+							jsonBlogPost.toJSONString());
+					
+					json.put("type", "fee");
+					json.put("result", result);
+	
+				}
+				else
+				{
+					String result = new BlogPostResource().addBlogEntry(
+							jsonBlogPost.toJSONString(), blogname);
+			
+					json.put("type", "postSuccessful");
+					json.put("result", result);
+				}
 
 				return Response
 						.status(200)

@@ -128,7 +128,7 @@ public class CalcFeeResource {
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/blogpost")
-	public String addBlogEntry(String x) {
+	public String calcFeeForBlogPost(String x) {
 		try {
 
 			// READ JSON

@@ -392,11 +392,6 @@ public class ApiClient {
 				""
 			},
 			{
-				"POST calcfee/blogpost {\"blogname\":\"<blogname>\", \"author\": \"<author>\", \"title\": \"<title>\", \"body\":\"<body>\"}", 
-				"Calculates recommended fee and the length of the transaction for blogpost.",
-				""
-			},
-			{
 				"POST calcfee/arbitrarytransactions {\"data\": \"<base58data>\"}", 
 				"Calculates recommended fee and the length of the transaction for arbitrary transactions.",
 				""
@@ -409,6 +404,11 @@ public class ApiClient {
 			{
 				"POST calcfee/nameupdate {\"name\": \"<name>\", \"newvalue\": \"<value>\"}", 
 				"Calculates recommended fee and the length of the transaction for update name.",
+				""
+			},
+			{
+				"POST calcfee/blogpost {\"blogname\":\"<blogname>\", \"author\": \"<author>\", \"title\": \"<title>\", \"body\":\"<body>\"}", 
+				"Calculates recommended fee and the length of the transaction for blogpost.",
 				""
 			},
 		};
