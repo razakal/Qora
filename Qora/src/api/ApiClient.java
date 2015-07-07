@@ -391,6 +391,26 @@ public class ApiClient {
 				"Used to create a new AT account. Returns the transaction in JSON when successful.",
 				""
 			},
+			{
+				"POST calcfee/blogpost {\"blogname\":\"<blogname>\", \"author\": \"<author>\", \"title\": \"<title>\", \"body\":\"<body>\"}", 
+				"Calculates recommended fee and the length of the transaction for blogpost.",
+				""
+			},
+			{
+				"POST calcfee/arbitrarytransactions {\"data\": \"<base58data>\"}", 
+				"Calculates recommended fee and the length of the transaction for arbitrary transactions.",
+				""
+			},
+			{
+				"POST calcfee/namereg {\"name\": \"<name>\", \"value\": \"<value>\"}", 
+				"Calculates recommended fee and the length of the transaction for name registration.",
+				""
+			},
+			{
+				"POST calcfee/nameupdate {\"name\": \"<name>\", \"newvalue\": \"<value>\"}", 
+				"Calculates recommended fee and the length of the transaction for update name.",
+				""
+			},
 		};
 	
 	

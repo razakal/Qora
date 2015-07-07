@@ -150,7 +150,7 @@ public class BlogPostResource {
 
 	}
 
-	private void isPostAllowed(String blogname) {
+	static void isPostAllowed(String blogname) {
 		
 		//MAINBLOG allows posting always
 		if(blogname == null)
