@@ -112,21 +112,26 @@ public class NameUtils {
 	{
 		
 		String rawNameValue = null;
-		List<Transaction> accountTransactions = getOwnUnconfirmedTX();
-		
-		for (Transaction transaction : accountTransactions) {
+		//CHECK UNCONFIRMED ONLY FOR OWN NAMES
+		if(Controller.getInstance().getName(name.getName()) != null)
+		{
+			List<Transaction> accountTransactions = getOwnUnconfirmedTX();
 			
-			if(transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION )
-			{
-				UpdateNameTransaction updateNameTx =	(UpdateNameTransaction) transaction;
-				if(updateNameTx.getName().getName().equals(name.getName()))
+			for (Transaction transaction : accountTransactions) {
+				
+				if(transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION )
 				{
-					rawNameValue =  updateNameTx.getName().getValue();
-					break;
-				}
+					UpdateNameTransaction updateNameTx =	(UpdateNameTransaction) transaction;
+					if(updateNameTx.getName().getName().equals(name.getName()))
+					{
+						rawNameValue =  updateNameTx.getName().getValue();
+						break;
+					}
 					
+				}
 			}
 		}
+		
 		
 		if(rawNameValue == null)
 		{

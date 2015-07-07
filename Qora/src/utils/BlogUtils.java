@@ -81,6 +81,11 @@ public class BlogUtils {
 						10000, 1000, 10, 777, null);
 		List<BlogEntry> results = new ArrayList<>();
 		List<Transaction> b = resultlist.getB();
+		
+		b.addAll(DBSet.getInstance().getTransactionMap().getTransactions());
+			
+		//SORT THEM BY TIMESTAMP
+		Collections.sort(b, new TransactionTimestampComparator());
 
 		for (Transaction transaction : b) {
 			if (transaction instanceof ArbitraryTransaction) {
