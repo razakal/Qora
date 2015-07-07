@@ -262,9 +262,41 @@ public class CreatePollFrame extends JFrame
 				}
 			}
 			
+
+			BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForPoll(this.txtName.getText(), this.txtareaDescription.getText(), this.optionsTableModel.getOptions()).getA();
+			if(fee.compareTo(recommendedFee) < 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
+									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
+									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
+		                "Confirmation",
+		                JOptionPane.YES_NO_CANCEL_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+					{
+						this.txtFee.setText("1.00000000"); // Return to the default fee for the next message.
+					}
+					
+					fee = recommendedFee; // Set recommended fee for this message.
+					
+				}
+				else if (n == JOptionPane.NO_OPTION) {
+					
+				}	
+				else {
+					
+					//ENABLE
+					this.createButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
 			//CREATE POLL
 			PrivateKeyAccount creator = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
-			Pair<Transaction, Integer> result = Controller.getInstance().createPoll(creator, this.txtName.getText(),this.txtareaDescription.getText(), this.optionsTableModel.getOptions(), fee);
+			Pair<Transaction, Integer> result = Controller.getInstance().createPoll(creator, this.txtName.getText(), this.txtareaDescription.getText(), this.optionsTableModel.getOptions(), fee);
 			
 			//CHECK VALIDATE MESSAGE
 			switch(result.getB())

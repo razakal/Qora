@@ -138,9 +138,6 @@ public class TransactionCreator
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameRegistration(Name name) 
 	{
-		//CHECK FOR UPDATES
-		this.checkUpdate();
-				
 		//TIME
 		long time = NTP.getTime();
 								
@@ -151,7 +148,7 @@ public class TransactionCreator
 		PublicKeyAccount registrant = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1}); 
 		
 		//CREATE NAME UPDATE
-		RegisterNameTransaction nameRegistration = new RegisterNameTransaction(registrant, name, Transaction.MINIMUM_FEE, time, registrant.getLastReference(this.fork), signature);
+		RegisterNameTransaction nameRegistration = new RegisterNameTransaction(registrant, name, Transaction.MINIMUM_FEE, time, signature, signature);
 		
 		return new Pair(nameRegistration.calcRecommendedFee(), nameRegistration.getDataLength());
 	}
@@ -177,9 +174,6 @@ public class TransactionCreator
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameUpdate(Name name) 
 	{
-		//CHECK FOR UPDATES
-		this.checkUpdate();
-		
 		//TIME
 		long time = NTP.getTime();
 								
@@ -190,7 +184,7 @@ public class TransactionCreator
 		PublicKeyAccount owner = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
 		
 		//CREATE NAME UPDATE
-		UpdateNameTransaction nameUpdate = new UpdateNameTransaction(owner, name, Transaction.MINIMUM_FEE, time, owner.getLastReference(this.fork), signature);
+		UpdateNameTransaction nameUpdate = new UpdateNameTransaction(owner, name, Transaction.MINIMUM_FEE, time, signature, signature);
 				
 		return new Pair(nameUpdate.calcRecommendedFee(), nameUpdate.getDataLength());
 	}
@@ -249,6 +243,24 @@ public class TransactionCreator
 		return this.afterCreate(namePurchase);
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForPollCreation(Poll poll) 
+	{
+		//TIME
+		long time = NTP.getTime();
+								
+		//CREATE SIGNATURE
+		byte[] signature = new byte[64];
+		
+		//GENESIS ACCOUNT
+		PublicKeyAccount creator = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1}); 
+		
+		//CREATE NAME UPDATE
+		CreatePollTransaction pollCreation = new CreatePollTransaction(creator, poll, Transaction.MINIMUM_FEE, time, signature, signature);
+		
+		return new Pair(pollCreation.calcRecommendedFee(), pollCreation.getDataLength());
+	}
+	
 	public Pair<Transaction, Integer> createPollCreation(PrivateKeyAccount creator, Poll poll, BigDecimal fee) 
 	{
 		//CHECK FOR UPDATES
@@ -305,10 +317,7 @@ public class TransactionCreator
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(byte[] data) 
-	{
-		//CHECK FOR UPDATES
-		this.checkUpdate();
-		
+	{	
 		//TIME
 		long time = NTP.getTime();
 								
@@ -319,7 +328,7 @@ public class TransactionCreator
 		PublicKeyAccount creator = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
 		
 		//CREATE ARBITRARY TRANSACTION
-		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(creator, 0, data, Transaction.MINIMUM_FEE, time, creator.getLastReference(this.fork), signature);
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(creator, 0, data, Transaction.MINIMUM_FEE, time, signature, signature);
 		
 		return new Pair(arbitraryTransaction.calcRecommendedFee(), arbitraryTransaction.getDataLength());
 	}
@@ -327,9 +336,6 @@ public class TransactionCreator
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForMessage(byte[] message) 
 	{
-		//CHECK FOR UPDATES
-		this.checkUpdate();
-		
 		//TIME
 		long time = NTP.getTime();
 								
@@ -340,7 +346,7 @@ public class TransactionCreator
 		PublicKeyAccount sender = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
 		
 		//CREATE MESSAGE TRANSACTION
-		MessageTransaction messageTx = new MessageTransaction(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, sender.getLastReference(this.fork), signature );
+		MessageTransaction messageTx = new MessageTransaction(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, signature, signature );
 		
 		return new Pair(messageTx.calcRecommendedFee(), messageTx.getDataLength());
 	}

@@ -1097,6 +1097,23 @@ public class Controller extends Observable {
 				new Name(new Account("QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, value)); // FOR GENESIS ADDRESS
 	}
 	
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForPoll(
+			String name, String description, List<String> options) {
+		// CREATE ONLY ONE TRANSACTION AT A TIME
+		
+		// CREATE POLL OPTIONS
+		List<PollOption> pollOptions = new ArrayList<PollOption>();
+		for (String option : options) {
+			pollOptions.add(new PollOption(option));
+		}
+
+		// CREATE POLL
+		Poll poll = new Poll(new Account("QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, description, pollOptions);
+
+		return this.transactionCreator.calcRecommendedFeeForPollCreation(poll);
+	}
+	
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(byte[] data) {
 		return this.transactionCreator.calcRecommendedFeeForArbitraryTransaction(data);
 	}
