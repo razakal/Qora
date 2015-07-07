@@ -37,21 +37,19 @@ public class Profile {
 	private final BlogBlackWhiteList blogBlackWhiteList;
 	private JSONObject jsonRepresenation;
 	private Name name;
+	private List<Name> followerCache = null;
+	private List<Name> likeCache = null;
 
-	
-	public static Profile getProfileOpt(String name)
-	{
+	public static Profile getProfileOpt(String name) {
 		Profile result = null;
-		if(name != null)
-		{
+		if (name != null) {
 			Name nameObj = DBSet.getInstance().getNameMap().get(name);
 			result = Profile.getProfileOpt(nameObj);
 		}
-		
-		
+
 		return result;
 	}
-	
+
 	public static Profile getProfileOpt(Name name) {
 		if (!isAllowedProfileName(name.getName())) {
 			return null;
@@ -65,24 +63,62 @@ public class Profile {
 				.toString());
 		jsonRepresenation = NameUtils.getJsonForNameOpt(name);
 	}
-	
-	public List<Name> getFollower()
-	{
+
+	public List<Name> getFollower() {
+
+		if (followerCache != null) {
+			return followerCache;
+		}
+
 		List<Name> results = new ArrayList<>();
+		List<Name> resultsLike = new ArrayList<>();
 		Collection<Name> values = DBSet.getInstance().getNameMap().getValues();
-		
+
 		for (Name name : values) {
 			Profile profileOpt = Profile.getProfileOpt(name);
-			//FOLLOWING ONLY WITH ENABLED PROFILE
-			if(profileOpt != null && profileOpt.isProfileEnabled())
-			{
-					if(profileOpt.getFollowedBlogs().contains(this.name.getName()))
-					{
-						results.add(profileOpt.getName());
-					}
+			// FOLLOWING ONLY WITH ENABLED PROFILE
+			if (profileOpt != null && profileOpt.isProfileEnabled()) {
+				if (profileOpt.getFollowedBlogs().contains(this.name.getName())) {
+					results.add(profileOpt.getName());
+				}
+				if (profileOpt.getLikedProfiles().contains(this.name.getName())) {
+					resultsLike.add(profileOpt.getName());
+				}
+				
+				
+				
 			}
 		}
+		followerCache = results;
+		likeCache = resultsLike;
+		return results;
+	}
+
+	public List<Name> getLikes() {
+	
+		if (likeCache != null) {
+			return likeCache;
+		}
 		
+	
+		List<Name> results = new ArrayList<>();
+		List<Name> resultsFollower = new ArrayList<>();
+		Collection<Name> values = DBSet.getInstance().getNameMap().getValues();
+
+		for (Name name : values) {
+			Profile profileOpt = Profile.getProfileOpt(name);
+			// FOLLOWING ONLY WITH ENABLED PROFILE
+			if (profileOpt != null && profileOpt.isProfileEnabled()) {
+				if (profileOpt.getLikedProfiles().contains(this.name.getName())) {
+					results.add(profileOpt.getName());
+				}
+				if (profileOpt.getFollowedBlogs().contains(this.name.getName())) {
+					resultsFollower.add(profileOpt.getName());
+				}
+			}
+		}
+		likeCache = results;
+		followerCache = resultsFollower;
 		return results;
 	}
 
@@ -108,13 +144,10 @@ public class Profile {
 		storeKeyValueIfNotBlank(Qorakeys.BLOGDESCRIPTION, blogDescription);
 	}
 
-	public void storeKeyValueIfNotBlank( Qorakeys key, String value) {
-		if(!StringUtils.isBlank(value))
-		{
-			jsonRepresenation.put(key.toString(),
-					value);
-		}else
-		{
+	public void storeKeyValueIfNotBlank(Qorakeys key, String value) {
+		if (!StringUtils.isBlank(value)) {
+			jsonRepresenation.put(key.toString(), value);
+		} else {
 			jsonRepresenation.remove(key);
 		}
 	}
@@ -126,7 +159,7 @@ public class Profile {
 	public void saveAvatarTitle(String profileavatar) {
 		storeKeyValueIfNotBlank(Qorakeys.PROFILEAVATAR, profileavatar);
 	}
-	
+
 	public void saveProfileMainGraphicOpt(String maingraphicurl) {
 		storeKeyValueIfNotBlank(Qorakeys.PROFILEMAINGRAPHIC, maingraphicurl);
 	}
@@ -139,14 +172,18 @@ public class Profile {
 		return (String) jsonRepresenation
 				.get(Qorakeys.PROFILEAVATAR.toString());
 	}
-	
+
 	public String getProfileGraphicOpt() {
-		return (String) jsonRepresenation
-				.get(Qorakeys.PROFILEMAINGRAPHIC.toString());
+		return (String) jsonRepresenation.get(Qorakeys.PROFILEMAINGRAPHIC
+				.toString());
 	}
 
 	public List<String> getFollowedBlogs() {
 		return Collections.unmodifiableList(getFollowedBlogsInternal());
+	}
+
+	public List<String> getLikedProfiles() {
+		return Collections.unmodifiableList(getLikedProfilesInternal());
 	}
 
 	private List<String> getFollowedBlogsInternal() {
@@ -156,6 +193,18 @@ public class Profile {
 			String[] profileFollowArray = StringUtils.split(
 					profileFollowString, ";");
 			return new ArrayList<String>(Arrays.asList(profileFollowArray));
+		}
+
+		return new ArrayList<String>();
+	}
+
+	private List<String> getLikedProfilesInternal() {
+		String profileLikeString = (String) jsonRepresenation
+				.get(Qorakeys.PROFILELIKE.toString());
+		if (profileLikeString != null) {
+			String[] profileLikeArray = StringUtils.split(profileLikeString,
+					";");
+			return new ArrayList<String>(Arrays.asList(profileLikeArray));
 		}
 
 		return new ArrayList<String>();
@@ -175,7 +224,8 @@ public class Profile {
 			Profile profile = Profile.getProfileOpt(blogName);
 			// ADDING ONLY IF ENABLED REMOVE ALWAYS
 			if (isRemove
-					|| (profile != null && profile.isProfileEnabled() && profile.isBlogEnabled())) {
+					|| (profile != null && profile.isProfileEnabled() && profile
+							.isBlogEnabled())) {
 				List<String> followedBlogsInternal = getFollowedBlogsInternal();
 				if (isRemove) {
 					followedBlogsInternal.remove(blogname);
@@ -184,10 +234,36 @@ public class Profile {
 						followedBlogsInternal.add(blogname);
 					}
 				}
-				String joinResult = StringUtils.join(followedBlogsInternal,
-						";");
-				jsonRepresenation.put(Qorakeys.PROFILEFOLLOW.toString(), joinResult);
+				String joinResult = StringUtils
+						.join(followedBlogsInternal, ";");
+				jsonRepresenation.put(Qorakeys.PROFILEFOLLOW.toString(),
+						joinResult);
 			}
+		}
+	}
+
+	public void addLikeProfile(String profilename) {
+		addRemoveLikeInternal(profilename, false);
+	}
+
+	public void removeLikeProfile(String profilename) {
+		addRemoveLikeInternal(profilename, true);
+	}
+
+	public void addRemoveLikeInternal(String profilename, boolean isRemove) {
+		Profile profileOpt = Profile.getProfileOpt(profilename);
+		// ADDING ONLY IF ENABLED REMOVE ALWAYS
+		if (isRemove || (profileOpt != null && profileOpt.isProfileEnabled())) {
+			List<String> likedProfilesInternal = getLikedProfilesInternal();
+			if (isRemove) {
+				likedProfilesInternal.remove(profilename);
+			} else {
+				if (!likedProfilesInternal.contains(profilename)) {
+					likedProfilesInternal.add(profilename);
+				}
+			}
+			String joinResult = StringUtils.join(likedProfilesInternal, ";");
+			jsonRepresenation.put(Qorakeys.PROFILELIKE.toString(), joinResult);
 		}
 	}
 
@@ -220,25 +296,24 @@ public class Profile {
 	}
 
 	public String saveProfile() throws WebApplicationException {
-		Pair<String,String> jsonKeyPairRepresentation = blogBlackWhiteList.getJsonKeyPairRepresentation();
-		jsonRepresenation.put(jsonKeyPairRepresentation.getA(), jsonKeyPairRepresentation.getB());
-		if(blogBlackWhiteList.isWhitelist())
-		{
+		Pair<String, String> jsonKeyPairRepresentation = blogBlackWhiteList
+				.getJsonKeyPairRepresentation();
+		jsonRepresenation.put(jsonKeyPairRepresentation.getA(),
+				jsonKeyPairRepresentation.getB());
+		if (blogBlackWhiteList.isWhitelist()) {
 			jsonRepresenation.remove(Qorakeys.BLOGBLACKLIST.toString());
-		}else
-		{
+		} else {
 			jsonRepresenation.remove(Qorakeys.BLOGWHITELIST.toString());
 		}
-		
-		
+
 		String jsonString = jsonRepresenation.toJSONString();
 		String compressValue = GZIP.compress(jsonString);
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("fee", Controller.getInstance().calcRecommendedFeeForNameUpdate(name.getName(), compressValue).getA().toPlainString());
+		jsonObject.put("fee", Controller.getInstance()
+				.calcRecommendedFeeForNameUpdate(name.getName(), compressValue)
+				.getA().toPlainString());
 		jsonObject.put("newowner", name.getOwner().getAddress());
 		jsonObject.put("newvalue", compressValue);
-		
-		
 
 		return new NamesResource().updateName(jsonObject.toJSONString(),
 				name.getName());
