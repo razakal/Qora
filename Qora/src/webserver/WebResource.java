@@ -49,19 +49,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.mitchellbosecke.pebble.error.PebbleException;
-
-import api.ATResource;
-import api.AddressesResource;
-import api.ApiErrorFactory;
-import api.BlocksResource;
-import api.BlogPostResource;
-import api.NameSalesResource;
-import api.NamesResource;
-import api.TransactionsResource;
-import controller.Controller;
-import database.DBSet;
-import database.NameMap;
 import qora.account.Account;
 import qora.block.Block;
 import qora.blockexplorer.BlockExplorer;
@@ -85,6 +72,20 @@ import utils.PebbleHelper;
 import utils.Qorakeys;
 import utils.StrJSonFine;
 import utils.Triplet;
+import api.ATResource;
+import api.AddressesResource;
+import api.ApiErrorFactory;
+import api.BlocksResource;
+import api.BlogPostResource;
+import api.NameSalesResource;
+import api.NamesResource;
+import api.TransactionsResource;
+
+import com.mitchellbosecke.pebble.error.PebbleException;
+
+import controller.Controller;
+import database.DBSet;
+import database.NameMap;
 
 @Path("/")
 public class WebResource {
@@ -238,12 +239,14 @@ public class WebResource {
 
 		JSONObject json = new JSONObject();
 		
+	
+		
 		try {
 			
 			String profileName = form.getFirst("profilename");
-
-			if (!isCompleteSubmit(form)) {
-				
+			
+			if(StringUtils.isBlank(profileName))
+			{
 				json.put("type", "parametersMissing");
 				
 				return Response.status(200)
@@ -251,6 +254,7 @@ public class WebResource {
 						.entity(json.toJSONString())
 						.build();
 			}
+
 
 			Name name = null;
 			name = Controller.getInstance().getName(profileName);
@@ -410,37 +414,6 @@ public class WebResource {
 		return parameter != null ? URLDecoder.decode(parameter, "UTF-8") : null;
 	}
 
-	private boolean isCompleteSubmit(MultivaluedMap<String, String> parameterMap) {
-		if (
-				!parameterMap.containsKey("profilename")
-				||
-				 parameterMap.getFirst("profilename").equals("")
-				|| 
-				!parameterMap.containsKey("bwlistkind")
-				||
-				parameterMap.getFirst("bwlistkind").equals("") 
-				||
-				!parameterMap.containsKey("blackwhitelist")
-				||
-				parameterMap.getFirst("blackwhitelist").equals("") ) {
-			return false;
-		}
-
-		List<Qorakeys> list = Arrays.asList(Qorakeys.BLOGENABLE,
-				Qorakeys.PROFILEENABLE, Qorakeys.BLOGTITLE,
-				Qorakeys.PROFILEAVATAR, Qorakeys.BLOGDESCRIPTION, Qorakeys.PROFILEMAINGRAPHIC);
-		boolean result = true;
-
-		for (Qorakeys qorakey : list) {
-			if (!parameterMap.containsKey(qorakey.toString())) {
-				result = false;
-				break;
-			}
-
-		}
-
-		return result;
-	}
 
 	@Path("index/webdirectory.html")
 	@GET

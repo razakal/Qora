@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -9,8 +10,11 @@ import org.json.simple.JSONValue;
 
 import qora.account.Account;
 import qora.naming.Name;
+import qora.transaction.Transaction;
+import qora.transaction.UpdateNameTransaction;
 import webserver.WebResource;
 import api.ApiErrorFactory;
+import controller.Controller;
 import database.DBSet;
 import database.NameMap;
 
@@ -106,7 +110,28 @@ public class NameUtils {
 	@SuppressWarnings("unchecked")
 	public static JSONObject getJsonForNameOpt( Name name)
 	{
-		String rawNameValue = name.getValue();
+		
+		String rawNameValue = null;
+		List<Transaction> accountTransactions = getOwnUnconfirmedTX();
+		
+		for (Transaction transaction : accountTransactions) {
+			
+			if(transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION )
+			{
+				UpdateNameTransaction updateNameTx =	(UpdateNameTransaction) transaction;
+				if(updateNameTx.getName().getName().equals(name.getName()))
+				{
+					rawNameValue =  updateNameTx.getName().getValue();
+					break;
+				}
+					
+			}
+		}
+		
+		if(rawNameValue == null)
+		{
+			rawNameValue = name.getValue();
+		}
 		
 		String decompressedNameValue = GZIP.webDecompress(rawNameValue);
 		
@@ -140,6 +165,24 @@ public class NameUtils {
 		
 		
 		
+	}
+
+
+	public static List<Transaction> getOwnUnconfirmedTX() {
+		List<Transaction> transactions = DBSet.getInstance().getTransactionMap().getTransactions();
+		List<Transaction> accountTransactions = new ArrayList<Transaction>();
+			
+		for(Transaction transaction: transactions)
+		{
+			if(Controller.getInstance().getAccounts().contains(transaction.getCreator()))
+			{
+				accountTransactions.add(transaction);
+			}
+		}
+			
+		//SORT THEM BY TIMESTAMP
+		Collections.sort(accountTransactions, new TransactionTimestampComparator());
+		return accountTransactions;
 	}
 
 

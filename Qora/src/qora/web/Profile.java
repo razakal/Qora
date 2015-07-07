@@ -1,6 +1,5 @@
 package qora.web;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,14 +11,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.json.simple.JSONObject;
 
-import controller.Controller;
-import database.DBSet;
 import qora.naming.Name;
 import utils.GZIP;
 import utils.NameUtils;
 import utils.Pair;
 import utils.Qorakeys;
 import api.NamesResource;
+import controller.Controller;
+import database.DBSet;
 
 @SuppressWarnings("unchecked")
 public class Profile {
@@ -71,20 +70,30 @@ public class Profile {
 	}
 
 	public void saveBlogDescription(String blogDescription) {
-		jsonRepresenation.put(Qorakeys.BLOGDESCRIPTION.toString(),
-				blogDescription);
+		storeKeyValueIfNotBlank(Qorakeys.BLOGDESCRIPTION, blogDescription);
+	}
+
+	public void storeKeyValueIfNotBlank( Qorakeys key, String value) {
+		if(!StringUtils.isBlank(value))
+		{
+			jsonRepresenation.put(key.toString(),
+					value);
+		}else
+		{
+			jsonRepresenation.remove(key);
+		}
 	}
 
 	public void saveBlogTitle(String blogTitle) {
-		jsonRepresenation.put(Qorakeys.BLOGTITLE.toString(), blogTitle);
+		storeKeyValueIfNotBlank(Qorakeys.BLOGTITLE, blogTitle);
 	}
 
 	public void saveAvatarTitle(String profileavatar) {
-		jsonRepresenation.put(Qorakeys.PROFILEAVATAR.toString(), profileavatar);
+		storeKeyValueIfNotBlank(Qorakeys.PROFILEAVATAR, profileavatar);
 	}
 	
 	public void saveProfileMainGraphicOpt(String maingraphicurl) {
-		jsonRepresenation.put(Qorakeys.PROFILEMAINGRAPHIC.toString(), maingraphicurl);
+		storeKeyValueIfNotBlank(Qorakeys.PROFILEMAINGRAPHIC, maingraphicurl);
 	}
 
 	public String getBlogTitleOpt() {
@@ -190,7 +199,7 @@ public class Profile {
 		String jsonString = jsonRepresenation.toJSONString();
 		String compressValue = GZIP.compress(jsonString);
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("fee", BigDecimal.ONE.setScale(8).toPlainString());
+		jsonObject.put("fee", Controller.getInstance().calcRecommendedFeeForNameUpdate(name.getName(), compressValue).getA().toPlainString());
 		jsonObject.put("newowner", name.getOwner().getAddress());
 		jsonObject.put("newvalue", compressValue);
 		
