@@ -959,17 +959,29 @@ public class WebResource {
 										.contains(blogname)) {
 							activeProfileOpt.addFollowedBlog(blogname);
 							String result;
-							try {
-								
-								result = activeProfileOpt.saveProfile();
-								result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
-										+ result + "</div>";
-							} catch (WebApplicationException e) {
+							
+							//Prevent following of own profiles
+							if(Controller.getInstance().getName(blogname) != null)
+							{
 								result =
 										"<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
-												+ e.getResponse().getEntity()
+												+ "You can't follow your own profiles"
 												+ "</div></center>";
+							}else
+							{
+								try {
+									
+									result = activeProfileOpt.saveProfile();
+									result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
+											+ result + "</div>";
+								} catch (WebApplicationException e) {
+									result =
+											"<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+													+ e.getResponse().getEntity()
+													+ "</div></center>";
+								}
 							}
+							
 							
 							return getBlog(result);
 						}

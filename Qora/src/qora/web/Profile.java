@@ -73,7 +73,7 @@ public class Profile {
 		
 		for (Name name : values) {
 			Profile profileOpt = Profile.getProfileOpt(name);
-			//FOLLOWING ONLY WITH ENABLED PROFILE AND IF NOT OWN NAME
+			//FOLLOWING ONLY WITH ENABLED PROFILE
 			if(profileOpt != null && profileOpt.isProfileEnabled())
 			{
 					if(profileOpt.getFollowedBlogs().contains(this.name.getName()))
