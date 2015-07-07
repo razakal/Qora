@@ -38,6 +38,20 @@ public class Profile {
 	private JSONObject jsonRepresenation;
 	private Name name;
 
+	
+	public static Profile getProfileOpt(String name)
+	{
+		Profile result = null;
+		if(name != null)
+		{
+			Name nameObj = DBSet.getInstance().getNameMap().get(name);
+			result = Profile.getProfileOpt(nameObj);
+		}
+		
+		
+		return result;
+	}
+	
 	public static Profile getProfileOpt(Name name) {
 		if (!isAllowedProfileName(name.getName())) {
 			return null;

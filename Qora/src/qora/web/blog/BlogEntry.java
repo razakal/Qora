@@ -36,6 +36,7 @@ public class BlogEntry {
 	private final long time;
 	private final String creator;
 	private String 	avatar = "img/qora-user.png";
+	private final Profile profileOpt;
 
 	private List<String> imagelinks = new ArrayList<String>();
 
@@ -47,6 +48,7 @@ public class BlogEntry {
 		handleImages();
 		handleLinks();
 		this.nameOpt = nameOpt;
+		profileOpt = Profile.getProfileOpt(nameOpt);
 		addAvatar();
 		this.time = timeOpt;
 		this.creator = creator;
@@ -161,5 +163,9 @@ public class BlogEntry {
 		json.put("avatar", this.getAvatar());
 		
 		return json;	
+	}
+
+	public Profile getProfileOpt() {
+		return profileOpt;
 	}
 }
