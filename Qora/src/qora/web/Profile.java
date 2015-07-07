@@ -151,7 +151,7 @@ public class Profile {
 				}
 				String joinResult = StringUtils.join(followedBlogsInternal,
 						";");
-				jsonRepresenation.put(Qorakeys.PROFILEFOLLOW, joinResult);
+				jsonRepresenation.put(Qorakeys.PROFILEFOLLOW.toString(), joinResult);
 			}
 		}
 	}

@@ -225,7 +225,7 @@
               <p>Description</p>
               <ul class="profile-options list-inline">
               <li class="po-tabs"><a><div class="glyphicon glyphicon-heart"></div> Like</a></li>
-          		{% if blogprofile.isBlogEnabled() and ownProfileName is empty %}
+          		{% if blogprofile is not empty and  blogprofile.isBlogEnabled() and ownProfileName is empty %}
               <li class="po-tabs"><button onclick="javascript:processfollow()" type="button"><a><div class="glyphicon glyphicon-user"></div> Follow</a></button></li>
               {%endif%}
               </ul>

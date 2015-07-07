@@ -125,7 +125,6 @@ public class NameUtils {
 					if(updateNameTx.getName().getName().equals(name.getName()))
 					{
 						rawNameValue =  updateNameTx.getName().getValue();
-						break;
 					}
 					
 				}

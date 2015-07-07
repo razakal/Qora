@@ -983,7 +983,7 @@ public class WebResource {
 							String result;
 							try {
 								result = activeProfileOpt.saveProfile();
-								result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
+								result = "<div class=\"alert alert-success\" role=\"alert\">Unfollow successful<br>"
 										+ result + "</div>";
 							} catch (WebApplicationException e) {
 								result =
