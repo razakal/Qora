@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import org.mapdb.Fun.Tuple2;
@@ -53,6 +55,7 @@ public class Wallet extends Observable implements Observer
 	private SecureWalletDatabase secureDatabase;
 	
 	private int secondsToUnlock = -1;
+	private Timer lockTimer = new Timer();
 	
 	//CONSTRUCTORS
 	
@@ -561,17 +564,18 @@ public class Wallet extends Observable implements Observer
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(ObserverMessage.WALLET_STATUS, STATUS_UNLOCKED));
 		
-		if(secondsToUnlock > 0)
+		if(this.secondsToUnlock > 0)
 		{
-			new java.util.Timer().schedule( 
-				new java.util.TimerTask() {
-					@Override
-					public void run() {
-						lock();
-					}
-				}, 
-				secondsToUnlock*1000 
-			);
+			this.lockTimer.cancel(); 
+			this.lockTimer = new Timer();
+			
+			TimerTask action = new TimerTask() {
+		        public void run() {
+		            lock();
+		        }
+		    };
+		    
+		    this.lockTimer.schedule(action, this.secondsToUnlock*1000);
 		}
 		return true;
 	}
@@ -591,7 +595,8 @@ public class Wallet extends Observable implements Observer
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(ObserverMessage.WALLET_STATUS, STATUS_LOCKED));
 		
-		secondsToUnlock = -1;
+		this.secondsToUnlock = -1;
+		this.lockTimer.cancel(); 
 		
 		//LOCK SUCCESSFULL
 		return true;
