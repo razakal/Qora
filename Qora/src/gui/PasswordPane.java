@@ -40,7 +40,7 @@ public class PasswordPane
 					JOptionPane.QUESTION_MESSAGE, 
 					null,
 					options, 
-					options[2]
+					passwordFld
 				);
 		
 		if(n == JOptionPane.YES_OPTION) {
