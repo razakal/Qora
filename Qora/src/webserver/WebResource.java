@@ -1033,12 +1033,21 @@ public class WebResource {
 
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	@POST
 	@Path("index/likeprofile.html")
-	@GET
-	public Response likeProfile() {
+	@Consumes("application/x-www-form-urlencoded")
+	public Response likeProfile(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
+		
+		JSONObject json = new JSONObject();
+		
 		try {
-			String profilename = request.getParameter(BlogPostResource.BLOGNAME_KEY);
-			String likeString = request.getParameter("like");
+			
+			String profilename = form.getFirst(BlogPostResource.BLOGNAME_KEY);
+			String likeString = form.getFirst("like");
+			
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			Profile activeProfileOpt = ProfileHelper.getInstance()
 					.getActiveProfileOpt();
@@ -1056,63 +1065,128 @@ public class WebResource {
 
 							if (activeProfileOpt.getLikedProfiles().contains(
 									profilename)) {
-								result = "<center><div class=\"alert alert-danger\" role=\"alert\">You already like this profile<br>"
-										+ "</div></center>";
-								return getBlog(result);
+								
+								json.put("type", "YouAlreadyLikeThisProfile");
+								json.put("likes", profile.getLikes().size());
+								
+								json.put("isLikeing",
+										activeProfileOpt.getLikedProfiles().contains(
+												profilename));
+								
+								return Response
+										.status(200)
+										.header("Content-Type",
+												"application/json; charset=utf-8")
+										.entity(json.toJSONString()).build();
 							}
 
 							// Prevent liking of own profiles
 							if (Controller.getInstance().getNamesAsListAsString().contains(profilename)) {
-								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>"
-										+ "You can't like your own profiles"
-										+ "</div></center>";
-								return getBlog(result);
+								
+								json.put("type", "YouCantLikeYourOwnProfiles");
+								json.put("likes", profile.getLikes().size());
+								
+								json.put("isLikeing",
+										activeProfileOpt.getLikedProfiles().contains(
+												profilename));
+								
+								return Response
+										.status(200)
+										.header("Content-Type",
+												"application/json; charset=utf-8")
+										.entity(json.toJSONString()).build();
+								
+								
 							}
+							
+							boolean isLikeing =	activeProfileOpt.getLikedProfiles().contains(profilename);
 							
 							activeProfileOpt.addLikeProfile(profilename);
 							try {
 
 								result = activeProfileOpt.saveProfile();
-								result = "<div class=\"alert alert-success\" role=\"alert\">Like successful<br>"
-										+ result + "</div>";
+								
+								json.put("type", "LikeSuccessful");
+								json.put("result", result);
+								json.put("likes", profile.getLikes().size());
+								
+								json.put("isLikeing",
+											activeProfileOpt.getLikedProfiles().contains(
+													profilename));
+												
+								
 							} catch (WebApplicationException e) {
-								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>"
-										+ e.getResponse().getEntity()
-										+ "</div></center>";
+								
+								json.put("type", "LikeNotSuccessful");
+								json.put("result", e.getResponse().getEntity());
+								json.put("likes", profile.getLikes().size());
+								
+								json.put("isLikeing", isLikeing);
 							}
 
-							return getBlog(result);
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
+									.entity(json.toJSONString()).build();
 						}
-
 					} else {
 						if (activeProfileOpt.getLikedProfiles().contains(
 								profilename)) {
+							
+							boolean isLikeing =	activeProfileOpt.getLikedProfiles().contains(profilename);
+							
 							activeProfileOpt.removeLikeProfile(profilename);
 							String result;
 							try {
 								result = activeProfileOpt.saveProfile();
-								result = "<div class=\"alert alert-success\" role=\"alert\">Like removed successful<br>"
-										+ result + "</div>";
+								
+								json.put("type", "LikeRemovedSuccessful");
+								json.put("result", result);
+								json.put("likes", profile.getLikes().size());
+								
+								json.put("isLikeing",
+										activeProfileOpt.getLikedProfiles().contains(
+												profilename));
+								
 							} catch (WebApplicationException e) {
-								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Like remove not successful<br>"
-										+ e.getResponse().getEntity()
-										+ "</div></center>";
+								
+								json.put("type", "LikeRemovedNotSuccessful");
+								json.put("result", e.getResponse().getEntity());
+								json.put("likes", profile.getLikes().size());
+								
+								json.put("isLikeing", isLikeing);
 							}
 
-							return getBlog(result);
-
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
+									.entity(json.toJSONString()).build();						
 						}
 					}
 
 				}
 			}
 
-			return getBlog(null);
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
-		}
 
+			json.put("type", "error");
+			json.put("error", e.getMessage());
+			
+			return Response
+					.status(200)
+					.header("Content-Type",
+							"application/json; charset=utf-8")
+					.entity(json.toJSONString()).build();
+		}
+		
+		return Response
+				.status(200)
+				.header("Content-Type",
+						"application/json; charset=utf-8")
+				.entity("{}").build();
 	}
 
 	@Path("index/blog.html")
@@ -1186,7 +1260,7 @@ public class WebResource {
 			pebbleHelper.getContextMap().put(
 					"isLikeing",
 					activeProfileOpt != null
-					&& !activeProfileOpt.getLikedProfiles().contains(
+					&& activeProfileOpt.getLikedProfiles().contains(
 							blogname));
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);

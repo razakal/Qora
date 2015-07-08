@@ -225,20 +225,22 @@
               <p>Description</p>
               <ul class="profile-options list-inline">&nbsp;&nbsp;
               {% if blogprofile is not empty and  blogprofile.isProfileEnabled() and ownProfileName is empty %}
-              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()"><div class="glyphicon glyphicon-heart"></div> Like</span></a></li>
+              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()">Like <div class="glyphicon glyphicon-heart"></div> <span id=profLikes>
+			  {% if likes is not null and likes.size() != 0 %}
+              {{ likes.size() }}
+              {%endif%}
+			  </span></span></a></li>
               {%endif%}
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled() and ownProfileName is empty %}
-              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()"><div class="glyphicon glyphicon-user"></div> Follow</span></a></li>
+              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">Follow <div class="glyphicon glyphicon-user"></div> <span id=profFollower>
+			  {% if follower is not null and follower.size() != 0 %}
+              {{ follower.size() }}
               {%endif%}
-              {% if follower is not null%}
-              {{ follower.size() }} follower
-              {%endif%}
-              {% if likes is not null%}
-              {{ likes.size() }} likes
+			  </span></span></a></li>
               {%endif%}
               </ul>
             </div>
-          </div>        	{{apimessage}}
+          </div>        	{{apimessage}} <div id=apimessage></div>
           
           {% if blogenabled %}
           <ul class="timeline">{% for blogpost in blogposts %}
@@ -283,6 +285,12 @@
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
     <script type="text/javascript">
 
+		var profileIsLikeing;
+		{% if isLikeing %}
+		profileIsLikeing = true;
+		{% else %}
+		profileIsLikeing = false;
+		{%  endif %}
 
        function getParameter(name) {
         if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
@@ -290,45 +298,120 @@
     	}
 
     	function processfollow() {
-        var  blogname;
+			var  blogname;
 
+			blogname = getParameter('blogname');
 
-        blogname = getParameter('blogname');
+			if (!blogname) {
+				alert("You can't follow the Mainblog");
+				return 0;
+			}
 
-        if (!blogname) {
+			{% if activeProfile is null %}
+				alert("This feature can only be used with an active profile.\nPlease choose a Profile first!");
+				return 0;
+			{%  endif %}
 
-        alert("You can't follow the Mainblog");
-        return 0;
-        }
-
-        {% if activeProfile is null %}
-        alert("This feature can only be used with an active profile.\nPlease choose a Profile first!");
-        return 0;
-        {%  endif %}
-
-        document.location.href = '/index/followblog.html?blogname=' + blogname + '&follow={{isFollowing}}';
-        return 0;
+			document.location.href = '/index/followblog.html?blogname=' + blogname + '&follow={{isFollowing}}';
+			return 0;
    		 }
    		 
     	function processLike() {
-        var  blogname;
+			var blogname;
+			var like = !profileIsLikeing;
+			
+			blogname = getParameter('blogname');
 
+			if (!blogname) {
 
-        blogname = getParameter('blogname');
+				alert("You can't follow the Mainblog");
+				return 0;
+			}
 
-        if (!blogname) {
+			{% if activeProfile is null %}
+				alert("This feature can only be used with an active profile.\nPlease choose a Profile first!");
+				return 0;
+			{%  endif %}
+			
+			$.post(
+			"/index/likeprofile.html",
+			{
+				blogname: blogname, 
+				like: like
+			}).done( function(data) {
+				if(data.type == 'YouAlreadyLikeThisProfile'){
+					$("#apimessage").html('<center><div class="alert alert-danger" role="alert">You already like this profile'
+										+ '<br></div></center>');
+					$("#profLikes").html(data.newlikes);
+				} else if (data.type == 'YouCantLikeYourOwnProfiles'){
+					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>'
+										+ 'You can\'t like your own profiles'
+										+ '</div></center>');
+					$("#profLikes").html(data.newlikes);
+				} else if (data.type == 'LikeSuccessful'){
+					$("#apimessage").html('<center><div class=\"alert alert-success\" role=\"alert\">Like successful<br>'
+										+ '</div></center>');
+					$("#profLikes").html(data.newlikes);
+				} else if (data.type == 'LikeNotSuccessful'){
+					try {
+						var error = JSON.parse(data.result);
+						message = error.message;
+					} catch (e) {
+						message = data.result;
+					}
+				
+					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>'
+										+ message + '</div></center>');
+					$("#profLikes").html(data.newlikes);
+				} else if (data.type == 'LikeRemovedSuccessful'){
+				
+					$("#apimessage").html('<center><div class=\"alert alert-success\" role=\"alert\">Like removed successful<br>'
+										+ '</div></center>');
+					$("#profLikes").html(data.newlikes);
+				} else if (data.type == 'LikeRemovedNotSuccessful'){
+					try {
+						var error = JSON.parse(data.result);
+						message = error.message;
+					} catch (e) {
+						message = data.result;
+					}
+				
+					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">'
+										+ 'Like remove not successful<br>'
+										+ message
+										+ '</div></center>');
+					$("#profLikes").html(data.newlikes);
+				} else if (data.type == 'error'){
+					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like Error<br>'
+										+ data.error + '</div></center>');
+				}
+				
+				if(data.hasOwnProperty('likes'))
+				{
+					if(data.likes == 0)
+					{
+						$("#profLikes").html('');
+					}
+					else
+					{
+						$("#profLikes").html(data.likes);
+					}
+				}
 
-        alert("You can't follow the Mainblog");
-        return 0;
-        }
+				if(data.hasOwnProperty('isLikeing'))
+				{
+					profileIsLikeing = data.isLikeing;
+				}
+				if($("#profLikes").html() == '0'){
+					
+				}
+			}).fail( function(xhr, textStatus, errorThrown) {
+				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like Error<br>'
+										+ 'Connection Error<br>'
+										+ xhr.responseText + '</div></center>');
+			});
 
-        {% if activeProfile is null %}
-        alert("This feature can only be used with an active profile.\nPlease choose a Profile first!");
-        return 0;
-        {%  endif %}
-
-        document.location.href = '/index/likeprofile.html?blogname=' + blogname + '&like={{isLikeing}}';
-        return 0;
+			return 0;
    		 }
 
     $('ul.nav-tabs > li').removeClass('active');
