@@ -839,6 +839,10 @@ public class Controller extends Observable {
 		return this.wallet.unlock(password);
 	}
 
+	public void setSecondsToUnlock(int seconds) {
+		this.wallet.setSecondsToUnlock(seconds);
+	}
+	
 	public List<Pair<Account, Transaction>> getLastTransactions(int limit) {
 		return this.wallet.getLastTransactions(limit);
 	}

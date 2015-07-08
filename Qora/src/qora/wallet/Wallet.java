@@ -52,6 +52,8 @@ public class Wallet extends Observable implements Observer
 	private WalletDatabase database;
 	private SecureWalletDatabase secureDatabase;
 	
+	private int secondsToUnlock = -1;
+	
 	//CONSTRUCTORS
 	
 	public Wallet()
@@ -70,6 +72,11 @@ public class Wallet extends Observable implements Observer
 	
 	//GETTERS/SETTERS
 	
+	public void setSecondsToUnlock(int seconds)
+	{
+		this.secondsToUnlock = seconds;
+	}
+
 	public int getVersion()
 	{
 		return this.database.getVersion();
@@ -554,6 +561,18 @@ public class Wallet extends Observable implements Observer
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(ObserverMessage.WALLET_STATUS, STATUS_UNLOCKED));
 		
+		if(secondsToUnlock > 0)
+		{
+			new java.util.Timer().schedule( 
+				new java.util.TimerTask() {
+					@Override
+					public void run() {
+						lock();
+					}
+				}, 
+				secondsToUnlock*1000 
+			);
+		}
 		return true;
 	}
 	
@@ -571,6 +590,8 @@ public class Wallet extends Observable implements Observer
 		//NOTIFY
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(ObserverMessage.WALLET_STATUS, STATUS_LOCKED));
+		
+		secondsToUnlock = -1;
 		
 		//LOCK SUCCESSFULL
 		return true;

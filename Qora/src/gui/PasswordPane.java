@@ -7,6 +7,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
+import controller.Controller;
+
 public class PasswordPane 
 {
 	public static String showUnlockWalletDialog()
@@ -22,14 +24,33 @@ public class PasswordPane
 		userPanel.add(passwordLbl);
 		userPanel.add(passwordFld);
 
+		Object[] options = {"Unlock",
+                "Unlock for 2 minutes",
+                "Cancel"};		
+		
 		//As the JOptionPane accepts an object as the message
 		//it allows us to use any component we like - in this case 
 		//a JPanel containing the dialog components we want
-		if(JOptionPane.showConfirmDialog(null, userPanel, "Unlock Wallet" ,JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
-		{
-			return new String(passwordFld.getPassword());
+		
+		int n = JOptionPane.showOptionDialog(
+					null, 
+					userPanel, 
+					"Unlock Wallet",
+					JOptionPane.YES_NO_CANCEL_OPTION, 
+					JOptionPane.QUESTION_MESSAGE, 
+					null,
+					options, 
+					options[2]
+				);
+		
+		if(n == JOptionPane.YES_OPTION) {
+			Controller.getInstance().setSecondsToUnlock(-1);
+		} else if (n == JOptionPane.NO_OPTION) {
+			Controller.getInstance().setSecondsToUnlock(120);
+		} else {
+			return "";
 		}
 		
-		return "";
+		return new String(passwordFld.getPassword());
 	}
 }
