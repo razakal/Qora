@@ -636,7 +636,7 @@ public class SendMessagePanel extends JPanel
 				if(fee.compareTo(recommendedFee) < 0)
 				{
 					int n = -1;
-					if(Settings.getInstance().isAllowFeeBelowMinimum())
+					if(Settings.getInstance().isAllowFeeLessRequired())
 					{
 						n = JOptionPane.showConfirmDialog(
 							new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"

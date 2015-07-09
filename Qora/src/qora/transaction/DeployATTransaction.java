@@ -418,7 +418,7 @@ public class DeployATTransaction extends Transaction
 		}
 		
 		//CHECK IF FEE BELOW MINIMUM
-		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
+		if(!Settings.getInstance().isAllowFeeLessRequired() && !this.hasMinimumFeePerByte())
 		{
 			return FEE_LESS_REQUIRED;
 		}
