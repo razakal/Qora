@@ -204,10 +204,15 @@
         searchval = searchval.replace(/%20/g, ' ');
         $('#name').val(searchval);
         $('#button').click(function() {
+        	
             var url;
             url = void 0;
             searchval = $('#name').val();
-            document.location.href = '/index/main.html?search=' + searchval;
+              if (window.location.pathname === '/index/blogsearch.html') {
+       		 	document.location.href = '/index/blogsearch.html?search=' + searchval;
+       		 } else {
+       		 	document.location.href = '/index/main.html?search=' + searchval;
+        	}
         });
         $('#name').keypress(function(e) {
             if (e.which === 13) {
