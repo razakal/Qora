@@ -153,9 +153,9 @@ public class PollsResource
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
 				
-			case Transaction.FEE_BELOW_MINIMUM:
+			case Transaction.FEE_LESS_REQUIRED:
 				
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_BELOW_MINIMUM);
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
 					
 			case Transaction.NO_BALANCE:	
 					
@@ -282,9 +282,9 @@ public class PollsResource
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
 				
-			case Transaction.FEE_BELOW_MINIMUM:
+			case Transaction.FEE_LESS_REQUIRED:
 				
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_BELOW_MINIMUM);
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
 					
 			case Transaction.NO_BALANCE:	
 					

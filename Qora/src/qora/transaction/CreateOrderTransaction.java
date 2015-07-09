@@ -318,7 +318,7 @@ public class CreateOrderTransaction extends Transaction
 		//CHECK IF FEE BELOW MINIMUM
 		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
 		{
-			return FEE_BELOW_MINIMUM;
+			return FEE_LESS_REQUIRED;
 		}
 		
 		return VALIDATE_OKE;

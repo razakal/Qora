@@ -518,7 +518,7 @@ public class DeployATFrame extends JFrame {
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;	
-			case Transaction.FEE_BELOW_MINIMUM:
+			case Transaction.FEE_LESS_REQUIRED:
 				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;

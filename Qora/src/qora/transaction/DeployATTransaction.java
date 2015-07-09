@@ -420,7 +420,7 @@ public class DeployATTransaction extends Transaction
 		//CHECK IF FEE BELOW MINIMUM
 		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
 		{
-			return FEE_BELOW_MINIMUM;
+			return FEE_LESS_REQUIRED;
 		}
 		
 		//CHECK IF CREATIONBYTES VALID
