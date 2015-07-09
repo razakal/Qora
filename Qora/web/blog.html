@@ -292,6 +292,13 @@
 		{% else %}
 		profileIsLikeing = false;
 		{%  endif %}
+		
+		var profileisFollowing;
+		{% if isFollowing %}
+		profileisFollowing = true;
+		{% else %}
+		profileisFollowing = false;
+		{%  endif %}
 
        function getParameter(name) {
         if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
@@ -300,7 +307,7 @@
 
     	function processfollow() {
 			var  blogname;
-
+			var follow = !profileisFollowing; 
 			blogname = getParameter('blogname');
 
 			if (!blogname) {
@@ -313,8 +320,72 @@
 				return 0;
 			{%  endif %}
 
-			document.location.href = '/index/followblog.html?blogname=' + blogname + '&follow={{isFollowing}}';
-			return 0;
+			$.post(
+			"/index/followblog.html",
+			{
+				blogname: blogname, 
+				follow: follow
+			}).done( function(data) {
+				if(data.type == 'youAlreadyFollowThisBlog'){
+					$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+										+ "You already follow this blog"
+										+ "</div></center>");
+				} else if (data.type == 'youCantFollowYourOwnProfiles'){
+					$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+										+ "You can't follow your own profiles"
+										+ "</div></center>");
+				} else if (data.type == 'YouFollowThisBlogNow'){
+					$("#apimessage").html("<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
+										+ "</div>");
+				} else if (data.type == 'BlogFollowNotSuccessful'){
+					try {
+						var error = JSON.parse(data.result);
+						message = error.message;
+					} catch (e) {
+						message = data.result;
+					}
+					
+					$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+										+ message
+										+ "</div></center>");
+				} else if (data.type == 'unfollowSuccessful'){
+					$("#apimessage").html("<div class=\"alert alert-success\" role=\"alert\">Unfollow successful<br>"
+										+ "</div>");
+				} else if (data.type == 'blogUnfollowNotSuccessful'){
+					try {
+						var error = JSON.parse(data.result);
+						message = error.message;
+					} catch (e) {
+						message = data.result;
+					}
+					$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">Blog unfollow not successful<br>"
+										+ message
+										+ "</div></center>");
+				}
+				
+				if(data.hasOwnProperty('follower'))
+				{
+					if(data.follower == 0)
+					{
+						$("#profFollower").html('');
+					}
+					else
+					{
+						$("#profFollower").html(data.follower);
+					}
+				}
+
+				if(data.hasOwnProperty('isFollowing'))
+				{
+					profileisFollowing = data.isFollowing;
+				}
+				
+			}).fail( function(xhr, textStatus, errorThrown) {
+				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like Error<br>'
+										+ 'Connection Error<br>'
+										+ xhr.responseText + '</div></center>');
+			});
+			
    		 }
    		 
     	function processLike() {
@@ -343,16 +414,13 @@
 				if(data.type == 'YouAlreadyLikeThisProfile'){
 					$("#apimessage").html('<center><div class="alert alert-danger" role="alert">You already like this profile'
 										+ '<br></div></center>');
-					$("#profLikes").html(data.newlikes);
 				} else if (data.type == 'YouCantLikeYourOwnProfiles'){
 					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>'
 										+ 'You can\'t like your own profiles'
 										+ '</div></center>');
-					$("#profLikes").html(data.newlikes);
 				} else if (data.type == 'LikeSuccessful'){
 					$("#apimessage").html('<center><div class=\"alert alert-success\" role=\"alert\">Like successful<br>'
 										+ '</div></center>');
-					$("#profLikes").html(data.newlikes);
 				} else if (data.type == 'LikeNotSuccessful'){
 					try {
 						var error = JSON.parse(data.result);
@@ -363,12 +431,10 @@
 				
 					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>'
 										+ message + '</div></center>');
-					$("#profLikes").html(data.newlikes);
 				} else if (data.type == 'LikeRemovedSuccessful'){
 				
 					$("#apimessage").html('<center><div class=\"alert alert-success\" role=\"alert\">Like removed successful<br>'
 										+ '</div></center>');
-					$("#profLikes").html(data.newlikes);
 				} else if (data.type == 'LikeRemovedNotSuccessful'){
 					try {
 						var error = JSON.parse(data.result);
@@ -403,9 +469,7 @@
 				{
 					profileIsLikeing = data.isLikeing;
 				}
-				if($("#profLikes").html() == '0'){
-					
-				}
+
 			}).fail( function(xhr, textStatus, errorThrown) {
 				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like Error<br>'
 										+ 'Connection Error<br>'

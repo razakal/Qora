@@ -945,13 +945,20 @@ public class WebResource {
 		}
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	@POST
 	@Path("index/followblog.html")
-	@GET
-	public Response followBlog() {
+	@Consumes("application/x-www-form-urlencoded")
+	public Response followBlog(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 		try {
-			String blogname = request
-					.getParameter(BlogPostResource.BLOGNAME_KEY);
-			String followString = request.getParameter("follow");
+			
+			JSONObject json = new JSONObject();
+			
+			String blogname = form
+					.getFirst(BlogPostResource.BLOGNAME_KEY);
+			String followString = form.getFirst("follow");
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			Profile activeProfileOpt = ProfileHelper.getInstance()
 					.getActiveProfileOpt();
@@ -977,7 +984,19 @@ public class WebResource {
 								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
 										+ "You already follow this blog"
 										+ "</div></center>";
-								return getBlog(result);
+								
+								json.put("type", "youAlreadyFollowThisBlog");
+								json.put("follower", profile.getFollower().size());
+								
+								json.put("isFollowing",
+										activeProfileOpt.getFollowedBlogs().contains(
+												blogname));
+								
+								return Response
+										.status(200)
+										.header("Content-Type",
+												"application/json; charset=utf-8")
+										.entity(json.toJSONString()).build();
 							}
 							
 							// Prevent following of own profiles
@@ -985,24 +1004,60 @@ public class WebResource {
 								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
 										+ "You can't follow your own profiles"
 										+ "</div></center>";
-								return getBlog(result);
+								
+								json.put("type", "youCantFollowYourOwnProfiles");
+								json.put("follower", profile.getFollower().size());
+								
+								json.put("isFollowing",
+										activeProfileOpt.getFollowedBlogs().contains(
+												blogname));
+								
+								return Response
+										.status(200)
+										.header("Content-Type",
+												"application/json; charset=utf-8")
+										.entity(json.toJSONString()).build();
 							} 
-								try {
+							
+							boolean isFollowing = activeProfileOpt.getFollowedBlogs().contains(blogname);	
+							
+							try {
 
-									activeProfileOpt.addFollowedBlog(blogname);
-									result = activeProfileOpt.saveProfile();
-									result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
-											+ result + "</div>";
-								} catch (WebApplicationException e) {
-									result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
-											+ e.getResponse().getEntity()
-											+ "</div></center>";
-								}
+								activeProfileOpt.addFollowedBlog(blogname);
+								result = activeProfileOpt.saveProfile();
+								result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
+										+ result + "</div>";
+								
+								json.put("type", "YouFollowThisBlogNow");
+								json.put("result", result);
+								json.put("follower", profile.getFollower().size());
+								json.put("isFollowing",
+										activeProfileOpt.getFollowedBlogs().contains(
+												blogname));
+								
+							} catch (WebApplicationException e) {
+								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
+										+ e.getResponse().getEntity()
+										+ "</div></center>";
+								
+								json.put("type", "BlogFollowNotSuccessful");
+								json.put("result", e.getResponse().getEntity());
+								json.put("follower", profile.getFollower().size());
+								json.put("isFollowing",	isFollowing);
+									
+							}
 
-							return getBlog(result);
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
+									.entity(json.toJSONString()).build();	
 						}
 
 					} else {
+						
+						boolean isFollowing = activeProfileOpt.getFollowedBlogs().contains(blogname);
+						
 						if (activeProfileOpt.getFollowedBlogs().contains(
 								blogname)) {
 							activeProfileOpt.removeFollowedBlog(blogname);
@@ -1011,13 +1066,29 @@ public class WebResource {
 								result = activeProfileOpt.saveProfile();
 								result = "<div class=\"alert alert-success\" role=\"alert\">Unfollow successful<br>"
 										+ result + "</div>";
+								
+								json.put("type", "unfollowSuccessful");
+								json.put("result", result);
+								json.put("follower", profile.getFollower().size());
+								json.put("isFollowing",
+										activeProfileOpt.getFollowedBlogs().contains(
+												blogname));
 							} catch (WebApplicationException e) {
 								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog unfollow not successful<br>"
 										+ e.getResponse().getEntity()
 										+ "</div></center>";
+								
+								json.put("type", "blogUnfollowNotSuccessful");
+								json.put("result", e.getResponse().getEntity());
+								json.put("follower", profile.getFollower().size());
+								json.put("isFollowing",	isFollowing);
 							}
 
-							return getBlog(result);
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
+									.entity(json.toJSONString()).build();	
 
 						}
 					}
@@ -1028,7 +1099,11 @@ public class WebResource {
 			return getBlog(null);
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return Response
+					.status(200)
+					.header("Content-Type",
+							"application/json; charset=utf-8")
+					.entity("{}").build();
 		}
 
 	}
@@ -1254,7 +1329,7 @@ public class WebResource {
 			pebbleHelper.getContextMap().put(
 					"isFollowing",
 					activeProfileOpt != null
-							&& !activeProfileOpt.getFollowedBlogs().contains(
+							&& activeProfileOpt.getFollowedBlogs().contains(
 									blogname));
 			
 			pebbleHelper.getContextMap().put(
