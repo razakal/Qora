@@ -331,6 +331,7 @@
       });
     });
 
+ 	{% autoescape true %}
     $(document).ready(function() {
         var searchval;
         {%if profile is not null%}
@@ -481,6 +482,7 @@
           $('#btnShow').attr('disabled', true);
 		{%endif%}
     });
+    {% endautoescape %}
 	
 	function Add(){
 		AddValue("");
