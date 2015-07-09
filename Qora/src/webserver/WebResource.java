@@ -137,7 +137,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -190,7 +190,7 @@ public class WebResource {
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -215,7 +215,7 @@ public class WebResource {
 
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 
 	}
@@ -234,7 +234,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 
 	}
@@ -360,7 +360,7 @@ public class WebResource {
 			
 			if(ServletUtils.isRemoteRequest(request))
 			{
-				return getRemoteDisabledPage();
+				return error404(request, "This page is disabled for remote usage");
 			}
 
 			String profileName = request.getParameter("profilename");
@@ -410,15 +410,9 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 
-	}
-
-	public Response getRemoteDisabledPage() throws PebbleException {
-		return Response.ok(PebbleHelper
-				.getPebbleHelper("web/remotedisabled.html", request).evaluate(),
-				"text/html; charset=utf-8").build();
 	}
 
 	public String decodeIfNotNull(String parameter)
@@ -445,7 +439,7 @@ public class WebResource {
 
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 
 	}
@@ -510,7 +504,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "image/vnd.microsoft.icon").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -522,7 +516,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "image/vnd.microsoft.icon").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -553,7 +547,7 @@ public class WebResource {
 		int imgnum = imgs.indexOf(filename);
 
 		if (imgnum == -1) {
-			return error404(request);
+			return error404(request, null);
 		}
 
 		File file = new File("web/img/" + imgs.get(imgnum));
@@ -574,7 +568,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, type).build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -736,7 +730,7 @@ public class WebResource {
 			e.printStackTrace();
 		}
 
-		return error404(request);
+		return error404(request, null);
 
 	}
 
@@ -748,7 +742,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "text/css").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -760,7 +754,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "text/css").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -772,7 +766,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "text/css").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -784,7 +778,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -958,7 +952,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -1357,7 +1351,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -1369,7 +1363,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -1381,7 +1375,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -1400,7 +1394,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript; charset=utf-8").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -1419,7 +1413,7 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript; charset=utf-8").build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
@@ -1537,15 +1531,19 @@ public class WebResource {
 		if (file.exists()) {
 			return Response.ok(file, type).build();
 		} else {
-			return error404(request);
+			return error404(request, null);
 		}
 	}
 
-	public Response error404(HttpServletRequest request) {
+	public Response error404(HttpServletRequest request, String titleOpt) {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/404.html", request);
+			
+			
+			pebbleHelper.getContextMap().put("title", titleOpt == null ? "Sorry, that page does not exist!" : titleOpt);
+			
 			return Response.status(404)
 					.header("Content-Type", "text/html; charset=utf-8")
 					.entity(pebbleHelper.evaluate()).build();
@@ -1593,11 +1591,11 @@ public class WebResource {
 						.entity(pebbleHelper.evaluate()).build();
 
 			} else {
-				return error404(request);
+				return error404(request, null);
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return error404(request);
+			return error404(request, null);
 		}
 
 	}
@@ -1944,7 +1942,7 @@ public class WebResource {
 
 		// CHECK IF NAME EXISTS
 		if (name == null) {
-			return error404(request);
+			return error404(request, null);
 		}
 
 		String value = name.getValue();
@@ -1974,7 +1972,7 @@ public class WebResource {
 						"text/html; charset=utf-8").build();
 			} catch (Throwable e) {
 				e.printStackTrace();
-				return error404(request);
+				return error404(request, null);
 			}
 
 		}
