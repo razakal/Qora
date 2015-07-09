@@ -182,7 +182,7 @@ public abstract class Transaction {
 		}
 		else
 		{
-			recommendedFee = recommendedFee.add(new BigDecimal(0.0000001));
+			recommendedFee = recommendedFee.add(new BigDecimal("0.0000001"));
 		}
 		
 		return recommendedFee.setScale(8);
