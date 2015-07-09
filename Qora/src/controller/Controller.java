@@ -1136,6 +1136,54 @@ public class Controller extends Observable {
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForMessage(byte[] message) {
 		return this.transactionCreator.calcRecommendedFeeForMessage(message);
 	}
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForPayment() {
+		return this.transactionCreator.calcRecommendedFeeForPayment();
+	}
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForAssetTransfer() {
+		return this.transactionCreator.calcRecommendedFeeForAssetTransfer();
+	}		
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForOrderTransaction() {
+		return this.transactionCreator.calcRecommendedFeeForOrderTransaction();
+	}	
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForCancelOrderTransaction() {
+		return this.transactionCreator.calcRecommendedFeeForCancelOrderTransaction();
+	}	
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameSale(String name) {
+		return this.transactionCreator.calcRecommendedFeeForNameSale(
+				new NameSale(name, Transaction.MINIMUM_FEE));
+	}	
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNamePurchase(String name) {
+		return this.transactionCreator.calcRecommendedFeeForNamePurchase(
+				new NameSale(name, Transaction.MINIMUM_FEE));
+	}
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForCancelNameSale(String name) {
+		return this.transactionCreator.calcRecommendedFeeForCancelNameSale(
+				new NameSale(name, Transaction.MINIMUM_FEE));
+	}
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForPollVote(String pollName) {
+		return this.transactionCreator.calcRecommendedFeeForPollVote(pollName);
+	}
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForIssueAssetTransaction(String name, String description) {
+		return this.transactionCreator.calcRecommendedFeeForIssueAssetTransaction(name, description);
+	}
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForMultiPayment(List<Payment> payments) {
+		return this.transactionCreator.calcRecommendedFeeForMultiPayment(payments);
+	}
+	
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForMultiPayment(String name, String description, String type, 
+			String tags, byte[] creationBytes) {
+		return this.transactionCreator.calcRecommendedFeeForDeployATTransaction(name, description, type, tags, creationBytes);
+	}
 	
 	public Pair<Transaction, Integer> updateName(PrivateKeyAccount owner,
 			Account newOwner, String name, String value, BigDecimal fee) {
