@@ -52,7 +52,7 @@ public class LinkUtils {
 		StringBuffer sb = new StringBuffer();
 		while (m.find()) {
 			String found = m.group(0);
-			m.appendReplacement(sb, "<a href='" + found + "'>" + found + "</a>");
+			m.appendReplacement(sb, "<a target=\"_blank\" href='" + found + "'>" + found + "</a>");
 		}
 		m.appendTail(sb);
 		return sb.toString();
