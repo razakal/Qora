@@ -1642,6 +1642,9 @@ function mainQuery(data) {
 							output += ' / confirmations: '+data[i].transaction.confirmations;
 						}
 						output += '</td>';
+						
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
 						output += '<b>Action</b></td><td width="290"><b>New Owner</b></td><td width=100><b>Fee</b></td>';
