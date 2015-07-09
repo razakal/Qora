@@ -31,17 +31,9 @@ public class ProfileHelper {
 
 	public Profile getActiveProfileOpt(HttpServletRequest servletRequestOpt) {
 		// ACTIVE PROFILE NOT FOR REMOTE
-		if (servletRequestOpt != null) {
-
-			String ipAdress = servletRequestOpt.getHeader("X-FORWARDED-FOR");
-
-			if (ipAdress == null) {
-				ipAdress = servletRequestOpt.getRemoteAddr();
-			}
-
-			if (!ipAdress.equals("127.0.0.1")) {
-				return null;
-			}
+		if(ServletUtils.isRemoteRequest(servletRequestOpt))
+		{
+			return null;
 		}
 
 		if (currentProfile != null) {

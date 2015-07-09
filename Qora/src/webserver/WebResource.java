@@ -59,6 +59,7 @@ import qora.web.BlogBlackWhiteList;
 import qora.web.HTMLSearchResult;
 import qora.web.Profile;
 import qora.web.ProfileHelper;
+import qora.web.ServletUtils;
 import qora.web.blog.BlogEntry;
 import settings.Settings;
 import utils.AccountBalanceComparator;
@@ -356,6 +357,11 @@ public class WebResource {
 
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/settings.html", request);
+			
+			if(ServletUtils.isRemoteRequest(request))
+			{
+				return getRemoteDisabledPage();
+			}
 
 			String profileName = request.getParameter("profilename");
 
@@ -407,6 +413,12 @@ public class WebResource {
 			return error404(request);
 		}
 
+	}
+
+	public Response getRemoteDisabledPage() throws PebbleException {
+		return Response.ok(PebbleHelper
+				.getPebbleHelper("web/remotedisabled.html", request).evaluate(),
+				"text/html; charset=utf-8").build();
 	}
 
 	public String decodeIfNotNull(String parameter)
