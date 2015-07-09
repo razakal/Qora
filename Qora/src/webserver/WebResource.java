@@ -169,7 +169,7 @@ public class WebResource {
 		return Response
 				.status(200)
 				.header("Content-Type", "application/json; charset=utf-8")
-				.entity(StrJSonFine.StrJSonFine(JSONValue.toJSONString(output)))
+				.entity(StrJSonFine.convert(JSONValue.toJSONString(output)))
 				.build();
 	}
 

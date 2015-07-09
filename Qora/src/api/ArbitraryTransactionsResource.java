@@ -3,8 +3,6 @@ package api;
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;

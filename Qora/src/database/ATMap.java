@@ -21,11 +21,11 @@ import com.google.common.collect.Lists;
 
 import database.serializer.ATSerializer;
 
+@SuppressWarnings("rawtypes")
 public class ATMap extends DBMap<String, AT> 
 {
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 
-	
 	private NavigableSet typeATs;
 	private NavigableSet creatorATs;
 	private NavigableSet orderedATs;

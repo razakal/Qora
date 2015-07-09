@@ -22,6 +22,7 @@ public class ATStateMap extends DBMap< Tuple2<Integer, String> ,  byte[] > {
 
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 
+	@SuppressWarnings("rawtypes")
 	private NavigableSet allATStates;
 
 	public ATStateMap( DBSet databaseSet, DB database ) 

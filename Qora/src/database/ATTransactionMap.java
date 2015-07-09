@@ -25,7 +25,9 @@ import database.serializer.ATTransactionSerializer;
 public class ATTransactionMap extends DBMap< Tuple2<Integer, Integer> ,  AT_Transaction > { 
 	
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
+	@SuppressWarnings("rawtypes")
 	private NavigableSet senderKey;
+	@SuppressWarnings("rawtypes")
 	private NavigableSet recipientKey;
 	
 	public ATTransactionMap(DBSet databaseSet, DB database)

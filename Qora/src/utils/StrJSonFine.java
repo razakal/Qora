@@ -4,7 +4,7 @@ import java.io.StringWriter;
 
 public class StrJSonFine{
 
-    public static String StrJSonFine(String str) {
+    public static String convert(String str) {
         int indent = 0;
         
         boolean value = false;
