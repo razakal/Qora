@@ -54,7 +54,8 @@ public class Profile {
 		if (!isAllowedProfileName(name.getName())) {
 			return null;
 		}
-		return new Profile(name);
+		Name nameReloaded = DBSet.getInstance().getNameMap().get(name.getName());
+		return new Profile(nameReloaded);
 	}
 
 	private Profile(Name name) {

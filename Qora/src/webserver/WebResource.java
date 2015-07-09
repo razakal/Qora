@@ -286,7 +286,7 @@ public class WebResource {
 			blackwhitelist = URLDecoder.decode(blackwhitelist, "UTF-8");
 
 			profileAvatarOpt = decodeIfNotNull(profileAvatarOpt);
-			profileBannerOpt = decodeIfNotNull(profileBannerOpt);
+			profileBannerOpt = decodeIfNotNull(profileBannerOpt);			
 
 			Profile profile = Profile.getProfileOpt(name);
 			profile.saveAvatarTitle(profileAvatarOpt);
