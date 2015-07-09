@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.escaper.EscaperExtension;
@@ -41,11 +43,11 @@ public class PebbleHelper {
 		return pebbleHelper;
 	}
 
-	public static PebbleHelper getPebbleHelper(String htmlTemplate) throws PebbleException {
+	public static PebbleHelper getPebbleHelper(String htmlTemplate, HttpServletRequest requestOpt) throws PebbleException {
 		PebbleHelper pebbleHelper = getRawPebbleHelper(htmlTemplate);
 
 		List<Profile> enabledProfiles = Profile.getEnabledProfiles();
-		Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt();
+		Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(requestOpt);
 		List<String> followedBlogs;
 		if (activeProfileOpt != null) {
 			followedBlogs = activeProfileOpt.getFollowedBlogs();

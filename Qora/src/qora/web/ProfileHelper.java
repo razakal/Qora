@@ -2,6 +2,8 @@ package qora.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import qora.naming.Name;
 import controller.Controller;
 
@@ -15,20 +17,33 @@ public class ProfileHelper {
 		if (instance == null) {
 			instance = new ProfileHelper();
 		}
-		
+
 		return instance;
 
 	}
-	
+
 	public ProfileHelper() {
 		List<Profile> enabledProfiles = Profile.getEnabledProfiles();
-		if(enabledProfiles.size() > 0)
-		{
+		if (enabledProfiles.size() > 0) {
 			currentProfile = enabledProfiles.get(0);
 		}
 	}
 
-	public Profile getActiveProfileOpt(){
+	public Profile getActiveProfileOpt(HttpServletRequest servletRequestOpt) {
+		// ACTIVE PROFILE NOT FOR REMOTE
+		if (servletRequestOpt != null) {
+
+			String ipAdress = servletRequestOpt.getHeader("X-FORWARDED-FOR");
+
+			if (ipAdress == null) {
+				ipAdress = servletRequestOpt.getRemoteAddr();
+			}
+
+			if (!ipAdress.equals("127.0.0.1")) {
+				return null;
+			}
+		}
+
 		if (currentProfile != null) {
 			Name name = currentProfile.getName();
 			// RELOADING CURRENT VALUES
@@ -46,21 +61,17 @@ public class ProfileHelper {
 	}
 
 	public void switchProfileOpt(String profileString) {
-		
-		if(profileString != null)
-		{
+
+		if (profileString != null) {
 			Name name = Controller.getInstance().getName(profileString);
-			if(name != null)
-			{
+			if (name != null) {
 				Profile profile = Profile.getProfileOpt(name);
-				if(profile != null && profile.isProfileEnabled())
-				{
+				if (profile != null && profile.isProfileEnabled()) {
 					currentProfile = profile;
 				}
-				
+
 			}
 		}
-		
 
 	}
 

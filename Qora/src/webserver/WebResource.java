@@ -107,12 +107,12 @@ public class WebResource {
 			String searchValue = request.getParameter("search");
 
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/main.mini.html");
+					.getPebbleHelper("web/main.mini.html", request);
 
 			if (searchValue == null) {
 
 				return Response.ok(
-						PebbleHelper.getPebbleHelper("web/main.html")
+						PebbleHelper.getPebbleHelper("web/main.html", request)
 								.evaluate(), "text/html; charset=utf-8")
 						.build();
 			}
@@ -200,7 +200,7 @@ public class WebResource {
 		String searchValue = request.getParameter("search");
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/main.mini.html");
+					.getPebbleHelper("web/main.mini.html", request);
 			if (StringUtil.isBlank(searchValue)) {
 
 				return Response.ok(pebbleHelper.evaluate(),
@@ -225,7 +225,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/main.mini.html");
+					.getPebbleHelper("web/main.mini.html", request);
 
 			List<HTMLSearchResult> results = handleBlogSearch(null);
 			pebbleHelper.getContextMap().put("searchresults", results);
@@ -355,7 +355,7 @@ public class WebResource {
 		try {
 
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/settings.html");
+					.getPebbleHelper("web/settings.html", request);
 
 			String profileName = request.getParameter("profilename");
 
@@ -379,7 +379,7 @@ public class WebResource {
 
 				if (name == null) {
 					Profile activeProfileOpt = ProfileHelper.getInstance()
-							.getActiveProfileOpt();
+							.getActiveProfileOpt(request);
 					if (activeProfileOpt != null) {
 						name = activeProfileOpt.getName();
 					} else {
@@ -420,7 +420,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/main.mini.html");
+					.getPebbleHelper("web/main.mini.html", request);
 
 			List<Pair<String, String>> websitesByValue = NameUtils
 					.getWebsitesByValue(null);
@@ -578,7 +578,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/apianswer.html");
+					.getPebbleHelper("web/apianswer.html", request);
 			// EXAMPLE POST/GET/DELETE
 			String type = request.getParameter("type");
 			// EXAMPLE /names/key/MyName
@@ -881,7 +881,7 @@ public class WebResource {
 		try {
 
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/postblog.html");
+					.getPebbleHelper("web/postblog.html", request);
 
 			pebbleHelper.getContextMap().put("errormessage", "");
 			pebbleHelper.getContextMap().put("font", "");
@@ -932,7 +932,7 @@ public class WebResource {
 			}
 
 			Profile activeProfileOpt = ProfileHelper.getInstance()
-					.getActiveProfileOpt();
+					.getActiveProfileOpt(request);
 
 			if (activeProfileOpt != null
 					&& resultingNames.contains(activeProfileOpt.getName())) {
@@ -964,7 +964,7 @@ public class WebResource {
 			String followString = form.getFirst("follow");
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			Profile activeProfileOpt = ProfileHelper.getInstance()
-					.getActiveProfileOpt();
+					.getActiveProfileOpt(request);
 
 			if (followString != null && activeProfileOpt != null
 					&& blogname != null && nameMap.contains(blogname)) {
@@ -1127,7 +1127,7 @@ public class WebResource {
 
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			Profile activeProfileOpt = ProfileHelper.getInstance()
-					.getActiveProfileOpt();
+					.getActiveProfileOpt(request);
 
 			if (likeString != null && activeProfileOpt != null
 					&& profilename != null && nameMap.contains(profilename)) {
@@ -1276,7 +1276,7 @@ public class WebResource {
 			ProfileHelper.getInstance().switchProfileOpt(switchprofile);
 
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/blog.html");
+					.getPebbleHelper("web/blog.html", request);
 			pebbleHelper.getContextMap().put("postblogurl", "postblog.html");
 			pebbleHelper.getContextMap().put("apimessage", messageOpt);
 
@@ -1285,7 +1285,7 @@ public class WebResource {
 				if (!nameMap.contains(blogname)) {
 					return Response.ok(
 							PebbleHelper.getPebbleHelper(
-									"web/profiledisabled.html").evaluate(),
+									"web/profiledisabled.html", request).evaluate(),
 							"text/html; charset=utf-8").build();
 				}
 
@@ -1294,7 +1294,7 @@ public class WebResource {
 
 				if (profile == null || !profile.isProfileEnabled()) {
 					pebbleHelper = PebbleHelper
-							.getPebbleHelper("web/profiledisabled.html");
+							.getPebbleHelper("web/profiledisabled.html", request);
 					if (Controller.getInstance().getAccountByAddress(
 							name.getOwner().getAddress()) != null) {
 						pebbleHelper.getContextMap().put("ownProfileName",
@@ -1324,7 +1324,7 @@ public class WebResource {
 			}
 
 			Profile activeProfileOpt = ProfileHelper.getInstance()
-					.getActiveProfileOpt();
+					.getActiveProfileOpt(request);
 			pebbleHelper.getContextMap().put(
 					"isFollowing",
 					activeProfileOpt != null
@@ -1533,7 +1533,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/404.html");
+					.getPebbleHelper("web/404.html", request);
 			return Response.status(404)
 					.header("Content-Type", "text/html; charset=utf-8")
 					.entity(pebbleHelper.evaluate()).build();
@@ -1556,7 +1556,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper
-					.getPebbleHelper("web/main.mini.html");
+					.getPebbleHelper("web/main.mini.html", request);
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 
 			if (nameMap.contains(name)) {
@@ -1954,7 +1954,7 @@ public class WebResource {
 		if (website == null) {
 			try {
 				PebbleHelper pebbleHelper = PebbleHelper
-						.getPebbleHelper("web/websitenotfound.html");
+						.getPebbleHelper("web/websitenotfound.html", request);
 				pebbleHelper.getContextMap().put("name",
 						nameName.replaceAll(" ", "%20"));
 
