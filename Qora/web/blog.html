@@ -225,14 +225,14 @@
               <h1>{{blogprofile.getName().getName()}}</h1>
               <p>Description</p>
               <ul class="profile-options list-inline">&nbsp;&nbsp;
-              {% if blogprofile is not empty and  blogprofile.isProfileEnabled() and ownProfileName is empty %}
+              {% if blogprofile is not empty and  blogprofile.isProfileEnabled()%}
               <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()">Like <div class="glyphicon glyphicon-heart"></div> <span id=profLikes>
 			  {% if likes is not null and likes.size() != 0 %}
               {{ likes.size() }}
               {%endif%}
 			  </span></span></a></li>
               {%endif%}
-          		{% if blogprofile is not empty and  blogprofile.isBlogEnabled() and ownProfileName is empty %}
+          		{% if blogprofile is not empty and  blogprofile.isBlogEnabled()%}
               <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">Follow <div class="glyphicon glyphicon-user"></div> <span id=profFollower>
 			  {% if follower is not null and follower.size() != 0 %}
               {{ follower.size() }}
