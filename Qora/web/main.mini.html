@@ -131,8 +131,8 @@
             <ul class="list-unstyled">
             	 {% for searchresult in searchresults %}
              <li class="q"><a href="{{searchresult.titlelink}}">
- 			<h5 class="r-t">{% autoescape true %}{{searchresult.title}}{% endautoescape %}</h5><a><a href="{{searchresult.namelink}}" class="r-l">{{searchresult.name}}</a><span class="label label-default"><a href="{{searchresult.keyslink}}"/>rawdata</a></span>
-			<p>{% autoescape true %}{{searchresult.description}}{% endautoescape %}</p></a></a></li>
+ 			<h5 class="r-t">{% autoescape true %}{{searchresult.title | abbreviate(64)}}{% endautoescape %}</h5><a><a href="{{searchresult.namelink}}" class="r-l">{{searchresult.name}}</a><span class="label label-default"><a href="{{searchresult.keyslink}}"/>rawdata</a></span>
+			<p>{% autoescape true %}{{searchresult.description | abbreviate(150)}}{% endautoescape %}</p></a></a></li>
 			{% endfor %}
 
 				{% if keyvaluepairs is not empty %}
