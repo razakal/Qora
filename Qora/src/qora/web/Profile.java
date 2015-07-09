@@ -148,7 +148,7 @@ public class Profile {
 		if (!StringUtils.isBlank(value)) {
 			jsonRepresenation.put(key.toString(), value);
 		} else {
-			jsonRepresenation.remove(key);
+			jsonRepresenation.remove(key.toString());
 		}
 	}
 
