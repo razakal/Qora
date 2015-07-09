@@ -313,12 +313,16 @@
 			blogname = getParameter('blogname');
 
 			if (!blogname) {
-				alert("You can't follow the Mainblog");
+				$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">"
+								+ "You can't follow the Mainblog<br>"
+								+ "</div></center>");
 				return 0;
 			}
 
 			{% if activeProfile is null %}
-				alert("This feature can only be used with an active profile.\nPlease choose a Profile first!");
+				$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">"
+								+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+								+ "</div></center>");
 				return 0;
 			{%  endif %}
 
@@ -397,13 +401,16 @@
 			blogname = getParameter('blogname');
 
 			if (!blogname) {
-
-				alert("You can't follow the Mainblog");
+				$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">"
+									+ "You can't like the Mainblog!"
+									+ "</div></center>");
 				return 0;
 			}
 
 			{% if activeProfile is null %}
-				alert("This feature can only be used with an active profile.\nPlease choose a Profile first!");
+				$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">"
+									+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+									+ "</div></center>");
 				return 0;
 			{%  endif %}
 			
