@@ -255,7 +255,50 @@ public class IssueAssetFrame extends JFrame
 				}
 			}
 		
-			//CREATE POLL
+			BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForIssueAssetTransaction(this.txtName.getText(), this.txtareaDescription.getText()).getA();
+			if(fee.compareTo(recommendedFee) < 0)
+			{
+				int n = -1;
+				if(Settings.getInstance().isAllowFeeBelowMinimum())
+				{
+					n = JOptionPane.showConfirmDialog(
+						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
+									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
+									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
+		                "Confirmation",
+		                JOptionPane.YES_NO_CANCEL_OPTION);
+				}
+				else
+				{
+					n = JOptionPane.showConfirmDialog(
+							new JFrame(), "Fee less required!\n"
+										+ "Press OK to turn on required "+recommendedFee.toPlainString() + ".",
+			                "Confirmation",
+			                JOptionPane.OK_CANCEL_OPTION);
+				}
+				if (n == JOptionPane.YES_OPTION || n == JOptionPane.OK_OPTION) {
+					
+					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+					{
+						this.txtFee.setText("1"); // Return to the default fee for the next name.
+					}
+					
+					fee = recommendedFee; // Set recommended fee for this name.
+					
+				}
+				else if (n == JOptionPane.NO_OPTION) {
+					
+				}	
+				else {
+					
+					//ENABLE
+					this.issueButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
+			//CREATE ASSET
 			PrivateKeyAccount creator = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
 			Pair<Transaction, Integer> result = Controller.getInstance().issueAsset(creator, this.txtName.getText(), this.txtareaDescription.getText(), quantity, this.chkDivisible.isSelected(), fee);
 			
@@ -284,6 +327,11 @@ public class IssueAssetFrame extends JFrame
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
+				
+			case Transaction.FEE_BELOW_MINIMUM:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;
 				
 			case Transaction.NO_BALANCE:
 			

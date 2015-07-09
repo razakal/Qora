@@ -26,6 +26,7 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import settings.Settings;
 import utils.Converter;
 import database.DBSet;
 
@@ -414,6 +415,12 @@ public class DeployATTransaction extends Transaction
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
+		}
+		
+		//CHECK IF FEE BELOW MINIMUM
+		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
+		{
+			return FEE_BELOW_MINIMUM;
 		}
 		
 		//CHECK IF CREATIONBYTES VALID

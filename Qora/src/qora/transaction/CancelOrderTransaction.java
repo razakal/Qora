@@ -18,6 +18,7 @@ import qora.account.PublicKeyAccount;
 import qora.assets.Order;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import settings.Settings;
 import database.DBSet;
 
 public class CancelOrderTransaction extends Transaction
@@ -223,6 +224,12 @@ public class CancelOrderTransaction extends Transaction
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
+		}
+		
+		//CHECK IF FEE BELOW MINIMUM
+		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
+		{
+			return FEE_BELOW_MINIMUM;
 		}
 		
 		return VALIDATE_OKE;

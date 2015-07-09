@@ -1180,7 +1180,7 @@ public class Controller extends Observable {
 		return this.transactionCreator.calcRecommendedFeeForMultiPayment(payments);
 	}
 	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForMultiPayment(String name, String description, String type, 
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForDeployATTransaction(String name, String description, String type, 
 			String tags, byte[] creationBytes) {
 		return this.transactionCreator.calcRecommendedFeeForDeployATTransaction(name, description, type, tags, creationBytes);
 	}

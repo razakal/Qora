@@ -11,6 +11,7 @@ import qora.account.Account;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import settings.Settings;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -175,6 +176,12 @@ public class GenesisTransaction extends Transaction {
 		if(!Crypto.getInstance().isValidAddress(this.recipient.getAddress()))
 		{
 			return INVALID_ADDRESS;
+		}
+		
+		//CHECK IF FEE BELOW MINIMUM
+		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
+		{
+			return FEE_BELOW_MINIMUM;
 		}
 		
 		return VALIDATE_OKE;

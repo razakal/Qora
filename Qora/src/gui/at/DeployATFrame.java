@@ -353,7 +353,7 @@ public class DeployATFrame extends JFrame {
 				}
 			}
 
-			//CREATE POLL
+			//
 			PrivateKeyAccount creator = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
 
 
@@ -451,7 +451,52 @@ public class DeployATFrame extends JFrame {
 			byte[] creationBytes = null;
 			creationBytes = creation.array();
 
-			Pair<Transaction, Integer> result = Controller.getInstance().deployAT(creator, this.txtName.getText(), this.txtareaDescription.getText() , this.txtType.getText() , this.txtTags.getText() , creationBytes, quantity, fee);
+			
+			
+			BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForDeployATTransaction(this.txtName.getText(), this.txtareaDescription.getText(), this.txtType.getText(), this.txtTags.getText(), creationBytes).getA();
+			if(fee.compareTo(recommendedFee) < 0)
+			{
+				int n = -1;
+				if(Settings.getInstance().isAllowFeeBelowMinimum())
+				{
+					n = JOptionPane.showConfirmDialog(
+						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
+									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
+									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
+		                "Confirmation",
+		                JOptionPane.YES_NO_CANCEL_OPTION);
+				}
+				else
+				{
+					n = JOptionPane.showConfirmDialog(
+							new JFrame(), "Fee less required!\n"
+										+ "Press OK to turn on required "+recommendedFee.toPlainString() + ".",
+			                "Confirmation",
+			                JOptionPane.OK_CANCEL_OPTION);
+				}
+				if (n == JOptionPane.YES_OPTION || n == JOptionPane.OK_OPTION) {
+					
+					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+					{
+						this.txtFee.setText("1.00000000"); // Return to the default fee for the next message.
+					}
+					
+					fee = recommendedFee; // Set recommended fee for this message.
+					
+				}
+				else if (n == JOptionPane.NO_OPTION) {
+					
+				}	
+				else {
+					
+					//ENABLE
+					this.deployButton.setEnabled(true);
+					
+					return;
+				}
+			}			
+			
+			Pair<Transaction, Integer> result = Controller.getInstance().deployAT(creator, this.txtName.getText(), this.txtareaDescription.getText() , this.txtType.getText(), this.txtTags.getText() , creationBytes, quantity, fee);
 
 			//CHECK VALIDATE MESSAGE
 			if (result.getB() > 1000)
@@ -473,6 +518,10 @@ public class DeployATFrame extends JFrame {
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;	
+			case Transaction.FEE_BELOW_MINIMUM:
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				this.deployButton.setEnabled(true);
+				break;
 			case Transaction.NEGATIVE_AMOUNT:
 				JOptionPane.showMessageDialog(new JFrame(), "Quantity must be at least 0!", "Error", JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);

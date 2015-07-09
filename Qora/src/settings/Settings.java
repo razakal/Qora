@@ -55,8 +55,11 @@ public class Settings {
 	private static final boolean DEFAULT_BLOCKEXPLORER_BOOST = false;
 	
 	private static final int DEFAULT_MAX_BYTE_PER_FEE = 512;
+	private static final boolean ALLOW_FEE_BELOW_MINIMUM = false;
+	
 	private static final BigDecimal DEFAULT_BIG_FEE = new BigDecimal(1000);
 	private static final String DEFAULT_BIG_FEE_MESSAGE = "Do you really want to set such a large fee?\nThese coins will go to the forgers.";
+	
 	
 	private static Settings instance;
 	
@@ -423,6 +426,16 @@ public class Settings {
 		}
 		
 		return DEFAULT_MAX_BYTE_PER_FEE;
+	}
+	
+	public boolean isAllowFeeBelowMinimum() 
+	{
+		if(this.settingsJSON.containsKey("allowfeebelowminimum"))
+		{
+			return ((Boolean) this.settingsJSON.get("allowfeebelowminimum")).booleanValue();
+		}
+		
+		return ALLOW_FEE_BELOW_MINIMUM;
 	}
 	
 	public BigDecimal getBigFee() 

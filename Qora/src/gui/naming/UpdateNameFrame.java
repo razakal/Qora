@@ -559,13 +559,25 @@ public class UpdateNameFrame extends JFrame
 			BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForNameUpdate(name.getName(), currentValueAsJsonStringOpt).getA();
 			if(fee.compareTo(recommendedFee) < 0)
 			{
-				int n = JOptionPane.showConfirmDialog(
+				int n = -1;
+				if(Settings.getInstance().isAllowFeeBelowMinimum())
+				{
+					n = JOptionPane.showConfirmDialog(
 						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
 									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
 									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
 		                "Confirmation",
 		                JOptionPane.YES_NO_CANCEL_OPTION);
-				if (n == JOptionPane.YES_OPTION) {
+				}
+				else
+				{
+					n = JOptionPane.showConfirmDialog(
+							new JFrame(), "Fee less required!\n"
+										+ "Press OK to turn on required "+recommendedFee.toPlainString() + ".",
+			                "Confirmation",
+			                JOptionPane.OK_CANCEL_OPTION);
+				}
+				if (n == JOptionPane.YES_OPTION || n == JOptionPane.OK_OPTION) {
 					
 					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
 					{
@@ -602,6 +614,11 @@ public class UpdateNameFrame extends JFrame
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
+				
+			case Transaction.FEE_BELOW_MINIMUM:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;
 				
 			case Transaction.NO_BALANCE:
 			

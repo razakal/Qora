@@ -221,6 +221,10 @@ public class NameSalesResource
 			case Transaction.NEGATIVE_FEE:
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				
+			case Transaction.FEE_BELOW_MINIMUM:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_BELOW_MINIMUM);
 					
 			case Transaction.NO_BALANCE:	
 					
@@ -323,6 +327,10 @@ public class NameSalesResource
 			case Transaction.NEGATIVE_FEE:
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				
+			case Transaction.FEE_BELOW_MINIMUM:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_BELOW_MINIMUM);
 					
 			case Transaction.NO_BALANCE:	
 					
@@ -441,6 +449,10 @@ public class NameSalesResource
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
 					
+			case Transaction.FEE_BELOW_MINIMUM:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_BELOW_MINIMUM);
+
 			case Transaction.NO_BALANCE:	
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NO_BALANCE);

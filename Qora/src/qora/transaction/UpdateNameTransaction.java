@@ -19,6 +19,7 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
+import settings.Settings;
 
 public class UpdateNameTransaction extends Transaction 
 {
@@ -241,6 +242,12 @@ public class UpdateNameTransaction extends Transaction
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
+		}
+		
+		//CHECK IF FEE BELOW MINIMUM
+		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
+		{
+			return FEE_BELOW_MINIMUM;
 		}
 		
 		return VALIDATE_OKE;

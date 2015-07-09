@@ -299,7 +299,12 @@ public class SellNameFrame extends JFrame
 			case Transaction.NEGATIVE_FEE:
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
-				break;	
+				break;
+				
+			case Transaction.FEE_BELOW_MINIMUM:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;				
 				
 			case Transaction.NO_BALANCE:
 			

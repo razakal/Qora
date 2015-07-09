@@ -23,6 +23,7 @@ import qora.account.PublicKeyAccount;
 import qora.crypto.Crypto;
 import qora.voting.Poll;
 import qora.voting.PollOption;
+import settings.Settings;
 
 public class CreatePollTransaction extends Transaction 
 {
@@ -280,6 +281,12 @@ public class CreatePollTransaction extends Transaction
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
+		}
+		
+		//CHECK IF FEE BELOW MINIMUM
+		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
+		{
+			return FEE_BELOW_MINIMUM;
 		}
 		
 		return VALIDATE_OKE;

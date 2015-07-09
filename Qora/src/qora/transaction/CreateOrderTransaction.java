@@ -19,6 +19,7 @@ import qora.account.PublicKeyAccount;
 import qora.assets.Asset;
 import qora.assets.Order;
 import qora.crypto.Crypto;
+import settings.Settings;
 
 public class CreateOrderTransaction extends Transaction 
 {
@@ -312,6 +313,12 @@ public class CreateOrderTransaction extends Transaction
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
+		}
+		
+		//CHECK IF FEE BELOW MINIMUM
+		if(!Settings.getInstance().isAllowFeeBelowMinimum() && !this.hasMinimumFeePerByte())
+		{
+			return FEE_BELOW_MINIMUM;
 		}
 		
 		return VALIDATE_OKE;

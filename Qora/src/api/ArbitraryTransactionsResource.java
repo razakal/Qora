@@ -3,6 +3,8 @@ package api;
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -132,6 +134,10 @@ public class ArbitraryTransactionsResource
 				
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
 				
+		case Transaction.FEE_BELOW_MINIMUM:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_BELOW_MINIMUM);
+			
 		case Transaction.NO_BALANCE:	
 				
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NO_BALANCE);
