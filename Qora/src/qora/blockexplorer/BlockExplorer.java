@@ -13,17 +13,20 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
+
 import javax.ws.rs.core.UriInfo;
+
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 import org.mapdb.Fun.Tuple6;
-import at.AT;
-import at.AT_Transaction;
+
 import qora.account.Account;
 import qora.assets.Asset;
 import qora.assets.Order;
@@ -51,11 +54,14 @@ import qora.transaction.UpdateNameTransaction;
 import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
 import qora.voting.PollOption;
+import settings.Settings;
 import utils.BlockExplorerComparator;
 import utils.GZIP;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.ReverseComparator;
+import at.AT;
+import at.AT_Transaction;
 import controller.Controller;
 import database.DBSet;
 import database.SortableList;
@@ -65,7 +71,8 @@ public class BlockExplorer extends Observable implements Observer
 {
 	private static BlockExplorer blockExplorer;
 	private boolean indexing;
-
+	private Timer timer = new Timer();
+	
 	public static BlockExplorer getInstance()
 	{
 		if(blockExplorer == null)
@@ -106,10 +113,44 @@ public class BlockExplorer extends Observable implements Observer
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
+		
+		ObserverMessage message = (ObserverMessage) arg1;
+		
+		if(message.getType() == ObserverMessage.NETWORK_STATUS)
+		{
+			if((int)message.getValue() == Controller.STATUS_OKE)
+			{
+				this.timer.cancel(); 
+				this.timer = new Timer();
+				
+				TimerTask action = new TimerTask() {
+			        public void run() {
+			    		// BLOCKEXPLORER BOOST
+			    		if(Settings.getInstance().isBlockExplorerBoost()) {
+			    			Block lastBlock = Controller.getInstance().getLastBlock();
+			    			 
+			    			if(!(
+			    					DBSet.getInstance().getBlocksOfAddressMap().getValues().size() == Controller.getInstance().getHeight()
+			    					&&
+			    					DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature())))
+			    				)) {
+			    				synchronize();
+			    			}
+			          	}		        
+			    	}
+			    };
+			    
+			    this.timer.schedule(action, 10000);
+			}
+			
+			if((int)message.getValue() == Controller.STATUS_NO_CONNECTIONS || (int)message.getValue() == Controller.STATUS_SYNCHRONIZING)
+			{
+				this.timer.cancel(); 
+			}
+		}
+		
 		if(indexing)
 		{
-			ObserverMessage message = (ObserverMessage) arg1;
-			
 			if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE)
 			{
 				Block block = (Block) message.getValue();
@@ -192,7 +233,7 @@ public class BlockExplorer extends Observable implements Observer
 				//UPDATE
 				this.update(this, new ObserverMessage(ObserverMessage.ADD_BLOCK_TYPE, block));
 				
-				if(block.getHeight() % 1000 == 0) 
+				if(block.getHeight() % 2000 == 0) 
 				{
 					Logger.getGlobal().info("Synchronize blockexplorer: " + block.getHeight());
 					DBSet.getInstance().commit();
@@ -202,9 +243,12 @@ public class BlockExplorer extends Observable implements Observer
 				block = block.getChild();
 			}
 			while(block != null);
+			
+			DBSet.getInstance().commit();
+			
+			Logger.getGlobal().info("Synchronize blockexplorer completed.");
 		}
 		finally{
-			//forcedSynchronize = false;
 		}
 		
 	}

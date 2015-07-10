@@ -32,7 +32,6 @@ import network.message.TransactionMessage;
 import network.message.VersionMessage;
 
 import org.apache.commons.io.FileUtils;
-import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 
 import qora.BlockChain;
@@ -233,19 +232,6 @@ public class Controller extends Observable {
 		// REGISTER DATABASE OBSERVER
 		this.addObserver(DBSet.getInstance().getTransactionMap());
 		this.addObserver(DBSet.getInstance());
-		
-		// BLOCKEXPLORER BOOST
-		if(Settings.getInstance().isBlockExplorerBoost()) {
-			Block lastBlock = Controller.getInstance().getLastBlock();
-			 
-			if(!(
-					DBSet.getInstance().getBlocksOfAddressMap().getValues().size() == Controller.getInstance().getHeight()
-					&&
-					DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature())))
-				)) {
-				BlockExplorer.getInstance().synchronize();
-			}
-      	}
 	}
 
 	private File getDataBakDir(File dataDir) {
