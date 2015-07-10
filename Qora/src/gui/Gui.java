@@ -52,6 +52,11 @@ public class Gui extends JFrame{
         
 	}
 	
+	public static boolean isGuiStarted()
+	{
+		return maingui != null;
+	}
+	
 	public void onWalletCreated()
 	{
 		mainframe = new MainFrame();

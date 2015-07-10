@@ -59,7 +59,7 @@ public class Start {
 				//ERROR STARTING
 				System.out.println("STARTUP ERROR: " + e.getMessage());
 				
-				if(Gui.getWindows().length > 0)
+				if(Gui.isGuiStarted())
 				{
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Startup Error", JOptionPane.ERROR_MESSAGE);
 				}
