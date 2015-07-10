@@ -226,14 +226,14 @@
               <p>Description</p>
               <ul class="profile-options list-inline">&nbsp;&nbsp;
               {% if blogprofile is not empty and  blogprofile.isProfileEnabled()%}
-              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()">{%if isLikeing%}Unlike {%else%}Like {%endif%}<div class="glyphicon glyphicon-heart"></div> <span id=profLikes>
+              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()">Like <div id="divLike" class="glyphicon glyphicon-heart"{%if isLikeing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profLikes>
 			  {% if likes is not null and likes.size() != 0 %}
               {{ likes.size() }}
               {%endif%}
 			  </span></span></a></li>
               {%endif%}
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled()%}
-              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">{%if isFollowing%}Unfollow {%else%}Follow {%endif%}<div class="glyphicon glyphicon-user"></div> <span id=profFollower>
+              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">Follow <div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
 			  {% if follower is not null and follower.size() != 0 %}
               {{ follower.size() }}
               {%endif%}
@@ -384,6 +384,15 @@
 				if(data.hasOwnProperty('isFollowing'))
 				{
 					profileisFollowing = data.isFollowing;
+					
+					if(data.isFollowing)
+					{
+						$("#divFollow").css("color", "#6467FF");
+					}
+					else
+					{
+						$("#divFollow").css("color", "");
+					}
 				}
 				
 			}).fail( function(xhr, textStatus, errorThrown) {
@@ -477,6 +486,15 @@
 				if(data.hasOwnProperty('isLikeing'))
 				{
 					profileIsLikeing = data.isLikeing;
+					
+					if(data.isLikeing)
+					{
+						$("#divLike").css("color", "#6467FF");
+					}
+					else
+					{
+						$("#divLike").css("color", "");
+					}
 				}
 
 			}).fail( function(xhr, textStatus, errorThrown) {
