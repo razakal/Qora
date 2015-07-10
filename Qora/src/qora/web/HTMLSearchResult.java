@@ -1,5 +1,7 @@
 package qora.web;
 
+import java.util.List;
+
 public class HTMLSearchResult {
 
 	
@@ -9,14 +11,16 @@ public class HTMLSearchResult {
 	private String namelink;
 	private String keyslink;
 	private String name;
+	private List<String> followerOpt;
 
-	public HTMLSearchResult(String title, String description,String name, String titlelink, String namelink, String keyslink) {
+	public HTMLSearchResult(String title, String description,String name, String titlelink, String namelink, String keyslink, List<String> followerOpt) {
 		this.title = title;
 		this.description = description;
 		this.name = name;
 		this.titlelink = titlelink;
 		this.namelink = namelink;
 		this.keyslink = keyslink;
+		this.followerOpt = followerOpt;
 	}
 
 	public String getTitle() {
@@ -42,6 +46,11 @@ public class HTMLSearchResult {
 	public String getName() {
 		return name;
 	}
+
+	public List<String> getFollowerOpt() {
+		return followerOpt;
+	}
+
 
 
 

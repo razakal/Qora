@@ -56,6 +56,7 @@ import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
+import qora.web.BlogProfile;
 import qora.web.HTMLSearchResult;
 import qora.web.Profile;
 import qora.web.ProfileHelper;
@@ -72,7 +73,6 @@ import utils.Pair;
 import utils.PebbleHelper;
 import utils.Qorakeys;
 import utils.StrJSonFine;
-import utils.Triplet;
 import api.ATResource;
 import api.AddressesResource;
 import api.ApiErrorFactory;
@@ -155,7 +155,7 @@ public class WebResource {
 			description = description == null ? "" : description;
 			description = StringUtils.abbreviate(description, 150);
 			results.add(new HTMLSearchResult(title, description, name, "/"
-					+ name, "/" + name, "/namepairs:" + name));
+					+ name, "/" + name, "/namepairs:" + name, null));
 
 		}
 		return results;
@@ -446,17 +446,16 @@ public class WebResource {
 
 	private List<HTMLSearchResult> handleBlogSearch(String blogSearchOpt) {
 		List<HTMLSearchResult> results = new ArrayList<>();
-		List<Triplet<String, String, String>> allEnabledBlogs = BlogUtils
+		List<BlogProfile> allEnabledBlogs = BlogUtils
 				.getEnabledBlogs(blogSearchOpt);
-		for (Triplet<String, String, String> triplet : allEnabledBlogs) {
-			String name = triplet.getA();
-			String title = triplet.getB();
-			String description = triplet.getC();
-			description = StringUtils.abbreviate(description, 150);
+		for (BlogProfile blogProfile : allEnabledBlogs) {
+			String name = blogProfile.getProfile().getName().getName();
+			String title = blogProfile.getProfile().getBlogTitleOpt();
+			String description = blogProfile.getProfile().getBlogDescriptionOpt();
 
 			results.add(new HTMLSearchResult(title, description, name,
 					"/index/blog.html?blogname=" + name,
-					"/index/blog.html?blogname=" + name, "/namepairs:" + name));
+					"/index/blog.html?blogname=" + name, "/namepairs:" + name, blogProfile.getFollower()));
 		}
 
 		return results;

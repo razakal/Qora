@@ -2,7 +2,9 @@ package utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jetty.util.StringUtil;
@@ -14,6 +16,7 @@ import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
+import qora.web.BlogProfile;
 import qora.web.Profile;
 import qora.web.blog.BlogEntry;
 import api.BlogPostResource;
@@ -27,46 +30,88 @@ public class BlogUtils {
 	 * 
 	 * @return triplet of name, title, description of all enabled blogs.
 	 */
-	public static List<Triplet<String, String, String>> getEnabledBlogs(
+	public static List<BlogProfile> getEnabledBlogs(
 			String searchvalueOpt) {
 
 		NameMap nameMap = DBSet.getInstance().getNameMap();
-		List<Triplet<String, String, String>> results = new ArrayList<>();
 		Set<String> names = nameMap.getKeys();
+		
+		Map<String, List<String>> followMap = new HashMap<>();
+		List<Profile> resultProfiles = new ArrayList<>();
 
 		for (String name : names) {
 			Name nameObj = nameMap.get(name);
 
 			Profile profile = Profile.getProfileOpt(nameObj);
 
-			if (profile != null && profile.isProfileEnabled() && profile.isBlogEnabled()) {
-
-				String title = profile.getBlogTitleOpt();
-				String description = profile.getBlogDescriptionOpt();
-				if (searchvalueOpt != null) {
-					searchvalueOpt = searchvalueOpt.toLowerCase();
-					if (name.toLowerCase().contains(searchvalueOpt)
-							|| (title != null && title.toLowerCase().contains(
-									searchvalueOpt))
-							|| (description != null)
-							&& description.toLowerCase().contains(
-									searchvalueOpt)) {
-						results.add(addTriplet(name, title, description));
+			if(profile != null && profile.isProfileEnabled())
+			{
+				List<String> followedBlogs = profile.getFollowedBlogs();
+				if(followedBlogs != null)
+				{
+					List<String> alreadyProcessed = new ArrayList<String>();
+					for (String followedBlog : followedBlogs) {
+						if(!alreadyProcessed.contains(followedBlog) && !name.equals(followedBlog))
+						{
+							alreadyProcessed.add(followedBlog);
+							if(followMap.containsKey(followedBlog))
+							{
+								List<String> followerList = followMap.get(followedBlog);
+								if(!followerList.contains(name))
+								{
+									followerList.add(name);
+								}
+								followMap.put(followedBlog, followerList);
+							}else
+							{
+								List<String> followerList = new ArrayList<>();
+								followerList.add(name);
+								followMap.put(followedBlog, followerList);
+							}
+						}
 					}
-					continue;
 				}
-				results.add(addTriplet(name, title, description));
+				
+				if (profile.isBlogEnabled()) {
+					
+					String title = profile.getBlogTitleOpt();
+					String description = profile.getBlogDescriptionOpt();
+					if (searchvalueOpt != null) {
+						searchvalueOpt = searchvalueOpt.toLowerCase();
+						if (name.toLowerCase().contains(searchvalueOpt)
+								|| (title != null && title.toLowerCase().contains(
+										searchvalueOpt))
+										|| (description != null)
+										&& description.toLowerCase().contains(
+												searchvalueOpt)) {
+							resultProfiles.add(profile);
+						}
+						continue;
+					}
+					resultProfiles.add(profile);
+				}
 			}
 
 		}
+		
+		List<BlogProfile> blogprofiles = new ArrayList<>();
+		for (Profile profileWithBlog : resultProfiles) {
+			
+			String name = profileWithBlog.getName().getName();
+			if(followMap.containsKey(name))
+			{
+				blogprofiles.add(new BlogProfile(profileWithBlog, followMap.get(name)));
+			}else
+			{
+				blogprofiles.add(new BlogProfile(profileWithBlog, new ArrayList<String>()));
+			}
+			
+		}
+		
+		Collections.sort(blogprofiles);
+		
 
-		return results;
-	}
-
-	private static Triplet<String, String, String> addTriplet(String name,
-			String title, String description) {
-		return new Triplet<String, String, String>(name, title == null ? ""
-				: title, description == null ? "" : description);
+		return blogprofiles;
 	}
 
 	public static List<BlogEntry> getBlogPosts(String blogOpt) {
