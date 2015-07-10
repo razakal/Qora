@@ -105,6 +105,11 @@ public class Wallet extends Observable implements Observer
 		return this.database.getAccountMap().getAccount(address);
 	}
 	
+	public boolean isWalletDatabaseExisting()
+	{
+		return database != null;
+	}
+	
 	public BigDecimal getUnconfirmedBalance(String address)
 	{
 		return this.database.getAccountMap().getUnconfirmedBalance(address);

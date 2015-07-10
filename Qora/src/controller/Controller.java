@@ -719,6 +719,11 @@ public class Controller extends Observable {
 		// CHECK IF WALLET EXISTS
 		return this.wallet.exists();
 	}
+	
+	public boolean doesWalletDatabaseExists()
+	{
+		return this.wallet.isWalletDatabaseExisting();
+	}
 
 	public boolean createWallet(byte[] seed, String password, int amount) {
 		// IF NEW WALLET CREADED

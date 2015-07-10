@@ -1315,10 +1315,13 @@ public class WebResource {
 				pebbleHelper.getContextMap().put("blogprofile", profile);
 				pebbleHelper.getContextMap().put("blogenabled",
 						profile.isBlogEnabled());
-				if (Controller.getInstance().getAccountByAddress(
-						name.getOwner().getAddress()) != null) {
-					pebbleHelper.getContextMap()
-							.put("ownProfileName", blogname);
+				if(Controller.getInstance().doesWalletDatabaseExists())
+				{
+					if (Controller.getInstance().getAccountByAddress(
+							name.getOwner().getAddress()) != null) {
+						pebbleHelper.getContextMap()
+						.put("ownProfileName", blogname);
+					}
 				}
 				pebbleHelper.getContextMap().put("follower",
 						profile.getFollower());

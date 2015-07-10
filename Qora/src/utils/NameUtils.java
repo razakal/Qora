@@ -102,17 +102,18 @@ public class NameUtils {
 		String rawNameValue = null;
 		List<Transaction> accountTransactions = getOwnUnconfirmedTX();
 
-		for (Transaction transaction : accountTransactions) {
-
-			if (transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION) {
-				UpdateNameTransaction updateNameTx = (UpdateNameTransaction) transaction;
-				if (updateNameTx.getName().getName().equals(name.getName())) {
-					rawNameValue = updateNameTx.getName().getValue();
-					break;
+		
+			for (Transaction transaction : accountTransactions) {
+				
+				if (transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION) {
+					UpdateNameTransaction updateNameTx = (UpdateNameTransaction) transaction;
+					if (updateNameTx.getName().getName().equals(name.getName())) {
+						rawNameValue = updateNameTx.getName().getValue();
+						break;
+					}
+					
 				}
-
 			}
-		}
 
 		if (rawNameValue == null) {
 			rawNameValue = name.getValue();
@@ -154,8 +155,11 @@ public class NameUtils {
 				.getTransactionMap().getTransactions();
 		List<Transaction> accountTransactions = new ArrayList<Transaction>();
 
+		
+		boolean doesWalletDatabaseExists = Controller.getInstance().doesWalletDatabaseExists();
+		
 		for (Transaction transaction : transactions) {
-			if (Controller.getInstance().getAccounts()
+			if (doesWalletDatabaseExists && Controller.getInstance().getAccounts()
 					.contains(transaction.getCreator())) {
 				accountTransactions.add(transaction);
 			}
