@@ -13,21 +13,21 @@ import java.util.List;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import at.AT;
-import at.AT_Constants;
-import at.AT_Controller;
-import at.AT_Exception;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
-import settings.Settings;
 import utils.Converter;
+import at.AT;
+import at.AT_Constants;
+import at.AT_Controller;
+import at.AT_Exception;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
 import database.DBSet;
 
 public class DeployATTransaction extends Transaction
@@ -415,12 +415,6 @@ public class DeployATTransaction extends Transaction
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
-		}
-		
-		//CHECK IF FEE BELOW MINIMUM
-		if(!Settings.getInstance().isAllowFeeLessRequired() && !this.hasMinimumFeePerByte())
-		{
-			return FEE_LESS_REQUIRED;
 		}
 		
 		//CHECK IF CREATIONBYTES VALID

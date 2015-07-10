@@ -14,7 +14,6 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
-import settings.Settings;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -295,12 +294,6 @@ public class TransferAssetTransaction extends Transaction {
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
-		}
-		
-		//CHECK IF FEE BELOW MINIMUM
-		if(!Settings.getInstance().isAllowFeeLessRequired() && !this.hasMinimumFeePerByte())
-		{
-			return FEE_LESS_REQUIRED;
 		}
 				
 		return VALIDATE_OKE;

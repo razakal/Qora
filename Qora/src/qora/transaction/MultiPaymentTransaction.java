@@ -16,7 +16,6 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Crypto;
 import qora.payment.Payment;
-import settings.Settings;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -297,12 +296,6 @@ public class MultiPaymentTransaction extends Transaction {
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
-		}
-		
-		//CHECK IF FEE BELOW MINIMUM
-		if(!Settings.getInstance().isAllowFeeLessRequired() && !this.hasMinimumFeePerByte())
-		{
-			return FEE_LESS_REQUIRED;
 		}
 		
 		return VALIDATE_OKE;

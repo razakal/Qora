@@ -8,18 +8,18 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.assets.Asset;
 import qora.assets.Order;
 import qora.crypto.Crypto;
-import settings.Settings;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import database.DBSet;
 
 public class CreateOrderTransaction extends Transaction 
 {
@@ -313,12 +313,6 @@ public class CreateOrderTransaction extends Transaction
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
-		}
-		
-		//CHECK IF FEE BELOW MINIMUM
-		if(!Settings.getInstance().isAllowFeeLessRequired() && !this.hasMinimumFeePerByte())
-		{
-			return FEE_LESS_REQUIRED;
 		}
 		
 		return VALIDATE_OKE;

@@ -36,6 +36,7 @@ import qora.transaction.TransferAssetTransaction;
 import qora.transaction.UpdateNameTransaction;
 import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
+import settings.Settings;
 import utils.Pair;
 import utils.TransactionTimestampComparator;
 import database.DBSet;
@@ -680,14 +681,23 @@ public class TransactionCreator
 	private Pair<Transaction, Integer> afterCreate(Transaction transaction)
 	{
 		//CHECK IF PAYMENT VALID
-		int valid = transaction.isValid(this.fork);		
+		int valid = transaction.isValid(this.fork);
+		
 		if(valid == Transaction.VALIDATE_OKE)
 		{
-			//PROCESS IN FORK
-			transaction.process(this.fork);
-					
-			//CONTROLLER ONTRANSACTION
-			Controller.getInstance().onTransactionCreate(transaction);
+			//CHECK IF FEE BELOW MINIMUM
+			if(!Settings.getInstance().isAllowFeeLessRequired() && !transaction.hasMinimumFeePerByte())
+			{
+				valid = Transaction.FEE_LESS_REQUIRED;
+			}
+			else
+			{
+				//PROCESS IN FORK
+				transaction.process(this.fork);
+						
+				//CONTROLLER ONTRANSACTION
+				Controller.getInstance().onTransactionCreate(transaction);
+			}
 		}
 				
 		//RETURN

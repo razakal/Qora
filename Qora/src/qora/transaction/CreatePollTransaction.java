@@ -12,18 +12,18 @@ import ntp.NTP;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Crypto;
 import qora.voting.Poll;
 import qora.voting.PollOption;
-import settings.Settings;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import database.DBSet;
 
 public class CreatePollTransaction extends Transaction 
 {
@@ -281,12 +281,6 @@ public class CreatePollTransaction extends Transaction
 		if(this.fee.compareTo(BigDecimal.ZERO) <= 0)
 		{
 			return NEGATIVE_FEE;
-		}
-		
-		//CHECK IF FEE BELOW MINIMUM
-		if(!Settings.getInstance().isAllowFeeLessRequired() && !this.hasMinimumFeePerByte())
-		{
-			return FEE_LESS_REQUIRED;
 		}
 		
 		return VALIDATE_OKE;
