@@ -226,7 +226,7 @@
               <p>Description</p>
               <ul class="profile-options list-inline">&nbsp;&nbsp;
               {% if blogprofile is not empty and  blogprofile.isProfileEnabled()%}
-              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()">{%if isLikeing%}UnLike {%else%}Like {%endif%}<div class="glyphicon glyphicon-heart"></div> <span id=profLikes>
+              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()">{%if isLikeing%}Unlike {%else%}Like {%endif%}<div class="glyphicon glyphicon-heart"></div> <span id=profLikes>
 			  {% if likes is not null and likes.size() != 0 %}
               {{ likes.size() }}
               {%endif%}
