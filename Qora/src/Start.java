@@ -37,16 +37,22 @@ public class Start {
 				//STARTING NETWORK/BLOCKCHAIN/RPC
 				Controller.getInstance().start();
 				
-				if(Settings.getInstance().isGuiEnabled())
+				try
 				{
-					//START GUI
-					Gui.getInstance();
-					
-					SysTray.getInstance().createTrayIcon();
+					if(Settings.getInstance().isGuiEnabled())
+					{
+						//START GUI
+						if(Gui.getInstance() != null)
+						{					
+							SysTray.getInstance().createTrayIcon();
+						}
+					}
+				} catch(Exception e) {
+					System.out.println("GUI ERROR: " + e.getMessage());
 				}
-			}
-			catch(Exception e)
-			{
+				
+			} catch(Exception e) {
+				
 				e.printStackTrace();
 				
 				//USE SYSTEM STYLE
