@@ -157,8 +157,15 @@ public class BlogBlackWhiteList {
 		List<Name> resultingNames = new CopyOnWriteArrayList<Name>();
 		List<Account> resultingAccounts = new CopyOnWriteArrayList<Account>();
 		
-		List<Account> myaccounts = new ArrayList<Account>(Controller
-				.getInstance().getAccounts());
+		List<Account> myaccounts;
+		if(Controller.getInstance().doesWalletExists())
+		{
+			myaccounts = new ArrayList<Account>(Controller
+					.getInstance().getAccounts());
+		}else
+		{
+			myaccounts = new ArrayList<Account>();
+		}
 		List<Name> myNames = new ArrayList<Name>(Controller
 				.getInstance().getNamesAsList());
 		

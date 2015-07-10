@@ -112,6 +112,8 @@ public class NameUtils {
 	{
 		
 		String rawNameValue = null;
+		if(Controller.getInstance().doesWalletExists())
+		{
 			List<Transaction> accountTransactions = getOwnUnconfirmedTX();
 			
 			for (Transaction transaction : accountTransactions) {
@@ -127,6 +129,8 @@ public class NameUtils {
 					
 				}
 			}
+			
+		}
 		
 		
 		if(rawNameValue == null)
@@ -172,7 +176,7 @@ public class NameUtils {
 	public static List<Transaction> getOwnUnconfirmedTX() {
 		List<Transaction> transactions = DBSet.getInstance().getTransactionMap().getTransactions();
 		List<Transaction> accountTransactions = new ArrayList<Transaction>();
-			
+		
 		for(Transaction transaction: transactions)
 		{
 			if(Controller.getInstance().getAccounts().contains(transaction.getCreator()))
