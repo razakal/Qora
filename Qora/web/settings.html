@@ -197,7 +197,7 @@
                 </select>
 				<br>
 				<div style="border: 2px solid #ddd;  border-radius: 6px; padding: 10px;">
-				<table id="tblData">	
+				<table id="tblData" width=100%>	
 				<thead> 
 				<tr> 
 				<th>Addresses:</th> 
@@ -489,7 +489,7 @@
 	function AddValue(value){
 	$("#tblData tbody").append(
 		"<tr>"+
-		"<td><input size=63 type='text'/ value='"+value+"'></td>"+
+		"<td width=100%><input style='width: 100%;' type='text'/ value='"+value+"'></td>"+
 		"<td>&nbsp;<span class=btnDelete style='cursor: pointer;'>&#10006;</span></td>"+
 		"</tr>");
 		$(".btnDelete").bind("click", Delete);
