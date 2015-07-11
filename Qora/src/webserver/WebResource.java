@@ -1271,7 +1271,7 @@ public class WebResource {
 
 	@Path("index/blog.html")
 	@GET
-	public Response getBlog(String messageOpt) {
+	public Response getBlog(@PathParam("messageOpt") String messageOpt) {
 
 		try {
 			String blogname = request
