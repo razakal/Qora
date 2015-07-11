@@ -3,12 +3,10 @@ package qora.blockexplorer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,6 +54,7 @@ import qora.voting.Poll;
 import qora.voting.PollOption;
 import settings.Settings;
 import utils.BlockExplorerComparator;
+import utils.DateTimeFormat;
 import utils.GZIP;
 import utils.ObserverMessage;
 import utils.Pair;
@@ -255,9 +254,7 @@ public class BlockExplorer extends Observable implements Observer
 	
 	public static String timestampToStr(long timestamp)
 	{
-		Date date = new Date( timestamp );
-		DateFormat format = DateFormat.getDateTimeInstance();
-		return format.format(date);
+		return DateTimeFormat.timestamptoString(timestamp);
 	}
 	
 	

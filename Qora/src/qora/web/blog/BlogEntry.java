@@ -2,9 +2,7 @@ package qora.web.blog;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +15,7 @@ import org.jsoup.safety.Whitelist;
 
 import qora.naming.Name;
 import qora.web.Profile;
+import utils.DateTimeFormat;
 import utils.LinkUtils;
 import utils.Pair;
 import webserver.WebResource;
@@ -137,9 +136,7 @@ public class BlogEntry {
 	}
 
 	public String getCreationTime() {
-		Date date = new Date(time);
-		DateFormat format = DateFormat.getDateTimeInstance();
-		return format.format(date);
+		return DateTimeFormat.timestamptoString(time);
 	}
 
 	@Override

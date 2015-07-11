@@ -3,18 +3,17 @@ package gui.models;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.mapdb.Fun.Tuple2;
 
-import controller.Controller;
 import qora.assets.Asset;
 import qora.assets.Trade;
+import utils.DateTimeFormat;
 import utils.NumberAsString;
 import utils.ObserverMessage;
+import controller.Controller;
 import database.DBSet;
 import database.SortableList;
 
@@ -85,9 +84,7 @@ public class TradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteg
 		{
 		case COLUMN_TIMESTAMP:
 			
-			Date date = new Date(trade.getTimestamp());
-			DateFormat format = DateFormat.getDateTimeInstance();
-			return format.format(date);
+			return DateTimeFormat.timestamptoString(trade.getTimestamp());
 			
 		case COLUMN_TYPE:
 			

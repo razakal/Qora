@@ -19,5 +19,7 @@
 	"weballowed":[
 		"127.0.0.1"
 	],
-	"generatorkeycaching": true
+	"generatorkeycaching": true,
+	"timezone": "UTC",
+	"timeformat": "yyyy-MM-dd HH:mm:ss"
 }

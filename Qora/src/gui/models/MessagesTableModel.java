@@ -14,12 +14,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -47,6 +45,7 @@ import qora.transaction.MessageTransaction;
 import qora.transaction.Transaction;
 import qora.wallet.Wallet;
 import utils.Converter;
+import utils.DateTimeFormat;
 import utils.NumberAsString;
 import utils.ObserverMessage;
 import utils.Pair;
@@ -667,9 +666,6 @@ public class MessagesTableModel extends JTable implements Observer{
 		
 		public String getDecrMessageHtml(int width, boolean selected, boolean images)
 		{
-			Date date = new Date( timestamp );
-			DateFormat format = DateFormat.getDateTimeInstance();
-			
 			Account account = Controller.getInstance().getAccountByAddress( sender );
 			String imginout = "";
 			if(account != null)
@@ -752,7 +748,7 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ recipient+"\n</font></td>\n"
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
 					+ "<font color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
-					+ format.format(date) + "\n<br>\n"
+					+ DateTimeFormat.timestamptoString(timestamp) + "\n<br>\n"
 					+ "<font"+fontsmall+">Amount: " +  NumberAsString.getInstance().numberAsString(amount)+" Fee: "
 					+ NumberAsString.getInstance().numberAsString(fee)+"</font>"
 					+ "\n</font></td></tr></table>"
@@ -768,9 +764,6 @@ public class MessagesTableModel extends JTable implements Observer{
 		
 		public String getDecrMessageTXT()
 		{
-			Date date = new Date( timestamp );
-			DateFormat format = DateFormat.getDateTimeInstance();
-			
 			Account account = Controller.getInstance().getAccountByAddress( sender );
 			
 			String imginout = "";
@@ -809,8 +802,8 @@ public class MessagesTableModel extends JTable implements Observer{
 			{
 				strconfirmations = strconfirmations + " !";
 			}
-			
-			return 	  "Date: " + format.format(date) + "\n"
+						
+			return 	  "Date: " + DateTimeFormat.timestamptoString(timestamp) + "\n"
 					+ "Sender: " + sender + "\n"
 					+ "Recipient: " + recipient + "\n"
 					+ "Amount: " +  NumberAsString.getInstance().numberAsString(amount) + " Fee: " + NumberAsString.getInstance().numberAsString(fee) + "\n"

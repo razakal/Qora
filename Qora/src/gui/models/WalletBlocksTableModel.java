@@ -1,16 +1,15 @@
 package gui.models;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.mapdb.Fun.Tuple2;
 
+import qora.block.Block;
+import utils.DateTimeFormat;
+import utils.ObserverMessage;
 import controller.Controller;
 import database.SortableList;
 import database.wallet.BlockMap;
-import qora.block.Block;
-import utils.ObserverMessage;
 
 @SuppressWarnings("serial")
 public class WalletBlocksTableModel extends QoraTableModel<Tuple2<String, String>, Block> implements Observer{
@@ -77,9 +76,7 @@ public class WalletBlocksTableModel extends QoraTableModel<Tuple2<String, String
 			
 		case COLUMN_TIMESTAMP:
 			
-			Date date = new Date(block.getTimestamp());
-			DateFormat format = DateFormat.getDateTimeInstance();
-			return format.format(date);
+			return DateTimeFormat.timestamptoString(block.getTimestamp());
 			
 		case COLUMN_GENERATOR:
 			

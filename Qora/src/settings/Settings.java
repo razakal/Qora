@@ -8,11 +8,11 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import network.Peer;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
-import network.Peer;
 
 public class Settings {
 
@@ -60,6 +60,9 @@ public class Settings {
 	private static final BigDecimal DEFAULT_BIG_FEE = new BigDecimal(1000);
 	private static final String DEFAULT_BIG_FEE_MESSAGE = "Do you really want to set such a large fee?\nThese coins will go to the forgers.";
 	
+	//DATE FORMAT
+	private static final String DEFAULT_TIME_ZONE = "";
+	private static final String DEFAULT_TIME_FORMAT = "";
 	
 	private static Settings instance;
 	
@@ -466,5 +469,23 @@ public class Settings {
 		}
 		
 		return DEFAULT_BLOCKEXPLORER_BOOST;
+	}
+	
+	public String getTimeZone()
+	{
+		if(this.settingsJSON.containsKey("timezone")) {
+			return (String) this.settingsJSON.get("timezone");
+		}
+		
+		return DEFAULT_TIME_ZONE;
+	}
+	
+	public String getTimeFormat()
+	{
+		if(this.settingsJSON.containsKey("timeformat")) {
+			return (String) this.settingsJSON.get("timeformat");
+		}
+		
+		return DEFAULT_TIME_FORMAT;
 	}
 }

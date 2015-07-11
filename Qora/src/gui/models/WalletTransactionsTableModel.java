@@ -1,27 +1,26 @@
 package gui.models;
 
 import java.awt.TrayIcon.MessageType;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.mapdb.Fun.Tuple2;
 
-import controller.Controller;
-import database.DBSet;
-import database.SortableList;
-import database.wallet.TransactionMap;
 import qora.account.Account;
 import qora.transaction.MessageTransaction;
 import qora.transaction.PaymentTransaction;
 import qora.transaction.Transaction;
 import settings.Settings;
+import utils.DateTimeFormat;
 import utils.NumberAsString;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.PlaySound;
 import utils.SysTray;
+import controller.Controller;
+import database.DBSet;
+import database.SortableList;
+import database.wallet.TransactionMap;
 
 @SuppressWarnings("serial")
 public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, String>, Transaction> implements Observer {
@@ -95,9 +94,7 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 			
 		case COLUMN_TIMESTAMP:
 			
-			Date date = new Date(transaction.getTimestamp());
-			DateFormat format = DateFormat.getDateTimeInstance();
-			return format.format(date);
+			return DateTimeFormat.timestamptoString(transaction.getTimestamp());
 			
 		case COLUMN_TYPE:
 			

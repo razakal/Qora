@@ -11,19 +11,23 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import controller.Controller;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Order;
 import qora.transaction.Transaction;
+import utils.DateTimeFormat;
 import utils.Pair;
+import controller.Controller;
 
 @SuppressWarnings("serial")
 public class CancelOrderFrame extends JFrame
@@ -88,10 +92,7 @@ public class CancelOrderFrame extends JFrame
       	//TXT TIMESTAMP
       	txtGBC.gridy = 1;
     
-		Date date = new Date(order.getTimestamp());
-		DateFormat format = DateFormat.getDateTimeInstance();
-      	
-      	JTextField txtTimestamp = new JTextField(format.format(date));
+		JTextField txtTimestamp = new JTextField(DateTimeFormat.timestamptoString(order.getTimestamp()));
       	txtTimestamp.setEditable(false);
       	this.add(txtTimestamp, txtGBC);
         

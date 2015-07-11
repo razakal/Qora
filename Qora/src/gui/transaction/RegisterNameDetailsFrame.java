@@ -5,16 +5,22 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 
 import qora.crypto.Base58;
 import qora.transaction.RegisterNameTransaction;
+import utils.DateTimeFormat;
 import utils.GZIP;
 
 @SuppressWarnings("serial")
@@ -97,9 +103,7 @@ public class RegisterNameDetailsFrame extends JFrame
 						
 		//TIMESTAMP
 		detailGBC.gridy = 3;
-		Date date = new Date(nameRegistration.getTimestamp());
-		DateFormat format = DateFormat.getDateTimeInstance();
-		JLabel timestamp = new JLabel(format.format(date));
+		JLabel timestamp = new JLabel(DateTimeFormat.timestamptoString(nameRegistration.getTimestamp()));
 		this.add(timestamp, detailGBC);
 		
 		//LABEL REGISTRANT

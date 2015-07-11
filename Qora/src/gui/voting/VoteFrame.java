@@ -13,21 +13,27 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.transaction.Transaction;
 import qora.voting.Poll;
 import qora.voting.PollOption;
+import utils.DateTimeFormat;
 import utils.Pair;
+import controller.Controller;
 
 @SuppressWarnings("serial")
 public class VoteFrame extends JFrame
@@ -224,9 +230,7 @@ public class VoteFrame extends JFrame
 				
 			case Transaction.NOT_YET_RELEASED:
 				
-				Date release = new Date(Transaction.VOTING_RELEASE);	
-				DateFormat format = DateFormat.getDateTimeInstance();
-				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + format.format(release) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + DateTimeFormat.timestamptoString(Transaction.VOTING_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 			
 			case Transaction.ALREADY_VOTED_FOR_THAT_OPTION:

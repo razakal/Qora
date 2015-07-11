@@ -1,8 +1,11 @@
 package utils;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+
+import settings.Settings;
 
 public class DateStringComparator implements Comparator<String> {
 
@@ -10,7 +13,13 @@ public class DateStringComparator implements Comparator<String> {
 	
 	public DateStringComparator()
 	{
-		this.format = DateFormat.getDateTimeInstance();
+		String strTimeFormat = Settings.getInstance().getTimeFormat();
+		
+		if(strTimeFormat.equals("")) {
+			this.format = DateFormat.getDateTimeInstance();
+		} else {
+			this.format = new SimpleDateFormat(strTimeFormat);
+		}
 	}
 	
 	@Override
