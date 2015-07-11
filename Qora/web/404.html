@@ -202,7 +202,7 @@
     var getSearchParameters;
     getSearchParameters = function() {
         var prmstr;
-        prmstr = window.location.search.substr(1);
+        prmstr = decodeURIComponent(window.location.search.substr(1));
         if (prmstr != null && prmstr != '') {
             return transformToAssocArray(prmstr);
         } else {
@@ -233,8 +233,7 @@
         if (getSearchParameters().search === void 0) {
             $('#name').val('');
         }
-        searchval = $('#name').val();
-        searchval = searchval.replace(/%20/g, ' ');
+		
         $('#name').val(searchval);
         $('[id="button"]').click(function() {
             var url;

@@ -245,7 +245,7 @@
     var getSearchParameters;
     getSearchParameters = function() {
         var prmstr;
-        prmstr = window.location.search.substr(1);
+        prmstr = decodeURIComponent(window.location.search.substr(1));
         if (prmstr != null && prmstr != '') {
             return transformToAssocArray(prmstr);
         } else {
@@ -359,9 +359,7 @@
         });
         $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
         $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
-        searchval = $('#name').val();
-        searchval = searchval.replace(/%20/g, ' ');
-        $('#name').val(searchval);
+
         $('#button').click(function() {
             var url;
             url = void 0;
@@ -443,9 +441,6 @@
             $('#name').val(this);
         });
 		
-		searchval = $('#name').val();
-        searchval = searchval.replace(/%20/g, ' ');
-        $('#name').val(searchval);
         $('#button').click(function() {
             var url;
             url = void 0;
