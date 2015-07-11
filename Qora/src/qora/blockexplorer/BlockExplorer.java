@@ -1446,6 +1446,9 @@ public class BlockExplorer extends Observable implements Observer
 		output.put("timestamp", lastBlock.getTimestamp());
 		output.put("dateTime", BlockExplorer.timestampToStr(lastBlock.getTimestamp()));
 		
+		output.put("timezone", Settings.getInstance().getTimeZone());
+		output.put("timeformat", Settings.getInstance().getTimeFormat());
+		
 		output.put("boost", getBoostStatus());
 					
 		return output;
