@@ -223,10 +223,6 @@ function asyncAjax (url, type){
 	xmlhttp.send(null);
 }
 
-//window.onhashchange = function() {
-//	start();
-//}
-
 function secToFine(time) {
 	time = Math.floor( time/1000 );
 	
@@ -393,6 +389,9 @@ function topRichest(data)
 	
 	output += lastBlock(data.lastBlock);
 
+	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="900">';
+	output += '<tr><td align=center>';
+	
 	output += 'Total coins in the system: ' + 
 		addCommas(data.allTotal) + ' '+ getAssetName(data.assetKey, data.assetName) + '<br>';
 	output += 'minus ' + addCommas(data.allinOrders) + 
