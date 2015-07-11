@@ -184,14 +184,33 @@ public class RegisterNameFrame extends JFrame
       	this.txtKey = new JTextField();
       	this.add(this.txtKey, txtGBC);
       	
-         
+		//WEBSITE
+        buttonGBC.gridy = 4;
+        buttonGBC.gridx = 2;
+        buttonGBC.fill = GridBagConstraints.EAST;
+        buttonGBC.anchor = GridBagConstraints.EAST;
+        
+        JButton webButton = new JButton("website");
+        webButton.setPreferredSize(new Dimension(150, 25));
+        webButton.setToolTipText("Add key for website");
+        
+        webButton.addActionListener(new ActionListener()
+	    {
+			public void actionPerformed(ActionEvent e)
+			{
+				txtKey.setText("website");
+		    }
+		});	
+        
+        this.add(webButton, buttonGBC);
+      	
         //LABEL NAME
-      	labelGBC.gridy = 4;
+      	labelGBC.gridy = 5;
       	JLabel valueLabel = new JLabel("Value:");
       	this.add(valueLabel, labelGBC);
       		
       	//TXTAREA NAME
-      	txtGBC.gridy = 4;
+      	txtGBC.gridy = 5;
       	this.txtareaValue = new JTextArea();
       	
       	
@@ -206,7 +225,7 @@ public class RegisterNameFrame extends JFrame
       			
       		
       	//LABEL COUNT
-		labelGBC.gridy = 5;
+		labelGBC.gridy = 6;
 		labelGBC.gridx = 1;
 		labelGBC.fill = GridBagConstraints.BOTH;   
 		labelGBC.anchor = GridBagConstraints.CENTER;
@@ -223,7 +242,7 @@ public class RegisterNameFrame extends JFrame
 		tableGBC.weighty = 1;
 		tableGBC.gridwidth = 10;
 		tableGBC.gridx = 0;	
-		tableGBC.gridy= 6;	
+		tableGBC.gridy= 7;	
 
 		namesModel = new KeyValueTableModel();
 		final JTable namesTable = new JTable(namesModel);
@@ -263,7 +282,7 @@ public class RegisterNameFrame extends JFrame
 		this.add(scrollPane, tableGBC);
 
 		//BUTTON REMOVE
-        buttonGBC.gridy = 7;
+        buttonGBC.gridy = 8;
         buttonGBC.gridx = 1;
         buttonGBC.fill = GridBagConstraints.EAST;
         buttonGBC.anchor = GridBagConstraints.EAST;
@@ -311,19 +330,19 @@ public class RegisterNameFrame extends JFrame
 		
 
 		//LABEL FEE
-      	labelGBC.gridy = 8;
+      	labelGBC.gridy = 9;
       	labelGBC.gridx = 0;
       	JLabel feeLabel = new JLabel("Fee:");
       	this.add(feeLabel, labelGBC);
       	
       	//TXT FEE
-      	txtGBC.gridy = 8;
+      	txtGBC.gridy = 9;
       	this.txtFee = new JTextField();
       	this.txtFee.setText("1");
         this.add(this.txtFee, txtGBC);
 		           
         //BUTTON Register
-        buttonGBC.gridy = 9;
+        buttonGBC.gridy = 10;
         registerButton = new JButton("Register");
         registerButton.setPreferredSize(new Dimension(80, 25));
         registerButton.addActionListener(new ActionListener()
