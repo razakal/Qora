@@ -19,17 +19,10 @@
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-152.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-schemas-3.1.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/api/javax.ws.rs-api-2.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/aopalliance-repackaged-2.4.0-b10.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/asm-debug-all-5.0.2.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-api-2.4.0-b10.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-locator-2.4.0-b10.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-utils-2.4.0-b10.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/javassist-3.18.1-GA.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/javax.annotation-api-1.2.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javax.inject-2.4.0-b10.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/javax.servlet-api-3.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/jaxb-api-2.2.7.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/jersey-guava-2.17.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/org.osgi.core-4.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/osgi-resource-locator-1.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/persistence-api-1.0.jar"/>
@@ -93,5 +86,12 @@
 	<classpathentry kind="lib" path="libs/jetty/jetty-util-9.3.0.v20150612.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-webapp-9.3.0.v20150612.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-xml-9.3.0.v20150612.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/aopalliance-repackaged-2.4.0-b25.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/asm-debug-all-5.0.3.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-api-2.4.0-b25.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-locator-2.4.0-b25.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-utils-2.4.0-b25.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javax.inject-2.4.0-b25.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/jersey-guava-2.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
