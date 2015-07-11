@@ -13,8 +13,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -29,8 +45,8 @@ import settings.Settings;
 import utils.Converter;
 import utils.MenuPopupUtil;
 import utils.NameUtils;
-import utils.Pair;
 import utils.NameUtils.NameResult;
+import utils.Pair;
 import controller.Controller;
 
 @SuppressWarnings("serial")
@@ -44,13 +60,14 @@ public class SendMessagePanel extends JPanel
 	private JTextField txtTo;
 	private JTextField txtAmount;
 	private JTextField txtFee;
-	private JTextArea txtMessage;
+	public JTextArea txtMessage;
 	private JCheckBox encrypted;
 	private JCheckBox isText;
 	private JButton sendButton;
 	private AccountsComboBoxModel accountsModel;
 	private JComboBox<Asset> cbxFavorites;
 	private JTextField txtRecDetails;
+	private JLabel messageLabel;
 	
 	public SendMessagePanel()
 	{
@@ -129,7 +146,7 @@ public class SendMessagePanel extends JPanel
 		labelToGBC.anchor = GridBagConstraints.NORTHWEST;
 		labelToGBC.weightx = 0;	
 		labelToGBC.gridx = 0;
-		JLabel toLabel = new JLabel("To:");
+		JLabel toLabel = new JLabel("To: (address or name)");
 		this.add(toLabel, labelToGBC);
       	
       	//TXT TO
@@ -195,10 +212,9 @@ public class SendMessagePanel extends JPanel
       	labelMessageGBC.gridx = 0;
       	labelMessageGBC.gridy = 4;
       	
-      	JLabel messageLabel = new JLabel("Message:");
-      	this.add(messageLabel, labelMessageGBC);
+      	messageLabel = new JLabel("Message:");
       	
-        //TXT MESSAGE
+		//TXT MESSAGE
 		GridBagConstraints txtMessageGBC = new GridBagConstraints();
 		txtMessageGBC.gridwidth = 4;
 		txtMessageGBC.insets = new Insets(5, 5, 5, 0);
@@ -210,9 +226,17 @@ public class SendMessagePanel extends JPanel
         
         this.txtMessage = new JTextArea();
         this.txtMessage.setRows(4);
-      	this.txtMessage.setBorder(this.txtTo.getBorder());
-        this.add(txtMessage, txtMessageGBC);
+        this.txtMessage.setColumns(25);
 
+        this.txtMessage.setBorder(this.txtTo.getBorder());
+
+      	JScrollPane messageScroll = new JScrollPane(this.txtMessage);
+      	messageScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      	messageScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.add(messageScroll, txtMessageGBC);
+      	
+      	this.add(messageLabel, labelMessageGBC);
+      	
 		//LABEL ISTEXT
 		GridBagConstraints labelIsTextGBC = new GridBagConstraints();
 		labelIsTextGBC.gridy = 5;
@@ -390,6 +414,14 @@ public class SendMessagePanel extends JPanel
 		MenuPopupUtil.installContextMenu(txtAmount);
 		MenuPopupUtil.installContextMenu(txtMessage);
 		MenuPopupUtil.installContextMenu(txtRecDetails);
+		
+		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleWithFixedDelay(	new Runnable() { 
+			public void run() {
+				
+				messageLabel.setText("<html>Message:<br>("+ txtMessage.getText().length()+"/4000)</html>");
+				
+			}}, 0, 500, TimeUnit.MILLISECONDS);
 	}
 
 	private void refreshReceiverDetails()

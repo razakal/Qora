@@ -260,7 +260,7 @@ public class RegisterNameFrame extends JFrame
 		});
 		
 		//ADD NAMING SERVICE TABLE
-		this.add(new JScrollPane(scrollPane), tableGBC);
+		this.add(scrollPane, tableGBC);
 
 		//BUTTON REMOVE
         buttonGBC.gridy = 7;

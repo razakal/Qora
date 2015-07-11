@@ -288,18 +288,15 @@ public class UpdateNameFrame extends JFrame
       			if (event.getStateChange() == ItemEvent.SELECTED) 
       			{
       				Name name = (Name) event.getItem();
-      	 
-//      				txtareaValue.setText(name.getValue());
-//      				txtOwner.setText(name.getOwner().getAddress());
+
       				loadName(name, namesTable);
-      				
       			}
       	    }    
       	});
 		
 		
 		//ADD NAMING SERVICE TABLE
-		this.add(new JScrollPane(scrollPane), tableGBC);
+		this.add(scrollPane, tableGBC);
 		
       	//LABEL FEE
 		labelGBC.gridx = 0;
