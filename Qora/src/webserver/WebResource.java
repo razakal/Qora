@@ -963,6 +963,8 @@ public class WebResource {
 			MultivaluedMap<String, String> form) {
 		try {
 
+			
+			
 			JSONObject json = new JSONObject();
 
 			String blogname = form.getFirst(BlogPostResource.BLOGNAME_KEY);

@@ -8,6 +8,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import qora.web.NameStorageMap;
+import qora.web.OrphanNameStorageMap;
 import controller.Controller;
 import settings.Settings;
 import utils.ObserverMessage;
@@ -27,6 +28,7 @@ public class DBSet implements Observer, IDB {
 	private TransactionMap transactionMap;
 	private NameMap nameMap;
 	private NameStorageMap nameStorageMap;
+	private OrphanNameStorageMap orphanNameStorageMap;
 	private TransactionParentMap transactionParentMap;
 	private NameExchangeMap nameExchangeMap;
 	private UpdateNameMap updateNameMap;
@@ -97,6 +99,7 @@ public class DBSet implements Observer, IDB {
 		this.transactionMap = new TransactionMap(this, database);
 		this.nameMap = new NameMap(this, database);
 		this.nameStorageMap = new NameStorageMap(this, database);
+		this.orphanNameStorageMap = new OrphanNameStorageMap(this, database);
 		this.transactionParentMap = new TransactionParentMap(this, database);
 		this.nameExchangeMap = new NameExchangeMap(this, database);
 		this.updateNameMap = new UpdateNameMap(this, database);
@@ -127,6 +130,7 @@ public class DBSet implements Observer, IDB {
 		this.transactionMap = new TransactionMap(parent.transactionMap);		
 		this.nameMap = new NameMap(parent.nameMap);
 		this.nameStorageMap = new NameStorageMap(parent.nameStorageMap);
+		this.orphanNameStorageMap = new OrphanNameStorageMap(parent.orphanNameStorageMap);
 		this.transactionParentMap = new TransactionParentMap(this.blockMap, parent.transactionParentMap);
 		this.nameExchangeMap = new NameExchangeMap(parent.nameExchangeMap);
 		this.updateNameMap = new UpdateNameMap(parent.updateNameMap);
@@ -155,6 +159,7 @@ public class DBSet implements Observer, IDB {
 		this.transactionMap.reset();
 		this.nameMap.reset();
 		this.nameStorageMap.reset();
+		this.orphanNameStorageMap.reset();
 		this.transactionParentMap.reset();
 		this.nameExchangeMap.reset();
 		this.updateNameMap.reset();
@@ -216,6 +221,10 @@ public class DBSet implements Observer, IDB {
 	public NameStorageMap getNameStorageMap()
 	{
 		return this.nameStorageMap;
+	}
+	public OrphanNameStorageMap getOrphanNameStorageMap()
+	{
+		return this.orphanNameStorageMap;
 	}
 	
 	public TransactionParentMap getTransactionParentMap()

@@ -2,14 +2,16 @@ package utils;
 
 public enum Qorakeys {
 
-	DEFAULT("defaultkey"), WEBSITE("website"), BLOGWHITELIST("blogwhitelist"), BLOGBLACKLIST(
-			"blogblacklist"), BLOGDESCRIPTION("blogdescription"), BLOGTITLE("blogtitle"), BLOGENABLE(
-					"blogenable"), PROFILEENABLE("profileenable"), PROFILEAVATAR("profileavatar"), PROFILEFOLLOW(
-							"profilefollow"), PROFILEMAINGRAPHIC("profilemaingraphic"), PROFILELIKE("profilelike");
+	DEFAULT("defaultkey", KeyVariation.DEFAULTKEY), WEBSITE("website",KeyVariation.DEFAULTKEY), BLOGWHITELIST("blogwhitelist", KeyVariation.LISTKEY), BLOGBLACKLIST(
+			"blogblacklist",KeyVariation.LISTKEY), BLOGDESCRIPTION("blogdescription",KeyVariation.DEFAULTKEY), BLOGTITLE("blogtitle",KeyVariation.DEFAULTKEY), BLOGENABLE(
+					"blogenable", KeyVariation.EXISTSKEY), PROFILEENABLE("profileenable", KeyVariation.EXISTSKEY), PROFILEAVATAR("profileavatar", KeyVariation.DEFAULTKEY), PROFILEFOLLOW(
+							"profilefollow", KeyVariation.LISTKEY), PROFILEMAINGRAPHIC("profilemaingraphic",KeyVariation.DEFAULTKEY), PROFILELIKE("profilelike",KeyVariation.LISTKEY);
 	private final String keyname;
+	private KeyVariation variation;
 
-	private Qorakeys(String keyname) {
+	private Qorakeys(String keyname, KeyVariation variation) {
 		this.keyname = keyname;
+		this.variation = variation;
 	}
 
 	public String getKeyname() {
@@ -19,5 +21,11 @@ public enum Qorakeys {
 	public String toString() {
 		return keyname;
 	}
+
+	public KeyVariation getVariation() {
+		return variation;
+	}
+	
+	
 
 }

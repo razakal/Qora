@@ -27,6 +27,7 @@ public class NameStorageResource {
 	@Context
 	HttpServletRequest request;
 
+	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/update/{creator}/{name}")
 	public String updateEntry(String x, @PathParam("name") String name,
@@ -83,12 +84,14 @@ public class NameStorageResource {
 			}
 
 
-			APIUtils.askAPICallAllowed("POST namestorage/" + creator + "/" + name + "\n" + x,
+			jsonObject.put("name", name);
+			String jsonString = jsonObject.toJSONString();
+			APIUtils.askAPICallAllowed("POST namestorage/" + creator + "/" + name + "\n" + jsonString,
 					request);
 
 
 			// SEND PAYMENT
-			byte[] bytes = jsonObject.toJSONString().getBytes();
+			byte[] bytes = jsonString.getBytes();
 			Pair<Transaction, Integer> result = Controller.getInstance()
 					.createArbitraryTransaction(account, 10,
 							bytes, Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(bytes).getA());
