@@ -215,7 +215,8 @@ public class StorageUtils {
 
 			if (name != null) {
 				
-				Map<String, String> orphanMapForTx = DBSet.getInstance().getOrphanNameStorageMap().get(new Tuple2<byte[], String>(signature, name));
+				Tuple2<byte[], String> tupleKeyToProcess = new Tuple2<byte[], String>(signature, name);
+				Map<String, String> orphanMapForTx = DBSet.getInstance().getOrphanNameStorageMap().get(tupleKeyToProcess);
 				
 				if(orphanMapForTx != null)
 				{
@@ -236,6 +237,9 @@ public class StorageUtils {
 							}
 						}
 					}
+					
+					DBSet.getInstance().getOrphanNameStorageMap().delete(tupleKeyToProcess);
+					
 					
 				}
 				
