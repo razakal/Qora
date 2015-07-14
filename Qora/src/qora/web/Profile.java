@@ -371,7 +371,7 @@ public class Profile {
 					if(oldValueOpt == null && newValueOpt != null)  
 					{
 						addCompleteKeys.add(new Pair<String,String>(key, newValueOpt));
-					}else if(oldValueOpt != null && newValueOpt != null)
+					}else if(oldValueOpt != null && newValueOpt == null)
 					{
 						removeCompleteKeys.add(key);
 					}else
