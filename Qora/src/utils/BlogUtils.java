@@ -12,17 +12,16 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import qora.block.Block;
-import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
 import qora.web.BlogProfile;
+import qora.web.NameStorageMap;
 import qora.web.Profile;
 import qora.web.blog.BlogEntry;
 import api.BlogPostResource;
 import controller.Controller;
 import database.DBSet;
-import database.NameMap;
 
 public class BlogUtils {
 
@@ -33,16 +32,15 @@ public class BlogUtils {
 	public static List<BlogProfile> getEnabledBlogs(
 			String searchvalueOpt) {
 
-		NameMap nameMap = DBSet.getInstance().getNameMap();
+		NameStorageMap nameMap = DBSet.getInstance().getNameStorageMap();
 		Set<String> names = nameMap.getKeys();
 		
 		Map<String, List<String>> followMap = new HashMap<>();
 		List<Profile> resultProfiles = new ArrayList<>();
 
 		for (String name : names) {
-			Name nameObj = nameMap.get(name);
 
-			Profile profile = Profile.getProfileOpt(nameObj);
+			Profile profile = Profile.getProfileOpt(name);
 
 			if(profile != null && profile.isProfileEnabled())
 			{
