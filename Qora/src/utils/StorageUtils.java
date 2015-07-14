@@ -19,17 +19,23 @@ import database.DBSet;
 
 public class StorageUtils {
 
+	// REPLACES CURRENT VALUE
 	public static final String ADD_COMPLETE_KEY = "addcomplete";
+	// REMOVES CURRENT VALUE (COMPLETE KEY FROM STORAGE)
 	public static final String REMOVE_COMPLETE_KEY = "removecomplete";
+	// ADD VALUE TO A LIST IF NOT IN LIST SEPERATOR ";"
 	public static final String ADD_LIST_KEY = "addlist";
+	// REMOVE VALUE FROM LIST IF VALUE THERE SEPERATOR ";"
 	public static final String REMOVE_LIST_KEY = "removelist";
+	//ADD TO CURRENT VALUE WITHOUT SEPERATOR
+	public static final String ADD_KEY = "add";
 
 	@SuppressWarnings("unchecked")
 	public static JSONObject getStorageJsonObject(
 			List<Pair<String, String>> addCompleteKeys,
 			List<String> removeCompleteKeys,
 			List<Pair<String, String>> addListKeys,
-			List<Pair<String, String>> removeListKeys) {
+			List<Pair<String, String>> removeListKeys, List<Pair<String,String>> addWithoutSeperator) {
 		JSONObject json = new JSONObject();
 
 		addListPairtoJson(addCompleteKeys, json, ADD_COMPLETE_KEY);
@@ -47,10 +53,14 @@ public class StorageUtils {
 		addListPairtoJson(addListKeys, json, ADD_LIST_KEY);
 
 		addListPairtoJson(removeListKeys, json, REMOVE_LIST_KEY);
+		
+		addListPairtoJson(addWithoutSeperator, json, ADD_KEY);
 
 		return json;
 
 	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	public static void addListPairtoJson(
@@ -106,10 +116,10 @@ public class StorageUtils {
 							.getOpt(name, keyForOrphaning));
 				}
 
-				String addJson = (String) jsonObject.get(ADD_COMPLETE_KEY);
-				if (addJson != null) {
+				String addCompleteJson = (String) jsonObject.get(ADD_COMPLETE_KEY);
+				if (addCompleteJson != null) {
 					JSONObject addCompleteResults = (JSONObject) JSONValue
-							.parse(addJson);
+							.parse(addCompleteJson);
 
 					Set<String> keys = addCompleteResults.keySet();
 
@@ -168,6 +178,24 @@ public class StorageUtils {
 								entriesToAdd);
 					}
 				}
+				
+				String addJson = (String) jsonObject
+						.get(ADD_KEY);
+				if (addJson != null) {
+					
+					JSONObject addJsonKey = (JSONObject) JSONValue
+							.parse(addJson);
+					
+					Set<String> keys = addJsonKey.keySet();
+					
+					for (String key : keys) {
+						
+						String oldValueOpt = nameStorageMap.getOpt(name, key);
+						oldValueOpt = oldValueOpt == null?  "" : oldValueOpt;
+						nameStorageMap.add(name, key, oldValueOpt +
+								"" + addJsonKey.get(key));
+					}
+				}
 
 			}
 
@@ -181,6 +209,7 @@ public class StorageUtils {
 		getKeys(jsonObject, results, ADD_LIST_KEY);
 		getKeys(jsonObject, results, REMOVE_COMPLETE_KEY);
 		getKeys(jsonObject, results, REMOVE_LIST_KEY);
+		getKeys(jsonObject, results, ADD_KEY);
 
 		return results;
 	}

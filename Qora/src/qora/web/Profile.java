@@ -433,7 +433,7 @@ public class Profile {
 		}
 		
 
-		JSONObject jsonResult = StorageUtils.getStorageJsonObject(addCompleteKeys, removeCompleteKeys, addListKeys, removeListKeys);
+		JSONObject jsonResult = StorageUtils.getStorageJsonObject(addCompleteKeys, removeCompleteKeys, addListKeys, removeListKeys, null);
 		
 		
 	return	new NameStorageResource().updateEntry(jsonResult.toJSONString(), name.getName());

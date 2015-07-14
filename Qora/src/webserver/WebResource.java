@@ -319,7 +319,7 @@ public class WebResource {
 							"application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
 		}
-		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(Arrays.asList(new Pair<String, String>(Qorakeys.WEBSITE.toString(), website)), null, null, null);
+		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(Collections.singletonList(new Pair<String, String>(Qorakeys.WEBSITE.toString(), website)), null, null, null, null);
 		
 		new NameStorageResource().updateEntry(storageJsonObject.toString(), name);
 		
