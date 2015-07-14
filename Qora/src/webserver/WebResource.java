@@ -72,6 +72,7 @@ import utils.NameUtils.NameResult;
 import utils.Pair;
 import utils.PebbleHelper;
 import utils.Qorakeys;
+import utils.StorageUtils;
 import utils.StrJSonFine;
 import api.ATResource;
 import api.AddressesResource;
@@ -80,6 +81,7 @@ import api.BlocksResource;
 import api.BlogPostResource;
 import api.CalcFeeResource;
 import api.NameSalesResource;
+import api.NameStorageResource;
 import api.NamesResource;
 import api.TransactionsResource;
 
@@ -253,7 +255,12 @@ public class WebResource {
 					}
 				}
 
+				
+				String websiteOpt = DBSet.getInstance().getNameStorageMap().getOpt(nameobj.getName(), Qorakeys.WEBSITE.toString());
+				
+				
 				pebbleHelper.getContextMap().put("name", nameobj.getName());
+				pebbleHelper.getContextMap().put("website", websiteOpt);
 
 			} else {
 				pebbleHelper
@@ -288,6 +295,41 @@ public class WebResource {
 			return error404(request, null);
 		}
 
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@POST
+	@Path("index/websitesave.html")
+	@Consumes("application/x-www-form-urlencoded")
+	public Response saveWebsite(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
+		
+		String name = form.getFirst("name");
+		String website = form.getFirst("website");
+		
+		JSONObject json = new JSONObject();
+		
+		if (StringUtils.isBlank(name)) {
+			json.put("type", "parametersMissing");
+
+			return Response
+					.status(200)
+					.header("Content-Type",
+							"application/json; charset=utf-8")
+					.entity(json.toJSONString()).build();
+		}
+		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(Arrays.asList(new Pair<String, String>(Qorakeys.WEBSITE.toString(), website)), null, null, null);
+		
+		new NameStorageResource().updateEntry(storageJsonObject.toString(), name);
+		
+		json.put("type", "settingsSuccessfullySaved");
+		return Response
+				.status(200)
+				.header("Content-Type",
+						"application/json; charset=utf-8")
+				.entity(json.toJSONString()).build();
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2008,21 +2050,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 
-		String value = name.getValue();
-
-		// REDIRECT
-		if (value.toLowerCase().startsWith("http://")
-				|| value.toLowerCase().startsWith("https://")) {
-			return Response.status(302).header("Location", value).build();
-		}
-
-		JSONObject jsonObject = NameUtils.getJsonForNameOpt(name);
-
-		String website = null;
-		if (jsonObject != null
-				&& jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname())) {
-			website = (String) jsonObject.get(Qorakeys.WEBSITE.getKeyname());
-		}
+		String website = DBSet.getInstance().getNameStorageMap().getOpt(nameName, Qorakeys.WEBSITE.toString());
 
 		if (website == null) {
 			try {
@@ -2039,8 +2067,6 @@ public class WebResource {
 			}
 
 		}
-
-		website = injectValues(website);
 
 		// SHOW WEB-PAGE
 		return Response.status(200)

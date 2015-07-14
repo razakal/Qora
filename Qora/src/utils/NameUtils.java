@@ -12,7 +12,7 @@ import qora.account.Account;
 import qora.naming.Name;
 import qora.transaction.Transaction;
 import qora.transaction.UpdateNameTransaction;
-import webserver.WebResource;
+import qora.web.NameStorageMap;
 import api.ApiErrorFactory;
 import controller.Controller;
 import database.DBSet;
@@ -175,52 +175,28 @@ public class NameUtils {
 	public static List<Pair<String, String>> getWebsitesbyValueInternal(
 			String searchValueOpt) {
 
+		
 		List<Pair<String, String>> results = new ArrayList<Pair<String, String>>();
 
-		NameMap nameMap = DBSet.getInstance().getNameMap();
-
-		Set<String> keys = nameMap.getKeys();
+		
+		NameStorageMap nameStorageMap = DBSet.getInstance().getNameStorageMap();
+		Set<String> keys = nameStorageMap.getKeys();
 
 		for (String key : keys) {
-			String value = nameMap.get(key).getValue();
-
-			value = GZIP.webDecompress(value);
-			value = WebResource.injectValues(value);
-
-			try {
-				if (value.startsWith("{")) {
-					JSONObject jsonObject = (JSONObject) JSONValue.parse(value);
-					if (jsonObject.containsKey(Qorakeys.WEBSITE.getKeyname())) {
-						String websitevalue = (String) jsonObject
-								.get(Qorakeys.WEBSITE.getKeyname());
-						if (websitevalue
-								.contains(Qorakeys.WEBSITE.getKeyname())
-								&& websitevalue
-										.matches("<inj.*key=."
-												+ Qorakeys.WEBSITE.getKeyname()
-												+ ".*>")) {
-							// Another website is injected into this page, to
-							// avoid both in the searchengine we don't allow
-							// this!
-							continue;
-						}
-						websitevalue = WebResource.injectValues(websitevalue);
+			String value = nameStorageMap.getOpt(key, Qorakeys.WEBSITE.getKeyname());
+					if (value != null) {
 						if (searchValueOpt == null) {
 							results.add(new Pair<String, String>(key,
-									websitevalue));
+									value));
 						} else {
-							if (websitevalue.toLowerCase().contains(
+							if (value.toLowerCase().contains(
 									searchValueOpt.toLowerCase())) {
 								results.add(new Pair<String, String>(key,
-										websitevalue));
+										value));
 							}
 
 						}
 					}
-				}
-			} catch (Exception e) {
-				// no valid json no website key
-			}
 
 		}
 

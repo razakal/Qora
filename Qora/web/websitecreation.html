@@ -138,7 +138,7 @@
           <div class="col-lg-8 col-centered">
         <div class="form-horizontal">
           <!-- <fieldset> -->
-            <legend>Settings</legend>
+            <legend>Create or update a website</legend>
 			<div id=result></div>
             	{{result}}
             <div class="form-group">
@@ -152,9 +152,9 @@
                 </select>
               </div>
             <div class="form-group">
-            <label for="content" class="col-lg-2 control-label">Website (Html)</label>
+            <label for="website" class="col-lg-2 control-label">Website (Html)</label>
             <div class="col-lg-10">
-              <textarea id="content" rows="3" class="form-control"></textarea><span class="help-block"></span><span id="charNum" class="help-block">3000</span>
+              <textarea id="website" rows="3" class="form-control"></textarea><span class="help-block"></span><span id="charNum" class="help-block">3000</span>
             </div>
           </div>
           <!-- </fieldset> -->
@@ -203,24 +203,11 @@
 
 		document.getElementById('result').innerHTML = '<div class=\"alert alert-info\" role=\"alert\">Saving...<br></div>';
 
-		allbwlistData = "";
-		var MyRows = $('table#tblData').find('tr');
-			for (var i = 1; i < MyRows.length; i++){
-					allbwlistData += $(MyRows[i]).find('td:eq(0)').children("input[type=text]").val() + ";";
-			}
-		
 		$.post(
-			"/index/settingssave.html",
+			"/index/websitesave.html",
 			{
-				profilename: document.getElementById('select-name').value, 
-				profileenable: document.getElementById('profile-status').checked,
-				blogenable: document.getElementById('blog-status').checked,
-				blogdescription: document.getElementById('blogdescription').value,
-				blogtitle: document.getElementById('blogtitle').value,
-				profileavatar: document.getElementById('avatar').value,
-				profilemaingraphic: document.getElementById('banner').value,
-				blackwhitelist: allbwlistData,
-				bwlistkind: document.getElementById('select-list-type').value
+				name: document.getElementById('select-name').value,
+				website: document.getElementById('website').value
 			})
 			.done( function(data) {
 				if (data.type == 'settingsSuccessfullySaved')
@@ -231,10 +218,6 @@
 				{
 					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Some parameters are missing.<br></div>";
 				}
-				else if(data.type == 'profileNameisnotAllowed')
-				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Profile Name is not Allowed.<br></div>";
-				}
 				else if (data.type == 'error')
 				{
 					try {
@@ -244,7 +227,7 @@
 						message = data.error;
 					}
 
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occurred while saving settings.<br>"+message+"<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occurred while saving the website.<br>"+message+"<br></div>";
 				}
 				else
 				{
@@ -274,10 +257,11 @@
       });
     });
 
- 	{% autoescape true %}
     $(document).ready(function() {
         var searchval;
 		$("#select-name").val('{{name}}');
+		$("#website").val('{{website}}');
+ 	{% autoescape true %}
 		var searchval
 		$('#name').change(function() {
             $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
