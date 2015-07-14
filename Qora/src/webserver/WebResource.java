@@ -354,6 +354,9 @@ public class WebResource {
 	public Response doProfileSettings() {
 
 		try {
+			
+			
+		System.out.println("here" + DBSet.getInstance().getNameStorageMap().getOpt("drizzt", Qorakeys.PROFILEENABLE.toString()) );
 
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/settings.html", request);

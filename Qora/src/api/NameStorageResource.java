@@ -29,9 +29,9 @@ public class NameStorageResource {
 
 	@SuppressWarnings("unchecked")
 	@POST
-	@Path("/update/{creator}/{name}")
-	public String updateEntry(String x, @PathParam("name") String name,
-			@PathParam("creator") String creator) {
+	@Path("/update/{name}")
+	public String updateEntry(String x, @PathParam("name") String name
+			) {
 		try {
 
 			// READ JSON
@@ -49,6 +49,15 @@ public class NameStorageResource {
 						ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
 
+			Name nameObj = DBSet.getInstance().getNameMap().get(name);
+			
+			if(nameObj == null)
+			{
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
+			}
+			
+			String creator = nameObj.getOwner().getAddress();
 			// CHECK ADDRESS
 			if (!Crypto.getInstance().isValidAddress(creator)) {
 				throw ApiErrorFactory.getInstance().createError(
@@ -61,19 +70,7 @@ public class NameStorageResource {
 						ApiErrorFactory.ERROR_WALLET_ADDRESS_NO_EXISTS);
 			}
 
-			Name nameObj = DBSet.getInstance().getNameMap().get(name);
-			
-			if(nameObj == null)
-			{
-				throw ApiErrorFactory.getInstance().createError(
-						ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
-			}
 
-			// Name is not owned by creator!
-			if (!nameObj.getOwner().getAddress().equals(creator)) {
-				throw ApiErrorFactory.getInstance().createError(
-						ApiErrorFactory.ERROR_NAME_NOT_OWNER);
-			}
 
 			// GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance()

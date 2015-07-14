@@ -436,7 +436,7 @@ public class Profile {
 		JSONObject jsonResult = StorageUtils.getStorageJsonObject(addCompleteKeys, removeCompleteKeys, addListKeys, removeListKeys);
 		
 		
-	return	new NameStorageResource().updateEntry(jsonResult.toJSONString(), name.getName(), name.getOwner().getAddress());
+	return	new NameStorageResource().updateEntry(jsonResult.toJSONString(), name.getName());
 		
 //		String jsonString = jsonRepresenation.toJSONString();
 //		String compressValue = GZIP.compress(jsonString);
