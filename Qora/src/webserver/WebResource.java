@@ -193,6 +193,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
+	
 
 	@Path("index/blogsearch.html")
 	@GET
@@ -218,6 +219,56 @@ public class WebResource {
 			return error404(request, null);
 		}
 
+	}
+	
+	@Path("index/websitecreation.html")
+	@GET
+	public Response doWebsiteCreation() {
+		
+		String name = request.getParameter("name");
+		try {
+			PebbleHelper pebbleHelper = PebbleHelper
+					.getPebbleHelper("web/websitecreation.html", request);
+			
+			List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller
+					.getInstance().getNamesAsList());
+
+			pebbleHelper.getContextMap().put("names", namesAsList);
+			
+			
+			Name nameobj = null;
+			if (name != null) {
+				nameobj = Controller.getInstance().getName(name);
+			}
+
+			if (namesAsList.size() > 0) {
+
+				if (name == null) {
+					Profile activeProfileOpt = ProfileHelper.getInstance()
+							.getActiveProfileOpt(request);
+					if (activeProfileOpt != null) {
+						nameobj = activeProfileOpt.getName();
+					} else {
+						nameobj = namesAsList.get(0);
+					}
+				}
+
+				pebbleHelper.getContextMap().put("name", nameobj.getName());
+
+			} else {
+				pebbleHelper
+						.getContextMap()
+						.put("result",
+								"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a website.<br></div>");
+			}
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
+		}
+		
 	}
 
 	@Path("index/blogdirectory.html")
@@ -356,7 +407,6 @@ public class WebResource {
 		try {
 			
 			
-		System.out.println("here" + DBSet.getInstance().getNameStorageMap().getOpt("drizzt", Qorakeys.PROFILEENABLE.toString()) );
 
 			PebbleHelper pebbleHelper = PebbleHelper
 					.getPebbleHelper("web/settings.html", request);
@@ -379,35 +429,7 @@ public class WebResource {
 
 			pebbleHelper.getContextMap().put("names", namesAsList);
 
-			Name name = null;
-			if (profileName != null) {
-				name = Controller.getInstance().getName(profileName);
-			}
-
-			if (namesAsList.size() > 0) {
-
-				if (name == null) {
-					Profile activeProfileOpt = ProfileHelper.getInstance()
-							.getActiveProfileOpt(request);
-					if (activeProfileOpt != null) {
-						name = activeProfileOpt.getName();
-					} else {
-						name = namesAsList.get(0);
-					}
-				}
-
-				// WE HAVE HERE ONLY ALLOWED NAMES SO PROFILE CAN'T BE NULL HERE
-				Profile profile = Profile.getProfileOpt(name);
-
-				pebbleHelper.getContextMap().put("profile", profile);
-				pebbleHelper.getContextMap().put("name", name);
-
-			} else {
-				pebbleHelper
-						.getContextMap()
-						.put("result",
-								"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a profile.<br></div>");
-			}
+			handleSelectNameAndProfile(pebbleHelper, profileName, namesAsList);
 
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
@@ -417,6 +439,40 @@ public class WebResource {
 		}
 
 	}
+
+	public void handleSelectNameAndProfile(PebbleHelper pebbleHelper,
+			String profileName, List<Name> namesAsList) {
+		Name name = null;
+		if (profileName != null) {
+			name = Controller.getInstance().getName(profileName);
+		}
+
+		if (namesAsList.size() > 0) {
+
+			if (name == null) {
+				Profile activeProfileOpt = ProfileHelper.getInstance()
+						.getActiveProfileOpt(request);
+				if (activeProfileOpt != null) {
+					name = activeProfileOpt.getName();
+				} else {
+					name = namesAsList.get(0);
+				}
+			}
+
+			// WE HAVE HERE ONLY ALLOWED NAMES SO PROFILE CAN'T BE NULL HERE
+			Profile profile = Profile.getProfileOpt(name);
+
+			pebbleHelper.getContextMap().put("profile", profile);
+			pebbleHelper.getContextMap().put("name", name);
+
+		} else {
+			pebbleHelper
+					.getContextMap()
+					.put("result",
+							"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a profile.<br></div>");
+		}
+	}
+	
 
 	public String decodeIfNotNull(String parameter)
 			throws UnsupportedEncodingException {
