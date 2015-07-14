@@ -1,5 +1,7 @@
 package api;
 
+import java.math.BigDecimal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -83,15 +85,16 @@ public class NameStorageResource {
 
 			jsonObject.put("name", name);
 			String jsonString = jsonObject.toJSONString();
-			APIUtils.askAPICallAllowed("POST namestorage/" + creator + "/" + name + "\n" + jsonString,
+			byte[] bytes = jsonString.getBytes();
+			BigDecimal fee = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(bytes).getA();
+			APIUtils.askAPICallAllowed("POST namestorage/" + creator + "/" + name + "\n" + jsonString + "\nfee: " + fee.toPlainString(),
 					request);
 
 
 			// SEND PAYMENT
-			byte[] bytes = jsonString.getBytes();
 			Pair<Transaction, Integer> result = Controller.getInstance()
 					.createArbitraryTransaction(account, 10,
-							bytes, Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(bytes).getA());
+							bytes, fee);
 
 			return ArbitraryTransactionsResource
 					.checkArbitraryTransaction(result);
