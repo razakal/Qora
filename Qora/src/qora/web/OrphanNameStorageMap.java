@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.mapdb.DB;
-import org.mapdb.DB.BTreeMapMaker;
-import org.mapdb.Fun.Tuple2;
+
+import com.google.common.primitives.SignedBytes;
 
 import database.DBMap;
 import database.DBSet;
 
-public class OrphanNameStorageMap extends DBMap<Tuple2<byte[], String>, Map<String, String>> {
+public class OrphanNameStorageMap extends DBMap<byte[], Map<String, String>> {
 
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 
@@ -18,20 +18,23 @@ public class OrphanNameStorageMap extends DBMap<Tuple2<byte[], String>, Map<Stri
 		super(databaseSet, database);
 	}
 
-	public OrphanNameStorageMap(DBMap<Tuple2<byte[], String>, Map<String, String>> parent) {
+	public OrphanNameStorageMap(DBMap<byte[], Map<String, String>> parent) {
 		super(parent);
 	}
 
 	@Override
-	protected Map<Tuple2<byte[], String>, Map<String, String>> getMap(DB database) {
-		// OPEN MAP
-		BTreeMapMaker createTreeMap = database.createTreeMap("OrphanNameStorageMap");
-		return createTreeMap.makeOrGet();
+	protected Map<byte[], Map<String, String>> getMap(DB database) {
+		
+		
+		return   database.createTreeMap("OrphanNameStorageMap")
+		            .comparator(SignedBytes.lexicographicalComparator())
+		            .makeOrGet();
+		
 	}
 
 	@Override
-	protected Map<Tuple2<byte[], String>, Map<String, String>> getMemoryMap() {
-		return new HashMap<Tuple2<byte[], String>, Map<String, String>>();
+	protected Map<byte[], Map<String, String>> getMemoryMap() {
+		return new HashMap<byte[], Map<String, String>>();
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class OrphanNameStorageMap extends DBMap<Tuple2<byte[], String>, Map<Stri
 	protected void createIndexes(DB database) {}
 	
 	
-	public void add(Tuple2<byte[], String> txAndName, String key, String value)
+	public void add(byte[] txAndName, String key, String value)
 	{
 		Map<String, String> keyValueMap = this.get(txAndName);
 		if (keyValueMap == null) {
@@ -62,7 +65,7 @@ public class OrphanNameStorageMap extends DBMap<Tuple2<byte[], String>, Map<Stri
 		
 	}
 	
-	public void remove(Tuple2<byte[], String> txAndName)
+	public void remove(byte[] txAndName)
 	{
 		this.remove(txAndName);
 	}

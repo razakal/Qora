@@ -10,13 +10,12 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.mapdb.Fun.Tuple2;
 
-import database.DBSet;
 import qora.account.PublicKeyAccount;
 import qora.naming.Name;
 import qora.web.NameStorageMap;
 import qora.web.OrphanNameStorageMap;
+import database.DBSet;
 
 public class StorageUtils {
 
@@ -103,8 +102,7 @@ public class StorageUtils {
 
 				// SAVE OLD VALUES FOR ORPHANING
 				for (String keyForOrphaning : allKeysForOrphanSaving) {
-					orphanNameStorageMap.add(new Tuple2<byte[], String>(
-							signature, name), keyForOrphaning, nameStorageMap
+					orphanNameStorageMap.add(signature, keyForOrphaning, nameStorageMap
 							.getOpt(name, keyForOrphaning));
 				}
 
@@ -215,8 +213,7 @@ public class StorageUtils {
 
 			if (name != null) {
 				
-				Tuple2<byte[], String> tupleKeyToProcess = new Tuple2<byte[], String>(signature, name);
-				Map<String, String> orphanMapForTx = DBSet.getInstance().getOrphanNameStorageMap().get(tupleKeyToProcess);
+				Map<String, String> orphanMapForTx = DBSet.getInstance().getOrphanNameStorageMap().get(signature);
 				
 				if(orphanMapForTx != null)
 				{
@@ -238,7 +235,7 @@ public class StorageUtils {
 						}
 					}
 					
-					DBSet.getInstance().getOrphanNameStorageMap().delete(tupleKeyToProcess);
+					DBSet.getInstance().getOrphanNameStorageMap().delete(signature);
 					
 					
 				}
