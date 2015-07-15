@@ -163,6 +163,19 @@ public class BlockExplorer extends Observable implements Observer
 				}
 			}
 		}
+		
+		if(message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE)
+		{
+			Block block = (Block) message.getValue();
+			
+			this.orphanBlock(block);
+			
+			//CHECK TRANSACTIONS
+			for(Transaction transaction: block.getTransactions())
+			{
+				this.orphanTransaction(transaction);
+			}
+		}
 	}
 	
 	private void processTransaction(Transaction transaction)
@@ -205,6 +218,47 @@ public class BlockExplorer extends Observable implements Observer
 			DBSet.getInstance().getTransactionOfNameMap().add(name, transaction);
 		}
 	}
+
+	private void orphanTransaction(Transaction transaction)
+	{
+		//CHECK IF INVOLVED
+		List<Account> involvedAccounts = transaction.getInvolvedAccounts();  
+		 
+		synchronized(involvedAccounts)
+		{		
+			for(Account account: involvedAccounts)
+			{
+				//ADD TO ACCOUNT TRANSACTIONS
+				DBSet.getInstance().getTransactionOfAddressMap().remove(account, transaction);
+			}
+		}
+		
+		if(transaction.getType() == Transaction.REGISTER_NAME_TRANSACTION)
+		{
+			String name = ((RegisterNameTransaction)transaction).getName().toString();
+			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
+		}
+		if(transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION)
+		{
+			String name = ((UpdateNameTransaction)transaction).getName().toString();
+			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
+		}
+		if(transaction.getType() == Transaction.SELL_NAME_TRANSACTION)
+		{
+			String name = ((SellNameTransaction)transaction).getNameSale().getName().toString();
+			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
+		}
+		if(transaction.getType() == Transaction.CANCEL_SELL_NAME_TRANSACTION)
+		{
+			String name = ((CancelSellNameTransaction)transaction).getName();
+			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
+		}
+		if(transaction.getType() == Transaction.BUY_NAME_TRANSACTION)
+		{
+			String name = ((BuyNameTransaction)transaction).getNameSale().getName().toString();
+			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
+		}
+	}	
 	
 	private void processBlock(Block block)
 	{
@@ -214,6 +268,16 @@ public class BlockExplorer extends Observable implements Observer
 		String s = block.getGenerator().getAddress();
 		
 		DBSet.getInstance().getBlocksOfAddressMap().add(s, block);
+	}
+	
+	private void orphanBlock(Block block)
+	{
+		//CHECK IF INVOLVED
+
+		//ADD TO ACCOUNT TRANSACTIONS
+		String s = block.getGenerator().getAddress();
+		
+		DBSet.getInstance().getBlocksOfAddressMap().remove(s, block);
 	}
 	
 	public void synchronize()

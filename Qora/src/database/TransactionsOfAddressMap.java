@@ -63,6 +63,11 @@ public class TransactionsOfAddressMap extends DBMap<Tuple2<String, String>, byte
 		return this.set(new Tuple2<String, String>(account.getAddress(), new String(transaction.getSignature())), transaction.getSignature());
 	}
 	
+	public void remove(Account account, Transaction transaction)
+	{
+		this.delete(new Tuple2<String, String>(account.getAddress(), new String(transaction.getSignature())));
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<byte[]> get(String address, int limit)
 	{

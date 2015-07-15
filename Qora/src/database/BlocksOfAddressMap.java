@@ -63,6 +63,11 @@ public class BlocksOfAddressMap extends DBMap<Tuple2<String, String>, byte[]>
 		return this.set(new Tuple2<String, String>(address, new String(block.getSignature())), block.getSignature());
 	}
 	
+	public void remove(String address, Block block)
+	{
+		this.delete(new Tuple2<String, String>(address, new String(block.getSignature())));
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<byte[]> get(String address, int limit)
 	{

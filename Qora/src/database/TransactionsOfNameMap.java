@@ -6,11 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
+
+import qora.account.Account;
 import qora.transaction.Transaction;
 import database.DBMap;
 
@@ -61,6 +64,11 @@ public class TransactionsOfNameMap extends DBMap<Tuple2<String, String>, byte[]>
 	public boolean add(String name, Transaction transaction)
 	{
 		return this.set(new Tuple2<String, String>(name, new String(transaction.getSignature())), transaction.getSignature());
+	}
+	
+	public void remove(String name, Transaction transaction)
+	{
+		this.delete(new Tuple2<String, String>(name, new String(transaction.getSignature())));
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
