@@ -8,7 +8,9 @@ import java.util.List;
 
 import ntp.NTP;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
@@ -16,6 +18,7 @@ import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import utils.StorageUtils;
+import api.BlogPostResource;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -261,6 +264,9 @@ public class ArbitraryTransaction extends Transaction {
 		// NAME STORAGE UPDATE
 		if (service == 10) {
 			StorageUtils.processUpdate(getData(), signature, creator);
+			// BLOGPOST?
+		} else if (service == 777) {
+			addToBlogMapOnDemand();
 		}
 
 		// UPDATE CREATOR
@@ -277,6 +283,9 @@ public class ArbitraryTransaction extends Transaction {
 		// NAME STORAGE UPDATE ORPHAN
 		if (service == 10) {
 			StorageUtils.processOrphan(getData(), signature);
+			// BLOGPOST?
+		} else {
+			removeFromBlogMapOnDemand();
 		}
 
 		// UPDATE CREATOR
@@ -363,4 +372,46 @@ public class ArbitraryTransaction extends Transaction {
 
 		return Crypto.getInstance().sign(creator, data);
 	}
+
+	private void addToBlogMapOnDemand() {
+		if (getService() == 777) {
+			byte[] data = getData();
+			String string = new String(data);
+			
+			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
+			if (jsonObject != null) {
+				String post = (String) jsonObject
+						.get(BlogPostResource.POST_KEY);
+				
+				String blognameOpt = (String) jsonObject
+						.get(BlogPostResource.BLOGNAME_KEY);
+				
+				// DOES POST MET MINIMUM CRITERIUM?
+				if (StringUtils.isNotBlank(post)) {
+					DBSet.getInstance().getBlogPostMap()
+					.add(blognameOpt, getSignature());
+				}
+				
+			}
+		}
+	}
+	
+	private void removeFromBlogMapOnDemand() {
+		if (getService() == 777) {
+			byte[] data = getData();
+			String string = new String(data);
+
+			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
+			if (jsonObject != null) {
+				String blognameOpt = (String) jsonObject
+						.get(BlogPostResource.BLOGNAME_KEY);
+
+				DBSet.getInstance().getBlogPostMap()
+						.remove(blognameOpt, getSignature());
+
+			}
+		}
+	}
+
+
 }

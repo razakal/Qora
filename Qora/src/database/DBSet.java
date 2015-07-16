@@ -30,6 +30,7 @@ public class DBSet implements Observer, IDB {
 	private NameStorageMap nameStorageMap;
 	private OrphanNameStorageMap orphanNameStorageMap;
 	private LocalDataMap localDataMap;
+	private BlogPostMap blogPostMap;
 	private TransactionParentMap transactionParentMap;
 	private NameExchangeMap nameExchangeMap;
 	private UpdateNameMap updateNameMap;
@@ -104,6 +105,7 @@ public class DBSet implements Observer, IDB {
 		this.nameStorageMap = new NameStorageMap(this, database);
 		this.orphanNameStorageMap = new OrphanNameStorageMap(this, database);
 		this.localDataMap = new LocalDataMap(this, database);
+		this.blogPostMap = new BlogPostMap(this, database);
 		this.transactionParentMap = new TransactionParentMap(this, database);
 		this.nameExchangeMap = new NameExchangeMap(this, database);
 		this.updateNameMap = new UpdateNameMap(this, database);
@@ -136,6 +138,7 @@ public class DBSet implements Observer, IDB {
 		this.nameStorageMap = new NameStorageMap(parent.nameStorageMap);
 		this.orphanNameStorageMap = new OrphanNameStorageMap(parent.orphanNameStorageMap);
 		this.localDataMap = new LocalDataMap(parent.localDataMap);
+		this.blogPostMap = new BlogPostMap(parent.blogPostMap);
 		this.transactionParentMap = new TransactionParentMap(this.blockMap, parent.transactionParentMap);
 		this.nameExchangeMap = new NameExchangeMap(parent.nameExchangeMap);
 		this.updateNameMap = new UpdateNameMap(parent.updateNameMap);
@@ -166,6 +169,7 @@ public class DBSet implements Observer, IDB {
 		this.nameStorageMap.reset();
 		this.orphanNameStorageMap.reset();
 		this.localDataMap.reset();
+		this.blogPostMap.reset();
 		this.transactionParentMap.reset();
 		this.nameExchangeMap.reset();
 		this.updateNameMap.reset();
@@ -236,6 +240,11 @@ public class DBSet implements Observer, IDB {
 	public LocalDataMap getLocalDataMap()
 	{
 		return this.localDataMap;
+	}
+	
+	public BlogPostMap getBlogPostMap()
+	{
+		return this.blogPostMap;
 	}
 	
 	public TransactionParentMap getTransactionParentMap()

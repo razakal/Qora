@@ -11,7 +11,6 @@ import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import qora.block.Block;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
@@ -113,25 +112,22 @@ public class BlogUtils {
 	}
 
 	public static List<BlogEntry> getBlogPosts(String blogOpt) {
-		int height = Controller.getInstance().getHeight();
-		int floor = 1;
-		if (height > 10000) {
-			floor = height - 10000;
-		}
-		Pair<Block, List<Transaction>> resultlist = Controller.getInstance()
-				.scanTransactions(
-						Controller.getInstance().getBlockByHeight(floor),
-						10000, 1000, 10, 777, null);
 		List<BlogEntry> results = new ArrayList<>();
-		List<Transaction> b = resultlist.getB();
 		
-		b.addAll(DBSet.getInstance().getTransactionMap().getTransactions());
-			
-		//SORT THEM BY TIMESTAMP
-		Collections.sort(b, new TransactionTimestampComparator());
+		
+		List<byte[]> list = DBSet.getInstance().getBlogPostMap().get(blogOpt == null ? "QORA" : blogOpt);
+		
+		List<ArbitraryTransaction> blogPostTX = new ArrayList<>();
+		for (byte[] blogArbTx : list) {
+			Transaction transaction = Controller.getInstance().getTransaction(blogArbTx);
+			if(transaction != null)
+			{
+				blogPostTX.add((ArbitraryTransaction) transaction);
+			}
+		}
+		
 
-		for (Transaction transaction : b) {
-			if (transaction instanceof ArbitraryTransaction) {
+		for (ArbitraryTransaction transaction : blogPostTX) {
 
 				byte[] data = ((ArbitraryTransaction) transaction).getData();
 				String string = new String(data);
@@ -166,12 +162,12 @@ public class BlogUtils {
 				}
 
 			}
-		}
 
 		Collections.reverse(results);
 
 		return results;
 
 	}
+	
 
 }
