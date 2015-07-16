@@ -118,11 +118,14 @@ public class BlogUtils {
 		List<byte[]> list = DBSet.getInstance().getBlogPostMap().get(blogOpt == null ? "QORA" : blogOpt);
 		
 		List<ArbitraryTransaction> blogPostTX = new ArrayList<>();
-		for (byte[] blogArbTx : list) {
-			Transaction transaction = Controller.getInstance().getTransaction(blogArbTx);
-			if(transaction != null)
-			{
-				blogPostTX.add((ArbitraryTransaction) transaction);
+		if(list != null)
+		{
+			for (byte[] blogArbTx : list) {
+				Transaction transaction = Controller.getInstance().getTransaction(blogArbTx);
+				if(transaction != null)
+				{
+					blogPostTX.add((ArbitraryTransaction) transaction);
+				}
 			}
 		}
 		
