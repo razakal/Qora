@@ -41,8 +41,10 @@ public class LinkUtils {
 	}
 	
 	public static String getYoutubeEmbedHtml(String vid) {
-		return "<iframe width=\"320\" height=\"215\" src=\"https://www.youtube.com/embed/"
-				+ vid + "\" frameborder=\"0\" allowfullscreen></iframe>";
+		
+	   
+		
+		return "<div class=\"youtube-container\">\n<div class=\"youtube-player\" data-id="+vid+"></div>\n</div>";
 	}
 	
 	public static String transformURLIntoLinks(String text) {
