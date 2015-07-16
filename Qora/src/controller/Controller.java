@@ -65,11 +65,13 @@ import api.ApiClient;
 import api.ApiService;
 import at.AT;
 import database.DBSet;
+import database.LocalDataMap;
 import database.SortableList;
 
 public class Controller extends Observable {
 
 	private String version = "0.22.0 beta";
+	public static final String releaseVersion = "0.22.0";
 
 	public static final int STATUS_NO_CONNECTIONS = 0;
 	public static final int STATUS_SYNCHRONIZING = 1;
@@ -153,6 +155,10 @@ public class Controller extends Observable {
 
 		// OPENING DATABASES
 		DBSet.getInstance();
+
+//		TODO IMPORTANT FOR RELEASE Start from Scratch if necessary
+//		startFromScratchOnDemand();
+
 		if (DBSet.getInstance().getBlockMap().isProcessing()) {
 			DBSet.getInstance().close();
 
@@ -162,12 +168,11 @@ public class Controller extends Observable {
 				java.nio.file.Files.walkFileTree(dataDir.toPath(),
 						new SimpleFileVisitorForRecursiveFolderDeletion());
 				File dataBak = getDataBakDir(dataDir);
-				if(dataBak.exists() && Settings.getInstance().isCheckpointingEnabled())
-				{
+				if (dataBak.exists()
+						&& Settings.getInstance().isCheckpointingEnabled()) {
 					FileUtils.copyDirectory(dataBak, dataDir);
 					DBSet.reCreateDatabase();
-				}else
-				{
+				} else {
 					DBSet.reCreateDatabase();
 				}
 
@@ -182,16 +187,13 @@ public class Controller extends Observable {
 		}
 
 		// BLOCKEXPLORER BOOST
-		if(Settings.getInstance().isBlockExplorerBoost())
-		{
+		if (Settings.getInstance().isBlockExplorerBoost()) {
 			BlockExplorer.getInstance().setIndexing(true);
-		}
-		else
-		{
+		} else {
 			BlockExplorer.getInstance().setIndexing(false);
 			BlockExplorer.getInstance().ResetBase();
 		}
-		
+
 		// CREATE SYNCHRONIZOR
 		this.synchronizer = new Synchronizer();
 
@@ -232,6 +234,37 @@ public class Controller extends Observable {
 		// REGISTER DATABASE OBSERVER
 		this.addObserver(DBSet.getInstance().getTransactionMap());
 		this.addObserver(DBSet.getInstance());
+	}
+
+	public void startFromScratchOnDemand() throws IOException {
+		String dataVersion = DBSet.getInstance().getLocalDataMap()
+				.get(LocalDataMap.LOCAL_DATA_VERSION_KEY);
+
+		if (dataVersion == null || !dataVersion.equals(releaseVersion)) {
+			File dataDir = new File(Settings.getInstance().getDataDir());
+			File dataBak = getDataBakDir(dataDir);
+			DBSet.getInstance().close();
+
+			if (dataDir.exists()) {
+				// delete data folder
+				java.nio.file.Files.walkFileTree(dataDir.toPath(),
+						new SimpleFileVisitorForRecursiveFolderDeletion());
+
+			}
+
+			if (dataBak.exists()) {
+				// delete data folder
+				java.nio.file.Files.walkFileTree(dataDir.toPath(),
+						new SimpleFileVisitorForRecursiveFolderDeletion());
+			}
+			DBSet.reCreateDatabase();
+
+			DBSet.getInstance()
+					.getLocalDataMap()
+					.set(LocalDataMap.LOCAL_DATA_VERSION_KEY,
+							Controller.releaseVersion);
+
+		}
 	}
 
 	private File getDataBakDir(File dataDir) {
@@ -340,7 +373,8 @@ public class Controller extends Observable {
 	}
 
 	private void createDataCheckpoint() {
-		if (!DBSet.getInstance().getBlockMap().isProcessing() && Settings.getInstance().isCheckpointingEnabled()) {
+		if (!DBSet.getInstance().getBlockMap().isProcessing()
+				&& Settings.getInstance().isCheckpointingEnabled()) {
 			DBSet.getInstance().close();
 
 			File dataDir = new File(Settings.getInstance().getDataDir());
@@ -542,10 +576,12 @@ public class Controller extends Observable {
 					return;
 				}
 
-				// CHECK IF TRANSACTION HAS MINIMUM FEE AND MINIMUM FEE PER BYTE AND UNCONFIRMED
+				// CHECK IF TRANSACTION HAS MINIMUM FEE AND MINIMUM FEE PER BYTE
+				// AND UNCONFIRMED
 				if (transaction.hasMinimumFee()
 						&& transaction.hasMinimumFeePerByte()
-						&& ! DBSet.getInstance().getTransactionParentMap().contains(transaction.getSignature())) {
+						&& !DBSet.getInstance().getTransactionParentMap()
+								.contains(transaction.getSignature())) {
 					// ADD TO UNCONFIRMED TRANSACTIONS
 					this.blockGenerator.addUnconfirmedTransaction(transaction);
 
@@ -591,12 +627,11 @@ public class Controller extends Observable {
 
 	private void broadcastTransaction(Transaction transaction) {
 
-		if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
-		{
+		if (Controller.getInstance().getStatus() == Controller.STATUS_OKE) {
 			// CREATE MESSAGE
 			Message message = MessageFactory.getInstance()
 					.createTransactionMessage(transaction);
-	
+
 			// BROADCAST MESSAGE
 			List<Peer> excludes = new ArrayList<Peer>();
 			this.network.broadcast(message, excludes);
@@ -719,9 +754,8 @@ public class Controller extends Observable {
 		// CHECK IF WALLET EXISTS
 		return this.wallet.exists();
 	}
-	
-	public boolean doesWalletDatabaseExists()
-	{
+
+	public boolean doesWalletDatabaseExists() {
 		return this.wallet.isWalletDatabaseExisting();
 	}
 
@@ -833,7 +867,7 @@ public class Controller extends Observable {
 	public void setSecondsToUnlock(int seconds) {
 		this.wallet.setSecondsToUnlock(seconds);
 	}
-	
+
 	public List<Pair<Account, Transaction>> getLastTransactions(int limit) {
 		return this.wallet.getLastTransactions(limit);
 	}
@@ -866,30 +900,27 @@ public class Controller extends Observable {
 	public List<Pair<Account, Name>> getNames() {
 		return this.wallet.getNames();
 	}
-	
-	public List<Name> getNamesAsList()
-	{
+
+	public List<Name> getNamesAsList() {
 		List<Pair<Account, Name>> names = this.wallet.getNames();
 		List<Name> result = new ArrayList<>();
 		for (Pair<Account, Name> pair : names) {
 			result.add(pair.getB());
 		}
-		
+
 		return result;
-		
+
 	}
-	
-	public List<String> getNamesAsListAsString()
-	{
+
+	public List<String> getNamesAsListAsString() {
 		List<Name> namesAsList = getNamesAsList();
 		List<String> results = new ArrayList<String>();
 		for (Name name : namesAsList) {
 			results.add(name.getName());
 		}
 		return results;
-		
+
 	}
-	
 
 	public List<Name> getNames(Account account) {
 		return this.wallet.getNames(account);
@@ -934,7 +965,7 @@ public class Controller extends Observable {
 	public Collection<Asset> getAllAssets() {
 		return DBSet.getInstance().getAssetMap().getValues();
 	}
-	
+
 	public void onDatabaseCommit() {
 		this.wallet.commit();
 	}
@@ -1093,21 +1124,28 @@ public class Controller extends Observable {
 		}
 	}
 
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameRegistration(String name, String value) {
-		return this.transactionCreator.calcRecommendedFeeForNameRegistration(
-			new Name(new Account("QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, value)); // FOR GENESIS ADDRESS
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameRegistration(
+			String name, String value) {
+		return this.transactionCreator
+				.calcRecommendedFeeForNameRegistration(new Name(new Account(
+						"QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, value)); // FOR
+																				// GENESIS
+																				// ADDRESS
 	}
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameUpdate(String name, String value) {
-		return this.transactionCreator.calcRecommendedFeeForNameUpdate(
-				new Name(new Account("QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, value)); // FOR GENESIS ADDRESS
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameUpdate(
+			String name, String value) {
+		return this.transactionCreator
+				.calcRecommendedFeeForNameUpdate(new Name(new Account(
+						"QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, value)); // FOR
+																				// GENESIS
+																				// ADDRESS
 	}
-	
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForPoll(
-			String name, String description, List<String> options) {
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForPoll(String name,
+			String description, List<String> options) {
 		// CREATE ONLY ONE TRANSACTION AT A TIME
-		
+
 		// CREATE POLL OPTIONS
 		List<PollOption> pollOptions = new ArrayList<PollOption>();
 		for (String option : options) {
@@ -1115,15 +1153,18 @@ public class Controller extends Observable {
 		}
 
 		// CREATE POLL
-		Poll poll = new Poll(new Account("QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"), name, description, pollOptions);
+		Poll poll = new Poll(new Account("QLpLzqs4DW1FNJByeJ63qaqw3eAYCxfkjR"),
+				name, description, pollOptions);
 
 		return this.transactionCreator.calcRecommendedFeeForPollCreation(poll);
 	}
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(byte[] data) {
-		return this.transactionCreator.calcRecommendedFeeForArbitraryTransaction(data);
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(
+			byte[] data) {
+		return this.transactionCreator
+				.calcRecommendedFeeForArbitraryTransaction(data);
 	}
-	
+
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForMessage(byte[] message) {
 		return this.transactionCreator.calcRecommendedFeeForMessage(message);
 	}
@@ -1134,48 +1175,62 @@ public class Controller extends Observable {
 
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForAssetTransfer() {
 		return this.transactionCreator.calcRecommendedFeeForAssetTransfer();
-	}		
+	}
 
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForOrderTransaction() {
 		return this.transactionCreator.calcRecommendedFeeForOrderTransaction();
-	}	
-	
+	}
+
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForCancelOrderTransaction() {
-		return this.transactionCreator.calcRecommendedFeeForCancelOrderTransaction();
-	}	
-	
+		return this.transactionCreator
+				.calcRecommendedFeeForCancelOrderTransaction();
+	}
+
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForNameSale(String name) {
-		return this.transactionCreator.calcRecommendedFeeForNameSale(
-				new NameSale(name, Transaction.MINIMUM_FEE));
-	}	
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForNamePurchase(String name) {
-		return this.transactionCreator.calcRecommendedFeeForNamePurchase(
-				new NameSale(name, Transaction.MINIMUM_FEE));
+		return this.transactionCreator
+				.calcRecommendedFeeForNameSale(new NameSale(name,
+						Transaction.MINIMUM_FEE));
 	}
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForCancelNameSale(String name) {
-		return this.transactionCreator.calcRecommendedFeeForCancelNameSale(
-				new NameSale(name, Transaction.MINIMUM_FEE));
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForNamePurchase(
+			String name) {
+		return this.transactionCreator
+				.calcRecommendedFeeForNamePurchase(new NameSale(name,
+						Transaction.MINIMUM_FEE));
 	}
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForPollVote(String pollName) {
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForCancelNameSale(
+			String name) {
+		return this.transactionCreator
+				.calcRecommendedFeeForCancelNameSale(new NameSale(name,
+						Transaction.MINIMUM_FEE));
+	}
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForPollVote(
+			String pollName) {
 		return this.transactionCreator.calcRecommendedFeeForPollVote(pollName);
 	}
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForIssueAssetTransaction(String name, String description) {
-		return this.transactionCreator.calcRecommendedFeeForIssueAssetTransaction(name, description);
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForIssueAssetTransaction(
+			String name, String description) {
+		return this.transactionCreator
+				.calcRecommendedFeeForIssueAssetTransaction(name, description);
 	}
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForMultiPayment(List<Payment> payments) {
-		return this.transactionCreator.calcRecommendedFeeForMultiPayment(payments);
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForMultiPayment(
+			List<Payment> payments) {
+		return this.transactionCreator
+				.calcRecommendedFeeForMultiPayment(payments);
 	}
-	
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForDeployATTransaction(String name, String description, String type, 
-			String tags, byte[] creationBytes) {
-		return this.transactionCreator.calcRecommendedFeeForDeployATTransaction(name, description, type, tags, creationBytes);
+
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForDeployATTransaction(
+			String name, String description, String type, String tags,
+			byte[] creationBytes) {
+		return this.transactionCreator
+				.calcRecommendedFeeForDeployATTransaction(name, description,
+						type, tags, creationBytes);
 	}
-	
+
 	public Pair<Transaction, Integer> updateName(PrivateKeyAccount owner,
 			Account newOwner, String name, String value, BigDecimal fee) {
 		// CREATE ONLY ONE TRANSACTION AT A TIME
@@ -1324,11 +1379,11 @@ public class Controller extends Observable {
 	}
 
 	public byte[] getPublicKeyByAddress(String address) {
-		
-		if(!Crypto.getInstance().isValidAddress(address)) {
+
+		if (!Crypto.getInstance().isValidAddress(address)) {
 			return null;
 		}
-		
+
 		// CHECK ACCOUNT IN OWN WALLET
 		Account account = Controller.getInstance().getAccountByAddress(address);
 		if (account != null) {
@@ -1337,19 +1392,18 @@ public class Controller extends Observable {
 						.getPrivateKeyAccountByAddress(address).getPublicKey();
 			}
 		}
-		
-		if(!DBSet.getInstance().getReferenceMap().contains(address))
-		{
+
+		if (!DBSet.getInstance().getReferenceMap().contains(address)) {
 			return null;
 		}
-		
-		Transaction transaction = Controller.getInstance().getTransaction(DBSet.getInstance().getReferenceMap().get(address));
-		
-		if(transaction == null)
-		{
+
+		Transaction transaction = Controller.getInstance().getTransaction(
+				DBSet.getInstance().getReferenceMap().get(address));
+
+		if (transaction == null) {
 			return null;
 		}
-		
+
 		return transaction.getCreator().getPublicKey();
 	}
 }

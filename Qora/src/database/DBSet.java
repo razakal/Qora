@@ -29,6 +29,7 @@ public class DBSet implements Observer, IDB {
 	private NameMap nameMap;
 	private NameStorageMap nameStorageMap;
 	private OrphanNameStorageMap orphanNameStorageMap;
+	private LocalDataMap localDataMap;
 	private TransactionParentMap transactionParentMap;
 	private NameExchangeMap nameExchangeMap;
 	private UpdateNameMap updateNameMap;
@@ -75,6 +76,8 @@ public class DBSet implements Observer, IDB {
 		
 		//CREATE INSTANCE
 		instance = new DBSet(database);
+		
+		
 	}	
 	
 	public static DBSet createEmptyDatabaseSet()
@@ -100,6 +103,7 @@ public class DBSet implements Observer, IDB {
 		this.nameMap = new NameMap(this, database);
 		this.nameStorageMap = new NameStorageMap(this, database);
 		this.orphanNameStorageMap = new OrphanNameStorageMap(this, database);
+		this.localDataMap = new LocalDataMap(this, database);
 		this.transactionParentMap = new TransactionParentMap(this, database);
 		this.nameExchangeMap = new NameExchangeMap(this, database);
 		this.updateNameMap = new UpdateNameMap(this, database);
@@ -131,6 +135,7 @@ public class DBSet implements Observer, IDB {
 		this.nameMap = new NameMap(parent.nameMap);
 		this.nameStorageMap = new NameStorageMap(parent.nameStorageMap);
 		this.orphanNameStorageMap = new OrphanNameStorageMap(parent.orphanNameStorageMap);
+		this.localDataMap = new LocalDataMap(parent.localDataMap);
 		this.transactionParentMap = new TransactionParentMap(this.blockMap, parent.transactionParentMap);
 		this.nameExchangeMap = new NameExchangeMap(parent.nameExchangeMap);
 		this.updateNameMap = new UpdateNameMap(parent.updateNameMap);
@@ -160,6 +165,7 @@ public class DBSet implements Observer, IDB {
 		this.nameMap.reset();
 		this.nameStorageMap.reset();
 		this.orphanNameStorageMap.reset();
+		this.localDataMap.reset();
 		this.transactionParentMap.reset();
 		this.nameExchangeMap.reset();
 		this.updateNameMap.reset();
@@ -225,6 +231,11 @@ public class DBSet implements Observer, IDB {
 	public OrphanNameStorageMap getOrphanNameStorageMap()
 	{
 		return this.orphanNameStorageMap;
+	}
+	
+	public LocalDataMap getLocalDataMap()
+	{
+		return this.localDataMap;
 	}
 	
 	public TransactionParentMap getTransactionParentMap()
