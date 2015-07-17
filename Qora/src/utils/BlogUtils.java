@@ -120,6 +120,8 @@ public class BlogUtils {
 		}
 		Collections.sort(blogPosts, new BlogEntryTimestampComparator());
 		
+		Collections.reverse(blogPosts);
+		
 		return blogPosts;
 	}
 	
