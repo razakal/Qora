@@ -110,6 +110,19 @@ public class BlogUtils {
 
 		return blogprofiles;
 	}
+	
+	
+	public static List<BlogEntry> getBlogPosts(List<String> blogList)
+	{
+		List<BlogEntry> blogPosts = new ArrayList<BlogEntry>();
+		for (String blogname : blogList) {
+			blogPosts.addAll(getBlogPosts(blogname));
+		}
+		Collections.sort(blogPosts, new BlogEntryTimestampComparator());
+		
+		return blogPosts;
+	}
+	
 
 	public static List<BlogEntry> getBlogPosts(String blogOpt) {
 		List<BlogEntry> results = new ArrayList<>();
