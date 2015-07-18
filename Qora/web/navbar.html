@@ -26,7 +26,17 @@
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Profile <span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 {% for profile in profiles %}
-                	<li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">{{profile.getName().getName()}}</a></li>
+                	<li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">
+                    <span class="item">
+  <span class="item-left">
+      <img class="prof-pic" src="/index/img/qora-user.png" alt="" />
+      <span class="item-info">
+          <span>{{profile.getName().getName()}}</span>
+                        </span>
+                    </span>
+                    <span class="item-right">
+                    </span>
+                </span></a></li>
                 	{% if  loop.index   != profiles.size()  - 1 %}
                 	<li class="divider"></li>
                 	{% endif %}
