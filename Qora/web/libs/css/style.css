@@ -430,4 +430,6 @@ border-radius: 50%;
 }
 .menu-grid span.glyphicon.glyphicon-edit {
   font-size: 40px;
+}.menu-grid span.glyphicon.glyphicon-file {
+  font-size: 40px;
 }
