@@ -26,7 +26,11 @@
                 	<li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&switchprofile={{profile.getName().getName()}}">
                     <span class="item">
                       <span class="item-left">
+                      {% if profile.getAvatarOpt() is empty%}
                         <img class="prof-pic" src="/index/img/qora-user.png" alt="" />
+			          {%else%}
+                        <img class="prof-pic" src="{{profile.getAvatarOpt()}}" alt="" />
+			            {%endif%}
                         <span class="item-info">
                           <span>{{profile.getName().getName()}}</span>
                         </span>
