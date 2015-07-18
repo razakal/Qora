@@ -315,6 +315,9 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 			var follow = !profileisFollowing;
 			blogname = getParameter('blogname');
 
+      $("#apimessage").fadeTo(2500, 500).slideUp(1000, function(){
+          $("#apimessage").alert('close');
+      });
 			if (!blogname) {
 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
 								+ "You can't follow the Mainblog<br>"
