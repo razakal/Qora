@@ -251,7 +251,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
                   	{% if blogpost.shareAuthorOpt() is not null %}
                   	<h6><span class="glyphicon glyphicon-retweet"></span>  <b><a href="/index/blog.html?blogname={{blogpost.shareAuthorOpt()}}">{{blogpost.shareAuthorOpt()}}</a></b> shared <b><a href="/index/blog.html?blogname={{blogpost.nameOrCreator}}">{{blogpost.nameOrCreator}}</a></b> post</h6>
                   	{%endif%}
-                    <div class="media-left media-middle"><a href="#"><img src="{{blogpost.getAvatar()}}" alt="" class="media-object"></a></div>
+                    <div class="media-left media-middle"><a href="/index/blog.html?blogname={{blogpost.nameOrCreator}}"><img src="{{blogpost.getAvatar()}}" alt="" class="media-object"></a></div>
                     <div class="media-body">
                     	{% if blogpost.getProfileOpt() is not null and blogpost.getProfileOpt().isProfileEnabled() %}
                       <h6 class="media-heading"><b><a href="/index/blog.html?blogname={{blogpost.getProfileOpt().getName().getName()}}">{{blogpost.nameOrCreator}}</a></b></h6>{{blogpost.creationTime}}
