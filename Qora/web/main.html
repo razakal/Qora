@@ -12,6 +12,12 @@
     <style type="text/css">
       html,
       body,
+      .header {
+      height: 65%;
+      }
+      .main-tabs {
+      display: none;
+      }
       .container {
       height: 100%;
       }
@@ -38,7 +44,7 @@
       background-color: #ffffff;
       box-shadow: 0px 0px 3px 0px #ccc;
       }
-      img {
+      .main-logo img {
       -webkit-animation: fadein 4s;
       -moz-animation: fadein 4s;
       -o-animation: fadein 4s;
@@ -120,25 +126,6 @@
       .navbar-default .btn-link {
       color: #6467FF;
       }
-      .glyphicon.glyphicon-globe,
-      .glyphicon.glyphicon-edit,
-      .glyphicon.glyphicon-random {
-      font-size: 40px;
-      text-align: center;
-      color: #555;
-      display: block;
-      -webkit-animation: fadein 8s;
-      -moz-animation: fadein 8s;
-      -o-animation: fadein 8s;
-      -ms-animation: fadein 8s;
-      animation: fadein 6s;
-      }
-      .hyperlinks {
-      padding-top: 50px;
-      padding-left: auto;
-      padding-right: auto;
-      color: #ddd;
-      }
       textarea, textarea.form-control, input.form-control, input[type=text], input[type=number], [type=text].form-control {
       padding: 0;
       border: none;
@@ -148,34 +135,36 @@
       box-shadow: inset 0 -1px 0 #555;
       font-size: 16px;
       }
-      .glyphicon.glyphicon-globe:hover,
-      .glyphicon.glyphicon-globe:focus,
-      .glyphicon.glyphicon-edit:hover,
-      .glyphicon.glyphicon-edit:focus,
-      .glyphicon.glyphicon-random:hover,
-      .glyphicon.glyphicon-random:focus {
-      color: #6467FF;
-      border-radius: 10px;
-      -webkit-transition: background-color 500ms linear;
-      -moz-transition: background-color 500ms linear;
-      -o-transition: background-color 500ms linear;
-      -ms-transition: background-color 500ms linear;
-      transition: background-color 500ms linear;
-      -webkit-transition: color 250ms linear;
-      -moz-transition: color 250ms linear;
-      -o-transition: color 250ms linear;
-      -ms-transition: color 250ms linear;
-      transition: color 250ms linear;
-      text-decoration: none;
+      a {
+      color: #555;
       }
       a:hover,
       a:focus {
       color: #6467FF;
       text-decoration: none;
       }
+      a.navbar-brand {
+      display: none;
+      }
+      .navbar-form.navbar-left {
+      display: none;
+      }
+      .navbar {
+      border: none;
+       -webkit-box-shadow: 0 0px 0px rgba(0,0,0,0.3);
+       box-shadow: 0 0px 0px rgba(0,0,0,0.3);
+      }
+      .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
+      color: #6467FF;
+      background-color: #ffffff;
+      }
+      .navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
+      background-color: #ffffff;
+      color: #6467ff;
+      }
     </style>
   </head>
-  <body>
+  <body><div class="header"><div class="container">{{navbar}}</div></div>
     <div class="container">
       <div class="vertical-center-row">
         <div align="center">
@@ -188,16 +177,11 @@
               </select><br>
               <div class="form-inline">
                 <div class="input-group">
-                  <label for="name" class="sr-only">Search</label>
-                  <input id="name" autofocus="autofocus" size="75" type="text" value="" class="form-control"><span class="input-group-btn">
+                  <label for="searchkey" class="sr-only">Search</label>
+                  <input id="searchkey" autofocus="autofocus" size="75" type="text" value="" class="form-control"><span class="input-group-btn">
                     <button id="button" type="button" value="Search" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
                 </div>
               </div>
-            </div>
-            <div class="hyperlinks">
-              <div class="col-lg-4"><abbr title="Web"><a href="webdirectory.html"><span class="glyphicon glyphicon-globe"></span><span class="sr-only">Web</span></a><abbr></div>
-              <div class="col-lg-4"><abbr title="Blog"><a href="blog.html"><span class="glyphicon glyphicon-edit"></span><span class="sr-only">Blog</span></a></abbr></div>
-              <div class="col-lg-4"><abbr title="Block Explorer"><a href="blockexplorer.html"><span class="glyphicon glyphicon-random"></span><span class="sr-only">Block Explorer</span></a></abbr></div>
             </div>
           </div>
         </div>
@@ -237,23 +221,23 @@
             var searchval, url, value;
             value = $("#kind")[0].selectedIndex;
             if (value == 1) {
-                url = $('#name').val();
+                url = $('#searchkey').val();
                 document.location.href = '/' + url;
                 return 0;
             } else {
-                searchval = $('#name').val();
+                searchval = $('#searchkey').val();
                 document.location.href = '/index/main.html?search=' + searchval;
                 return 0;
             }
         });
-        $("#name").keypress(function(e) {
+        $("#searchkey").keypress(function(e) {
             if (e.which == 13) {
                 $("#button").trigger("click");
             }
         });
-        $("#name").val(getSearchParameters().search);
+        $("#searchkey").val(getSearchParameters().search);
         if (getSearchParameters().search == void 0) {
-            $('#name').val('');
+            $('#searchkey').val('');
         }
     });
     </script>

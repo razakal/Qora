@@ -155,6 +155,9 @@
         -ms-transition: color 250ms linear;
         transition: color 250ms linear;
       }
+      .navbar-form.navbar-left {
+      display: none;
+      }
     </style>
   </head>
   <body>
@@ -172,8 +175,8 @@
                 </div><br>
                 <div class="error-actions">
                   <div class="input-group">
-                    <label for="name" class="sr-only">Search</label>
-                    <input id="name" size="35" autofocus="autofocus" type="text" value="" class="form-control"><span class="input-group-btn">
+                    <label for="searchkey" class="sr-only">Search</label>
+                    <input id="searchkey" size="35" autofocus="autofocus" type="text" value="" class="form-control"><span class="input-group-btn">
                       <button id="button" type="button" value="!searchval!" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
                   </div>
                 </div>
@@ -212,13 +215,13 @@
     var blogloc;
     blogloc = function() {
         var url;
-        url = '/index/blogsearch.html?search=' + $("#name").val();
+        url = '/index/blogsearch.html?search=' + $("#searchkey").val();
         return url;
     };
     var webloc;
     webloc = function() {
         var url;
-        url = '/?search=' + $("#name").val();
+        url = '/?search=' + $("#searchkey").val();
         return url;
     };
     $(document).ready(function() {
@@ -229,19 +232,19 @@
         } else {
             $('ul.nav-tabs > li:nth-child(1)').addClass('active');
         }
-        $('#name').val(getSearchParameters().search);
+        $('#searchkey').val(getSearchParameters().search);
         if (getSearchParameters().search === void 0) {
-            $('#name').val('');
+            $('#searchkey').val('');
         }
-		
-        $('#name').val(searchval);
+
+        $('#searchkey').val(searchval);
         $('[id="button"]').click(function() {
             var url;
             url = void 0;
-            searchval = $('#name').val();
+            searchval = $('#searchkey').val();
             document.location.href = "http://" + window.location.host + '/index/main.html?search=' + searchval;
         });
-        $('[id="name"]').keypress(function(e) {
+        $('[id="searchkey"]').keypress(function(e) {
             if (e.which === 13) {
                 $('#button').trigger('click');
             }
