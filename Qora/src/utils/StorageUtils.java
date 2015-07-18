@@ -27,15 +27,18 @@ public class StorageUtils {
 	public static final String ADD_LIST_KEY = "addlist";
 	// REMOVE VALUE FROM LIST IF VALUE THERE SEPERATOR ";"
 	public static final String REMOVE_LIST_KEY = "removelist";
-	//ADD TO CURRENT VALUE WITHOUT SEPERATOR
+	// ADD TO CURRENT VALUE WITHOUT SEPERATOR
 	public static final String ADD_KEY = "add";
+
+	private static final List<byte[]> processed = new ArrayList<byte[]>();
 
 	@SuppressWarnings("unchecked")
 	public static JSONObject getStorageJsonObject(
 			List<Pair<String, String>> addCompleteKeys,
 			List<String> removeCompleteKeys,
 			List<Pair<String, String>> addListKeys,
-			List<Pair<String, String>> removeListKeys, List<Pair<String,String>> addWithoutSeperator) {
+			List<Pair<String, String>> removeListKeys,
+			List<Pair<String, String>> addWithoutSeperator) {
 		JSONObject json = new JSONObject();
 
 		addListPairtoJson(addCompleteKeys, json, ADD_COMPLETE_KEY);
@@ -53,14 +56,12 @@ public class StorageUtils {
 		addListPairtoJson(addListKeys, json, ADD_LIST_KEY);
 
 		addListPairtoJson(removeListKeys, json, REMOVE_LIST_KEY);
-		
+
 		addListPairtoJson(addWithoutSeperator, json, ADD_KEY);
 
 		return json;
 
 	}
-	
-	
 
 	@SuppressWarnings("unchecked")
 	public static void addListPairtoJson(
@@ -77,124 +78,131 @@ public class StorageUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void processUpdate(byte[] data, byte[] signature, PublicKeyAccount creator) {
-		String string = new String(data);
+	public static void processUpdate(byte[] data, byte[] signature,
+			PublicKeyAccount creator) {
 
-		JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
+		if (!ByteArrayUtils.contains(StorageUtils.getProcessed(), signature)) {
 
-		if (jsonObject != null) {
+			StorageUtils.addProcessed(signature);
+			String string = new String(data);
 
-			String name = (String) jsonObject.get("name");
+			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 
-			if (name != null) {
+			if (jsonObject != null) {
 
-				
-				Name nameObj = DBSet.getInstance().getNameMap().get(name);
-				
-				if(nameObj == null)
-				{
-					return;
-				}
-				
-				if(!nameObj.getOwner().getAddress().equals(creator.getAddress()))
-				{
-//					creator is not the owner of the name
-					return;
-				}
-				
-				
-				NameStorageMap nameStorageMap = DBSet.getInstance()
-						.getNameStorageMap();
-				OrphanNameStorageMap orphanNameStorageMap = DBSet.getInstance()
-						.getOrphanNameStorageMap();
+				String name = (String) jsonObject.get("name");
 
-				Set<String> allKeysForOrphanSaving = getAllKeysForOrphanSaving(jsonObject);
+				if (name != null) {
 
-				// SAVE OLD VALUES FOR ORPHANING
-				for (String keyForOrphaning : allKeysForOrphanSaving) {
-					orphanNameStorageMap.add(signature, keyForOrphaning, nameStorageMap
-							.getOpt(name, keyForOrphaning));
-				}
+					Name nameObj = DBSet.getInstance().getNameMap().get(name);
 
-				String addCompleteJson = (String) jsonObject.get(ADD_COMPLETE_KEY);
-				if (addCompleteJson != null) {
-					JSONObject addCompleteResults = (JSONObject) JSONValue
-							.parse(addCompleteJson);
-
-					Set<String> keys = addCompleteResults.keySet();
-
-					for (String key : keys) {
-						nameStorageMap.add(name, key,
-								"" + addCompleteResults.get(key));
+					if (nameObj == null) {
+						return;
 					}
 
-				}
-
-				String removeJson = (String) jsonObject
-						.get(REMOVE_COMPLETE_KEY);
-				if (removeJson != null) {
-
-					JSONObject removeCompleteResults = (JSONObject) JSONValue
-							.parse(removeJson);
-
-					Set<String> keys = removeCompleteResults.keySet();
-
-					for (String key : keys) {
-
-						nameStorageMap.remove(name, key);
+					if (!nameObj.getOwner().getAddress()
+							.equals(creator.getAddress())) {
+						// creator is not the owner of the name
+						return;
 					}
-				}
 
-				String addJsonList = (String) jsonObject.get(ADD_LIST_KEY);
-				if (addJsonList != null) {
+					NameStorageMap nameStorageMap = DBSet.getInstance()
+							.getNameStorageMap();
+					OrphanNameStorageMap orphanNameStorageMap = DBSet
+							.getInstance().getOrphanNameStorageMap();
 
-					JSONObject addListKey = (JSONObject) JSONValue
-							.parse(addJsonList);
+					Set<String> allKeysForOrphanSaving = getAllKeysForOrphanSaving(jsonObject);
 
-					Set<String> keys = addListKey.keySet();
-
-					for (String key : keys) {
-						List<String> entriesToAdd = new ArrayList<>(
-								Arrays.asList(StringUtils.split(
-										"" + addListKey.get(key), ";")));
-						nameStorageMap.addListEntries(name, key, entriesToAdd);
+					// SAVE OLD VALUES FOR ORPHANING
+					for (String keyForOrphaning : allKeysForOrphanSaving) {
+						orphanNameStorageMap.add(signature, keyForOrphaning,
+								nameStorageMap.getOpt(name, keyForOrphaning));
 					}
-				}
 
-				String removeJsonList = (String) jsonObject
-						.get(REMOVE_LIST_KEY);
-				if (removeJsonList != null) {
+					String addCompleteJson = (String) jsonObject
+							.get(ADD_COMPLETE_KEY);
+					if (addCompleteJson != null) {
+						JSONObject addCompleteResults = (JSONObject) JSONValue
+								.parse(addCompleteJson);
 
-					JSONObject removeListKey = (JSONObject) JSONValue
-							.parse(removeJsonList);
+						Set<String> keys = addCompleteResults.keySet();
 
-					Set<String> keys = removeListKey.keySet();
+						for (String key : keys) {
+							nameStorageMap.add(name, key, ""
+									+ addCompleteResults.get(key));
+						}
 
-					for (String key : keys) {
-						List<String> entriesToAdd = new ArrayList<>(
-								Arrays.asList(StringUtils.split(""
-										+ removeListKey.get(key), ";")));
-						nameStorageMap.removeListEntries(name, key,
-								entriesToAdd);
 					}
-				}
-				
-				String addJson = (String) jsonObject
-						.get(ADD_KEY);
-				if (addJson != null) {
-					
-					JSONObject addJsonKey = (JSONObject) JSONValue
-							.parse(addJson);
-					
-					Set<String> keys = addJsonKey.keySet();
-					
-					for (String key : keys) {
-						
-						String oldValueOpt = nameStorageMap.getOpt(name, key);
-						oldValueOpt = oldValueOpt == null?  "" : oldValueOpt;
-						nameStorageMap.add(name, key, oldValueOpt +
-								"" + addJsonKey.get(key));
+
+					String removeJson = (String) jsonObject
+							.get(REMOVE_COMPLETE_KEY);
+					if (removeJson != null) {
+
+						JSONObject removeCompleteResults = (JSONObject) JSONValue
+								.parse(removeJson);
+
+						Set<String> keys = removeCompleteResults.keySet();
+
+						for (String key : keys) {
+
+							nameStorageMap.remove(name, key);
+						}
 					}
+
+					String addJsonList = (String) jsonObject.get(ADD_LIST_KEY);
+					if (addJsonList != null) {
+
+						JSONObject addListKey = (JSONObject) JSONValue
+								.parse(addJsonList);
+
+						Set<String> keys = addListKey.keySet();
+
+						for (String key : keys) {
+							List<String> entriesToAdd = new ArrayList<>(
+									Arrays.asList(StringUtils.split(""
+											+ addListKey.get(key), ";")));
+							nameStorageMap.addListEntries(name, key,
+									entriesToAdd);
+						}
+					}
+
+					String removeJsonList = (String) jsonObject
+							.get(REMOVE_LIST_KEY);
+					if (removeJsonList != null) {
+
+						JSONObject removeListKey = (JSONObject) JSONValue
+								.parse(removeJsonList);
+
+						Set<String> keys = removeListKey.keySet();
+
+						for (String key : keys) {
+							List<String> entriesToAdd = new ArrayList<>(
+									Arrays.asList(StringUtils.split(""
+											+ removeListKey.get(key), ";")));
+							nameStorageMap.removeListEntries(name, key,
+									entriesToAdd);
+						}
+					}
+
+					String addJson = (String) jsonObject.get(ADD_KEY);
+					if (addJson != null) {
+
+						JSONObject addJsonKey = (JSONObject) JSONValue
+								.parse(addJson);
+
+						Set<String> keys = addJsonKey.keySet();
+
+						for (String key : keys) {
+
+							String oldValueOpt = nameStorageMap.getOpt(name,
+									key);
+							oldValueOpt = oldValueOpt == null ? ""
+									: oldValueOpt;
+							nameStorageMap.add(name, key, oldValueOpt + ""
+									+ addJsonKey.get(key));
+						}
+					}
+
 				}
 
 			}
@@ -228,7 +236,6 @@ public class StorageUtils {
 
 		}
 	}
-	
 
 	public static void processOrphan(byte[] data, byte[] signature) {
 
@@ -241,36 +248,44 @@ public class StorageUtils {
 			String name = (String) jsonObject.get("name");
 
 			if (name != null) {
-				
-				Map<String, String> orphanMapForTx = DBSet.getInstance().getOrphanNameStorageMap().get(signature);
-				
-				if(orphanMapForTx != null)
-				{
-					NameStorageMap nameStorageMap = DBSet.getInstance().getNameStorageMap();
+
+				Map<String, String> orphanMapForTx = DBSet.getInstance()
+						.getOrphanNameStorageMap().get(signature);
+
+				if (orphanMapForTx != null) {
+					NameStorageMap nameStorageMap = DBSet.getInstance()
+							.getNameStorageMap();
 					Set<String> keySet = orphanMapForTx.keySet();
-					
+
 					for (String key : keySet) {
-						Map<String, String> valueMapForName = nameStorageMap.get(name);
-						if(valueMapForName != null)
-						{
+						Map<String, String> valueMapForName = nameStorageMap
+								.get(name);
+						if (valueMapForName != null) {
 							String value = orphanMapForTx.get(key);
-							if(value != null)
-							{
+							if (value != null) {
 								nameStorageMap.add(name, key, value);
-							}else
-							{
+							} else {
 								nameStorageMap.remove(name, key);
 							}
 						}
 					}
-					
-					DBSet.getInstance().getOrphanNameStorageMap().delete(signature);
-					
-					
+
+					DBSet.getInstance().getOrphanNameStorageMap()
+							.delete(signature);
+
 				}
-				
-				
+
 			}
+		}
+	}
+
+	public static List<byte[]> getProcessed() {
+		return processed;
+	}
+
+	public static void addProcessed(byte[] signature) {
+		if (!ByteArrayUtils.contains(processed, signature)) {
+			processed.add(signature);
 		}
 	}
 

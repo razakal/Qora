@@ -313,9 +313,10 @@ public class WebResource {
 					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
 		}
+		Pair<String, String> websitepair = new Pair<String, String>(
+				Qorakeys.WEBSITE.toString(), website);
 		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
-				Collections.singletonList(new Pair<String, String>(
-						Qorakeys.WEBSITE.toString(), website)), null, null,
+				Collections.singletonList(websitepair), null, null,
 				null, null);
 
 		new NameStorageResource().updateEntry(storageJsonObject.toString(),

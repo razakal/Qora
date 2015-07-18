@@ -17,6 +17,7 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import utils.ByteArrayUtils;
 import utils.StorageUtils;
 import api.BlogPostResource;
 
@@ -374,28 +375,32 @@ public class ArbitraryTransaction extends Transaction {
 	}
 
 	private void addToBlogMapOnDemand() {
+		
 		if (getService() == 777) {
-			byte[] data = getData();
-			String string = new String(data);
-			
-			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
-			if (jsonObject != null) {
-				String post = (String) jsonObject
-						.get(BlogPostResource.POST_KEY);
+		if (!ByteArrayUtils.contains(StorageUtils.getProcessed(), signature)) {
+			StorageUtils.addProcessed(signature);
+				byte[] data = getData();
+				String string = new String(data);
 				
-				String blognameOpt = (String) jsonObject
-						.get(BlogPostResource.BLOGNAME_KEY);
-				
-				// DOES POST MET MINIMUM CRITERIUM?
-				if (StringUtils.isNotBlank(post)) {
-					DBSet.getInstance().getBlogPostMap()
-					.add(blognameOpt, getSignature());
+				JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
+				if (jsonObject != null) {
+					String post = (String) jsonObject
+							.get(BlogPostResource.POST_KEY);
+					
+					String blognameOpt = (String) jsonObject
+							.get(BlogPostResource.BLOGNAME_KEY);
+					
+					// DOES POST MET MINIMUM CRITERIUM?
+					if (StringUtils.isNotBlank(post)) {
+						DBSet.getInstance().getBlogPostMap()
+						.add(blognameOpt, getSignature());
+					}
+					
 				}
-				
 			}
 		}
 	}
-	
+
 	private void removeFromBlogMapOnDemand() {
 		if (getService() == 777) {
 			byte[] data = getData();
@@ -412,6 +417,5 @@ public class ArbitraryTransaction extends Transaction {
 			}
 		}
 	}
-
 
 }

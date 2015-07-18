@@ -1,7 +1,6 @@
 package database;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,11 +8,13 @@ import java.util.Map;
 import org.mapdb.DB;
 import org.mapdb.DB.BTreeMapMaker;
 
+import utils.ByteArrayUtils;
+
 public class BlogPostMap extends DBMap<String, List<byte[]>> {
 
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 
-	private final static String MAINBLOG = "QORA";
+	public final static String MAINBLOG = "QORA";
 
 	public BlogPostMap(DBSet databaseSet, DB database) {
 		super(databaseSet, database);
@@ -60,7 +61,7 @@ public class BlogPostMap extends DBMap<String, List<byte[]>> {
 			list = new ArrayList<>();
 		}
 
-		if (!contains(list, signature)) {
+		if (!ByteArrayUtils.contains(list, signature)) {
 			list.add(signature);
 		}
 
@@ -75,30 +76,11 @@ public class BlogPostMap extends DBMap<String, List<byte[]>> {
 
 		if (contains(blogname)) {
 			List<byte[]> list = get(blogname);
-			remove(list, signature);
+			ByteArrayUtils.remove(list, signature);
 		}
 
 	}
 	
 	
-	boolean contains(List<byte[]> arrays, byte[] other) {
-	    for (byte[] b : arrays)
-	        if (Arrays.equals(b, other)) return true;
-	    return false;
-	}
-	
-	
-	public void remove(List<byte[]> list, byte[] toremove)
-	{
-		byte[] result = null;
-		for (byte[] bs : list) {
-			if(Arrays.equals(bs, toremove))
-			{
-				result = bs;
-			}
-		}
-		
-		list.remove(result);
-	}
 
 }
