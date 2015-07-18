@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -32,6 +33,7 @@ public class BlogPostResource {
 	public static final String AUTHOR = "author";
 	public static final String BLOGNAME_KEY = "blogname";
 	public static final String TITLE_KEY = "title";
+	public static final String SHARE_KEY = "share";
 	public static final String POST_KEY = "post";
 
 	@Context
@@ -50,6 +52,7 @@ public class BlogPostResource {
 			String authorOpt = (String) jsonObject.get(BlogPostResource.AUTHOR);
 			String title = (String) jsonObject.get("title");
 			String body = (String) jsonObject.get("body");
+			String share = (String) jsonObject.get(BlogPostResource.SHARE_KEY);
 
 			if (StringUtil.isBlank(body)) {
 				throw ApiErrorFactory.getInstance().createError(
@@ -121,6 +124,10 @@ public class BlogPostResource {
 
 			dataStructure.put(TITLE_KEY, title);
 			dataStructure.put(POST_KEY, body);
+			if(StringUtils.isNotBlank(share))
+			{
+				dataStructure.put(BlogPostResource.SHARE_KEY, share);
+			}
 
 			if (blogname != null) {
 				dataStructure.put(BLOGNAME_KEY, blogname);

@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -316,8 +317,7 @@ public class WebResource {
 		Pair<String, String> websitepair = new Pair<String, String>(
 				Qorakeys.WEBSITE.toString(), website);
 		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
-				Collections.singletonList(websitepair), null, null,
-				null, null);
+				Collections.singletonList(websitepair), null, null, null, null);
 
 		new NameStorageResource().updateEntry(storageJsonObject.toString(),
 				name);
@@ -1215,9 +1215,128 @@ public class WebResource {
 
 	@SuppressWarnings("unchecked")
 	@POST
+	@Path("index/sharepost.html")
+	@Consumes("application/x-www-form-urlencoded")
+	public Response sharePost(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
+
+		JSONObject json = new JSONObject();
+
+		try {
+
+			String signature = form.getFirst("signature");
+
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
+
+			if (activeProfileOpt != null && signature != null) {
+				if (activeProfileOpt.isProfileEnabled()) {
+
+					
+					if(!activeProfileOpt.isBlogEnabled())
+					{
+						json.put("type", "BlogIsDisabled");
+						return Response
+								.status(200)
+								.header("Content-Type",
+										"application/json; charset=utf-8")
+								.entity(json.toJSONString()).build();
+					}
+					
+//					TODO DON'T SHARE iF ALREADY SHARED
+//
+//					if (activeProfileOpt.getLikedPosts().contains(signature)) {
+//
+//						json.put("type", "YouAlreadySharedThisPost");
+//
+//						return Response
+//								.status(200)
+//								.header("Content-Type",
+//										"application/json; charset=utf-8")
+//								.entity(json.toJSONString()).build();
+//					}
+
+					
+					// TODO PREVENT SHARING OF POSTS In OWN BLOG (MAKES NO SENSE)
+//					BlogEntry blogEntryOpt = BlogUtils
+//							.getBlogEntryOpt((ArbitraryTransaction) Controller
+//									.getInstance().getTransaction(
+//											Base58.decode(signature)));
+//
+//					boolean ownPost = false;
+//					if (blogEntryOpt != null) {
+//						if (Controller.getInstance().getAccountByAddress(
+//								blogEntryOpt.getCreator()) != null) {
+//							ownPost = true;
+//						}
+//					}
+//
+//					if (ownPost) {
+//
+//						json.put("type", "YouCantShareYourOwnPosts");
+//
+//						return Response
+//								.status(200)
+//								.header("Content-Type",
+//										"application/json; charset=utf-8")
+//								.entity(json.toJSONString()).build();
+//
+//					}
+
+					JSONObject jsonBlogPost = new JSONObject();
+					String profileName = activeProfileOpt.getName().getName();
+					jsonBlogPost.put(BlogPostResource.AUTHOR, profileName);
+					jsonBlogPost.put("creator", activeProfileOpt.getName().getOwner().getAddress());
+					jsonBlogPost.put(BlogPostResource.SHARE_KEY, signature);
+					jsonBlogPost.put("body", "share");
+					
+					 Pair<BigDecimal, Integer> fee = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(jsonBlogPost.toJSONString().getBytes());
+					jsonBlogPost.put("fee", fee.getA().toPlainString());
+					
+					try {
+
+						String result = new BlogPostResource().addBlogEntry(
+								jsonBlogPost.toJSONString(),profileName);
+
+						json.put("type", "ShareSuccessful");
+						json.put("result", result);
+
+					} catch (WebApplicationException e) {
+
+						json.put("type", "ShareNotSuccessful");
+						json.put("result", e.getResponse().getEntity());
+					}
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
+							.entity(json.toJSONString()).build();
+
+				}
+			}
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+
+			json.put("type", "error");
+			json.put("error", e.getMessage());
+
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(json.toJSONString()).build();
+		}
+
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.entity("{}").build();
+	}
+
+	@SuppressWarnings("unchecked")
+	@POST
 	@Path("index/likepost.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response likeProfile(@Context HttpServletRequest request,
+	public Response likePost(@Context HttpServletRequest request,
 			MultivaluedMap<String, String> form) {
 
 		JSONObject json = new JSONObject();
@@ -1249,7 +1368,6 @@ public class WebResource {
 									.entity(json.toJSONString()).build();
 						}
 
-						// TODO Prevent liking of own posts
 						BlogEntry blogEntryOpt = BlogUtils
 								.getBlogEntryOpt((ArbitraryTransaction) Controller
 										.getInstance().getTransaction(
@@ -1490,10 +1608,8 @@ public class WebResource {
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
 
-			
 			List<Profile> enabledProfiles = Profile.getEnabledProfiles();
 
-			
 			for (BlogEntry blogEntry : blogPosts) {
 				String signature = blogEntry.getSignature();
 
@@ -1502,7 +1618,7 @@ public class WebResource {
 						blogEntry.addLikingUser(enabledProfile.getName()
 								.getName());
 					}
-					
+
 				}
 				blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(
 						signature));
@@ -1732,31 +1848,31 @@ public class WebResource {
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/main.mini.html", request);
-			
-			NameStorageMap nameStorageMap = DBSet.getInstance().getNameStorageMap();
+
+			NameStorageMap nameStorageMap = DBSet.getInstance()
+					.getNameStorageMap();
 			Map<String, String> map = nameStorageMap.get(name);
-			
-			if(map != null)
-			{
+
+			if (map != null) {
 				Set<String> keySet = map.keySet();
-				JSONObject	resultJson = new JSONObject();
+				JSONObject resultJson = new JSONObject();
 				for (String key : keySet) {
 					String value = map.get(key);
 					resultJson.put(key, value);
 				}
-				
+
 				pebbleHelper.getContextMap().put("keyvaluepairs", resultJson);
 				pebbleHelper.getContextMap().put("dataname", name);
 
 				return Response.status(200)
 						.header("Content-Type", "text/html; charset=utf-8")
 						.entity(pebbleHelper.evaluate()).build();
-				
-			}else
-			{
-				return error404(request, "This namestorage does not contain any entries");
+
+			} else {
+				return error404(request,
+						"This namestorage does not contain any entries");
 			}
-			
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);

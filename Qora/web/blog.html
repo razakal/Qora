@@ -249,6 +249,9 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
               <div class="timeline-panel">
                 <div class="timeline-heading">
                   <div class="media">
+                  	{% if blogpost.shareAuthorOpt() is not null %}
+                  	<h6 class="media-heading"><b>This post was shared by {{blogpost.shareAuthorOpt()}}</b></h6>
+                  	{%endif%}
                     <div class="media-left media-middle"><a href="#"><img src="{{blogpost.getAvatar()}}" alt="" class="media-object"></a></div>
                     <div class="media-body">
                     	{% if blogpost.getProfileOpt() is not null and blogpost.getProfileOpt().isProfileEnabled() %}
@@ -265,7 +268,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
                 </div>
                 <div class="timeline-footer">
                   <a><span onclick="javascript:processLike('{{blogpost.getSignature()}}', {{blogpost.isLiking()}})" ><i class="glyphicon glyphicon-heart">{{blogpost.getLikes()}}</i></a>
-                  <a class="pull-right"><i class="glyphicon glyphicon-share"></i></a>
+                  <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}')" ><i class="glyphicon glyphicon-share"></i></a>
                 </div>
               </div>
             </li>			{% endfor %}
@@ -386,7 +389,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 				}
 				
 			}).fail( function(xhr, textStatus, errorThrown) {
-				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like Error<br>'
+				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Follow Error<br>'
 										+ 'Connection Error<br>'
 										+ xhr.responseText + '</div></center>');
 			});
@@ -414,6 +417,62 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 		    iframe.setAttribute("id", "youtube-iframe");
 		    this.parentNode.replaceChild(iframe, this);
 		}
+		
+		function processShare(signature) {
+			var blogname;
+			
+
+
+			{% if activeProfile is null %}
+				$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">"
+									+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+									+ "</div></center>");
+				return 0;
+			{%  endif %}
+			
+			$.post(
+			"/index/sharepost.html",
+			{
+				signature: signature, 
+			}).done( function(data) {
+				if(data.type == 'YouAlreadySharedThisPost'){
+					$("#apimessage").html('<center><div class="alert alert-danger" role="alert">You already shared this post'
+										+ '<br></div></center>');
+				} else if (data.type == 'YouCantShareYourOwnPosts'){
+					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Share not successful<br>'
+										+ 'This Blogentry is already in your blog.'
+										+ '</div></center>');
+				} else if (data.type == 'ShareSuccessful'){
+					$("#apimessage").html('<center><div class=\"alert alert-success\" role=\"alert\">Share successful<br>'
+										+ '</div></center>');
+				} else if (data.type == 'ShareNotSuccessful'){
+					try {
+						var error = JSON.parse(data.result);
+						message = error.message;
+					} catch (e) {
+						message = data.result;
+					}
+				
+					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Share not successful<br>'
+										+ message + '</div></center>');
+				} else if (data.type == 'error'){
+					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Share Error<br>'
+										+ data.error + '</div></center>');
+				}else if (data.type == 'BlogIsDisabled'){
+					("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Share not successful<br>'
+										+ 'The Blog of your active profile is disabled!'
+										+ '</div></center>');
+				}
+				
+
+			}).fail( function(xhr, textStatus, errorThrown) {
+				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Share Error<br>'
+										+ 'Connection Error<br>'
+										+ xhr.responseText + '</div></center>');
+			});
+
+			return 0;
+   		 }
    		 
     	function processLike(signature, isLikeing) {
 			var blogname;

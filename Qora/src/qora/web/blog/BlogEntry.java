@@ -32,7 +32,7 @@ public class BlogEntry {
 	private String titleOpt;
 	private String description;
 	private String nameOpt;
-	private final long time;
+	private long time;
 	private final String creator;
 	private String 	avatar = "img/qora-user.png";
 	private final Profile profileOpt;
@@ -41,6 +41,10 @@ public class BlogEntry {
 	private String signature;
 	private boolean isLiking = false;
 	private List<String> likingUser = new ArrayList<>();
+	/**
+	 * Only Set in case of a shared post (if I share your post I am the share author)
+	 */
+	private String shareAuthorOpt = null;
 
 	public BlogEntry(String titleOpt, String description, String nameOpt,
 			long timeOpt, String creator, String signature) {
@@ -135,6 +139,11 @@ public class BlogEntry {
 	public long getTime() {
 		return time;
 	}
+	
+	public void setTime(long time)
+	{
+		this.time = time;
+	}
 
 	public String getCreator() {
 		return creator;
@@ -194,6 +203,14 @@ public class BlogEntry {
 	public int getLikes()
 	{
 		return likingUser.size();
+	}
+
+	public String getShareAuthorOpt() {
+		return shareAuthorOpt;
+	}
+
+	public void setShareAuthor(String shareAuthor) {
+		this.shareAuthorOpt = shareAuthor;
 	}
 	
 

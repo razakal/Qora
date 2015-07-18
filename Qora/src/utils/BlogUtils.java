@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -163,20 +164,43 @@ public class BlogUtils {
 
 						String title = (String) jsonObject
 								.get(BlogPostResource.TITLE_KEY);
+						String share = (String) jsonObject
+								.get(BlogPostResource.SHARE_KEY);
 						String post = (String) jsonObject
 								.get(BlogPostResource.POST_KEY);
 						String nameOpt = (String) jsonObject
 								.get(BlogPostResource.AUTHOR);
-
+						
 						String creator = transaction
 								.getCreator().getAddress();
 						BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(blogOpt);
-						//POST NEEDS TO BE FILLED AND POST MUST BE ALLOWED
-						if (StringUtil.isNotBlank(post) && blogBlackWhiteList.isAllowedPost(nameOpt != null ? nameOpt : creator, creator)) {
-							results.add(new BlogEntry(title, post, nameOpt,
-									transaction.getTimestamp(), creator, Base58.encode(transaction.getSignature())));
-
+						
+						if(blogBlackWhiteList.isAllowedPost(nameOpt != null ? nameOpt : creator, creator))
+						{
+							if(StringUtils.isNotEmpty(share))
+							{
+								BlogEntry blogEntryToShareOpt = BlogUtils
+										.getBlogEntryOpt((ArbitraryTransaction) Controller
+												.getInstance().getTransaction(
+														Base58.decode(share)));
+								if(blogEntryToShareOpt != null && StringUtils.isNotBlank(blogEntryToShareOpt.getDescription()))
+								{
+									//share gets time of sharing!
+									blogEntryToShareOpt.setTime(transaction.getTimestamp());
+									blogEntryToShareOpt.setShareAuthor(nameOpt != null ? nameOpt : creator);
+									results.add(blogEntryToShareOpt);
+								}
+							}else
+							{
+								//POST NEEDS TO BE FILLED AND POST MUST BE ALLOWED
+								if (StringUtil.isNotBlank(post)) {
+									results.add(new BlogEntry(title, post, nameOpt,
+											transaction.getTimestamp(), creator, Base58.encode(transaction.getSignature())));
+									
+								}
+							}
 						}
+
 					}
 				}
 
