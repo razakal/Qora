@@ -40,6 +40,7 @@ public class BlogEntry {
 	private List<String> imagelinks = new ArrayList<String>();
 	private String signature;
 	private boolean isLiking = false;
+	private List<String> likingUser = new ArrayList<>();
 
 	public BlogEntry(String titleOpt, String description, String nameOpt,
 			long timeOpt, String creator, String signature) {
@@ -181,5 +182,19 @@ public class BlogEntry {
 	public void setLiking(boolean isLiking) {
 		this.isLiking = isLiking;
 	}
+	
+	public void addLikingUser(String user)
+	{
+		if(!likingUser.contains(user))
+		{
+			likingUser.add(user);
+		}
+	}
+	
+	public int getLikes()
+	{
+		return likingUser.size();
+	}
+	
 
 }

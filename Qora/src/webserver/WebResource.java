@@ -1228,74 +1228,73 @@ public class WebResource {
 			Profile activeProfileOpt = ProfileHelper.getInstance()
 					.getActiveProfileOpt(request);
 
-			if (likeString != null && activeProfileOpt != null
-					) {
+			if (likeString != null && activeProfileOpt != null) {
 				boolean like = Boolean.valueOf(likeString);
 				if (activeProfileOpt.isProfileEnabled()) {
 
 					if (like) {
-							String result;
+						String result;
 
-							if (activeProfileOpt.getLikedPosts().contains(
-									signature)) {
+						if (activeProfileOpt.getLikedPosts()
+								.contains(signature)) {
 
-								json.put("type", "YouAlreadyLikeThisPost");
-
-								return Response
-										.status(200)
-										.header("Content-Type",
-												"application/json; charset=utf-8")
-										.entity(json.toJSONString()).build();
-							}
-
-							//TODO Prevent liking of own posts
-							BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt((ArbitraryTransaction) Controller.getInstance().getTransaction(Base58.decode(signature)));
-							
-							boolean ownPost = false;
-							if(blogEntryOpt != null)
-							{
-								if(Controller.getInstance().getAccountByAddress(blogEntryOpt.getCreator()) != null)
-								{
-									ownPost = true;
-								}
-							}
-							
-							if (ownPost) {
-
-								json.put("type", "YouCantLikeYourOwnPosts");
-
-								return Response
-										.status(200)
-										.header("Content-Type",
-												"application/json; charset=utf-8")
-										.entity(json.toJSONString()).build();
-
-							}
-
-							activeProfileOpt.addLikePost(signature);
-							try {
-
-								result = activeProfileOpt.saveProfile();
-
-								json.put("type", "LikeSuccessful");
-								json.put("result", result);
-
-
-							} catch (WebApplicationException e) {
-
-								json.put("type", "LikeNotSuccessful");
-								json.put("result", e.getResponse().getEntity());
-							}
+							json.put("type", "YouAlreadyLikeThisPost");
 
 							return Response
 									.status(200)
 									.header("Content-Type",
 											"application/json; charset=utf-8")
 									.entity(json.toJSONString()).build();
-					} else {
-						if (activeProfileOpt.getLikedPosts().contains(
-								signature)) {
+						}
 
+						// TODO Prevent liking of own posts
+						BlogEntry blogEntryOpt = BlogUtils
+								.getBlogEntryOpt((ArbitraryTransaction) Controller
+										.getInstance().getTransaction(
+												Base58.decode(signature)));
+
+						boolean ownPost = false;
+						if (blogEntryOpt != null) {
+							if (Controller.getInstance().getAccountByAddress(
+									blogEntryOpt.getCreator()) != null) {
+								ownPost = true;
+							}
+						}
+
+						if (ownPost) {
+
+							json.put("type", "YouCantLikeYourOwnPosts");
+
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
+									.entity(json.toJSONString()).build();
+
+						}
+
+						activeProfileOpt.addLikePost(signature);
+						try {
+
+							result = activeProfileOpt.saveProfile();
+
+							json.put("type", "LikeSuccessful");
+							json.put("result", result);
+
+						} catch (WebApplicationException e) {
+
+							json.put("type", "LikeNotSuccessful");
+							json.put("result", e.getResponse().getEntity());
+						}
+
+						return Response
+								.status(200)
+								.header("Content-Type",
+										"application/json; charset=utf-8")
+								.entity(json.toJSONString()).build();
+					} else {
+						if (activeProfileOpt.getLikedPosts()
+								.contains(signature)) {
 
 							activeProfileOpt.removeLikeProfile(signature);
 							String result;
@@ -1304,7 +1303,6 @@ public class WebResource {
 
 								json.put("type", "LikeRemovedSuccessful");
 								json.put("result", result);
-
 
 							} catch (WebApplicationException e) {
 
@@ -1373,13 +1371,32 @@ public class WebResource {
 					"postblog.html?blogname=" + blogname);
 
 			pebbleHelper.getContextMap().put("blogprofile", profile);
-			pebbleHelper.getContextMap().put("blogenabled",
-					true);
-			
-			List<String> followedBlogs = new ArrayList<String>( profile.getFollowedBlogs());
+			pebbleHelper.getContextMap().put("blogenabled", true);
+
+			List<String> followedBlogs = new ArrayList<String>(
+					profile.getFollowedBlogs());
 			followedBlogs.add(profile.getName().getName());
-			
+
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(followedBlogs);
+
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
+			List<Profile> enabledProfiles = Profile.getEnabledProfiles();
+			for (BlogEntry blogEntry : blogPosts) {
+				String signature = blogEntry.getSignature();
+
+				for (Profile enabledProfile : enabledProfiles) {
+					if (enabledProfile.getLikedPosts().contains(signature)) {
+						blogEntry.addLikingUser(enabledProfile.getName()
+								.getName());
+					}
+
+				}
+				if (activeProfileOpt != null) {
+					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
+							.contains(signature));
+				}
+			}
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
 
@@ -1470,13 +1487,24 @@ public class WebResource {
 									blogname));
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
+
+			
+			List<Profile> enabledProfiles = Profile.getEnabledProfiles();
+
 			
 			for (BlogEntry blogEntry : blogPosts) {
 				String signature = blogEntry.getSignature();
-				
-					blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(signature));
+
+				for (Profile enabledProfile : enabledProfiles) {
+					if (enabledProfile.getLikedPosts().contains(signature)) {
+						blogEntry.addLikingUser(enabledProfile.getName()
+								.getName());
+					}
+					
+				}
+				blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(
+						signature));
 			}
-			
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
 
