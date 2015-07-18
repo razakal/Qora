@@ -60,6 +60,7 @@ import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
 import qora.web.BlogProfile;
 import qora.web.HTMLSearchResult;
+import qora.web.NameStorageMap;
 import qora.web.Profile;
 import qora.web.ProfileHelper;
 import qora.web.ServletUtils;
@@ -1730,32 +1731,31 @@ public class WebResource {
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/main.mini.html", request);
-			NameMap nameMap = DBSet.getInstance().getNameMap();
-
-			if (nameMap.contains(name)) {
-				Name nameObj = nameMap.get(name);
-				String value = nameObj.getValue();
-
-				JSONObject resultJson = NameUtils.getJsonForNameOpt(nameObj);
-
-				// BAD FORMAT --> NO KEYVALUE
-				if (resultJson == null) {
-					resultJson = new JSONObject();
-					resultJson.put(Qorakeys.DEFAULT.toString(), value);
-
-					value = jsonToFineSting(resultJson.toJSONString());
+			
+			NameStorageMap nameStorageMap = DBSet.getInstance().getNameStorageMap();
+			Map<String, String> map = nameStorageMap.get(name);
+			
+			if(map != null)
+			{
+				Set<String> keySet = map.keySet();
+				JSONObject	resultJson = new JSONObject();
+				for (String key : keySet) {
+					String value = map.get(key);
+					resultJson.put(key, value);
 				}
-
+				
 				pebbleHelper.getContextMap().put("keyvaluepairs", resultJson);
 				pebbleHelper.getContextMap().put("dataname", name);
 
 				return Response.status(200)
 						.header("Content-Type", "text/html; charset=utf-8")
 						.entity(pebbleHelper.evaluate()).build();
-
-			} else {
-				return error404(request, null);
+				
+			}else
+			{
+				return error404(request, "This namestorage does not contain any entries");
 			}
+			
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);
