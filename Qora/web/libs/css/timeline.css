@@ -138,13 +138,13 @@ i.glyphicon.glyphicon-heart:hover {
 color: #6474ff;
 }
 i.glyphicon.glyphicon-heart {
-color: #ddd;
+color: #888;
 }
 i.glyphicon.glyphicon-share:hover {
 color: #6474ff;
 }
 i.glyphicon.glyphicon-share {
-color: #ddd;
+color: #888;
 }
 .tooltip{
 position:absolute;

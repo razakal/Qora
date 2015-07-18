@@ -195,7 +195,7 @@
       color: #6467ff;
       text-decoration: none;
       }
-      
+
       .youtube-container { display: block; margin: 20px auto; width: 100%; max-width: 600px; }
 .youtube-player { display: block; width: 100%; /* assuming that the video has a 16:9 ratio */ padding-bottom: 56.25%; overflow: hidden; position: relative; width: 100%; height: 100%; cursor: hand; cursor: pointer; display: block; }
 img.youtube-thumb { bottom: 0; display: block; left: 0; margin: auto; max-width: 100%; width: 100%; position: absolute; right: 0; top: 0; height: auto }
@@ -302,7 +302,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 
     	function processfollow() {
 			var  blogname;
-			var follow = !profileisFollowing; 
+			var follow = !profileisFollowing;
 			blogname = getParameter('blogname');
 
 			if (!blogname) {
@@ -322,7 +322,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 			$.post(
 			"/index/followblog.html",
 			{
-				blogname: blogname, 
+				blogname: blogname,
 				follow: follow
 			}).done( function(data) {
 				if(data.type == 'youAlreadyFollowThisBlog'){
@@ -343,7 +343,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 					} catch (e) {
 						message = data.result;
 					}
-					
+
 					$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
 										+ message
 										+ "</div></center>");
@@ -361,7 +361,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 										+ message
 										+ "</div></center>");
 				}
-				
+
 				if(data.hasOwnProperty('follower'))
 				{
 					if(data.follower == 0)
@@ -377,7 +377,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 				if(data.hasOwnProperty('isFollowing'))
 				{
 					profileisFollowing = data.isFollowing;
-					
+
 					if(data.isFollowing)
 					{
 						$("#divFollow").css("color", "#6467FF");
@@ -387,15 +387,15 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 						$("#divFollow").css("color", "");
 					}
 				}
-				
+
 			}).fail( function(xhr, textStatus, errorThrown) {
 				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Follow Error<br>'
 										+ 'Connection Error<br>'
 										+ xhr.responseText + '</div></center>');
 			});
-			
+
    		 }
-   		 
+
 		   		 (function() {
 		    var v = document.getElementsByClassName("youtube-player");
 		    for (var n = 0; n < v.length; n++) {
@@ -405,11 +405,11 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 		        v[n].appendChild(p);
 		    }
 		})();
-		 
+
 		function labnolThumb(id) {
 		    return '<img class="youtube-thumb" src="//i.ytimg.com/vi/' + id + '/hqdefault.jpg"><div class="play-button"></div>';
 		}
-		 
+
 		function labnolIframe() {
 		    var iframe = document.createElement("iframe");
 		    iframe.setAttribute("src", "//www.youtube.com/embed/" + this.parentNode.dataset.id + "?autoplay=1&autohide=2&border=0&wmode=opaque&enablejsapi=1&controls=0&showinfo=0");
@@ -417,10 +417,10 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 		    iframe.setAttribute("id", "youtube-iframe");
 		    this.parentNode.replaceChild(iframe, this);
 		}
-		
+
 		function processShare(signature) {
 			var blogname;
-			
+
 
 
 			{% if activeProfile is null %}
@@ -429,11 +429,11 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 									+ "</div></center>");
 				return 0;
 			{%  endif %}
-			
+
 			$.post(
 			"/index/sharepost.html",
 			{
-				signature: signature, 
+				signature: signature,
 			}).done( function(data) {
 				if(data.type == 'YouAlreadySharedThisPost'){
 					$("#apimessage").html('<center><div class="alert alert-danger" role="alert">You already shared this post'
@@ -452,7 +452,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 					} catch (e) {
 						message = data.result;
 					}
-				
+
 					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Share not successful<br>'
 										+ message + '</div></center>');
 				} else if (data.type == 'error'){
@@ -463,7 +463,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 										+ 'The Blog of your active profile is disabled!'
 										+ '</div></center>');
 				}
-				
+
 
 			}).fail( function(xhr, textStatus, errorThrown) {
 				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Share Error<br>'
@@ -473,11 +473,11 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 
 			return 0;
    		 }
-   		 
+
     	function processLike(signature, isLikeing) {
 			var blogname;
 			var like = !isLikeing;
-			
+
 
 
 			{% if activeProfile is null %}
@@ -486,11 +486,11 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 									+ "</div></center>");
 				return 0;
 			{%  endif %}
-			
+
 			$.post(
 			"/index/likepost.html",
 			{
-				signature: signature, 
+				signature: signature,
 				like: like
 			}).done( function(data) {
 				if(data.type == 'YouAlreadyLikeThisPost'){
@@ -510,11 +510,11 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 					} catch (e) {
 						message = data.result;
 					}
-				
+
 					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>'
 										+ message + '</div></center>');
 				} else if (data.type == 'LikeRemovedSuccessful'){
-				
+
 					$("#apimessage").html('<center><div class=\"alert alert-success\" role=\"alert\">Like removed successful<br>'
 										+ '</div></center>');
 				} else if (data.type == 'LikeRemovedNotSuccessful'){
@@ -524,7 +524,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 					} catch (e) {
 						message = data.result;
 					}
-				
+
 					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">'
 										+ 'Like remove not successful<br>'
 										+ message
@@ -534,7 +534,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like Error<br>'
 										+ data.error + '</div></center>');
 				}
-				
+
 				if(data.hasOwnProperty('likes'))
 				{
 					if(data.likes == 0)
@@ -564,16 +564,16 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
     $(document).ready(function() {
-        
+
         var my_posts = $("[rel=tooltip]");
-		
+
 		var size = $(window).width();
-        
+
 		if(my_posts.length > 1)
 		{
 			$("ul.timeline li:odd").addClass("timeline-inverted");
 		}
-		
+
 		for (i = 0; i < my_posts.length; i++) {
             the_post = $(my_posts[i]);
             if (the_post.hasClass('invert') && size >= 767) {
