@@ -120,6 +120,7 @@ public class NameStorageMap extends DBMap<String, Map<String, String>> {
 		if (keyValueMap != null) {
 			keyValueMap.remove(key);
 		}
+		this.set(name, keyValueMap);
 	}
 
 	public String getOpt(String name, String key) {
