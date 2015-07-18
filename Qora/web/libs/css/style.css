@@ -319,3 +319,115 @@ img.prof-pic {
   margin-bottom: 10px;
   margin-right: 10px;
 }
+.menu-grid {
+text-align: right;
+padding: 29px 0;
+}
+.menu-grid .btn-group {
+margin-right: 80px;
+}
+.menu-grid .dropdown-toggle,
+.menu-grid .dropdown-toggle:hover,
+.menu-grid .dropdown-toggle:focus,
+.menu-grid .dropdown-toggle:active,
+.menu-grid .btn-group.open .dropdown-toggle {
+border: 0;
+float: right;
+box-shadow: none;
+background: transparent;
+}
+.menu-grid .btn-default:after {
+padding-left: 4px;
+line-height: 20px;
+display: inline-block;
+content: "+ Mostlikers";
+color: #0000 !important;
+}
+.menu-grid .btn-default img {
+height: 18px;
+vertical-align: bottom;
+}
+.menu-grid .dropdown-menu {
+margin: 0;
+border: 0;
+padding: 0;
+left: auto;
+right: 35px;
+margin-top: 10px;
+box-shadow: none;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+-ms-border-radius: 3px;
+-o-border-radius: 3px;
+border-radius: 3px;
+background-color: #ffffff;
+-webkit-box-shadow: 0 1px 8px 0 #393939;
+-moz-box-shadow: 0 1px 8px 0 #393939;
+-ms-box-shadow: 0 1px 8px 0 #393939;
+-o-box-shadow: 0 1px 8px 0 #393939;
+box-shadow: 0 1px 8px 0 #393939;
+}
+.menu-grid .list {
+width: 380px;
+position: relative;
+padding: 15px 25px;
+}
+.menu-grid .list:after {
+bottom: 100%;
+right: 20px;
+border: solid transparent;
+content: " ";
+height: 0;
+width: 0;
+position: absolute;
+pointer-events: none;
+border-color: rgba(136, 183, 213, 0);
+border-bottom-color: #FFFFFF;
+border-width: 8px;
+margin-right: 0px;
+}
+.menu-grid .list .menu {
+padding: 20px 0;
+color: #333333;
+text-align: center;
+-webkit-border-radius: 2px;
+-moz-border-radius: 2px;
+-ms-border-radius: 2px;
+-o-border-radius: 2px;
+border-radius: 2px;
+text-transform: capitalize;
+border: 1px solid transparent;
+-webkit-box-shadow: 0 0 1px 0 transparent;
+-moz-box-shadow: 0 0 1px 0 transparent;
+-ms-box-shadow: 0 0 1px 0 transparent;
+-o-box-shadow: 0 0 1px 0 transparent;
+box-shadow: 0 0 1px 0 transparent;
+}
+.menu-grid .list .menu:hover {
+border: 1px solid #e8e8e8;
+-webkit-box-shadow: 0 0 1px 0 #dddddd;
+-moz-box-shadow: 0 0 1px 0 #dddddd;
+-ms-box-shadow: 0 0 1px 0 #dddddd;
+-o-box-shadow: 0 0 1px 0 #dddddd;
+box-shadow: 0 0 1px 0 #dddddd;
+}
+.menu-grid .menu span {
+width: 55px;
+height: 55px;
+display: block;
+margin: 0 auto 10px;
+-webkit-border-radius: 50%;
+-moz-border-radius: 50%;
+-ms-border-radius: 50%;
+-o-border-radius: 50%;
+border-radius: 50%;
+}
+.menu-grid span.glyphicon.glyphicon-random {
+  font-size: 40px;
+}
+.menu-grid span.glyphicon.glyphicon-globe {
+  font-size: 40px;
+}
+.menu-grid span.glyphicon.glyphicon-edit {
+  font-size: 40px;
+}
