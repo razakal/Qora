@@ -430,6 +430,36 @@ border-radius: 50%;
 }
 .menu-grid span.glyphicon.glyphicon-edit {
   font-size: 40px;
-}.menu-grid span.glyphicon.glyphicon-file {
+}
+.menu-grid span.glyphicon.glyphicon-file {
   font-size: 40px;
+}
+.menu-grid .glyphicon.glyphicon-file:hover,
+.menu-grid .glyphicon.glyphicon-file:focus,
+.menu-grid .glyphicon.glyphicon-globe:hover,
+.menu-grid .glyphicon.glyphicon-globe:focus,
+.menu-grid .glyphicon.glyphicon-edit:hover,
+.menu-grid .glyphicon.glyphicon-edit:focus,
+.menu-grid .glyphicon.glyphicon-random:hover,
+.menu-grid .glyphicon.glyphicon-random:focus {
+color: #6467FF;
+border-radius: 10px;
+text-decoration: none;
+}
+.menu-grid a {
+color: #555;
+}
+.menu-grid a:hover,
+.menu-grid a:focus {
+color: #6467FF;
+text-decoration: none;
+}
+.menu-grid .glyphicon.glyphicon-file,
+.menu-grid .glyphicon.glyphicon-globe,
+.menu-grid .glyphicon.glyphicon-edit,
+.menu-grid .glyphicon.glyphicon-random {
+font-size: 40px;
+text-align: center;
+color: #555;
+display: block;
 }
