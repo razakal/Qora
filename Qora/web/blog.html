@@ -249,7 +249,7 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
                 <div class="timeline-heading">
                   <div class="media">
                   	{% if blogpost.shareAuthorOpt() is not null %}
-                  	<h6 class="media-heading"><b>This post was shared by {{blogpost.shareAuthorOpt()}}</b></h6>
+                  	<h6><span class="glyphicon glyphicon-retweet"></span>  <b><a href="/index/blog.html?blogname={{blogpost.shareAuthorOpt()}}">{{blogpost.shareAuthorOpt()}}</a></b> shared <b><a href="/index/blog.html?blogname={{blogpost.nameOrCreator}}">{{blogpost.nameOrCreator}}</a></b> post</h6>
                   	{%endif%}
                     <div class="media-left media-middle"><a href="#"><img src="{{blogpost.getAvatar()}}" alt="" class="media-object"></a></div>
                     <div class="media-body">
