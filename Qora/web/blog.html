@@ -229,7 +229,6 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
             {%endif%}
             <div class="tl-profile-text">
               <h1>{{blogprofile.getName().getName()}}</h1>
-              <p>Description</p>
               <ul class="profile-options list-inline">&nbsp;&nbsp;
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled()%}
               <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">Follow <div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
