@@ -319,6 +319,13 @@ img.prof-pic {
   margin-bottom: 10px;
   margin-right: 10px;
 }
+img.prof-minipic {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
 .menu-grid {
 text-align: right;
 padding: 29px 0;
@@ -462,4 +469,13 @@ font-size: 40px;
 text-align: center;
 color: #555;
 display: block;
+}
+span.glyphicon.glyphicon-th {
+  font-size: 17px;
+}
+span.glyphicon.glyphicon-cog {
+  font-size: 17px;
+}
+span.glyphicon.glyphicon-home {
+  font-size: 17px;
 }

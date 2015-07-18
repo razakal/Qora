@@ -150,7 +150,7 @@
       border: 1px solid #ddd;
       -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
       box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
-      margin-top: 20px;
+      margin-top: 40px;
       }
       .tl-profile img.tl-image-lg{
       z-index: 0;
@@ -591,6 +591,15 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
                 the_post.css("cursor", "pointer");
             }
         }
+    $(".main-tabs").hide();
+    if (window.location.pathname === '/index/mergedblog.html') {
+      $(".tl-profile").hide();
+      $(".timeline").css("padding-top","40px");
+    };
+    if (window.location.href === 'http://127.0.0.1:9083/index/blog.html') {
+      $(".tl-profile").hide();
+      $(".timeline").css("padding-top","40px");
+    };
     });
 
     </script>
