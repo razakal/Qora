@@ -231,13 +231,6 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
               <h1>{{blogprofile.getName().getName()}}</h1>
               <p>Description</p>
               <ul class="profile-options list-inline">&nbsp;&nbsp;
-              {% if blogprofile is not empty and  blogprofile.isProfileEnabled()%}
-              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processLike()">Like <div id="divLike" class="glyphicon glyphicon-heart"{%if isLikeing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profLikes>
-			  {% if likes is not null and likes.size() != 0 %}
-              {{ likes.size() }}
-              {%endif%}
-			  </span></span></a></li>
-              {%endif%}
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled()%}
               <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">Follow <div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
 			  {% if follower is not null and follower.size() != 0 %}
@@ -270,12 +263,10 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
                   <p class="post-header"><b>{{blogpost.titleOpt}}</b></p>
                   <p class="post-content">{{blogpost.description}}</p>
                 </div>
-				<!--
                 <div class="timeline-footer">
-                  <a><i class="glyphicon glyphicon-heart"></i></a>
+                  <a><span onclick="javascript:processLike('{{blogpost.getSignature()}}', {{blogpost.isLiking()}})" ><i class="glyphicon glyphicon-heart"></i></a>
                   <a class="pull-right"><i class="glyphicon glyphicon-share"></i></a>
                 </div>
-				!-->
               </div>
             </li>			{% endfor %}
             {%else%}
@@ -294,13 +285,6 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
     <script type="text/javascript">
 
-		var profileIsLikeing;
-		{% if isLikeing %}
-		profileIsLikeing = true;
-		{% else %}
-		profileIsLikeing = false;
-		{%  endif %}
-		
 		var profileisFollowing;
 		{% if isFollowing %}
 		profileisFollowing = true;
@@ -431,18 +415,11 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 		    this.parentNode.replaceChild(iframe, this);
 		}
    		 
-    	function processLike() {
+    	function processLike(signature, isLikeing) {
 			var blogname;
-			var like = !profileIsLikeing;
+			var like = !isLikeing;
 			
-			blogname = getParameter('blogname');
 
-			if (!blogname) {
-				$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">"
-									+ "You can't like the Mainblog!"
-									+ "</div></center>");
-				return 0;
-			}
 
 			{% if activeProfile is null %}
 				$("#apimessage").html("<center><div class=\"alert alert-danger\" role=\"alert\">"
@@ -452,17 +429,17 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 			{%  endif %}
 			
 			$.post(
-			"/index/likeprofile.html",
+			"/index/likepost.html",
 			{
-				blogname: blogname, 
+				signature: signature, 
 				like: like
 			}).done( function(data) {
-				if(data.type == 'YouAlreadyLikeThisProfile'){
-					$("#apimessage").html('<center><div class="alert alert-danger" role="alert">You already like this profile'
+				if(data.type == 'YouAlreadyLikeThisPost'){
+					$("#apimessage").html('<center><div class="alert alert-danger" role="alert">You already like this post'
 										+ '<br></div></center>');
-				} else if (data.type == 'YouCantLikeYourOwnProfiles'){
+				} else if (data.type == 'YouCantLikeYourOwnPosts'){
 					$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like not successful<br>'
-										+ 'You can\'t like your own profiles'
+										+ 'You can\'t like your own posts'
 										+ '</div></center>');
 				} else if (data.type == 'LikeSuccessful'){
 					$("#apimessage").html('<center><div class=\"alert alert-success\" role=\"alert\">Like successful<br>'
@@ -511,19 +488,6 @@ div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -
 					}
 				}
 
-				if(data.hasOwnProperty('isLikeing'))
-				{
-					profileIsLikeing = data.isLikeing;
-					
-					if(data.isLikeing)
-					{
-						$("#divLike").css("color", "#6467FF");
-					}
-					else
-					{
-						$("#divLike").css("color", "");
-					}
-				}
 
 			}).fail( function(xhr, textStatus, errorThrown) {
 				$("#apimessage").html('<center><div class=\"alert alert-danger\" role=\"alert\">Like Error<br>'

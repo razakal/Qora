@@ -38,10 +38,13 @@ public class BlogEntry {
 	private final Profile profileOpt;
 
 	private List<String> imagelinks = new ArrayList<String>();
+	private String signature;
+	private boolean isLiking = false;
 
 	public BlogEntry(String titleOpt, String description, String nameOpt,
-			long timeOpt, String creator) {
+			long timeOpt, String creator, String signature) {
 		this.titleOpt = titleOpt;
+		this.signature = signature;
 		this.description = description.replaceAll("\n", "<br/>");
 		this.description = Jsoup.clean(this.description, Whitelist.basic());
 		handleImages();
@@ -51,6 +54,7 @@ public class BlogEntry {
 		addAvatar();
 		this.time = timeOpt;
 		this.creator = creator;
+		
 	}
 
 	private void addAvatar() {
@@ -165,4 +169,17 @@ public class BlogEntry {
 	public Profile getProfileOpt() {
 		return profileOpt;
 	}
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public boolean isLiking() {
+		return isLiking;
+	}
+
+	public void setLiking(boolean isLiking) {
+		this.isLiking = isLiking;
+	}
+
 }

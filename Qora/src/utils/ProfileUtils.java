@@ -38,7 +38,7 @@ public class ProfileUtils {
 			addToJson(profilename, json, nameStorageMap, Qorakeys.PROFILEAVATAR);
 			addToJson(profilename, json, nameStorageMap, Qorakeys.PROFILEMAINGRAPHIC);
 			addToJson(profilename, json, nameStorageMap, Qorakeys.PROFILEFOLLOW);
-			addToJson(profilename, json, nameStorageMap, Qorakeys.PROFILELIKE);
+			addToJson(profilename, json, nameStorageMap, Qorakeys.PROFILELIKEPOSTS);
 		}
 		
 		

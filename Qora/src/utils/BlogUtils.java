@@ -11,6 +11,7 @@ import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import qora.crypto.Base58;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
@@ -173,7 +174,7 @@ public class BlogUtils {
 						//POST NEEDS TO BE FILLED AND POST MUST BE ALLOWED
 						if (StringUtil.isNotBlank(post) && blogBlackWhiteList.isAllowedPost(nameOpt != null ? nameOpt : creator, creator)) {
 							results.add(new BlogEntry(title, post, nameOpt,
-									transaction.getTimestamp(), creator));
+									transaction.getTimestamp(), creator, Base58.encode(transaction.getSignature())));
 
 						}
 					}
@@ -186,6 +187,46 @@ public class BlogUtils {
 		return results;
 
 	}
+	
+	/**
+	 * returns blogentry without any restrictions
+	 * @param transaction
+	 * @return
+	 */
+	public static BlogEntry getBlogEntryOpt(ArbitraryTransaction transaction)
+	{
+		if(transaction.getService() != 777)
+		{
+			return null;
+		}
+		byte[] data = ((ArbitraryTransaction) transaction).getData();
+		String string = new String(data);
+
+		JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
+		if (jsonObject != null) {
+			// MAINBLOG OR CUSTOM BLOG?
+
+				String title = (String) jsonObject
+						.get(BlogPostResource.TITLE_KEY);
+				String post = (String) jsonObject
+						.get(BlogPostResource.POST_KEY);
+				String nameOpt = (String) jsonObject
+						.get(BlogPostResource.AUTHOR);
+
+				String creator = transaction
+						.getCreator().getAddress();
+				
+				//POST NEEDS TO BE FILLED
+				if (StringUtil.isNotBlank(post)) {
+					return new BlogEntry(title, post, nameOpt,
+							transaction.getTimestamp(), creator, Base58.encode(transaction.getSignature()));
+
+				}
+		}
+		
+		return null;
+	}
+	
 	
 
 }

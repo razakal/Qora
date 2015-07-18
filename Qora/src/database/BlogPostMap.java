@@ -1,6 +1,7 @@
 package database;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class BlogPostMap extends DBMap<String, List<byte[]>> {
 			list = new ArrayList<>();
 		}
 
-		if (!list.contains(signature)) {
+		if (!contains(list, signature)) {
 			list.add(signature);
 		}
 
@@ -73,9 +74,31 @@ public class BlogPostMap extends DBMap<String, List<byte[]>> {
 		}
 
 		if (contains(blogname)) {
-			get(blogname).remove(signature);
+			List<byte[]> list = get(blogname);
+			remove(list, signature);
 		}
 
+	}
+	
+	
+	boolean contains(List<byte[]> arrays, byte[] other) {
+	    for (byte[] b : arrays)
+	        if (Arrays.equals(b, other)) return true;
+	    return false;
+	}
+	
+	
+	public void remove(List<byte[]> list, byte[] toremove)
+	{
+		byte[] result = null;
+		for (byte[] bs : list) {
+			if(Arrays.equals(bs, toremove))
+			{
+				result = bs;
+			}
+		}
+		
+		list.remove(result);
 	}
 
 }

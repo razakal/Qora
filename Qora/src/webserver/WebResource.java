@@ -52,8 +52,10 @@ import org.jsoup.select.Elements;
 import qora.account.Account;
 import qora.block.Block;
 import qora.blockexplorer.BlockExplorer;
+import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.naming.Name;
+import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
 import qora.web.BlogProfile;
@@ -916,7 +918,7 @@ public class WebResource {
 				json.put("type", "preview");
 
 				BlogEntry entry = new BlogEntry(title, contentparam, authorOpt,
-						new Date().getTime(), creator);
+						new Date().getTime(), creator, "");
 
 				json.put("previewBlogpost", entry.toJson());
 
@@ -1211,7 +1213,7 @@ public class WebResource {
 
 	@SuppressWarnings("unchecked")
 	@POST
-	@Path("index/likeprofile.html")
+	@Path("index/likepost.html")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response likeProfile(@Context HttpServletRequest request,
 			MultivaluedMap<String, String> form) {
@@ -1220,33 +1222,24 @@ public class WebResource {
 
 		try {
 
-			String profilename = form.getFirst(BlogPostResource.BLOGNAME_KEY);
+			String signature = form.getFirst("signature");
 			String likeString = form.getFirst("like");
 
-			NameMap nameMap = DBSet.getInstance().getNameMap();
 			Profile activeProfileOpt = ProfileHelper.getInstance()
 					.getActiveProfileOpt(request);
 
 			if (likeString != null && activeProfileOpt != null
-					&& profilename != null && nameMap.contains(profilename)) {
+					) {
 				boolean like = Boolean.valueOf(likeString);
-				Profile profile = Profile.getProfileOpt(profilename);
 				if (activeProfileOpt.isProfileEnabled()) {
 
 					if (like) {
-						if (profile != null && profile.isProfileEnabled()
-								&& profile.isBlogEnabled()) {
 							String result;
 
-							if (activeProfileOpt.getLikedProfiles().contains(
-									profilename)) {
+							if (activeProfileOpt.getLikedPosts().contains(
+									signature)) {
 
-								json.put("type", "YouAlreadyLikeThisProfile");
-								json.put("likes", profile.getLikes().size());
-
-								json.put("isLikeing",
-										activeProfileOpt.getLikedProfiles()
-												.contains(profilename));
+								json.put("type", "YouAlreadyLikeThisPost");
 
 								return Response
 										.status(200)
@@ -1255,17 +1248,21 @@ public class WebResource {
 										.entity(json.toJSONString()).build();
 							}
 
-							// Prevent liking of own profiles
-							if (Controller.getInstance()
-									.getNamesAsListAsString()
-									.contains(profilename)) {
+							//TODO Prevent liking of own posts
+							BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt((ArbitraryTransaction) Controller.getInstance().getTransaction(Base58.decode(signature)));
+							
+							boolean ownPost = false;
+							if(blogEntryOpt != null)
+							{
+								if(Controller.getInstance().getAccountByAddress(blogEntryOpt.getCreator()) != null)
+								{
+									ownPost = true;
+								}
+							}
+							
+							if (ownPost) {
 
-								json.put("type", "YouCantLikeYourOwnProfiles");
-								json.put("likes", profile.getLikes().size());
-
-								json.put("isLikeing",
-										activeProfileOpt.getLikedProfiles()
-												.contains(profilename));
+								json.put("type", "YouCantLikeYourOwnPosts");
 
 								return Response
 										.status(200)
@@ -1275,29 +1272,19 @@ public class WebResource {
 
 							}
 
-							boolean isLikeing = activeProfileOpt
-									.getLikedProfiles().contains(profilename);
-
-							activeProfileOpt.addLikeProfile(profilename);
+							activeProfileOpt.addLikePost(signature);
 							try {
 
 								result = activeProfileOpt.saveProfile();
 
 								json.put("type", "LikeSuccessful");
 								json.put("result", result);
-								json.put("likes", profile.getLikes().size());
 
-								json.put("isLikeing",
-										activeProfileOpt.getLikedProfiles()
-												.contains(profilename));
 
 							} catch (WebApplicationException e) {
 
 								json.put("type", "LikeNotSuccessful");
 								json.put("result", e.getResponse().getEntity());
-								json.put("likes", profile.getLikes().size());
-
-								json.put("isLikeing", isLikeing);
 							}
 
 							return Response
@@ -1305,34 +1292,25 @@ public class WebResource {
 									.header("Content-Type",
 											"application/json; charset=utf-8")
 									.entity(json.toJSONString()).build();
-						}
 					} else {
-						if (activeProfileOpt.getLikedProfiles().contains(
-								profilename)) {
+						if (activeProfileOpt.getLikedPosts().contains(
+								signature)) {
 
-							boolean isLikeing = activeProfileOpt
-									.getLikedProfiles().contains(profilename);
 
-							activeProfileOpt.removeLikeProfile(profilename);
+							activeProfileOpt.removeLikeProfile(signature);
 							String result;
 							try {
 								result = activeProfileOpt.saveProfile();
 
 								json.put("type", "LikeRemovedSuccessful");
 								json.put("result", result);
-								json.put("likes", profile.getLikes().size());
 
-								json.put("isLikeing",
-										activeProfileOpt.getLikedProfiles()
-												.contains(profilename));
 
 							} catch (WebApplicationException e) {
 
 								json.put("type", "LikeRemovedNotSuccessful");
 								json.put("result", e.getResponse().getEntity());
-								json.put("likes", profile.getLikes().size());
 
-								json.put("isLikeing", isLikeing);
 							}
 
 							return Response
@@ -1488,10 +1466,17 @@ public class WebResource {
 			pebbleHelper.getContextMap().put(
 					"isLikeing",
 					activeProfileOpt != null
-							&& activeProfileOpt.getLikedProfiles().contains(
+							&& activeProfileOpt.getLikedPosts().contains(
 									blogname));
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
+			
+			for (BlogEntry blogEntry : blogPosts) {
+				String signature = blogEntry.getSignature();
+				
+					blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(signature));
+			}
+			
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
 

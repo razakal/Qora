@@ -56,7 +56,8 @@ public class Profile {
 		if (!isAllowedProfileName(name.getName())) {
 			return null;
 		}
-		Name nameReloaded = DBSet.getInstance().getNameMap().get(name.getName());
+		Name nameReloaded = DBSet.getInstance().getNameMap()
+				.get(name.getName());
 		return new Profile(nameReloaded);
 	}
 
@@ -84,12 +85,10 @@ public class Profile {
 				if (profileOpt.getFollowedBlogs().contains(this.name.getName())) {
 					results.add(profileOpt.getName());
 				}
-				if (profileOpt.getLikedProfiles().contains(this.name.getName())) {
+				if (profileOpt.getLikedPosts().contains(this.name.getName())) {
 					resultsLike.add(profileOpt.getName());
 				}
-				
-				
-				
+
 			}
 		}
 		followerCache = results;
@@ -98,12 +97,11 @@ public class Profile {
 	}
 
 	public List<Name> getLikes() {
-	
+
 		if (likeCache != null) {
 			return likeCache;
 		}
-		
-	
+
 		List<Name> results = new ArrayList<>();
 		List<Name> resultsFollower = new ArrayList<>();
 		Collection<Name> values = DBSet.getInstance().getNameMap().getValues();
@@ -112,7 +110,7 @@ public class Profile {
 			Profile profileOpt = Profile.getProfileOpt(name);
 			// FOLLOWING ONLY WITH ENABLED PROFILE
 			if (profileOpt != null && profileOpt.isProfileEnabled()) {
-				if (profileOpt.getLikedProfiles().contains(this.name.getName())) {
+				if (profileOpt.getLikedPosts().contains(this.name.getName())) {
 					results.add(profileOpt.getName());
 				}
 				if (profileOpt.getFollowedBlogs().contains(this.name.getName())) {
@@ -185,8 +183,8 @@ public class Profile {
 		return Collections.unmodifiableList(getFollowedBlogsInternal());
 	}
 
-	public List<String> getLikedProfiles() {
-		return Collections.unmodifiableList(getLikedProfilesInternal());
+	public List<String> getLikedPosts() {
+		return Collections.unmodifiableList(getLikedPostsInternal());
 	}
 
 	private List<String> getFollowedBlogsInternal() {
@@ -201,9 +199,9 @@ public class Profile {
 		return new ArrayList<String>();
 	}
 
-	private List<String> getLikedProfilesInternal() {
+	private List<String> getLikedPostsInternal() {
 		String profileLikeString = (String) jsonRepresenation
-				.get(Qorakeys.PROFILELIKE.toString());
+				.get(Qorakeys.PROFILELIKEPOSTS.toString());
 		if (profileLikeString != null) {
 			String[] profileLikeArray = StringUtils.split(profileLikeString,
 					";");
@@ -245,29 +243,27 @@ public class Profile {
 		}
 	}
 
-	public void addLikeProfile(String profilename) {
-		addRemoveLikeInternal(profilename, false);
+	public void addLikePost(String signature) {
+		addRemoveLikeInternal(signature, false);
 	}
 
-	public void removeLikeProfile(String profilename) {
-		addRemoveLikeInternal(profilename, true);
+	public void removeLikeProfile(String signature) {
+		addRemoveLikeInternal(signature, true);
 	}
 
-	public void addRemoveLikeInternal(String profilename, boolean isRemove) {
-		Profile profileOpt = Profile.getProfileOpt(profilename);
+	public void addRemoveLikeInternal(String signature, boolean isRemove) {
 		// ADDING ONLY IF ENABLED REMOVE ALWAYS
-		if (isRemove || (profileOpt != null && profileOpt.isProfileEnabled())) {
-			List<String> likedProfilesInternal = getLikedProfilesInternal();
-			if (isRemove) {
-				likedProfilesInternal.remove(profilename);
-			} else {
-				if (!likedProfilesInternal.contains(profilename)) {
-					likedProfilesInternal.add(profilename);
-				}
+
+		List<String> likedPostsInternal = getLikedPostsInternal();
+		if (isRemove) {
+			likedPostsInternal.remove(signature);
+		} else {
+			if (!likedPostsInternal.contains(signature)) {
+				likedPostsInternal.add(signature);
 			}
-			String joinResult = StringUtils.join(likedProfilesInternal, ";");
-			jsonRepresenation.put(Qorakeys.PROFILELIKE.toString(), joinResult);
 		}
+		String joinResult = StringUtils.join(likedPostsInternal, ";");
+		jsonRepresenation.put(Qorakeys.PROFILELIKEPOSTS.toString(), joinResult);
 	}
 
 	public boolean isProfileEnabled() {
@@ -299,18 +295,18 @@ public class Profile {
 	}
 
 	public String saveProfile() throws WebApplicationException {
-		
-		
+
 		JSONObject oldProfileJson = ProfileUtils.getProfile(name.getName());
-		JSONObject oldBWListJson = ProfileUtils.getBlogBlackWhiteList(name.getName());
-		
+		JSONObject oldBWListJson = ProfileUtils.getBlogBlackWhiteList(name
+				.getName());
+
 		Set<String> keySet = oldBWListJson.keySet();
-		//COMBINING BOTH FOR COMPARISON
+		// COMBINING BOTH FOR COMPARISON
 		for (String key : keySet) {
 			oldProfileJson.put(key, oldBWListJson.get(key));
 		}
-		
-		//Combining actual values
+
+		// Combining actual values
 		Pair<String, String> jsonKeyPairRepresentation = blogBlackWhiteList
 				.getJsonKeyPairRepresentation();
 		jsonRepresenation.put(jsonKeyPairRepresentation.getA(),
@@ -320,135 +316,128 @@ public class Profile {
 		} else {
 			jsonRepresenation.remove(Qorakeys.BLOGWHITELIST.toString());
 		}
-		
-		
-		
-		List< Pair<String,String>> addCompleteKeys = new ArrayList<>();
-		List< String> removeCompleteKeys = new ArrayList<>();
-		List< Pair<String,String>> addListKeys =new ArrayList<>();
-		List< Pair<String,String>> removeListKeys = new ArrayList<>();
-		
-		List<Qorakeys> profileKeys = Arrays.asList(Qorakeys.BLOGBLACKLIST, Qorakeys.BLOGWHITELIST, Qorakeys.BLOGDESCRIPTION, Qorakeys.BLOGENABLE, Qorakeys.PROFILEAVATAR, Qorakeys.BLOGTITLE, Qorakeys.PROFILEENABLE, Qorakeys.PROFILEFOLLOW, Qorakeys.PROFILELIKE, Qorakeys.PROFILEMAINGRAPHIC);
-		
+
+		List<Pair<String, String>> addCompleteKeys = new ArrayList<>();
+		List<String> removeCompleteKeys = new ArrayList<>();
+		List<Pair<String, String>> addListKeys = new ArrayList<>();
+		List<Pair<String, String>> removeListKeys = new ArrayList<>();
+
+		List<Qorakeys> profileKeys = Arrays.asList(Qorakeys.BLOGBLACKLIST,
+				Qorakeys.BLOGWHITELIST, Qorakeys.BLOGDESCRIPTION,
+				Qorakeys.BLOGENABLE, Qorakeys.PROFILEAVATAR,
+				Qorakeys.BLOGTITLE, Qorakeys.PROFILEENABLE,
+				Qorakeys.PROFILEFOLLOW, Qorakeys.PROFILELIKEPOSTS,
+				Qorakeys.PROFILEMAINGRAPHIC);
+
 		for (Qorakeys qorakey : profileKeys) {
-			
-				String key = qorakey.toString();
-				String newValueOpt = (String) jsonRepresenation.get(key);
-				String oldValueOpt = (String) oldProfileJson.get(key);
-			
-			
-				if(qorakey.getVariation() == KeyVariation.EXISTSKEY)
-				{
-					
-					if(oldValueOpt == null && newValueOpt == null)
-					{
-						continue;
-					}
 
-					
-					//NEW KEY ADDED
-					if(oldValueOpt == null && newValueOpt != null)
-					{
-						addCompleteKeys.add(new Pair<String,String>(key, "yes"));
-					}else if(oldValueOpt != null && newValueOpt == null)
-					{
-						removeCompleteKeys.add(key);
-					}
-					
-					continue;
-				}
-				
-				if(qorakey.getVariation() == KeyVariation.DEFAULTKEY)
-				{
-					
-					if(StringUtils.isBlank(oldValueOpt) && StringUtils.isBlank(newValueOpt))
-					{
-						continue;
-					}
+			String key = qorakey.toString();
+			String newValueOpt = (String) jsonRepresenation.get(key);
+			String oldValueOpt = (String) oldProfileJson.get(key);
 
-					
-					//NEW KEY ADDED
-					if(oldValueOpt == null && newValueOpt != null)  
-					{
-						addCompleteKeys.add(new Pair<String,String>(key, newValueOpt));
-					}else if(oldValueOpt != null && newValueOpt == null)
-					{
-						removeCompleteKeys.add(key);
-					}else
-					{
-						//value was there but is it equal?
-						if(!oldValueOpt.equals(newValueOpt))
-						{
-							addCompleteKeys.add(new Pair<String,String>(key, newValueOpt));
-						}
-					}
-					
+			if (qorakey.getVariation() == KeyVariation.EXISTSKEY) {
+
+				if (oldValueOpt == null && newValueOpt == null) {
 					continue;
 				}
-				
-				if(qorakey.getVariation() == KeyVariation.LISTKEY)
-				{
-					if(StringUtils.isBlank(oldValueOpt) && StringUtils.isBlank(newValueOpt))
-					{
-						continue;
-					}
-					//NEW KEY ADDED
-					if(StringUtils.isBlank(oldValueOpt) && StringUtils.isNotBlank(newValueOpt))
-					{
-						addCompleteKeys.add(new Pair<String,String>(key, newValueOpt));
-					}else if(StringUtils.isNotBlank(oldValueOpt) && StringUtils.isBlank(newValueOpt))
-					{
-						removeCompleteKeys.add(key);
-					}
-					else
-					{
-						
-						//value was there but is it equal?
-						if(!oldValueOpt.equals(newValueOpt))
-						{
-							List<String> oldValues = new ArrayList<String>(Arrays.asList(oldValueOpt.split(";")));
-							List<String> newValues = new ArrayList<String>(Arrays.asList(newValueOpt.split(";")));
-							
-							List<String> copyNewValues = new ArrayList<String>(newValues);
-							copyNewValues.removeAll(oldValues);
-							
-							oldValues.removeAll(newValues);
-							
-							if(copyNewValues.size() > 0)
-							{
-								addListKeys.add(new Pair<String,String>(key, StringUtils.join(copyNewValues, ";")));
-							}
-							if(oldValues.size() > 0)
-							{
-								removeListKeys.add(new Pair<String,String>(key, StringUtils.join(oldValues, ";")));
-							}
-							
-							
-						}
-					}
-					
+
+				// NEW KEY ADDED
+				if (oldValueOpt == null && newValueOpt != null) {
+					addCompleteKeys.add(new Pair<String, String>(key, "yes"));
+				} else if (oldValueOpt != null && newValueOpt == null) {
+					removeCompleteKeys.add(key);
+				}
+
+				continue;
+			}
+
+			if (qorakey.getVariation() == KeyVariation.DEFAULTKEY) {
+
+				if (StringUtils.isBlank(oldValueOpt)
+						&& StringUtils.isBlank(newValueOpt)) {
 					continue;
 				}
-			
+
+				// NEW KEY ADDED
+				if (oldValueOpt == null && newValueOpt != null) {
+					addCompleteKeys.add(new Pair<String, String>(key,
+							newValueOpt));
+				} else if (oldValueOpt != null && newValueOpt == null) {
+					removeCompleteKeys.add(key);
+				} else {
+					// value was there but is it equal?
+					if (!oldValueOpt.equals(newValueOpt)) {
+						addCompleteKeys.add(new Pair<String, String>(key,
+								newValueOpt));
+					}
+				}
+
+				continue;
+			}
+
+			if (qorakey.getVariation() == KeyVariation.LISTKEY) {
+				if (StringUtils.isBlank(oldValueOpt)
+						&& StringUtils.isBlank(newValueOpt)) {
+					continue;
+				}
+				// NEW KEY ADDED
+				if (StringUtils.isBlank(oldValueOpt)
+						&& StringUtils.isNotBlank(newValueOpt)) {
+					addCompleteKeys.add(new Pair<String, String>(key,
+							newValueOpt));
+				} else if (StringUtils.isNotBlank(oldValueOpt)
+						&& StringUtils.isBlank(newValueOpt)) {
+					removeCompleteKeys.add(key);
+				} else {
+
+					// value was there but is it equal?
+					if (!oldValueOpt.equals(newValueOpt)) {
+						List<String> oldValues = new ArrayList<String>(
+								Arrays.asList(oldValueOpt.split(";")));
+						List<String> newValues = new ArrayList<String>(
+								Arrays.asList(newValueOpt.split(";")));
+
+						List<String> copyNewValues = new ArrayList<String>(
+								newValues);
+						copyNewValues.removeAll(oldValues);
+
+						oldValues.removeAll(newValues);
+
+						if (copyNewValues.size() > 0) {
+							addListKeys.add(new Pair<String, String>(key,
+									StringUtils.join(copyNewValues, ";")));
+						}
+						if (oldValues.size() > 0) {
+							removeListKeys.add(new Pair<String, String>(key,
+									StringUtils.join(oldValues, ";")));
+						}
+
+					}
+				}
+
+				continue;
+			}
+
 		}
-		
 
-		JSONObject jsonResult = StorageUtils.getStorageJsonObject(addCompleteKeys, removeCompleteKeys, addListKeys, removeListKeys, null);
-		
-		
-	return	new NameStorageResource().updateEntry(jsonResult.toJSONString(), name.getName());
-		
-//		String jsonString = jsonRepresenation.toJSONString();
-//		String compressValue = GZIP.compress(jsonString);
-//		JSONObject jsonObject = new JSONObject();
-//		jsonObject.put("fee", Controller.getInstance()
-//				.calcRecommendedFeeForNameUpdate(name.getName(), compressValue)
-//				.getA().toPlainString());
-//		jsonObject.put("newowner", name.getOwner().getAddress());
-//		jsonObject.put("newvalue", compressValue);
-//
-//		return new NamesResource().updateName(jsonObject.toJSONString(),
-//				name.getName());
+		JSONObject jsonResult = StorageUtils.getStorageJsonObject(
+				addCompleteKeys, removeCompleteKeys, addListKeys,
+				removeListKeys, null);
+
+		return new NameStorageResource().updateEntry(jsonResult.toJSONString(),
+				name.getName());
+
+		// String jsonString = jsonRepresenation.toJSONString();
+		// String compressValue = GZIP.compress(jsonString);
+		// JSONObject jsonObject = new JSONObject();
+		// jsonObject.put("fee", Controller.getInstance()
+		// .calcRecommendedFeeForNameUpdate(name.getName(), compressValue)
+		// .getA().toPlainString());
+		// jsonObject.put("newowner", name.getOwner().getAddress());
+		// jsonObject.put("newvalue", compressValue);
+		//
+		// return new NamesResource().updateName(jsonObject.toJSONString(),
+		// name.getName());
 	}
 
 	public Name getName() {
