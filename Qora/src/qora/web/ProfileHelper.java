@@ -56,7 +56,7 @@ public class ProfileHelper {
 
 		if (profileString != null) {
 			Name name = Controller.getInstance().getName(profileString);
-			if (name != null) {
+			if (name != null &&  Controller.getInstance().getNamesAsList().contains(name)) {
 				Profile profile = Profile.getProfileOpt(name);
 				if (profile != null && profile.isProfileEnabled()) {
 					currentProfile = profile;
