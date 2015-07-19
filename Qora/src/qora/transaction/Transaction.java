@@ -183,6 +183,12 @@ public abstract class Transaction {
 		else
 		{
 			recommendedFee = recommendedFee.add(new BigDecimal("0.0000001"));
+			
+			if(recommendedFee.compareTo(MINIMUM_FEE) > 0 )
+			{
+				recommendedFee = recommendedFee.setScale(0, BigDecimal.ROUND_UP); 
+			}
+			
 		}
 		
 		return recommendedFee.setScale(8);
