@@ -67,7 +67,15 @@
 		vertical-align: middle;
 		width: 900px;
 		height: 600px;
-	}
+	  }
+    #result {
+    position: fixed;
+    top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 9999;
+    width: 840px
+    }
     </style>
   </head>
   <body>
@@ -209,7 +217,7 @@
     processpost = function(preview) {
         if(! updatedfee)
 		{
-			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Try again in a few seconds.<br></div>");
+			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Try again in a few seconds.<br></div>");
             return 0;
 		}
 
@@ -221,15 +229,15 @@
         blogname = getParameter('blogname');
 
 		if (content == '') {
-			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Entering text is mandatory.<br></div>");
+			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Entering text is mandatory.<br></div>");
             return 0;
         }
         if (fee == '') {
-			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Entering fee is mandatory.<br></div>");
+			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Entering fee is mandatory.<br></div>");
             return 0;
         }
         if (creator == '') {
-			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Entering creator is mandatory.<br></div>");
+			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Entering creator is mandatory.<br></div>");
             return 0;
         }
 
@@ -255,7 +263,7 @@
 					$("#previewDescription").html(data.previewBlogpost.description);
 					$("#result").html('');
 				} else if (data.type == 'postSuccessful') {
-					$("#result").html('<div class=\"alert alert-success\" role=\"alert\">Your post was successful<br>'+wordwrap(data.result, 50, '<br>', true)+'<br></div>');
+					$("#result").html('<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Your post was successful<br>'+wordwrap(data.result, 50, '<br>', true)+'<br></div>');
 				} else if (data.type == 'error') {
 					try {
 						var error = JSON.parse(data.error);
@@ -264,11 +272,11 @@
 						message = data.error;
 					}
 
-					$("#result").html('<div class=\"alert alert-danger\" role=\"alert\">Your post was NOT successful<br>' + message+'<br></div>');
+					$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Your post was NOT successful<br>' + message+'<br></div>');
 				}
 
 			}).fail( function(xhr, textStatus, errorThrown) {
-				$("#result").html('<div class=\"alert alert-danger\" role=\"alert\">ERROR<br>'+xhr.responseText+'<br></div>');
+				$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>ERROR<br>'+xhr.responseText+'<br></div>');
 			});
 		return 0;
     };
