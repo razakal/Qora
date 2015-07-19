@@ -108,12 +108,6 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="title" class="col-lg-2 control-label">Fee</label>
-            <div class="col-lg-10">
-              <input id="fee" type="text" name="fee" value="1.00000000" class="form-control">
-            </div>
-          </div>
-          <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2"><br>
               <button type="preview" name="do" value="post" onclick="javascript:processpost(true)" class="btn btn-primary">Preview</button>
               <button type="submit" name="do" value="post" onclick="javascript:processpost(false)" class="btn btn-primary pull-right">Submit</button>
@@ -162,9 +156,6 @@
 	<script src="/index/libs/js/common.js"></script>
     <script type="text/javascript">
     var processpost;
-	var calcfee;
-	var updatedfee;
-	var calcfeeTimeout;
 
     function getParameter(name) {
         if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
@@ -175,65 +166,17 @@
         $('#prevmodal').hide();
     }
 
-	calcfee = function(preview) {
-	    var content, creator, fee, title, blogname;
-        title = document.getElementById('title').value;
-        content = document.getElementById('content').value;
-        creator = document.getElementById('addr').value;
-        fee = document.getElementById('fee').value;
-        blogname = getParameter('blogname');
-
-		$.post(
-			"/index/postblogprocessing.html",
-			{
-				title: title,
-				content: content,
-				creator: creator,
-				fee: fee,
-				blogname: blogname,
-				calcfee: true,
-			}).done( function(data) {
-				if(data.type == 'fee')
-				{
-					try {
-						var calcfee = JSON.parse(data.result);
-						$("#fee").val(calcfee.fee);
-						$("#result").html('');
-						updatedfee = true;
-					} catch (e) {
-						$("#fee").val("1.00000000");
-					}
-				}
-				else
-				{
-					$("#fee").val("1.00000000");
-				}
-			}).fail( function(xhr, textStatus, errorThrown) {
-				$("#fee").val("1.00000000");
-			});
-
-	}
 
     processpost = function(preview) {
-        if(! updatedfee)
-		{
-			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Try again in a few seconds.<br></div>");
-            return 0;
-		}
 
-		var content, creator, fee, title, blogname;
+		var content, creator, title, blogname;
         title = document.getElementById('title').value;
         content = document.getElementById('content').value;
         creator = document.getElementById('addr').value;
-        fee = document.getElementById('fee').value;
         blogname = getParameter('blogname');
 
 		if (content == '') {
 			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Entering text is mandatory.<br></div>");
-            return 0;
-        }
-        if (fee == '') {
-			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Entering fee is mandatory.<br></div>");
             return 0;
         }
         if (creator == '') {
@@ -249,7 +192,6 @@
 				title: title,
 				content: content,
 				creator: creator,
-				fee: fee,
 				blogname: blogname,
 				preview: preview
 			}).done( function(data) {
@@ -293,21 +235,12 @@
       {% else %}
       $('#addr').val('{{ oldcreator }}');
       {% endif %}
-      {% if oldfee is empty %}
-      {% else %}
-      $('#fee').val('{{ oldfee }}');
-      {% endif %}
-	  calcfeeTimeout = setInterval(calcfee, 2000);
       });
     </script>
     <script type="text/javascript">
-	$("#title").bind('input propertychange', function() {
-		updatedfee = false;
-	});
 
     $("#content").bind('input propertychange', function() {
         el = $(this);
-		updatedfee = false;
         if (el.val().length > 3000) {
             el.val(el.val().substr(0, 3000));
         } else {

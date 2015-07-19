@@ -83,7 +83,6 @@ import api.AddressesResource;
 import api.ApiErrorFactory;
 import api.BlocksResource;
 import api.BlogPostResource;
-import api.CalcFeeResource;
 import api.NameSalesResource;
 import api.NameStorageResource;
 import api.NamesResource;
@@ -889,14 +888,11 @@ public class WebResource {
 		String title = form.getFirst(BlogPostResource.TITLE_KEY);
 		String creator = form.getFirst("creator");
 		String contentparam = form.getFirst("content");
-		String fee = form.getFirst("fee");
 		String preview = form.getFirst("preview");
-		String calcfee = form.getFirst("calcfee");
 		String blogname = form.getFirst(BlogPostResource.BLOGNAME_KEY);
 
 		if (StringUtil.isNotBlank(creator)
-				&& StringUtil.isNotBlank(contentparam)
-				&& StringUtil.isNotBlank(fee)) {
+				&& StringUtil.isNotBlank(contentparam)) {
 
 			JSONObject jsonBlogPost = new JSONObject();
 
@@ -912,7 +908,6 @@ public class WebResource {
 				jsonBlogPost.put("creator", creator);
 			}
 
-			jsonBlogPost.put("fee", fee);
 			jsonBlogPost.put("title", title);
 			jsonBlogPost.put("body", contentparam);
 
@@ -933,23 +928,13 @@ public class WebResource {
 
 			try {
 
-				if (StringUtils.isNotBlank(calcfee) && calcfee.equals("true")) {
+				jsonBlogPost.put("fee", Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(jsonBlogPost.toJSONString().getBytes()).getA().toPlainString());
+				
+				String result = new BlogPostResource().addBlogEntry(
+						jsonBlogPost.toJSONString(), blogname);
 
-					jsonBlogPost.put("blogname", blogname);
-
-					String result = new CalcFeeResource()
-							.calcFeeForBlogPost(jsonBlogPost.toJSONString());
-
-					json.put("type", "fee");
-					json.put("result", result);
-
-				} else {
-					String result = new BlogPostResource().addBlogEntry(
-							jsonBlogPost.toJSONString(), blogname);
-
-					json.put("type", "postSuccessful");
-					json.put("result", result);
-				}
+				json.put("type", "postSuccessful");
+				json.put("result", result);
 
 				return Response
 						.status(200)
@@ -1259,12 +1244,12 @@ public class WebResource {
 
 					if (sourceBlog.equals(activeProfileOpt.getName().getName())) {
 						json.put("type", "YouCantShareYourOwnPosts");
-						
-						 return Response
-						 .status(200)
-						 .header("Content-Type",
-						 "application/json; charset=utf-8")
-						 .entity(json.toJSONString()).build();
+
+						return Response
+								.status(200)
+								.header("Content-Type",
+										"application/json; charset=utf-8")
+								.entity(json.toJSONString()).build();
 					}
 
 					JSONObject jsonBlogPost = new JSONObject();
