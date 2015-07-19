@@ -847,17 +847,17 @@ public class Controller extends Observable {
 			SysTray.getInstance().sendMessage("INCOMING API CALL",
 					"An API call needs authorization!", MessageType.WARNING);
 			Object[] options = { "Yes", "No" };
-			
-			
-			 StringBuilder sb = new StringBuilder("Error: ");
-	            sb.append("Do you want to authorize the following API call?\n"
+
+
+			 StringBuilder sb = new StringBuilder("Permission Request: ");
+	            sb.append("Do you want to authorize the following API call?\n\n"
 						+ json);
 	            JTextArea jta = new JTextArea(sb.toString());
 	            jta.setLineWrap(true);
 	            jta.setEditable(false);
 	            JScrollPane jsp = new JScrollPane(jta){
 	                /**
-					 * 
+					 *
 					 */
 					private static final long serialVersionUID = 1L;
 
@@ -866,8 +866,8 @@ public class Controller extends Observable {
 	                    return new Dimension(480, 200);
 	                }
 	            };
-			
-			
+
+
 			result = JOptionPane
 					.showOptionDialog(gui,
 							jsp, "INCOMING API CALL",

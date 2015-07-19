@@ -260,7 +260,7 @@
                 <li class="co-tabs pull-left"><ul class="co-lists list-unstyled"><li class="co-top">Followers</li><li class="co-bottom">{{ follower.size() }}</li></ul></li>
                 <li class="co-tabs pull-left"><ul class="co-lists list-unstyled"><li class="co-top">Following</li><li class="co-bottom">{{ blogprofile.getFollowedBlogs().size() }}</li></ul></li>
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled()%}
-              <li class="po-tabs pull-right"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">Follow <div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
+              <li class="po-tabs pull-right"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">{%if isFollowing%}Unfollow {%else%}Follow {%endif%}<div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
 			  </span></span></a></li>
               {%endif%}
               </ul>
