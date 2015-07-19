@@ -20,7 +20,6 @@ import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
 import utils.APIUtils;
-import utils.GZIP;
 import utils.Pair;
 import utils.Qorakeys;
 import controller.Controller;
@@ -165,25 +164,15 @@ public class BlogPostResource {
 			return;
 		}
 		
-		Name name = DBSet.getInstance().getNameMap().get(blogname);
-		if (name == null) {
-			throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_BLOG_DISABLED);
-		}
-		String value = GZIP.webDecompress(name.getValue());
-		JSONObject jsonObject = null;
-		try {
-			jsonObject = (JSONObject) JSONValue.parse(value);
-		} catch (Exception e) {
-			// no valid json
-		}
-
-		if (jsonObject == null
-				|| !jsonObject.containsKey(Qorakeys.BLOGENABLE.toString())) {
+		String blogenable = DBSet.getInstance().getNameStorageMap().getOpt(blogname, Qorakeys.BLOGENABLE.toString());
+		
+		if(blogenable == null)
+		{
 
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_BLOG_DISABLED);
 		}
+		
 
 	}
 
