@@ -183,6 +183,19 @@
       width:100%;
       font-size: 20px;
       }
+      .co-tabs {
+      border-bottom: 3px solid #6467ff;
+      margin-right: 10px;
+      }
+      ul.co-lists.list-unstyled {
+      text-align: center;
+      }
+      li.co-top {
+      font-size: 10px;
+      }
+      li.co-bottom {
+      font-size: 15px;
+      }
       .po-tabs
       {
       border: 1px solid #ddd;
@@ -244,11 +257,10 @@
             <div class="tl-profile-text">
               <h1>{{blogprofile.getName().getName()}}</h1>
               <ul class="profile-options list-inline">&nbsp;&nbsp;
+                <li class="co-tabs pull-left"><ul class="co-lists list-unstyled"><li class="co-top">Followers</li><li class="co-bottom">{{ follower.size() }}</li></ul></li>
+                <li class="co-tabs pull-left"><ul class="co-lists list-unstyled"><li class="co-top">Following</li><li class="co-bottom">{{ blogprofile.getFollowedBlogs().size() }}</li></ul></li>
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled()%}
-              <li class="po-tabs"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">Follow <div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
-			  {% if follower is not null and follower.size() != 0 %}
-              {{ follower.size() }}
-              {%endif%}
+              <li class="po-tabs pull-right"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">Follow <div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
 			  </span></span></a></li>
               {%endif%}
               </ul>
