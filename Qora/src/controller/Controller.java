@@ -2,6 +2,7 @@ package controller;
 
 import gui.Gui;
 
+import java.awt.Dimension;
 import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,8 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import network.Network;
 import network.Peer;
@@ -844,10 +847,30 @@ public class Controller extends Observable {
 			SysTray.getInstance().sendMessage("INCOMING API CALL",
 					"An API call needs authorization!", MessageType.WARNING);
 			Object[] options = { "Yes", "No" };
+			
+			
+			 StringBuilder sb = new StringBuilder("Error: ");
+	            sb.append("Do you want to authorize the following API call?\n"
+						+ json);
+	            JTextArea jta = new JTextArea(sb.toString());
+	            jta.setLineWrap(true);
+	            jta.setEditable(false);
+	            JScrollPane jsp = new JScrollPane(jta){
+	                /**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+	                public Dimension getPreferredSize() {
+	                    return new Dimension(480, 200);
+	                }
+	            };
+			
+			
 			result = JOptionPane
 					.showOptionDialog(gui,
-							"Do you want to authorize the following API call?\n"
-									+ json, "INCOMING API CALL",
+							jsp, "INCOMING API CALL",
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options,
 							options[1]);
