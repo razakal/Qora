@@ -66,5 +66,11 @@ public class ProfileHelper {
 		}
 
 	}
+	
+	
+	public void disconnect()
+	{
+		currentProfile = null;
+	}
 
 }

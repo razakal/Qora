@@ -1538,8 +1538,16 @@ public class WebResource {
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
 			String switchprofile = request.getParameter("switchprofile");
+			String disconnect = request.getParameter("disconnect");
 
-			ProfileHelper.getInstance().switchProfileOpt(switchprofile);
+			if(StringUtils.isNotBlank(disconnect))
+			{
+				ProfileHelper.getInstance().disconnect();
+			}else
+			{
+				ProfileHelper.getInstance().switchProfileOpt(switchprofile);
+			}
+			
 
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/blog.html", request);
@@ -1620,8 +1628,11 @@ public class WebResource {
 					}
 
 				}
-				blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(
-						signature));
+				if(activeProfileOpt != null)
+				{
+					blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(
+							signature));
+				}
 			}
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
