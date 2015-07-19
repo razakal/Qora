@@ -85,6 +85,7 @@
       padding-left: 0px;
       padding-right: 0px;
       background-color: lightgray;
+      display: none;
       }
       img.logo-header {
       background-color: transparent;
@@ -608,15 +609,11 @@
                 the_post.css("cursor", "pointer");
             }
         }
-    $(".main-tabs").hide();
-    if (window.location.pathname === '/index/mergedblog.html') {
+    if (window.location.pathname === '/index/mergedblog.html' || window.location.href === 'http://127.0.0.1:9083/index/blog.html' || window.location.href === 'http://127.0.0.1:9083/index/blog.html?disconnect=true' ) {
       $(".tl-profile").hide();
       $(".timeline").css("padding-top","40px");
     };
-    if (window.location.href === 'http://127.0.0.1:9083/index/blog.html') {
-      $(".tl-profile").hide();
-      $(".timeline").css("padding-top","40px");
-    };
+
     });
 
     </script>

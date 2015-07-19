@@ -1029,7 +1029,7 @@ public class WebResource {
 				pebbleHelper
 						.getContextMap()
 						.put("errormessage",
-								"<div class=\"alert alert-danger\" role=\"alert\">You can't post to this blog! None of your accounts has balance or the blogowner did not allow your accounts to post!<br></div>");
+								"<div id=\"result\"><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button>You can't post to this blog! None of your accounts has balance or the blog owner did not allow your accounts to post!<br></div></div>");
 
 			}
 
@@ -1232,7 +1232,7 @@ public class WebResource {
 			if (activeProfileOpt != null && signature != null) {
 				if (activeProfileOpt.isProfileEnabled()) {
 
-					
+
 					if(!activeProfileOpt.isBlogEnabled())
 					{
 						json.put("type", "BlogIsDisabled");
@@ -1242,7 +1242,7 @@ public class WebResource {
 										"application/json; charset=utf-8")
 								.entity(json.toJSONString()).build();
 					}
-					
+
 //					TODO DON'T SHARE iF ALREADY SHARED
 //
 //					if (activeProfileOpt.getLikedPosts().contains(signature)) {
@@ -1256,7 +1256,7 @@ public class WebResource {
 //								.entity(json.toJSONString()).build();
 //					}
 
-					
+
 					// TODO PREVENT SHARING OF POSTS In OWN BLOG (MAKES NO SENSE)
 //					BlogEntry blogEntryOpt = BlogUtils
 //							.getBlogEntryOpt((ArbitraryTransaction) Controller
@@ -1289,10 +1289,10 @@ public class WebResource {
 					jsonBlogPost.put("creator", activeProfileOpt.getName().getOwner().getAddress());
 					jsonBlogPost.put(BlogPostResource.SHARE_KEY, signature);
 					jsonBlogPost.put("body", "share");
-					
+
 					 Pair<BigDecimal, Integer> fee = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(jsonBlogPost.toJSONString().getBytes());
 					jsonBlogPost.put("fee", fee.getA().toPlainString());
-					
+
 					try {
 
 						String result = new BlogPostResource().addBlogEntry(
@@ -1547,7 +1547,7 @@ public class WebResource {
 			{
 				ProfileHelper.getInstance().switchProfileOpt(switchprofile);
 			}
-			
+
 
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/blog.html", request);

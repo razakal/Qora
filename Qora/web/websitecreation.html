@@ -56,7 +56,7 @@
       background-color: #428bca;
       }
       .main {
-      padding-top: 20px;
+      padding-top: 40px;
       }
       .main-tabs {
       width: 100%;
@@ -64,6 +64,7 @@
       padding-left: 0px;
       padding-right: 0px;
       background-color: lightgray;
+      display: none;
       }
       img.logo-header {
       background-color: transparent;
@@ -152,9 +153,9 @@
                 </select>
               </div>
             <div class="form-group">
-            <label for="website" class="col-lg-2 control-label">Website (Html)</label>
-            <div class="col-lg-10">
-              <textarea id="website" rows="3" class="form-control"></textarea><span class="help-block"></span><span id="charNum" class="help-block">3000</span>
+            <label for="website" class="col-lg-2 control-label"><br>Website (Html)</label>
+            <div class="col-lg-10"><br>
+              <pre><textarea id="website" rows="10" class="form-control"></textarea></pre><span class="help-block"></span><span id="charNum" class="help-block">3000</span>
             </div>
           </div>
           <!-- </fieldset> -->
@@ -238,7 +239,7 @@
 				document.getElementById('result').innerHTML = '<div class=\"alert alert-danger\" role=\"alert\">ERROR<br>'+xhr.responseText+'<br></div>';
 			});
     };
-    
+
       var updateValue;
     reload = function() {
     var name;
@@ -274,14 +275,14 @@
         $('#name').bind('oninput', function() {
             $('#name').val(this);
         });
-		
+
         $('#button').click(function() {
             var url;
             url = void 0;
             searchval = $('#name').val();
             document.location.href = '/index/main.html?search=' + searchval;
         });
-        
+
         $('#button').click(function() {
             var url;
             url = void 0;
@@ -297,11 +298,11 @@
         	$('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
     });
     {% endautoescape %}
-	
+
 	function Add(){
 		AddValue("");
-	}; 
-	
+	};
+
     </script>
     <script type="text/javascript">
     var myApp = angular.module('myApp', []);
