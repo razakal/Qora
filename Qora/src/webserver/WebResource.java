@@ -2215,13 +2215,7 @@ public class WebResource {
 
 		if (website == null) {
 			try {
-				PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-						"web/websitenotfound.html", request);
-				pebbleHelper.getContextMap().put("name",
-						nameName.replaceAll(" ", "%20"));
-
-				return Response.ok(pebbleHelper.evaluate(),
-						"text/html; charset=utf-8").build();
+				return error404(request, "This name has currently no <a href=\"/index/websitecreation.html\">website<a/>!");
 			} catch (Throwable e) {
 				e.printStackTrace();
 				return error404(request, null);
