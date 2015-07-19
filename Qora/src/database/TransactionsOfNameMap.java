@@ -13,9 +13,7 @@ import org.mapdb.DB;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 
-import qora.account.Account;
 import qora.transaction.Transaction;
-import database.DBMap;
 
 public class TransactionsOfNameMap extends DBMap<Tuple2<String, String>, byte[]> 
 {

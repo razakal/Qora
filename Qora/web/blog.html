@@ -297,7 +297,7 @@
                 </div>
                 <div class="timeline-footer">
                   <a><span onclick="javascript:processLike('{{blogpost.getSignature()}}', {{blogpost.isLiking()}})" ><i class="glyphicon glyphicon-heart">{{blogpost.getLikes()}}</i></a>
-                  <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}')" ><i class="glyphicon glyphicon-share">{{blogpost.getShares()}}</i></a>
+                  <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}' , '{{blogpost.getBlognameOpt()}}')" ><i class="glyphicon glyphicon-share">{{blogpost.getShares()}}</i></a>
                 </div>
               </div>
             </li>			{% endfor %}
@@ -451,12 +451,7 @@
 		    this.parentNode.replaceChild(iframe, this);
 		}
 
-		function processShare(signature) {
-			var  blogname;
-			blogname = getParameter('blogname');
-
-
-
+		function processShare(signature, blogname) {
 
 			{% if activeProfile is null %}
 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"

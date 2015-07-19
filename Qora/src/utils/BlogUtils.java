@@ -195,7 +195,7 @@ public class BlogUtils {
 								//POST NEEDS TO BE FILLED AND POST MUST BE ALLOWED
 								if (StringUtil.isNotBlank(post)) {
 									results.add(new BlogEntry(title, post, nameOpt,
-											transaction.getTimestamp(), creator, Base58.encode(transaction.getSignature())));
+											transaction.getTimestamp(), creator, Base58.encode(transaction.getSignature()), blogOpt));
 									
 								}
 							}
@@ -236,6 +236,8 @@ public class BlogUtils {
 						.get(BlogPostResource.POST_KEY);
 				String nameOpt = (String) jsonObject
 						.get(BlogPostResource.AUTHOR);
+				String blognameOpt = (String) jsonObject
+						.get(BlogPostResource.BLOGNAME_KEY);
 
 				String creator = transaction
 						.getCreator().getAddress();
@@ -243,7 +245,7 @@ public class BlogUtils {
 				//POST NEEDS TO BE FILLED
 				if (StringUtil.isNotBlank(post)) {
 					return new BlogEntry(title, post, nameOpt,
-							transaction.getTimestamp(), creator, Base58.encode(transaction.getSignature()));
+							transaction.getTimestamp(), creator, Base58.encode(transaction.getSignature()), blognameOpt);
 
 				}
 		}

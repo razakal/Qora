@@ -42,15 +42,17 @@ public class BlogEntry {
 	private boolean isLiking = false;
 	private List<String> likingUser = new ArrayList<>();
 	private List<String> sharingUser = new ArrayList<>();
+	private String blogname;
 	/**
 	 * Only Set in case of a shared post (if I share your post I am the share author)
 	 */
 	private String shareAuthorOpt = null;
 
 	public BlogEntry(String titleOpt, String description, String nameOpt,
-			long timeOpt, String creator, String signature) {
+			long timeOpt, String creator, String signature, String blogname) {
 		this.titleOpt = titleOpt;
 		this.signature = signature;
+		this.setBlogname(blogname);
 		this.description = description.replaceAll("\n", "<br/>");
 		this.description = Jsoup.clean(this.description, Whitelist.basic());
 		handleImages();
@@ -225,6 +227,14 @@ public class BlogEntry {
 
 	public void setShareAuthor(String shareAuthor) {
 		this.shareAuthorOpt = shareAuthor;
+	}
+
+	public String getBlognameOpt() {
+		return blogname;
+	}
+
+	public void setBlogname(String blogname) {
+		this.blogname = blogname;
 	}
 	
 

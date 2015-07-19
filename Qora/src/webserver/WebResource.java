@@ -915,7 +915,7 @@ public class WebResource {
 				json.put("type", "preview");
 
 				BlogEntry entry = new BlogEntry(title, contentparam, authorOpt,
-						new Date().getTime(), creator, "");
+						new Date().getTime(), creator, "", blogname);
 
 				json.put("previewBlogpost", entry.toJson());
 
@@ -1242,7 +1242,7 @@ public class WebResource {
 								.entity(json.toJSONString()).build();
 					}
 
-					if (sourceBlog.equals(activeProfileOpt.getName().getName())) {
+					if (activeProfileOpt.getName().getName().equals(sourceBlog)) {
 						json.put("type", "YouCantShareYourOwnPosts");
 
 						return Response
