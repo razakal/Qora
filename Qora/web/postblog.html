@@ -61,14 +61,13 @@
       margin-left: auto;
       margin-right: auto;
       }
-	  
+
 	  .textalign{
 		display: table-cell;
 		vertical-align: middle;
 		width: 700px;
 		height: 690px;
 	}
-	  
     </style>
   </head>
   <body>
@@ -146,7 +145,7 @@
         </div>
       </div>
     </div>
-	
+
 	</div>
     <script src="/index/libs/jquery/jquery.2.js"></script>
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
@@ -175,15 +174,15 @@
         creator = document.getElementById('addr').value;
         fee = document.getElementById('fee').value;
         blogname = getParameter('blogname');
-    
+
 		$.post(
 			"/index/postblogprocessing.html",
 			{
-				title: title, 
-				content: content, 
-				creator: creator, 
-				fee: fee, 
-				blogname: blogname, 
+				title: title,
+				content: content,
+				creator: creator,
+				fee: fee,
+				blogname: blogname,
 				calcfee: true,
 			}).done( function(data) {
 				if(data.type == 'fee')
@@ -204,7 +203,7 @@
 			}).fail( function(xhr, textStatus, errorThrown) {
 				$("#fee").val("1.00000000");
 			});
-	
+
 	}
 
     processpost = function(preview) {
@@ -213,14 +212,14 @@
 			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Try again in a few seconds.<br></div>");
             return 0;
 		}
-		
+
 		var content, creator, fee, title, blogname;
         title = document.getElementById('title').value;
         content = document.getElementById('content').value;
         creator = document.getElementById('addr').value;
         fee = document.getElementById('fee').value;
         blogname = getParameter('blogname');
-        
+
 		if (content == '') {
 			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Entering text is mandatory.<br></div>");
             return 0;
@@ -233,17 +232,17 @@
 			$("#result").html("<div class=\"alert alert-danger\" role=\"alert\">Entering creator is mandatory.<br></div>");
             return 0;
         }
-        
+
 		$("#result").html('<div class=\"alert alert-info\" role=\"alert\">Sending...<br></div>');
-		
+
 		$.post(
 			"/index/postblogprocessing.html",
 			{
-				title: title, 
-				content: content, 
-				creator: creator, 
-				fee: fee, 
-				blogname: blogname, 
+				title: title,
+				content: content,
+				creator: creator,
+				fee: fee,
+				blogname: blogname,
 				preview: preview
 			}).done( function(data) {
 				if(data.type == 'preview')
@@ -264,10 +263,10 @@
 					} catch (e) {
 						message = data.error;
 					}
-					
+
 					$("#result").html('<div class=\"alert alert-danger\" role=\"alert\">Your post was NOT successful<br>' + message+'<br></div>');
 				}
-				
+
 			}).fail( function(xhr, textStatus, errorThrown) {
 				$("#result").html('<div class=\"alert alert-danger\" role=\"alert\">ERROR<br>'+xhr.responseText+'<br></div>');
 			});
@@ -297,7 +296,7 @@
 	$("#title").bind('input propertychange', function() {
 		updatedfee = false;
 	});
-	
+
     $("#content").bind('input propertychange', function() {
         el = $(this);
 		updatedfee = false;
