@@ -390,6 +390,21 @@ public class ArbitraryTransaction extends Transaction {
 					String blognameOpt = (String) jsonObject
 							.get(BlogPostResource.BLOGNAME_KEY);
 					
+					String share = (String) jsonObject
+							.get(BlogPostResource.SHARE_KEY);
+					
+					String author = (String) jsonObject
+							.get(BlogPostResource.AUTHOR);
+					
+					if(StringUtils.isNotEmpty(share))
+					{
+						byte[] sharedSignature = Base58.decode(share);
+						if(sharedSignature != null)
+						{
+							DBSet.getInstance().getSharedPostsMap().add(sharedSignature, author);
+						}
+					}
+					
 					// DOES POST MET MINIMUM CRITERIUM?
 					if (StringUtils.isNotBlank(post)) {
 						DBSet.getInstance().getBlogPostMap()
@@ -410,6 +425,21 @@ public class ArbitraryTransaction extends Transaction {
 			if (jsonObject != null) {
 				String blognameOpt = (String) jsonObject
 						.get(BlogPostResource.BLOGNAME_KEY);
+				
+				String share = (String) jsonObject
+						.get(BlogPostResource.SHARE_KEY);
+				
+				String author = (String) jsonObject
+						.get(BlogPostResource.AUTHOR);
+				
+				if(StringUtils.isNotEmpty(share))
+				{
+					byte[] sharedSignature = Base58.decode(share);
+					if(sharedSignature != null)
+					{
+						DBSet.getInstance().getSharedPostsMap().remove(sharedSignature, author);
+					}
+				}
 
 				DBSet.getInstance().getBlogPostMap()
 						.remove(blognameOpt, getSignature());

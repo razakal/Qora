@@ -285,7 +285,7 @@
                 </div>
                 <div class="timeline-footer">
                   <a><span onclick="javascript:processLike('{{blogpost.getSignature()}}', {{blogpost.isLiking()}})" ><i class="glyphicon glyphicon-heart">{{blogpost.getLikes()}}</i></a>
-                  <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}')" ><i class="glyphicon glyphicon-share"></i></a>
+                  <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}')" ><i class="glyphicon glyphicon-share">{{blogpost.getShares()}}</i></a>
                 </div>
               </div>
             </li>			{% endfor %}

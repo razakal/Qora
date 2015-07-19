@@ -10,6 +10,7 @@ import org.mapdb.DBMaker;
 import qora.web.NameStorageMap;
 import qora.web.OrphanNameStorageHelperMap;
 import qora.web.OrphanNameStorageMap;
+import qora.web.SharedPostsMap;
 import controller.Controller;
 import settings.Settings;
 import utils.ObserverMessage;
@@ -31,6 +32,7 @@ public class DBSet implements Observer, IDB {
 	private NameStorageMap nameStorageMap;
 	private OrphanNameStorageMap orphanNameStorageMap;
 	private OrphanNameStorageHelperMap orphanNameStorageHelperMap;
+	private SharedPostsMap sharedPostsMap;
 	private LocalDataMap localDataMap;
 	private BlogPostMap blogPostMap;
 	private TransactionParentMap transactionParentMap;
@@ -107,6 +109,7 @@ public class DBSet implements Observer, IDB {
 		this.nameStorageMap = new NameStorageMap(this, database);
 		this.orphanNameStorageMap = new OrphanNameStorageMap(this, database);
 		this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(this, database);
+		this.sharedPostsMap = new SharedPostsMap(this, database);
 		this.localDataMap = new LocalDataMap(this, database);
 		this.blogPostMap = new BlogPostMap(this, database);
 		this.transactionParentMap = new TransactionParentMap(this, database);
@@ -140,6 +143,7 @@ public class DBSet implements Observer, IDB {
 		this.nameMap = new NameMap(parent.nameMap);
 		this.nameStorageMap = new NameStorageMap(parent.nameStorageMap);
 		this.orphanNameStorageMap = new OrphanNameStorageMap(parent.orphanNameStorageMap);
+		this.sharedPostsMap = new SharedPostsMap(parent.sharedPostsMap);
 		this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(parent.orphanNameStorageHelperMap);
 		this.localDataMap = new LocalDataMap(parent.localDataMap);
 		this.blogPostMap = new BlogPostMap(parent.blogPostMap);
@@ -173,6 +177,7 @@ public class DBSet implements Observer, IDB {
 		this.nameStorageMap.reset();
 		this.orphanNameStorageMap.reset();
 		this.orphanNameStorageHelperMap.reset();
+		this.sharedPostsMap.reset();
 		this.localDataMap.reset();
 		this.blogPostMap.reset();
 		this.transactionParentMap.reset();
@@ -240,6 +245,10 @@ public class DBSet implements Observer, IDB {
 	public OrphanNameStorageMap getOrphanNameStorageMap()
 	{
 		return this.orphanNameStorageMap;
+	}
+	public SharedPostsMap getSharedPostsMap()
+	{
+		return this.sharedPostsMap;
 	}
 	
 	public OrphanNameStorageHelperMap getOrphanNameStorageHelperMap()

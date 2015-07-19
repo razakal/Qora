@@ -1232,9 +1232,7 @@ public class WebResource {
 			if (activeProfileOpt != null && signature != null) {
 				if (activeProfileOpt.isProfileEnabled()) {
 
-
-					if(!activeProfileOpt.isBlogEnabled())
-					{
+					if (!activeProfileOpt.isBlogEnabled()) {
 						json.put("type", "BlogIsDisabled");
 						return Response
 								.status(200)
@@ -1243,60 +1241,64 @@ public class WebResource {
 								.entity(json.toJSONString()).build();
 					}
 
-//					TODO DON'T SHARE iF ALREADY SHARED
-//
-//					if (activeProfileOpt.getLikedPosts().contains(signature)) {
-//
-//						json.put("type", "YouAlreadySharedThisPost");
-//
-//						return Response
-//								.status(200)
-//								.header("Content-Type",
-//										"application/json; charset=utf-8")
-//								.entity(json.toJSONString()).build();
-//					}
+					// TODO DON'T SHARE iF ALREADY SHARED
+					//
+					// if (activeProfileOpt.getLikedPosts().contains(signature))
+					// {
+					//
+					// json.put("type", "YouAlreadySharedThisPost");
+					//
+					// return Response
+					// .status(200)
+					// .header("Content-Type",
+					// "application/json; charset=utf-8")
+					// .entity(json.toJSONString()).build();
+					// }
 
-
-					// TODO PREVENT SHARING OF POSTS In OWN BLOG (MAKES NO SENSE)
-//					BlogEntry blogEntryOpt = BlogUtils
-//							.getBlogEntryOpt((ArbitraryTransaction) Controller
-//									.getInstance().getTransaction(
-//											Base58.decode(signature)));
-//
-//					boolean ownPost = false;
-//					if (blogEntryOpt != null) {
-//						if (Controller.getInstance().getAccountByAddress(
-//								blogEntryOpt.getCreator()) != null) {
-//							ownPost = true;
-//						}
-//					}
-//
-//					if (ownPost) {
-//
-//						json.put("type", "YouCantShareYourOwnPosts");
-//
-//						return Response
-//								.status(200)
-//								.header("Content-Type",
-//										"application/json; charset=utf-8")
-//								.entity(json.toJSONString()).build();
-//
-//					}
+					// TODO PREVENT SHARING OF POSTS In OWN BLOG (MAKES NO
+					// SENSE)
+					// BlogEntry blogEntryOpt = BlogUtils
+					// .getBlogEntryOpt((ArbitraryTransaction) Controller
+					// .getInstance().getTransaction(
+					// Base58.decode(signature)));
+					//
+					// boolean ownPost = false;
+					// if (blogEntryOpt != null) {
+					// if (Controller.getInstance().getAccountByAddress(
+					// blogEntryOpt.getCreator()) != null) {
+					// ownPost = true;
+					// }
+					// }
+					//
+					// if (ownPost) {
+					//
+					// json.put("type", "YouCantShareYourOwnPosts");
+					//
+					// return Response
+					// .status(200)
+					// .header("Content-Type",
+					// "application/json; charset=utf-8")
+					// .entity(json.toJSONString()).build();
+					//
+					// }
 
 					JSONObject jsonBlogPost = new JSONObject();
 					String profileName = activeProfileOpt.getName().getName();
 					jsonBlogPost.put(BlogPostResource.AUTHOR, profileName);
-					jsonBlogPost.put("creator", activeProfileOpt.getName().getOwner().getAddress());
+					jsonBlogPost.put("creator", activeProfileOpt.getName()
+							.getOwner().getAddress());
 					jsonBlogPost.put(BlogPostResource.SHARE_KEY, signature);
 					jsonBlogPost.put("body", "share");
 
-					 Pair<BigDecimal, Integer> fee = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(jsonBlogPost.toJSONString().getBytes());
+					Pair<BigDecimal, Integer> fee = Controller.getInstance()
+							.calcRecommendedFeeForArbitraryTransaction(
+									jsonBlogPost.toJSONString().getBytes());
 					jsonBlogPost.put("fee", fee.getA().toPlainString());
 
 					try {
 
 						String result = new BlogPostResource().addBlogEntry(
-								jsonBlogPost.toJSONString(),profileName);
+								jsonBlogPost.toJSONString(), profileName);
 
 						json.put("type", "ShareSuccessful");
 						json.put("result", result);
@@ -1505,13 +1507,8 @@ public class WebResource {
 			for (BlogEntry blogEntry : blogPosts) {
 				String signature = blogEntry.getSignature();
 
-				for (Profile enabledProfile : enabledProfiles) {
-					if (enabledProfile.getLikedPosts().contains(signature)) {
-						blogEntry.addLikingUser(enabledProfile.getName()
-								.getName());
-					}
-
-				}
+				
+				addSharingAndLiking(enabledProfiles, blogEntry, signature);
 				if (activeProfileOpt != null) {
 					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
 							.contains(signature));
@@ -1530,6 +1527,25 @@ public class WebResource {
 
 	}
 
+	public void addSharingAndLiking(List<Profile> enabledProfiles,
+			BlogEntry blogEntry, String signature) {
+		List<String> list = DBSet.getInstance().getSharedPostsMap()
+				.get(Base58.decode(blogEntry.getSignature()));
+		if (list != null) {
+			for (String name : list) {
+				blogEntry.addSharedUser(name);
+			}
+		}
+		
+		for (Profile enabledProfile : enabledProfiles) {
+			if (enabledProfile.getLikedPosts().contains(signature)) {
+				blogEntry.addLikingUser(enabledProfile.getName()
+						.getName());
+			}
+
+		}
+	}
+
 	@Path("index/blog.html")
 	@GET
 	public Response getBlog(@PathParam("messageOpt") String messageOpt) {
@@ -1540,14 +1556,11 @@ public class WebResource {
 			String switchprofile = request.getParameter("switchprofile");
 			String disconnect = request.getParameter("disconnect");
 
-			if(StringUtils.isNotBlank(disconnect))
-			{
+			if (StringUtils.isNotBlank(disconnect)) {
 				ProfileHelper.getInstance().disconnect();
-			}else
-			{
+			} else {
 				ProfileHelper.getInstance().switchProfileOpt(switchprofile);
 			}
-
 
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/blog.html", request);
@@ -1621,17 +1634,10 @@ public class WebResource {
 			for (BlogEntry blogEntry : blogPosts) {
 				String signature = blogEntry.getSignature();
 
-				for (Profile enabledProfile : enabledProfiles) {
-					if (enabledProfile.getLikedPosts().contains(signature)) {
-						blogEntry.addLikingUser(enabledProfile.getName()
-								.getName());
-					}
-
-				}
-				if(activeProfileOpt != null)
-				{
-					blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(
-							signature));
+				addSharingAndLiking(enabledProfiles, blogEntry, signature);
+				if (activeProfileOpt != null) {
+					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
+							.contains(signature));
 				}
 			}
 

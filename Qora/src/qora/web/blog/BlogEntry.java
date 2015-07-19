@@ -41,6 +41,7 @@ public class BlogEntry {
 	private String signature;
 	private boolean isLiking = false;
 	private List<String> likingUser = new ArrayList<>();
+	private List<String> sharingUser = new ArrayList<>();
 	/**
 	 * Only Set in case of a shared post (if I share your post I am the share author)
 	 */
@@ -203,6 +204,19 @@ public class BlogEntry {
 	public int getLikes()
 	{
 		return likingUser.size();
+	}
+	
+	public void addSharedUser(String user)
+	{
+		if(!sharingUser.contains(user))
+		{
+			sharingUser.add(user);
+		}
+	}
+	
+	public int getShares()
+	{
+		return sharingUser.size();
 	}
 
 	public String getShareAuthorOpt() {
