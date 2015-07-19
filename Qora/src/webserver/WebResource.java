@@ -1225,11 +1225,13 @@ public class WebResource {
 		try {
 
 			String signature = form.getFirst("signature");
+			String sourceBlog = form.getFirst("blogname");
 
 			Profile activeProfileOpt = ProfileHelper.getInstance()
 					.getActiveProfileOpt(request);
 
-			if (activeProfileOpt != null && signature != null) {
+			if (activeProfileOpt != null && signature != null
+					&& sourceBlog != null) {
 				if (activeProfileOpt.isProfileEnabled()) {
 
 					if (!activeProfileOpt.isBlogEnabled()) {
@@ -1241,46 +1243,29 @@ public class WebResource {
 								.entity(json.toJSONString()).build();
 					}
 
-					// TODO DON'T SHARE iF ALREADY SHARED
-					//
-					// if (activeProfileOpt.getLikedPosts().contains(signature))
-					// {
-					//
-					// json.put("type", "YouAlreadySharedThisPost");
-					//
-					// return Response
-					// .status(200)
-					// .header("Content-Type",
-					// "application/json; charset=utf-8")
-					// .entity(json.toJSONString()).build();
-					// }
+					List<String> list = DBSet.getInstance().getSharedPostsMap()
+							.get(Base58.decode(signature));
+					if (list != null
+							&& list.contains(activeProfileOpt.getName()
+									.getName())) {
+						json.put("type", "YouAlreadySharedThisPost");
 
-					// TODO PREVENT SHARING OF POSTS In OWN BLOG (MAKES NO
-					// SENSE)
-					// BlogEntry blogEntryOpt = BlogUtils
-					// .getBlogEntryOpt((ArbitraryTransaction) Controller
-					// .getInstance().getTransaction(
-					// Base58.decode(signature)));
-					//
-					// boolean ownPost = false;
-					// if (blogEntryOpt != null) {
-					// if (Controller.getInstance().getAccountByAddress(
-					// blogEntryOpt.getCreator()) != null) {
-					// ownPost = true;
-					// }
-					// }
-					//
-					// if (ownPost) {
-					//
-					// json.put("type", "YouCantShareYourOwnPosts");
-					//
-					// return Response
-					// .status(200)
-					// .header("Content-Type",
-					// "application/json; charset=utf-8")
-					// .entity(json.toJSONString()).build();
-					//
-					// }
+						return Response
+								.status(200)
+								.header("Content-Type",
+										"application/json; charset=utf-8")
+								.entity(json.toJSONString()).build();
+					}
+
+					if (sourceBlog.equals(activeProfileOpt.getName().getName())) {
+						json.put("type", "YouCantShareYourOwnPosts");
+						
+						 return Response
+						 .status(200)
+						 .header("Content-Type",
+						 "application/json; charset=utf-8")
+						 .entity(json.toJSONString()).build();
+					}
 
 					JSONObject jsonBlogPost = new JSONObject();
 					String profileName = activeProfileOpt.getName().getName();
@@ -1507,7 +1492,6 @@ public class WebResource {
 			for (BlogEntry blogEntry : blogPosts) {
 				String signature = blogEntry.getSignature();
 
-				
 				addSharingAndLiking(enabledProfiles, blogEntry, signature);
 				if (activeProfileOpt != null) {
 					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
@@ -1536,11 +1520,10 @@ public class WebResource {
 				blogEntry.addSharedUser(name);
 			}
 		}
-		
+
 		for (Profile enabledProfile : enabledProfiles) {
 			if (enabledProfile.getLikedPosts().contains(signature)) {
-				blogEntry.addLikingUser(enabledProfile.getName()
-						.getName());
+				blogEntry.addLikingUser(enabledProfile.getName().getName());
 			}
 
 		}

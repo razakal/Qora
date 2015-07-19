@@ -440,7 +440,9 @@
 		}
 
 		function processShare(signature) {
-			var blogname;
+			var  blogname;
+			blogname = getParameter('blogname');
+
 
 
 
@@ -455,6 +457,7 @@
 			"/index/sharepost.html",
 			{
 				signature: signature,
+				blogname: blogname,
 			}).done( function(data) {
 				if(data.type == 'YouAlreadySharedThisPost'){
 					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You already shared this post'
