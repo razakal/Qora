@@ -58,6 +58,10 @@ public class Profile {
 		}
 		Name nameReloaded = DBSet.getInstance().getNameMap()
 				.get(name.getName());
+		if(nameReloaded == null)
+		{
+			return null;
+		}
 		return new Profile(nameReloaded);
 	}
 
