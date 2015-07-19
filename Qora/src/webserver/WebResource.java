@@ -2200,6 +2200,13 @@ public class WebResource {
 		}
 	}
 
+	
+	@Path("/index/{html}")
+	@GET
+	public Response getHtml(@PathParam("html") String html) {
+		return error404(request, null);
+	}
+	
 	@Path("{name}")
 	@GET
 	public Response getNames(@PathParam("name") String nameName) {
