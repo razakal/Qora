@@ -40,7 +40,6 @@ public class Profile {
 	private JSONObject jsonRepresenation;
 	private Name name;
 	private List<Name> followerCache = null;
-	private List<Name> likeCache = null;
 
 	public static Profile getProfileOpt(String name) {
 		Profile result = null;
@@ -79,7 +78,6 @@ public class Profile {
 		}
 
 		List<Name> results = new ArrayList<>();
-		List<Name> resultsLike = new ArrayList<>();
 		Collection<Name> values = DBSet.getInstance().getNameMap().getValues();
 
 		for (Name name : values) {
@@ -88,44 +86,14 @@ public class Profile {
 			if (profileOpt != null && profileOpt.isProfileEnabled()) {
 				if (profileOpt.getFollowedBlogs().contains(this.name.getName())) {
 					results.add(profileOpt.getName());
-				}
-				if (profileOpt.getLikedPosts().contains(this.name.getName())) {
-					resultsLike.add(profileOpt.getName());
 				}
 
 			}
 		}
 		followerCache = results;
-		likeCache = resultsLike;
 		return results;
 	}
 
-	public List<Name> getLikes() {
-
-		if (likeCache != null) {
-			return likeCache;
-		}
-
-		List<Name> results = new ArrayList<>();
-		List<Name> resultsFollower = new ArrayList<>();
-		Collection<Name> values = DBSet.getInstance().getNameMap().getValues();
-
-		for (Name name : values) {
-			Profile profileOpt = Profile.getProfileOpt(name);
-			// FOLLOWING ONLY WITH ENABLED PROFILE
-			if (profileOpt != null && profileOpt.isProfileEnabled()) {
-				if (profileOpt.getLikedPosts().contains(this.name.getName())) {
-					results.add(profileOpt.getName());
-				}
-				if (profileOpt.getFollowedBlogs().contains(this.name.getName())) {
-					resultsFollower.add(profileOpt.getName());
-				}
-			}
-		}
-		likeCache = results;
-		followerCache = resultsFollower;
-		return results;
-	}
 
 	public static List<Profile> getEnabledProfiles() {
 		List<Name> namesAsList = Controller.getInstance().getNamesAsList();

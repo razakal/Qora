@@ -1575,7 +1575,6 @@ public class WebResource {
 				}
 				pebbleHelper.getContextMap().put("follower",
 						profile.getFollower());
-				pebbleHelper.getContextMap().put("likes", profile.getLikes());
 
 			} else {
 				pebbleHelper.getContextMap().put("blogenabled", true);
