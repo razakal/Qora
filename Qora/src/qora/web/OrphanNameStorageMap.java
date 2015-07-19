@@ -25,8 +25,7 @@ public class OrphanNameStorageMap extends DBMap<byte[], Map<String, String>> {
 	@Override
 	protected Map<byte[], Map<String, String>> getMap(DB database) {
 		
-		
-		return   database.createTreeMap("OrphanNameStorageMap")
+		return database.createTreeMap("OrphanNameStorageMap")
 		            .comparator(SignedBytes.lexicographicalComparator())
 		            .makeOrGet();
 		

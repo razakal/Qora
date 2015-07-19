@@ -11,8 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import controller.Controller;
 import qora.account.PublicKeyAccount;
 import qora.naming.Name;
+import qora.transaction.ArbitraryTransaction;
+import qora.transaction.Transaction;
 import qora.web.NameStorageMap;
 import qora.web.OrphanNameStorageMap;
 import database.DBSet;
@@ -77,7 +80,6 @@ public class StorageUtils {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void processUpdate(byte[] data, byte[] signature,
 			PublicKeyAccount creator) {
 
@@ -119,89 +121,11 @@ public class StorageUtils {
 								nameStorageMap.getOpt(name, keyForOrphaning));
 					}
 
-					String addCompleteJson = (String) jsonObject
-							.get(ADD_COMPLETE_KEY);
-					if (addCompleteJson != null) {
-						JSONObject addCompleteResults = (JSONObject) JSONValue
-								.parse(addCompleteJson);
+					DBSet.getInstance().getOrphanNameStorageHelperMap()
+							.add(name, signature);
 
-						Set<String> keys = addCompleteResults.keySet();
-
-						for (String key : keys) {
-							nameStorageMap.add(name, key, ""
-									+ addCompleteResults.get(key));
-						}
-
-					}
-
-					String removeJson = (String) jsonObject
-							.get(REMOVE_COMPLETE_KEY);
-					if (removeJson != null) {
-
-						JSONObject removeCompleteResults = (JSONObject) JSONValue
-								.parse(removeJson);
-
-						Set<String> keys = removeCompleteResults.keySet();
-
-						for (String key : keys) {
-
-							nameStorageMap.remove(name, key);
-						}
-					}
-
-					String addJsonList = (String) jsonObject.get(ADD_LIST_KEY);
-					if (addJsonList != null) {
-
-						JSONObject addListKey = (JSONObject) JSONValue
-								.parse(addJsonList);
-
-						Set<String> keys = addListKey.keySet();
-
-						for (String key : keys) {
-							List<String> entriesToAdd = new ArrayList<>(
-									Arrays.asList(StringUtils.split(""
-											+ addListKey.get(key), ";")));
-							nameStorageMap.addListEntries(name, key,
-									entriesToAdd);
-						}
-					}
-
-					String removeJsonList = (String) jsonObject
-							.get(REMOVE_LIST_KEY);
-					if (removeJsonList != null) {
-
-						JSONObject removeListKey = (JSONObject) JSONValue
-								.parse(removeJsonList);
-
-						Set<String> keys = removeListKey.keySet();
-
-						for (String key : keys) {
-							List<String> entriesToAdd = new ArrayList<>(
-									Arrays.asList(StringUtils.split(""
-											+ removeListKey.get(key), ";")));
-							nameStorageMap.removeListEntries(name, key,
-									entriesToAdd);
-						}
-					}
-
-					String addJson = (String) jsonObject.get(ADD_KEY);
-					if (addJson != null) {
-
-						JSONObject addJsonKey = (JSONObject) JSONValue
-								.parse(addJson);
-
-						Set<String> keys = addJsonKey.keySet();
-
-						for (String key : keys) {
-
-							String oldValueOpt = nameStorageMap.getOpt(name,
-									key);
-							oldValueOpt = oldValueOpt == null ? ""
-									: oldValueOpt;
-							nameStorageMap.add(name, key, oldValueOpt + ""
-									+ addJsonKey.get(key));
-						}
-					}
+					addTxChangesToStorage(jsonObject, name, nameStorageMap,
+							null);
 
 				}
 
@@ -209,6 +133,97 @@ public class StorageUtils {
 
 		}
 
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void addTxChangesToStorage(JSONObject jsonObject,
+			String name, NameStorageMap nameStorageMap,
+			Set<String> onlyTheseKeysOpt) {
+		String addCompleteJson = (String) jsonObject.get(ADD_COMPLETE_KEY);
+		if (addCompleteJson != null) {
+			JSONObject addCompleteResults = (JSONObject) JSONValue
+					.parse(addCompleteJson);
+
+			Set<String> keys = addCompleteResults.keySet();
+
+			for (String key : keys) {
+
+				if (onlyTheseKeysOpt == null || onlyTheseKeysOpt.contains(key)) {
+					nameStorageMap.add(name, key,
+							"" + addCompleteResults.get(key));
+				}
+			}
+
+		}
+
+		String removeJson = (String) jsonObject.get(REMOVE_COMPLETE_KEY);
+		if (removeJson != null) {
+
+			JSONObject removeCompleteResults = (JSONObject) JSONValue
+					.parse(removeJson);
+
+			Set<String> keys = removeCompleteResults.keySet();
+
+			for (String key : keys) {
+
+				if (onlyTheseKeysOpt == null || onlyTheseKeysOpt.contains(key)) {
+					nameStorageMap.remove(name, key);
+				}
+			}
+		}
+
+		String addJsonList = (String) jsonObject.get(ADD_LIST_KEY);
+		if (addJsonList != null) {
+
+			JSONObject addListKey = (JSONObject) JSONValue.parse(addJsonList);
+
+			Set<String> keys = addListKey.keySet();
+
+			for (String key : keys) {
+				if (onlyTheseKeysOpt == null || onlyTheseKeysOpt.contains(key)) {
+					List<String> entriesToAdd = new ArrayList<>(
+							Arrays.asList(StringUtils.split(
+									"" + addListKey.get(key), ";")));
+					nameStorageMap.addListEntries(name, key, entriesToAdd);
+				}
+			}
+		}
+
+		String removeJsonList = (String) jsonObject.get(REMOVE_LIST_KEY);
+		if (removeJsonList != null) {
+
+			JSONObject removeListKey = (JSONObject) JSONValue
+					.parse(removeJsonList);
+
+			Set<String> keys = removeListKey.keySet();
+
+			for (String key : keys) {
+				if (onlyTheseKeysOpt == null || onlyTheseKeysOpt.contains(key)) {
+					List<String> entriesToAdd = new ArrayList<>(
+							Arrays.asList(StringUtils.split(
+									"" + removeListKey.get(key), ";")));
+					nameStorageMap.removeListEntries(name, key, entriesToAdd);
+				}
+			}
+		}
+
+		String addJson = (String) jsonObject.get(ADD_KEY);
+		if (addJson != null) {
+
+			JSONObject addJsonKey = (JSONObject) JSONValue.parse(addJson);
+
+			Set<String> keys = addJsonKey.keySet();
+
+			for (String key : keys) {
+
+				if (onlyTheseKeysOpt == null || onlyTheseKeysOpt.contains(key)) {
+					String oldValueOpt = nameStorageMap.getOpt(name, key);
+					oldValueOpt = oldValueOpt == null ? "" : oldValueOpt;
+					nameStorageMap.add(name, key,
+							oldValueOpt + "" + addJsonKey.get(key));
+				}
+			}
+		}
 	}
 
 	private static Set<String> getAllKeysForOrphanSaving(JSONObject jsonObject) {
@@ -253,6 +268,8 @@ public class StorageUtils {
 						.getOrphanNameStorageMap().get(signature);
 
 				if (orphanMapForTx != null) {
+					
+					//RESTORING SNAPSHOT FOR ALL CHANGED KEYS 
 					NameStorageMap nameStorageMap = DBSet.getInstance()
 							.getNameStorageMap();
 					Set<String> keySet = orphanMapForTx.keySet();
@@ -270,6 +287,24 @@ public class StorageUtils {
 						}
 					}
 
+					List<byte[]> listOfSignaturesForName = DBSet.getInstance()
+							.getOrphanNameStorageHelperMap().get(name);
+					int indexOf = listOfSignaturesForName.indexOf(signature);
+
+					// REDO ALL FOLLOWING TXS FOR THIS NAME (THIS TIME
+					// SELECTIVE)
+					for (int i = indexOf; i < listOfSignaturesForName.size(); i++) {
+						
+						Transaction transaction = Controller.getInstance().getTransaction(listOfSignaturesForName.get(i));
+						byte[] dataOfFollowingTx = ((ArbitraryTransaction) transaction).getData();
+						
+						String dataOfFollowingTxSting = new String(dataOfFollowingTx);
+						
+						JSONObject jsonObjectOfFollowingTx = (JSONObject) JSONValue.parse(dataOfFollowingTxSting);
+						
+						addTxChangesToStorage(jsonObjectOfFollowingTx, name, nameStorageMap, keySet);
+					}
+
 					DBSet.getInstance().getOrphanNameStorageMap()
 							.delete(signature);
 
@@ -278,6 +313,7 @@ public class StorageUtils {
 			}
 		}
 	}
+
 
 	public static List<byte[]> getProcessed() {
 		return processed;

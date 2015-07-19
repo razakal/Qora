@@ -8,6 +8,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import qora.web.NameStorageMap;
+import qora.web.OrphanNameStorageHelperMap;
 import qora.web.OrphanNameStorageMap;
 import controller.Controller;
 import settings.Settings;
@@ -29,6 +30,7 @@ public class DBSet implements Observer, IDB {
 	private NameMap nameMap;
 	private NameStorageMap nameStorageMap;
 	private OrphanNameStorageMap orphanNameStorageMap;
+	private OrphanNameStorageHelperMap orphanNameStorageHelperMap;
 	private LocalDataMap localDataMap;
 	private BlogPostMap blogPostMap;
 	private TransactionParentMap transactionParentMap;
@@ -104,6 +106,7 @@ public class DBSet implements Observer, IDB {
 		this.nameMap = new NameMap(this, database);
 		this.nameStorageMap = new NameStorageMap(this, database);
 		this.orphanNameStorageMap = new OrphanNameStorageMap(this, database);
+		this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(this, database);
 		this.localDataMap = new LocalDataMap(this, database);
 		this.blogPostMap = new BlogPostMap(this, database);
 		this.transactionParentMap = new TransactionParentMap(this, database);
@@ -137,6 +140,7 @@ public class DBSet implements Observer, IDB {
 		this.nameMap = new NameMap(parent.nameMap);
 		this.nameStorageMap = new NameStorageMap(parent.nameStorageMap);
 		this.orphanNameStorageMap = new OrphanNameStorageMap(parent.orphanNameStorageMap);
+		this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(parent.orphanNameStorageHelperMap);
 		this.localDataMap = new LocalDataMap(parent.localDataMap);
 		this.blogPostMap = new BlogPostMap(parent.blogPostMap);
 		this.transactionParentMap = new TransactionParentMap(this.blockMap, parent.transactionParentMap);
@@ -168,6 +172,7 @@ public class DBSet implements Observer, IDB {
 		this.nameMap.reset();
 		this.nameStorageMap.reset();
 		this.orphanNameStorageMap.reset();
+		this.orphanNameStorageHelperMap.reset();
 		this.localDataMap.reset();
 		this.blogPostMap.reset();
 		this.transactionParentMap.reset();
@@ -235,6 +240,11 @@ public class DBSet implements Observer, IDB {
 	public OrphanNameStorageMap getOrphanNameStorageMap()
 	{
 		return this.orphanNameStorageMap;
+	}
+	
+	public OrphanNameStorageHelperMap getOrphanNameStorageHelperMap()
+	{
+		return this.orphanNameStorageHelperMap;
 	}
 	
 	public LocalDataMap getLocalDataMap()
