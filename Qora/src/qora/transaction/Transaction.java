@@ -176,13 +176,14 @@ public abstract class Transaction {
 	{
 		BigDecimal recommendedFee = BigDecimal.valueOf(this.getDataLength()).divide(BigDecimal.valueOf(Settings.getInstance().getMaxBytePerFee()), MathContext.DECIMAL32).setScale(8);
 
+		//security margin
+		recommendedFee = recommendedFee.add(new BigDecimal("0.0000001"));
 		if(recommendedFee.compareTo(MINIMUM_FEE) <= 0)
 		{
 			recommendedFee = MINIMUM_FEE;
 		}
 		else
 		{
-			recommendedFee = recommendedFee.add(new BigDecimal("0.0000001"));
 			
 			if(recommendedFee.compareTo(MINIMUM_FEE) > 0 )
 			{
