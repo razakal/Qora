@@ -289,24 +289,50 @@ public class StorageUtils {
 
 					List<byte[]> listOfSignaturesForName = DBSet.getInstance()
 							.getOrphanNameStorageHelperMap().get(name);
-					int indexOf = listOfSignaturesForName.indexOf(signature);
+					int indexOf =  ByteArrayUtils.indexOf(listOfSignaturesForName, signature);
 
+					
+					OrphanNameStorageMap orphanNameStorageMap = DBSet
+							.getInstance().getOrphanNameStorageMap();
 					// REDO ALL FOLLOWING TXS FOR THIS NAME (THIS TIME
 					// SELECTIVE)
 					for (int i = indexOf; i < listOfSignaturesForName.size(); i++) {
 						
-						Transaction transaction = Controller.getInstance().getTransaction(listOfSignaturesForName.get(i));
+						byte[] signatureofFollowingTx = listOfSignaturesForName.get(i);
+						Transaction transaction = Controller.getInstance().getTransaction(signatureofFollowingTx);
 						byte[] dataOfFollowingTx = ((ArbitraryTransaction) transaction).getData();
 						
 						String dataOfFollowingTxSting = new String(dataOfFollowingTx);
 						
 						JSONObject jsonObjectOfFollowingTx = (JSONObject) JSONValue.parse(dataOfFollowingTxSting);
 						
+						Set<String> allKeysForOrphanSaving = getAllKeysForOrphanSaving(jsonObjectOfFollowingTx);
+						
+						//ALL KEYS THAT THEY HAVE IN COMMON
+						Set<String> keysToSaveSnapshot = new HashSet<String>();
+						for (String key : keySet) {
+							if(allKeysForOrphanSaving.contains(key))
+							{
+								keysToSaveSnapshot.add(key);
+							}
+						}
+						
+						
+						// SAVE OLD VALUES FOR ORPHANING
+						for (String keyForOrphaning : keysToSaveSnapshot) {
+							orphanNameStorageMap.add(signatureofFollowingTx, keyForOrphaning,
+									nameStorageMap.getOpt(name, keyForOrphaning));
+						}
+						
+						
 						addTxChangesToStorage(jsonObjectOfFollowingTx, name, nameStorageMap, keySet);
 					}
 
 					DBSet.getInstance().getOrphanNameStorageMap()
 							.delete(signature);
+					
+					DBSet.getInstance()
+					.getOrphanNameStorageHelperMap().remove(name, signature);
 
 				}
 

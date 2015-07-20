@@ -66,6 +66,21 @@ public class OrphanNameStorageHelperMap extends DBMap<String, List<byte[]>> {
 		
 	}
 	
+	public void remove(String name, byte[] signatureOfTx)
+	{
+		List<byte[]> list = this.get(name);
+		if(list == null)
+		{
+			return;
+		}
+		
+		ByteArrayUtils.remove(list, signatureOfTx);
+		
+		set(name, list);
+		
+	}
+	
+	
 	
 	public void remove(byte[] txAndName)
 	{
