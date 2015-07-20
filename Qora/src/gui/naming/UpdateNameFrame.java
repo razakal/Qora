@@ -160,27 +160,6 @@ public class UpdateNameFrame extends JFrame
       	this.add(this.txtKey, txtGBC);
         
       	
-		//WEBSITE
-        buttonGBC.gridy = 4;
-        buttonGBC.gridx = 2;
-        buttonGBC.fill = GridBagConstraints.EAST;
-        buttonGBC.anchor = GridBagConstraints.EAST;
-        
-        JButton webButton = new JButton("website");
-        webButton.setPreferredSize(new Dimension(150, 25));
-        webButton.setToolTipText("Add key for website");
-        
-        webButton.addActionListener(new ActionListener()
-	    {
-			public void actionPerformed(ActionEvent e)
-			{
-				txtKey.setText("website");
-		    }
-		});	
-        
-        this.add(webButton, buttonGBC);
-
-        
         //LABEL VALUE
       	labelGBC.gridy = 5;
       	JLabel valueLabel = new JLabel("Value:");
