@@ -44,6 +44,7 @@ public class ApiErrorFactory
 	public static final int ERROR_KEY_NOT_EXISTS = 119;
 	public static final int ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR = 120;
 	public static final int ERROR_FEE_LESS_REQUIRED = 121;
+	public static final int ERROR_WALLET_NOT_IN_SYNC = 122;
 	
 	//WALLET
 	public static final int ERROR_WALLET_NO_EXISTS = 201;
@@ -142,6 +143,7 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_KEY_NOT_EXISTS, "the key does not exist");
 		this.errorMessages.put(ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR, "you can't delete the key \""+Qorakeys.DEFAULT.toString() +"\" if it is the only key");
 		this.errorMessages.put(ERROR_FEE_LESS_REQUIRED, "fee less required");
+		this.errorMessages.put(ERROR_WALLET_NOT_IN_SYNC, "wallet needs to be synchronized");
 		
 		//WALLET
 		this.errorMessages.put(ERROR_WALLET_NO_EXISTS, "wallet does not exist");

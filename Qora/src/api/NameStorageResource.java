@@ -50,6 +50,12 @@ public class NameStorageResource {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			// CHECK WALLET IN SYNC
+			if (Controller.getInstance().getStatus() != Controller.STATUS_OKE) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_WALLET_NOT_IN_SYNC);
+			}
 
 			Name nameObj = DBSet.getInstance().getNameMap().get(name);
 			
