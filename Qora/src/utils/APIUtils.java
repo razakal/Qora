@@ -119,7 +119,7 @@ public class APIUtils {
 		// CHECK API CALL ALLOWED
 		try {
 
-			if (Controller.getInstance().checkAPICallAllowed(messageToDisplay, request) == JOptionPane.NO_OPTION) {
+			if (Controller.getInstance().checkAPICallAllowed(messageToDisplay, request) != JOptionPane.YES_OPTION) {
 				throw ApiErrorFactory
 						.getInstance()
 						.createError(
