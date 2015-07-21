@@ -315,8 +315,17 @@ public class WebResource {
 		}
 		Pair<String, String> websitepair = new Pair<String, String>(
 				Qorakeys.WEBSITE.toString(), website);
-		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
-				Collections.singletonList(websitepair), null, null, null, null);
+		
+		JSONObject storageJsonObject;
+		if(website == null || website.isEmpty())
+		{
+			storageJsonObject = StorageUtils.getStorageJsonObject(
+					null, Collections.singletonList(Qorakeys.WEBSITE.toString()), null, null, null);
+		}else
+		{
+			storageJsonObject = StorageUtils.getStorageJsonObject(
+					Collections.singletonList(websitepair), null, null, null, null);
+		}
 
 		new NameStorageResource().updateEntry(storageJsonObject.toString(),
 				name);
