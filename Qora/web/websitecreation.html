@@ -155,7 +155,7 @@
             <div class="form-group">
             <label for="website" class="col-lg-2 control-label"><br>Website (Html)</label>
             <div class="col-lg-10"><br>
-              <pre><textarea id="website" rows="10" class="form-control"></textarea></pre><span class="help-block"></span><span id="charNum" class="help-block">3000</span>
+              <pre><textarea id="website" rows="10" class="form-control">{{website}}</textarea></pre><span class="help-block"></span><span id="charNum" class="help-block">3000</span>
             </div>
           </div>
           <!-- </fieldset> -->
@@ -261,7 +261,6 @@
     $(document).ready(function() {
         var searchval;
 		$("#select-name").val('{{name}}');
-		$("#website").val('{{website}}');
  	{% autoescape true %}
 		var searchval
 		$('#name').change(function() {
