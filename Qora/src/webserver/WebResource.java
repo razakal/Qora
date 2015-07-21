@@ -158,7 +158,7 @@ public class WebResource {
 			description = description == null ? "" : description;
 			description = StringUtils.abbreviate(description, 150);
 			results.add(new HTMLSearchResult(title, description, name, "/"
-					+ name, "/" + name, "/namepairs:" + name, null));
+					+ name, "/" + name, "/namestorage:" + name, null));
 
 		}
 		return results;
@@ -559,7 +559,7 @@ public class WebResource {
 
 			results.add(new HTMLSearchResult(title, description, name,
 					"/index/blog.html?blogname=" + name,
-					"/index/blog.html?blogname=" + name, "/namepairs:" + name,
+					"/index/blog.html?blogname=" + name, "/namestorage:" + name,
 					blogProfile.getFollower()));
 		}
 
@@ -1834,9 +1834,9 @@ public class WebResource {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Path("namepairs:{name}")
+	@Path("namestorage:{name}")
 	@GET
-	public Response showNamepairs(@PathParam("name") String name) {
+	public Response showNamestorage(@PathParam("name") String name) {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
