@@ -278,7 +278,11 @@
                 <div class="timeline-heading">
                   <div class="media">
                   	{% if blogpost.shareAuthorOpt() is not null %}
+                  	{% if blogpost.getNameOpt() is not null %}
                   	<h6><span class="glyphicon glyphicon-retweet"></span>  <b><a href="/index/blog.html?blogname={{blogpost.shareAuthorOpt()}}">{{blogpost.shareAuthorOpt()}}</a></b> shared <b><a href="/index/blog.html?blogname={{blogpost.nameOrCreator}}">{{blogpost.nameOrCreator}}</a></b> post</h6>
+                  	{%else%}
+                  	<h6><span class="glyphicon glyphicon-retweet"></span>  <b><a href="/index/blog.html?blogname={{blogpost.shareAuthorOpt()}}">{{blogpost.shareAuthorOpt()}}</a></b> shared <b>{{blogpost.nameOrCreator}}</b> post</h6>
+                  	{%endif%}
                   	{%endif%}
                     {% if blogpost.getProfileOpt() is not null and blogpost.getProfileOpt().isProfileEnabled() %}
                     <div class="media-left media-middle"><a href="/index/blog.html?blogname={{blogpost.nameOrCreator}}"><img src="{{blogpost.getAvatar()}}" alt="" class="media-object"></a></div>
