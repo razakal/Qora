@@ -315,7 +315,7 @@ public class WebResource {
 		}
 		Pair<String, String> websitepair = new Pair<String, String>(
 				Qorakeys.WEBSITE.toString(), website);
-		
+
 		JSONObject storageJsonObject;
 		if(website == null || website.isEmpty())
 		{
@@ -938,7 +938,7 @@ public class WebResource {
 			try {
 
 				jsonBlogPost.put("fee", Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(jsonBlogPost.toJSONString().getBytes()).getA().toPlainString());
-				
+
 				String result = new BlogPostResource().addBlogEntry(
 						jsonBlogPost.toJSONString(), blogname);
 
@@ -1873,310 +1873,6 @@ public class WebResource {
 
 	}
 
-	@Path("block:{block}")
-	@GET
-	public Response getBlock(@PathParam("block") String strBlock) {
-		String str;
-		try {
-			if (strBlock.matches("\\d+")) {
-				str = BlocksResource.getbyHeight(Integer.valueOf(strBlock));
-			} else if (strBlock.equals("last")) {
-				str = BlocksResource.getLastBlock();
-			} else {
-				str = BlocksResource.getBlock(strBlock);
-			}
-
-			str = jsonToFineSting(str);
-
-		} catch (Exception e1) {
-			str = "<h2>Block does not exist!</h2";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">Block : "
-										+ strBlock
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}", "$scope.steps = " + str))
-				.build();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Path("tx:{tx}")
-	@GET
-	public Response getTx(@PathParam("tx") String strTx) {
-
-		String str = null;
-		try {
-
-			if (Crypto.getInstance().isValidAddress(strTx)) {
-				Account account = new Account(strTx);
-
-				Pair<Block, List<Transaction>> result = Controller
-						.getInstance().scanTransactions(null, -1, -1, -1, -1,
-								account);
-
-				JSONObject json = new JSONObject();
-				JSONArray transactions = new JSONArray();
-				for (Transaction transaction : result.getB()) {
-					transactions.add(transaction.toJson());
-				}
-				json.put(strTx, transactions);
-				str = json.toJSONString();
-			} else {
-				str = TransactionsResource.getTransactionsBySignature(strTx);
-			}
-			str = jsonToFineSting(str);
-		} catch (Exception e1) {
-			str = "<h2>Transaction does not exist!</h2>";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">Transaction : "
-										+ strTx
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}", "$scope.steps = " + str))
-				.build();
-	}
-
-	@Path("balance:{address}")
-	@GET
-	public Response getBalance(@PathParam("address") String address) {
-		String str = null;
-		try {
-
-			String addressreal = "";
-
-			if (!Crypto.getInstance().isValidAddress(address)) {
-				Pair<Account, NameResult> nameToAdress = NameUtils
-						.nameToAdress(address);
-
-				if (nameToAdress.getB() == NameResult.OK) {
-					addressreal = nameToAdress.getA().getAddress();
-				} else {
-					throw ApiErrorFactory.getInstance().createError(
-							nameToAdress.getB().getErrorCode());
-				}
-			} else {
-				addressreal = address;
-			}
-
-			str = AddressesResource.getGeneratingBalance(addressreal);
-
-		} catch (Exception e1) {
-			str = "<h2>Address does not exist!</h2>";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">Balance of "
-										+ address
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}",
-								"$scope.steps = {\"amount\":" + str + "}"))
-				.build();
-	}
-
-	@Path("balance:{address}:{confirmations}")
-	@GET
-	public Response getBalance(@PathParam("address") String address,
-			@PathParam("confirmations") int confirmations) {
-
-		String str = null;
-		try {
-
-			str = AddressesResource
-					.getGeneratingBalance(address, confirmations);
-
-		} catch (Exception e1) {
-			str = "<h2>Address does not exist!</h2>";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">Balance of "
-										+ address
-										+ ":"
-										+ confirmations
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}",
-								"$scope.steps = {\"amount\":" + str + "}"))
-				.build();
-	}
-
-	@Path("name:{name}")
-	@GET
-	public Response getName(@PathParam("name") String strName) {
-
-		String str = null;
-		String strNameSale = null;
-		try {
-			str = NamesResource.getName(strName);
-
-			if (DBSet.getInstance().getNameExchangeMap().contains(strName)) {
-				strNameSale = NameSalesResource.getNameSale(strName);
-			}
-
-			str = jsonToFineSting(str);
-
-			if (strNameSale != null) {
-				str += "\n\n" + jsonToFineSting(strNameSale);
-			}
-
-		} catch (Exception e1) {
-			str = "<h2>Name does not exist!</h2>";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">Name : "
-										+ strName
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}", "$scope.steps = " + str))
-				.build();
-	}
-
-	@Path("at:{at}")
-	@GET
-	public Response getAt(@PathParam("at") String strAt) {
-
-		String str = null;
-		try {
-			str = ATResource.getAT(strAt);
-			str = jsonToFineSting(str);
-		} catch (Exception e1) {
-			str = "<h2>AT does not exist!</h2>";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">AT : "
-										+ strAt
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}", "$scope.steps = " + str))
-				.build();
-	}
-
-	@Path("atbysender:{atbysender}")
-	@GET
-	public Response getAtTx(@PathParam("atbysender") String strAtbySender) {
-
-		String str = null;
-		try {
-			str = ATResource.getATTransactionsBySender(strAtbySender);
-			str = jsonToFineSting(str);
-		} catch (Exception e1) {
-			str = "<h2>AT does not exist!</h2>";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">AT Sender : "
-										+ strAtbySender
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}", "$scope.steps = " + str))
-				.build();
-	}
-
-	@Path("atbycreator:{atbycreator}")
-	@GET
-	public Response getAtbyCreator(
-			@PathParam("atbycreator") String strAtbyCreator) {
-
-		String str = null;
-		try {
-			str = ATResource.getATsByCreator(strAtbyCreator);
-			str = jsonToFineSting(str);
-		} catch (Exception e1) {
-			str = "<h2>AT does not exist!</h2>";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">AT Creator : "
-										+ strAtbyCreator
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}", "$scope.steps = " + str))
-				.build();
-	}
-
-	@Path("attxbyrecipient:{attxbyrecipient}")
-	@GET
-	public Response getATTransactionsByRecipient(
-			@PathParam("attxbyrecipient") String StrAtTxbyRecipient) {
-
-		String str = null;
-		try {
-			str = ATResource.getATTransactionsByRecipient(StrAtTxbyRecipient);
-			str = jsonToFineSting(str);
-		} catch (Exception e1) {
-			str = "<h2>AT does not exist!</h2>";
-		}
-
-		return Response
-				.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(miniIndex()
-						.replace(
-								"<jsonresults></jsonresults>",
-								"<br><div ng-app=\"myApp\" ng-controller=\"AppController\"><div class=\"panel panel-default\">" //
-										+ "<div class=\"panel-heading\">AT TX by Recipient : "
-										+ StrAtTxbyRecipient
-										+ "</div><table class=\"table\">" //
-										+ "<tr ng-repeat=\"(key,value) in steps\"><td>{{ key }}</td><td>{{ value }}</td></tr></table></div></div>")
-						.replace("$scope.steps = {}", "$scope.steps = " + str))
-				.build();
-	}
-
 	public String miniIndex() {
 		try {
 			return readFile("web/main.mini.html", StandardCharsets.UTF_8);
@@ -2208,13 +1904,13 @@ public class WebResource {
 		}
 	}
 
-	
+
 	@Path("/index/{html}")
 	@GET
 	public Response getHtml(@PathParam("html") String html) {
 		return error404(request, null);
 	}
-	
+
 	@Path("{name}")
 	@GET
 	public Response getNames(@PathParam("name") String nameName) {
