@@ -897,15 +897,20 @@ public class Controller extends Observable {
 
 	public Transaction getTransaction(byte[] signature) {
 
+		return getTransaction(signature, DBSet.getInstance());
+	}
+	
+	public Transaction getTransaction(byte[] signature, DBSet database) {
+		
 		// CHECK IF IN BLOCK
-		Block block = DBSet.getInstance().getTransactionParentMap()
+		Block block = database.getTransactionParentMap()
 				.getParent(signature);
 		if (block != null) {
 			return block.getTransaction(signature);
 		}
-
+		
 		// CHECK IF IN TRANSACTION DATABASE
-		return DBSet.getInstance().getTransactionMap().get(signature);
+		return database.getTransactionMap().get(signature);
 	}
 
 	public List<Transaction> getLastTransactions(Account account, int limit) {

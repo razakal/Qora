@@ -289,7 +289,7 @@ public class StorageUtils {
 					List<byte[]> listOfSignaturesForName = db
 							.getOrphanNameStorageHelperMap().get(name);
 					int indexOf =  ByteArrayUtils.indexOf(listOfSignaturesForName, signature);
-
+					indexOf++;
 					
 					OrphanNameStorageMap orphanNameStorageMap = db.getOrphanNameStorageMap();
 					// REDO ALL FOLLOWING TXS FOR THIS NAME (THIS TIME
@@ -297,7 +297,7 @@ public class StorageUtils {
 					for (int i = indexOf; i < listOfSignaturesForName.size(); i++) {
 						
 						byte[] signatureofFollowingTx = listOfSignaturesForName.get(i);
-						Transaction transaction = Controller.getInstance().getTransaction(signatureofFollowingTx);
+						Transaction transaction = Controller.getInstance().getTransaction(signatureofFollowingTx, db);
 						byte[] dataOfFollowingTx = ((ArbitraryTransaction) transaction).getData();
 						
 						String dataOfFollowingTxSting = new String(dataOfFollowingTx);
