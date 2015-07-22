@@ -257,14 +257,14 @@ public class ArbitraryTransaction extends Transaction {
 		return VALIDATE_OKE;
 	}
 
-	// PROCESS/ORPHAN
 	
-	DBSet getNameStorageDB()
+	public DBSet getNameStorageDB()
 	{
 		return DBSet.getInstance();
 	}
 	
 
+	// PROCESS/ORPHAN
 	@Override
 	public void process(DBSet db) {
 

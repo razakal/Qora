@@ -68,6 +68,7 @@ public class NameStorageTest {
 		Transaction nameRegistration = new RegisterNameTransaction(sender,
 				name, BigDecimal.ONE.setScale(8), timestamp,
 				sender.getLastReference(databaseSet), signature);
+		
 
 		// CHECK IF NAME REGISTRATION IS VALID
 		assertEquals(Transaction.VALIDATE_OKE,
@@ -96,7 +97,13 @@ public class NameStorageTest {
 				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		// KEY IS THERE!
@@ -123,7 +130,15 @@ public class NameStorageTest {
 					badSender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 			arbitraryTransaction = new ArbitraryTransaction(
 					badSender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-					badSender.getLastReference(databaseSet), signature);
+					badSender.getLastReference(databaseSet), signature)
+			{
+				@Override
+				public DBSet getNameStorageDB() {
+					return databaseSet;
+				}
+			};
+			
+			
 			arbitraryTransaction.process(databaseSet);
 
 			// KEY IS STILL THERE!
@@ -158,7 +173,13 @@ public class NameStorageTest {
 				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		// KEY IS THERE!
@@ -179,7 +200,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		arbitraryTransaction = new ArbitraryTransaction(sender, 10, data,
 				BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		// NEW KEY IS THERE!
@@ -200,7 +227,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		arbitraryTransaction = new ArbitraryTransaction(sender, 10, data,
 				BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		assertNull(databaseSet.getNameStorageMap().getOpt("drizzt",
@@ -230,7 +263,13 @@ public class NameStorageTest {
 				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		assertEquals(
@@ -250,7 +289,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		arbitraryTransaction = new ArbitraryTransaction(sender, 10, data,
 				BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		// KEY IS THERE!
@@ -271,7 +316,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		arbitraryTransaction = new ArbitraryTransaction(sender, 10, data,
 				BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		// KEY IS THERE!
@@ -297,7 +348,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		arbitraryTransaction = new ArbitraryTransaction(sender, 10, data,
 				BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		// KEY IS THERE!
@@ -323,7 +380,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		arbitraryTransaction = new ArbitraryTransaction(sender, 10, data,
 				BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		// KEY IS THERE!
@@ -343,7 +406,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		arbitraryTransaction = new ArbitraryTransaction(sender, 10, data,
 				BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		assertEquals(
@@ -364,7 +433,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		arbitraryTransaction = new ArbitraryTransaction(sender, 10, data,
 				BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		// KEY IS THERE!
@@ -391,7 +466,13 @@ public class NameStorageTest {
 				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction);
@@ -411,7 +492,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction2 = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction2.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction2);
@@ -455,7 +542,13 @@ public class NameStorageTest {
 				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction);
@@ -477,7 +570,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction2 = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction2.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction2);
@@ -499,7 +598,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction3 = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction3.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction3);
@@ -564,7 +669,13 @@ public class NameStorageTest {
 				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction);
@@ -586,7 +697,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction2 = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction2.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction2);
@@ -608,7 +725,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction3 = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction3.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction3);
@@ -690,7 +813,13 @@ public class NameStorageTest {
 				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction);
@@ -712,7 +841,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction2 = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction2.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction2);
@@ -734,7 +869,13 @@ public class NameStorageTest {
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
 		ArbitraryTransaction arbitraryTransaction3 = new ArbitraryTransaction(
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
-				sender.getLastReference(databaseSet), signature);
+				sender.getLastReference(databaseSet), signature)
+		{
+			@Override
+			public DBSet getNameStorageDB() {
+				return databaseSet;
+			}
+		};
 		arbitraryTransaction3.process(databaseSet);
 
 		databaseSet.getTransactionMap().add(arbitraryTransaction3);
