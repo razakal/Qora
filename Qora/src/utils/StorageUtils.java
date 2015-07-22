@@ -81,7 +81,7 @@ public class StorageUtils {
 	}
 
 	public static void processUpdate(byte[] data, byte[] signature,
-			PublicKeyAccount creator) {
+			PublicKeyAccount creator, DBSet db) {
 
 		if (!ByteArrayUtils.contains(StorageUtils.getProcessed(), signature)) {
 
@@ -96,7 +96,7 @@ public class StorageUtils {
 
 				if (name != null) {
 
-					Name nameObj = DBSet.getInstance().getNameMap().get(name);
+					Name nameObj = db.getNameMap().get(name);
 
 					if (nameObj == null) {
 						return;
@@ -108,10 +108,9 @@ public class StorageUtils {
 						return;
 					}
 
-					NameStorageMap nameStorageMap = DBSet.getInstance()
+					NameStorageMap nameStorageMap = db
 							.getNameStorageMap();
-					OrphanNameStorageMap orphanNameStorageMap = DBSet
-							.getInstance().getOrphanNameStorageMap();
+					OrphanNameStorageMap orphanNameStorageMap = db.getOrphanNameStorageMap();
 
 					Set<String> allKeysForOrphanSaving = getAllKeysForOrphanSaving(jsonObject);
 
@@ -121,7 +120,7 @@ public class StorageUtils {
 								nameStorageMap.getOpt(name, keyForOrphaning));
 					}
 
-					DBSet.getInstance().getOrphanNameStorageHelperMap()
+					db.getOrphanNameStorageHelperMap()
 							.add(name, signature);
 
 					addTxChangesToStorage(jsonObject, name, nameStorageMap,
@@ -252,7 +251,7 @@ public class StorageUtils {
 		}
 	}
 
-	public static void processOrphan(byte[] data, byte[] signature) {
+	public static void processOrphan(byte[] data, byte[] signature, DBSet db) {
 
 		String string = new String(data);
 
@@ -264,13 +263,13 @@ public class StorageUtils {
 
 			if (name != null) {
 
-				Map<String, String> orphanMapForTx = DBSet.getInstance()
+				Map<String, String> orphanMapForTx = db
 						.getOrphanNameStorageMap().get(signature);
 
 				if (orphanMapForTx != null) {
 					
 					//RESTORING SNAPSHOT FOR ALL CHANGED KEYS 
-					NameStorageMap nameStorageMap = DBSet.getInstance()
+					NameStorageMap nameStorageMap = db
 							.getNameStorageMap();
 					Set<String> keySet = orphanMapForTx.keySet();
 
@@ -287,13 +286,12 @@ public class StorageUtils {
 						}
 					}
 
-					List<byte[]> listOfSignaturesForName = DBSet.getInstance()
+					List<byte[]> listOfSignaturesForName = db
 							.getOrphanNameStorageHelperMap().get(name);
 					int indexOf =  ByteArrayUtils.indexOf(listOfSignaturesForName, signature);
 
 					
-					OrphanNameStorageMap orphanNameStorageMap = DBSet
-							.getInstance().getOrphanNameStorageMap();
+					OrphanNameStorageMap orphanNameStorageMap = db.getOrphanNameStorageMap();
 					// REDO ALL FOLLOWING TXS FOR THIS NAME (THIS TIME
 					// SELECTIVE)
 					for (int i = indexOf; i < listOfSignaturesForName.size(); i++) {
@@ -328,10 +326,10 @@ public class StorageUtils {
 						addTxChangesToStorage(jsonObjectOfFollowingTx, name, nameStorageMap, keySet);
 					}
 
-					DBSet.getInstance().getOrphanNameStorageMap()
+					db.getOrphanNameStorageMap()
 							.delete(signature);
 					
-					DBSet.getInstance()
+					db
 					.getOrphanNameStorageHelperMap().remove(name, signature);
 
 				}

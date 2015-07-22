@@ -264,10 +264,10 @@ public class ArbitraryTransaction extends Transaction {
 
 		// NAME STORAGE UPDATE
 		if (service == 10) {
-			StorageUtils.processUpdate(getData(), signature, creator);
+			StorageUtils.processUpdate(getData(), signature, creator, db);
 			// BLOGPOST?
 		} else if (service == 777) {
-			addToBlogMapOnDemand();
+			addToBlogMapOnDemand(db);
 		}
 
 		// UPDATE CREATOR
@@ -283,10 +283,10 @@ public class ArbitraryTransaction extends Transaction {
 
 		// NAME STORAGE UPDATE ORPHAN
 		if (service == 10) {
-			StorageUtils.processOrphan(getData(), signature);
+			StorageUtils.processOrphan(getData(), signature, db);
 			// BLOGPOST?
 		} else {
-			removeFromBlogMapOnDemand();
+			removeFromBlogMapOnDemand(db);
 		}
 
 		// UPDATE CREATOR
@@ -374,7 +374,7 @@ public class ArbitraryTransaction extends Transaction {
 		return Crypto.getInstance().sign(creator, data);
 	}
 
-	private void addToBlogMapOnDemand() {
+	private void addToBlogMapOnDemand(DBSet db) {
 		
 		if (getService() == 777) {
 		if (!ByteArrayUtils.contains(StorageUtils.getProcessed(), signature)) {
@@ -401,13 +401,13 @@ public class ArbitraryTransaction extends Transaction {
 						byte[] sharedSignature = Base58.decode(share);
 						if(sharedSignature != null)
 						{
-							DBSet.getInstance().getSharedPostsMap().add(sharedSignature, author);
+							db.getSharedPostsMap().add(sharedSignature, author);
 						}
 					}
 					
 					// DOES POST MET MINIMUM CRITERIUM?
 					if (StringUtils.isNotBlank(post)) {
-						DBSet.getInstance().getBlogPostMap()
+						db.getBlogPostMap()
 						.add(blognameOpt, getSignature());
 					}
 					
@@ -416,7 +416,7 @@ public class ArbitraryTransaction extends Transaction {
 		}
 	}
 
-	private void removeFromBlogMapOnDemand() {
+	private void removeFromBlogMapOnDemand(DBSet db) {
 		if (getService() == 777) {
 			byte[] data = getData();
 			String string = new String(data);
@@ -437,11 +437,11 @@ public class ArbitraryTransaction extends Transaction {
 					byte[] sharedSignature = Base58.decode(share);
 					if(sharedSignature != null)
 					{
-						DBSet.getInstance().getSharedPostsMap().remove(sharedSignature, author);
+						db.getSharedPostsMap().remove(sharedSignature, author);
 					}
 				}
 
-				DBSet.getInstance().getBlogPostMap()
+				db.getBlogPostMap()
 						.remove(blognameOpt, getSignature());
 
 			}

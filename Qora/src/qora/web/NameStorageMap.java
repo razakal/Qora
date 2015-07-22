@@ -109,8 +109,15 @@ public class NameStorageMap extends DBMap<String, Map<String, String>> {
 		}
 
 		String joinedResults = StringUtils.join(currentList, ";");
+		
+		if(joinedResults.isEmpty())
+		{
+			keyValueMap.remove(key);
+		}else
+		{
+			keyValueMap.put(key, joinedResults);
+		}
 
-		keyValueMap.put(key, joinedResults);
 
 		this.set(name, keyValueMap);
 	}
