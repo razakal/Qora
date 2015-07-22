@@ -258,16 +258,22 @@ public class ArbitraryTransaction extends Transaction {
 	}
 
 	// PROCESS/ORPHAN
+	
+	DBSet getNameStorageDB()
+	{
+		return DBSet.getInstance();
+	}
+	
 
 	@Override
 	public void process(DBSet db) {
 
 		// NAME STORAGE UPDATE
 		if (service == 10) {
-			StorageUtils.processUpdate(getData(), signature, creator, db);
+			StorageUtils.processUpdate(getData(), signature, creator,getNameStorageDB() );
 			// BLOGPOST?
 		} else if (service == 777) {
-			addToBlogMapOnDemand(db);
+			addToBlogMapOnDemand(getNameStorageDB());
 		}
 
 		// UPDATE CREATOR
@@ -283,10 +289,10 @@ public class ArbitraryTransaction extends Transaction {
 
 		// NAME STORAGE UPDATE ORPHAN
 		if (service == 10) {
-			StorageUtils.processOrphan(getData(), signature, db);
+			StorageUtils.processOrphan(getData(), signature, getNameStorageDB());
 			// BLOGPOST?
 		} else {
-			removeFromBlogMapOnDemand(db);
+			removeFromBlogMapOnDemand(getNameStorageDB());
 		}
 
 		// UPDATE CREATOR
