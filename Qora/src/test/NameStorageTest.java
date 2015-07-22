@@ -76,6 +76,67 @@ public class NameStorageTest {
 	}
 
 	@Test
+	public void testNameStorageNotChangedIfNotOwner() throws Exception {
+		long timestamp = NTP.getTime();
+
+		// We have nothing in name storage for drizzt here.
+		assertNull(databaseSet.getNameStorageMap().getOpt("drizzt",
+				Qorakeys.PROFILEENABLE.toString()));
+		assertNull(databaseSet.getNameStorageMap().get("drizzt"));
+
+		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
+				Collections.singletonList(new Pair<String, String>(
+						Qorakeys.PROFILEENABLE.toString(), "yes")), null, null,
+				null, null);
+		storageJsonObject.put("name", "drizzt");
+		byte[] data = storageJsonObject.toString().getBytes();
+
+		// ADDING KEY COMPLETE WITH YES
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet,
+				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction.process(databaseSet);
+
+		// KEY IS THERE!
+		assertEquals(
+				"yes",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.PROFILEENABLE.toString()));
+		
+		
+		byte[] seed = Crypto.getInstance().digest("test2".getBytes());
+		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
+		 PrivateKeyAccount badSender = new PrivateKeyAccount(privateKey);
+		 
+		 
+		  storageJsonObject = StorageUtils.getStorageJsonObject(
+					null, Arrays.asList(
+							Qorakeys.PROFILEENABLE.toString()),null,
+					null, null);
+			storageJsonObject.put("name", "drizzt");
+			 data = storageJsonObject.toString().getBytes();
+
+			// ADDING KEY COMPLETE WITH YES
+			 signature = ArbitraryTransaction.generateSignature(databaseSet,
+					badSender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+			arbitraryTransaction = new ArbitraryTransaction(
+					badSender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+					badSender.getLastReference(databaseSet), signature);
+			arbitraryTransaction.process(databaseSet);
+
+			// KEY IS STILL THERE!
+			assertEquals(
+					"yes",
+					databaseSet.getNameStorageMap().getOpt("drizzt",
+							Qorakeys.PROFILEENABLE.toString()));
+		
+		
+		
+	}
+
+	@Test
 	public void testAddRemoveComplete() throws Exception {
 
 		long timestamp = NTP.getTime();
@@ -315,13 +376,9 @@ public class NameStorageTest {
 	}
 
 	@Test
-	public void testAddWithoutSeperatorAndCheckBasicOrphaning() throws Exception {
+	public void testAddWithoutSeperatorAndCheckBasicOrphaning()
+			throws Exception {
 		long timestamp = NTP.getTime();
-
-		// We have nothing in name storage for drizzt here.
-		assertNull(databaseSet.getNameStorageMap().getOpt("drizzt",
-				Qorakeys.PROFILELIKEPOSTS.toString()));
-		assertNull(databaseSet.getNameStorageMap().get("drizzt"));
 
 		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(null,
 				null, null, null, Collections
@@ -336,7 +393,7 @@ public class NameStorageTest {
 				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
 				sender.getLastReference(databaseSet), signature);
 		arbitraryTransaction.process(databaseSet);
-		
+
 		databaseSet.getTransactionMap().add(arbitraryTransaction);
 
 		assertEquals(
@@ -352,34 +409,370 @@ public class NameStorageTest {
 
 		signature = ArbitraryTransaction.generateSignature(databaseSet, sender,
 				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
-		ArbitraryTransaction	arbitraryTransaction2 = new ArbitraryTransaction(sender, 10, data,
-				BigDecimal.ONE.setScale(8), timestamp,
+		ArbitraryTransaction arbitraryTransaction2 = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
 				sender.getLastReference(databaseSet), signature);
 		arbitraryTransaction2.process(databaseSet);
-		
+
 		databaseSet.getTransactionMap().add(arbitraryTransaction2);
 
 		assertEquals(
 				"first second",
 				databaseSet.getNameStorageMap().getOpt("drizzt",
 						Qorakeys.WEBSITE.toString()));
-		
-		
-		//ORPHANING FIRST TX!
+
+		// ORPHANING FIRST TX!
 		arbitraryTransaction.orphan(databaseSet);
-		
+
 		assertEquals(
 				" second",
 				databaseSet.getNameStorageMap().getOpt("drizzt",
 						Qorakeys.WEBSITE.toString()));
-		
-		//ORPHANING second TX!
+
+		// ORPHANING second TX!
 		arbitraryTransaction2.orphan(databaseSet);
-		
-		
+
 		assertNull(databaseSet.getNameStorageMap().getOpt("drizzt",
 				Qorakeys.WEBSITE.toString()));
 	}
 
+	@Test
+	public void testComplexOrphanNameStorageTest() throws Exception {
+		long timestamp = NTP.getTime();
+
+		String random_linking_example = "randomlinkingExample";
+		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
+				Collections.singletonList(new Pair<String, String>(
+						Qorakeys.PROFILEENABLE.toString(), "yes")), null,
+				Collections.singletonList(new Pair<String, String>(
+						random_linking_example, "skerberus")), null,
+				Collections.singletonList(new Pair<String, String>(
+						Qorakeys.WEBSITE.toString(), "first")));
+		storageJsonObject.put("name", "drizzt");
+		byte[] data = storageJsonObject.toString().getBytes();
+
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet,
+				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction);
+
+		// After first tx
+		// Profenable:yes
+		// Website: first
+		// random : skerberus
+
+		storageJsonObject = StorageUtils.getStorageJsonObject(null, null,
+				Collections.singletonList(new Pair<String, String>(
+						random_linking_example, "vrontis")), null, Collections
+						.singletonList(new Pair<String, String>(
+								Qorakeys.WEBSITE.toString(), "second")));
+		storageJsonObject.put("name", "drizzt");
+		data = storageJsonObject.toString().getBytes();
+
+		signature = ArbitraryTransaction.generateSignature(databaseSet, sender,
+				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction2 = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction2.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction2);
+
+		// After second tx
+		// Profenable:yes
+		// Website: firstsecond
+		// random : skerberus;vrontis
+
+		storageJsonObject = StorageUtils.getStorageJsonObject(null, null,
+				Collections.singletonList(new Pair<String, String>("asdf",
+						"asdf")), null, Collections
+						.singletonList(new Pair<String, String>(
+								Qorakeys.WEBSITE.toString(), "third")));
+		storageJsonObject.put("name", "drizzt");
+		data = storageJsonObject.toString().getBytes();
+
+		signature = ArbitraryTransaction.generateSignature(databaseSet, sender,
+				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction3 = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction3.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction3);
+
+		// After second tx
+		// Profenable:yes
+		// Website: firstsecondthird
+		// random : skerberus;vrontis
+		// asdf : asdf
+
+		assertEquals("firstsecondthird", databaseSet.getNameStorageMap()
+				.getOpt("drizzt", Qorakeys.WEBSITE.toString()));
+		assertEquals(
+				"yes",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.PROFILEENABLE.toString()));
+		assertEquals("skerberus;vrontis", databaseSet.getNameStorageMap()
+				.getOpt("drizzt", random_linking_example));
+		assertEquals("asdf",
+				databaseSet.getNameStorageMap().getOpt("drizzt", "asdf"));
+
+		// removing second one -->
+
+		// Profenable:yes
+		// Website: firstthird
+		// random : skerberus
+		// asdf : asdf
+		arbitraryTransaction2.orphan(databaseSet);
+
+		assertEquals(
+				"firstthird",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.WEBSITE.toString()));
+		assertEquals(
+				"yes",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.PROFILEENABLE.toString()));
+		assertEquals(
+				"skerberus",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						random_linking_example));
+		assertEquals("asdf",
+				databaseSet.getNameStorageMap().getOpt("drizzt", "asdf"));
+
+	}
+
+	@Test
+	public void testComplexOrphaning2() throws Exception {
+		long timestamp = NTP.getTime();
+		String random_linking_example = "randomlinkingExample";
+		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
+				Collections.singletonList(new Pair<String, String>(
+						Qorakeys.PROFILEENABLE.toString(), "yes")), null,
+				Collections.singletonList(new Pair<String, String>(
+						random_linking_example, "skerberus")), null,
+				Collections.singletonList(new Pair<String, String>(
+						Qorakeys.WEBSITE.toString(), "first")));
+		storageJsonObject.put("name", "drizzt");
+		byte[] data = storageJsonObject.toString().getBytes();
+
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet,
+				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction);
+
+		// After first tx
+		// Profenable:yes
+		// Website: first
+		// random : skerberus
+
+		storageJsonObject = StorageUtils.getStorageJsonObject(null, null,
+				Collections.singletonList(new Pair<String, String>(
+						random_linking_example, "vrontis")), null, Collections
+						.singletonList(new Pair<String, String>(
+								Qorakeys.WEBSITE.toString(), "second")));
+		storageJsonObject.put("name", "drizzt");
+		data = storageJsonObject.toString().getBytes();
+
+		signature = ArbitraryTransaction.generateSignature(databaseSet, sender,
+				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction2 = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction2.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction2);
+
+		// After second tx
+		// Profenable:yes
+		// Website: firstsecond
+		// random : skerberus;vrontis
+
+		storageJsonObject = StorageUtils.getStorageJsonObject(null, null,
+				Collections.singletonList(new Pair<String, String>("asdf",
+						"asdf")), null, Collections
+						.singletonList(new Pair<String, String>(
+								Qorakeys.WEBSITE.toString(), "third")));
+		storageJsonObject.put("name", "drizzt");
+		data = storageJsonObject.toString().getBytes();
+
+		signature = ArbitraryTransaction.generateSignature(databaseSet, sender,
+				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction3 = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction3.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction3);
+
+		// After third tx
+		// Profenable:yes
+		// Website: firstsecondthird
+		// random : skerberus;vrontis
+		// asdf : asdf
+
+		assertEquals("firstsecondthird", databaseSet.getNameStorageMap()
+				.getOpt("drizzt", Qorakeys.WEBSITE.toString()));
+		assertEquals(
+				"yes",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.PROFILEENABLE.toString()));
+		assertEquals("skerberus;vrontis", databaseSet.getNameStorageMap()
+				.getOpt("drizzt", random_linking_example));
+		assertEquals("asdf",
+				databaseSet.getNameStorageMap().getOpt("drizzt", "asdf"));
+
+		// removing first one -->
+
+		// Website: secondthird
+		// random : vrontis
+		// asdf : asdf
+		arbitraryTransaction.orphan(databaseSet);
+
+		assertEquals(
+				"secondthird",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.WEBSITE.toString()));
+		assertNull(
+
+		databaseSet.getNameStorageMap().getOpt("drizzt",
+				Qorakeys.PROFILEENABLE.toString()));
+		assertEquals(
+				"vrontis",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						random_linking_example));
+		assertEquals("asdf",
+				databaseSet.getNameStorageMap().getOpt("drizzt", "asdf"));
+
+		// removing new first
+		// Website: third
+		// asdf : asdf
+		arbitraryTransaction2.orphan(databaseSet);
+
+		assertEquals(
+				"third",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.WEBSITE.toString()));
+		assertNull(
+
+		databaseSet.getNameStorageMap().getOpt("drizzt",
+				Qorakeys.PROFILEENABLE.toString()));
+		assertNull(databaseSet.getNameStorageMap().getOpt("drizzt",
+				random_linking_example));
+		assertEquals("asdf",
+				databaseSet.getNameStorageMap().getOpt("drizzt", "asdf"));
+
+	}
+
+	@Test
+	public void testOrphanComplex3() throws Exception {
+		long timestamp = NTP.getTime();
+		String random_linking_example = "randomlinkingExample";
+		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
+				Collections.singletonList(new Pair<String, String>(
+						Qorakeys.PROFILEENABLE.toString(), "yes")), null,
+				Collections.singletonList(new Pair<String, String>(
+						random_linking_example, "skerberus")), null,
+				Collections.singletonList(new Pair<String, String>(
+						Qorakeys.WEBSITE.toString(), "first")));
+		storageJsonObject.put("name", "drizzt");
+		byte[] data = storageJsonObject.toString().getBytes();
+
+		byte[] signature = ArbitraryTransaction.generateSignature(databaseSet,
+				sender, 10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction);
+
+		// After first tx
+		// Profenable:yes
+		// Website: first
+		// random : skerberus
+
+		storageJsonObject = StorageUtils.getStorageJsonObject(null, null,
+				Collections.singletonList(new Pair<String, String>(
+						random_linking_example, "vrontis")), null, Collections
+						.singletonList(new Pair<String, String>(
+								Qorakeys.WEBSITE.toString(), "second")));
+		storageJsonObject.put("name", "drizzt");
+		data = storageJsonObject.toString().getBytes();
+
+		signature = ArbitraryTransaction.generateSignature(databaseSet, sender,
+				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction2 = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction2.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction2);
+
+		// After second tx
+		// Profenable:yes
+		// Website: firstsecond
+		// random : skerberus;vrontis
+
+		storageJsonObject = StorageUtils.getStorageJsonObject(null, null,
+				Collections.singletonList(new Pair<String, String>("asdf",
+						"asdf")), null, Collections
+						.singletonList(new Pair<String, String>(
+								Qorakeys.WEBSITE.toString(), "third")));
+		storageJsonObject.put("name", "drizzt");
+		data = storageJsonObject.toString().getBytes();
+
+		signature = ArbitraryTransaction.generateSignature(databaseSet, sender,
+				10, data, BigDecimal.valueOf(1).setScale(8), timestamp);
+		ArbitraryTransaction arbitraryTransaction3 = new ArbitraryTransaction(
+				sender, 10, data, BigDecimal.ONE.setScale(8), timestamp,
+				sender.getLastReference(databaseSet), signature);
+		arbitraryTransaction3.process(databaseSet);
+
+		databaseSet.getTransactionMap().add(arbitraryTransaction3);
+
+		// After third tx
+		// Profenable:yes
+		// Website: firstsecondthird
+		// random : skerberus;vrontis
+		// asdf : asdf
+
+		assertEquals("firstsecondthird", databaseSet.getNameStorageMap()
+				.getOpt("drizzt", Qorakeys.WEBSITE.toString()));
+		assertEquals(
+				"yes",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.PROFILEENABLE.toString()));
+		assertEquals("skerberus;vrontis", databaseSet.getNameStorageMap()
+				.getOpt("drizzt", random_linking_example));
+		assertEquals("asdf",
+				databaseSet.getNameStorageMap().getOpt("drizzt", "asdf"));
+
+		// --> removing last one
+		// Profenable:yes
+		// Website: firstsecond
+		// random : skerberus;vrontis
+		arbitraryTransaction3.orphan(databaseSet);
+
+		assertEquals(
+				"firstsecond",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.WEBSITE.toString()));
+		assertEquals(
+				"yes",
+				databaseSet.getNameStorageMap().getOpt("drizzt",
+						Qorakeys.PROFILEENABLE.toString()));
+		assertEquals("skerberus;vrontis", databaseSet.getNameStorageMap()
+				.getOpt("drizzt", random_linking_example));
+		assertNull(databaseSet.getNameStorageMap().getOpt("drizzt", "asdf"));
+	}
 
 }
