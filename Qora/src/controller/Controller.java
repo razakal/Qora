@@ -159,8 +159,7 @@ public class Controller extends Observable {
 		// OPENING DATABASES
 		DBSet.getInstance();
 
-//		TODO IMPORTANT FOR RELEASE Start from Scratch if necessary
-//		startFromScratchOnDemand();
+		startFromScratchOnDemand();
 
 		if (DBSet.getInstance().getBlockMap().isProcessing()) {
 			DBSet.getInstance().close();
