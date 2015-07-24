@@ -1463,6 +1463,7 @@ public class WebResource {
 
 			pebbleHelper.getContextMap().put("blogprofile", profile);
 			pebbleHelper.getContextMap().put("blogenabled", true);
+			pebbleHelper.getContextMap().put("hideprofile", true);
 
 			List<String> followedBlogs = new ArrayList<String>(
 					profile.getFollowedBlogs());
@@ -1576,6 +1577,7 @@ public class WebResource {
 						profile.getFollower());
 
 			} else {
+				pebbleHelper.getContextMap().put("hideprofile", true);
 				pebbleHelper.getContextMap().put("blogenabled", true);
 			}
 

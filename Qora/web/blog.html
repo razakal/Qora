@@ -619,10 +619,10 @@
                 the_post.css("cursor", "pointer");
             }
         }
-    if (window.location.pathname === '/index/mergedblog.html' || window.location.href === 'http://127.0.0.1:9090/index/blog.html' || window.location.href === 'http://127.0.0.1:9090/index/blog.html?disconnect=true' ) {
+        {% if hideprofile is not empty%}
       $(".tl-profile").hide();
       $(".timeline").css("padding-top","40px");
-    };
+      {%endif%}
 
     });
 
