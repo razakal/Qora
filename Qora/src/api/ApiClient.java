@@ -411,6 +411,11 @@ public class ApiClient {
 				"Calculates recommended fee and the length of the transaction for blogpost.",
 				""
 			},
+			{
+				"POST namestorage/update/<name> {\"removelist\":\"{\\\"<key>\\\":\\\"<value>\\\"}\",\"removecomplete\":\"{\\\"<key>\\\":\\\"\\\"}\",\"addlist\":\"{\\\"<key>\\\":\\\"<value>\\\"}\",\"addcomplete\":\"{\\\"<key>\\\":\\\"<value>\\\"}\",\"add\":\"{\\\"<key>\\\":\\\"<value>\\\"}\"}\"", 
+				"To add or edit data in namestorage. Keys in the same command can be many. \"addcomplete\" - replaces current value, \"removecomplete\" - removes current value (complete key from storage), \"addlist\" - add value to a list if not in list seperator \";\", \"removelist\" - remove value from list if value there seperator \";\", \"add\" - add to current value without seperator.",
+				""
+			},
 		};
 	
 	
