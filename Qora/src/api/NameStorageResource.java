@@ -63,7 +63,7 @@ public class NameStorageResource {
 	
 	@SuppressWarnings("unchecked")
 	@GET
-	@Path("/{name}/{key}")
+	@Path("/{name}/key/{key}")
 	public String getNameStorageValue(@PathParam("name") String name,@PathParam("key") String key) {
 		Name nameObj = DBSet.getInstance().getNameMap().get(name);
 
