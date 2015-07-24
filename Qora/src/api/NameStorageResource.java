@@ -35,12 +35,7 @@ public class NameStorageResource {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/{name}/list")
-	public String getNames(@PathParam("name") String name) {
-		// CHECK IF WALLET EXISTS
-		if (!Controller.getInstance().doesWalletExists()) {
-			throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_WALLET_NO_EXISTS);
-		}
+	public String listNameStorage(@PathParam("name") String name) {
 
 		Name nameObj = DBSet.getInstance().getNameMap().get(name);
 
@@ -64,6 +59,31 @@ public class NameStorageResource {
 
 		return json.toJSONString();
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/{name}/{key}")
+	public String getNameStorageValue(@PathParam("name") String name,@PathParam("key") String key) {
+		Name nameObj = DBSet.getInstance().getNameMap().get(name);
+
+		if (nameObj == null) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
+		}
+
+
+		Map<String, String> map = DBSet.getInstance().getNameStorageMap().get(name);
+		
+		JSONObject json = new JSONObject();
+		if(map != null && map.containsKey(key))
+		{
+			json.put(key, map.get(key));
+		}
+
+		return json.toJSONString();
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@POST
