@@ -3,8 +3,8 @@
 	<head>
 	<title>Qora BlockExplorer</title>
 	<link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
-	<link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
-	<script src="/index/libs/jquery/jquery.2.js"></script>
+    <script src="/index/libs/jquery/jquery.2.js"></script>
+	<script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
 	<link href="/index/libs/css/style.css" rel="stylesheet">
 	<script src="/index/libs/js/sidebar.js"></script>
 	<script src="/index/libs/js/common.js"></script>
@@ -3092,13 +3092,28 @@ function start() {
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#" class="navbar-brand"><img src="img/logo_header.png" alt="" class="logo-header"></a>
+          <button type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/index/main.html" class="navbar-brand"><img src="img/logo_header.png" alt="" class="logo-header"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a id=home href=''>BlockExplorer</a></li>
 			
-			<li><a href="main.html">Main</a></li>
+			<li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="glyphicon glyphicon-th"></span></a>
+          <div role="menu" class="dropdown-menu">
+            <div class="menu-grid">
+              <div class="list">
+                <div class="row">
+                  <div class="col-sm-4 col-xs-6"><a href="/index/webdirectory.html">
+                      <div class="menu"><span class="glyphicon glyphicon-globe"></span><a href="/index/webdirectory.html">Webdirectory</a></div></a></div>
+                  <div class="col-sm-4 col-xs-6"><a href="/index/blog.html">
+                      <div class="menu"><span class="glyphicon glyphicon-edit"></span><a href="/index/blog.html">Blog</a></div></a></div>
+                  <div class="col-sm-4 col-xs-6"><a href="/index/websitecreation.html">
+                      <div class="menu"><span class="glyphicon glyphicon-file"></span><a href="/index/websitecreation.html">Web Builder</a></div></a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
             
           </ul>
           <div class="navbar-form navbar-left">
