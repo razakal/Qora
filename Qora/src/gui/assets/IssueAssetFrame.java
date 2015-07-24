@@ -22,8 +22,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 
 import qora.account.Account;
@@ -127,9 +129,16 @@ public class IssueAssetFrame extends JFrame
       	//TXTAREA DESCRIPTION
       	txtGBC.gridy = 2;
       	this.txtareaDescription = new JTextArea();
-      	this.txtareaDescription.setRows(4);
+       	
+      	this.txtareaDescription.setRows(6);
+      	this.txtareaDescription.setColumns(20);
       	this.txtareaDescription.setBorder(this.txtName.getBorder());
-      	this.add(this.txtareaDescription, txtGBC);
+
+      	JScrollPane scrollDescription = new JScrollPane(this.txtareaDescription);
+      	scrollDescription.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      	scrollDescription.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.add(scrollDescription, txtGBC);
+      	
       	
       	//LABEL QUANTITY
       	labelGBC.gridy = 3;
