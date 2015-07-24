@@ -447,6 +447,9 @@ border-radius: 50%;
 .menu-grid span.glyphicon.glyphicon-edit {
   font-size: 40px;
 }
+.menu-grid span.glyphicon.glyphicon-list {
+  font-size: 40px;
+}
 .menu-grid span.glyphicon.glyphicon-file {
   font-size: 40px;
 }
@@ -456,6 +459,8 @@ border-radius: 50%;
 .menu-grid .glyphicon.glyphicon-globe:focus,
 .menu-grid .glyphicon.glyphicon-edit:hover,
 .menu-grid .glyphicon.glyphicon-edit:focus,
+.menu-grid .glyphicon.glyphicon-list:hover,
+.menu-grid .glyphicon.glyphicon-list:focus,
 .menu-grid .glyphicon.glyphicon-random:hover,
 .menu-grid .glyphicon.glyphicon-random:focus {
 color: #6467FF;
@@ -473,6 +478,7 @@ text-decoration: none;
 .menu-grid .glyphicon.glyphicon-file,
 .menu-grid .glyphicon.glyphicon-globe,
 .menu-grid .glyphicon.glyphicon-edit,
+.menu-grid .glyphicon.glyphicon-list,
 .menu-grid .glyphicon.glyphicon-random {
 font-size: 40px;
 text-align: center;
