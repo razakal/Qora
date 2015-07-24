@@ -93,7 +93,7 @@ public class NameStorageResource {
 			String jsonString = jsonObject.toJSONString();
 			byte[] bytes = jsonString.getBytes();
 			BigDecimal fee = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(bytes).getA();
-			APIUtils.askAPICallAllowed("POST namestorage/" + creator + "/" + name + "\n" + jsonString + "\nfee: " + fee.toPlainString(),
+			APIUtils.askAPICallAllowed("POST namestorage/update/" + name + "\n" + jsonString + "\nfee: " + fee.toPlainString(),
 					request);
 
 
@@ -114,7 +114,10 @@ public class NameStorageResource {
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_JSON);
 		}
+		
+		
 
 	}
+	
 	
 }
