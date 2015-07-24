@@ -1,8 +1,11 @@
 package api;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -30,10 +33,42 @@ public class NameStorageResource {
 	HttpServletRequest request;
 
 	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/{name}/list")
+	public String getNames(@PathParam("name") String name) {
+		// CHECK IF WALLET EXISTS
+		if (!Controller.getInstance().doesWalletExists()) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_WALLET_NO_EXISTS);
+		}
+
+		Name nameObj = DBSet.getInstance().getNameMap().get(name);
+
+		if (nameObj == null) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
+		}
+
+
+		Map<String, String> map = DBSet.getInstance().getNameStorageMap().get(name);
+		
+		JSONObject json = new JSONObject();
+		if(map != null)
+		{
+			Set<String> keySet = map.keySet();
+			
+			for (String key : keySet) {
+				json.put(key, map.get(key));
+			}
+		}
+
+		return json.toJSONString();
+	}
+
+	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/update/{name}")
-	public String updateEntry(String x, @PathParam("name") String name
-			) {
+	public String updateEntry(String x, @PathParam("name") String name) {
 		try {
 
 			// READ JSON
@@ -50,7 +85,7 @@ public class NameStorageResource {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
-			
+
 			// CHECK WALLET IN SYNC
 			if (Controller.getInstance().getStatus() != Controller.STATUS_OKE) {
 				throw ApiErrorFactory.getInstance().createError(
@@ -58,13 +93,12 @@ public class NameStorageResource {
 			}
 
 			Name nameObj = DBSet.getInstance().getNameMap().get(name);
-			
-			if(nameObj == null)
-			{
+
+			if (nameObj == null) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
 			}
-			
+
 			String creator = nameObj.getOwner().getAddress();
 			// CHECK ADDRESS
 			if (!Crypto.getInstance().isValidAddress(creator)) {
@@ -78,8 +112,6 @@ public class NameStorageResource {
 						ApiErrorFactory.ERROR_WALLET_ADDRESS_NO_EXISTS);
 			}
 
-
-
 			// GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance()
 					.getPrivateKeyAccountByAddress(creator);
@@ -88,19 +120,17 @@ public class NameStorageResource {
 						ApiErrorFactory.ERROR_INVALID_ADDRESS);
 			}
 
-
 			jsonObject.put("name", name);
 			String jsonString = jsonObject.toJSONString();
 			byte[] bytes = jsonString.getBytes();
-			BigDecimal fee = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(bytes).getA();
-			APIUtils.askAPICallAllowed("POST namestorage/update/" + name + "\n" + jsonString + "\nfee: " + fee.toPlainString(),
-					request);
-
+			BigDecimal fee = Controller.getInstance()
+					.calcRecommendedFeeForArbitraryTransaction(bytes).getA();
+			APIUtils.askAPICallAllowed("POST namestorage/update/" + name + "\n"
+					+ jsonString + "\nfee: " + fee.toPlainString(), request);
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
-					.createArbitraryTransaction(account, 10,
-							bytes, fee);
+					.createArbitraryTransaction(account, 10, bytes, fee);
 
 			return ArbitraryTransactionsResource
 					.checkArbitraryTransaction(result);
@@ -114,10 +144,7 @@ public class NameStorageResource {
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_JSON);
 		}
-		
-		
 
 	}
-	
-	
+
 }
