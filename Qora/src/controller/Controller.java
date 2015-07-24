@@ -256,7 +256,7 @@ public class Controller extends Observable {
 
 			if (dataBak.exists()) {
 				// delete data folder
-				java.nio.file.Files.walkFileTree(dataDir.toPath(),
+				java.nio.file.Files.walkFileTree(dataBak.toPath(),
 						new SimpleFileVisitorForRecursiveFolderDeletion());
 			}
 			DBSet.reCreateDatabase();
