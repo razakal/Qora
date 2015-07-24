@@ -13,10 +13,11 @@ public class LinkUtils {
 		List<Pair<String, String>> result = new ArrayList<>();
 		for (String link : links) {
 			String refurbishedlink = StringEscapeUtils.unescapeHtml4(link);
-			String youtubeWatchRegex = Pattern
-					.quote("https://www.youtube.com/watch?v=")
+			String youtubeWatchRegex = "https?" 
+					+ Pattern.quote("://www.youtube.com/watch?v=")
 					+ "([a-zA-Z0-9_-]+).*";
-			String youTubeSlashRegex = Pattern.quote("https://youtu.be/")
+			String youTubeSlashRegex = "https?" 
+					+ Pattern.quote("://youtu.be/")
 					+ "([a-zA-Z0-9_-]+).*";
 			if (refurbishedlink.toLowerCase().matches(youtubeWatchRegex)) {
 				String vid = refurbishedlink
