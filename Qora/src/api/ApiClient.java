@@ -416,6 +416,16 @@ public class ApiClient {
 				"To add or edit data in namestorage. Keys in the same command can be many. \"addcomplete\" - replaces current value, \"removecomplete\" - removes current value (complete key from storage), \"addlist\" - add value to a list if not in list seperator \";\", \"removelist\" - remove value from list if value there seperator \";\", \"add\" - add to current value without seperator.",
 				""
 			},
+			{
+				"GET namestorage/<name>/list>", 
+				"Returns an array of keys for name from namestorage.",
+				""
+			},
+			{
+				"GET namestorage/<name>/key/<key>", 
+				"Returns an value of namekey-pair from namestorage.",
+				""
+			},
 		};
 	
 	
