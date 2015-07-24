@@ -31,7 +31,7 @@ public class Settings {
 	private static final boolean DEFAULT_GUI_CONSOLE_ENABLED = true;
 	
 	//WEB
-	private static final int DEFAULT_WEB_PORT = 9083;
+	private static final int DEFAULT_WEB_PORT = 9090;
 	private static final String DEFAULT_WEB_ALLOWED = "127.0.0.1";
 	private static final boolean DEFAULT_WEB_ENABLED = true;
 	
