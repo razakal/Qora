@@ -13,20 +13,29 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.transaction.Transaction;
+import settings.Settings;
+import utils.DateTimeFormat;
 import utils.Pair;
+import controller.Controller;
 
 @SuppressWarnings("serial")
 public class CreatePollFrame extends JFrame
@@ -240,9 +249,74 @@ public class CreatePollFrame extends JFrame
 				return;
 			}
 		
+			//CHECK BIG FEE
+			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), Settings.getInstance().getBigFeeMessage(),
+		                "Confirmation",
+		                JOptionPane.YES_NO_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+				}
+				if (n == JOptionPane.NO_OPTION) {
+					
+					txtFee.setText("1");
+					
+					//ENABLE
+					this.createButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
+
+			BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForPoll(this.txtName.getText(), this.txtareaDescription.getText(), this.optionsTableModel.getOptions()).getA();
+			if(fee.compareTo(recommendedFee) < 0)
+			{
+				int n = -1;
+				if(Settings.getInstance().isAllowFeeLessRequired())
+				{
+					n = JOptionPane.showConfirmDialog(
+						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
+									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
+									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
+		                "Confirmation",
+		                JOptionPane.YES_NO_CANCEL_OPTION);
+				}
+				else
+				{
+					n = JOptionPane.showConfirmDialog(
+							new JFrame(), "Fee less required!\n"
+										+ "Press OK to turn on required "+recommendedFee.toPlainString() + ".",
+			                "Confirmation",
+			                JOptionPane.OK_CANCEL_OPTION);
+				}
+				if (n == JOptionPane.YES_OPTION || n == JOptionPane.OK_OPTION) {
+					
+					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+					{
+						this.txtFee.setText("1.00000000"); // Return to the default fee for the next message.
+					}
+					
+					fee = recommendedFee; // Set recommended fee for this message.
+					
+				}
+				else if (n == JOptionPane.NO_OPTION) {
+					
+				}	
+				else {
+					
+					//ENABLE
+					this.createButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
 			//CREATE POLL
 			PrivateKeyAccount creator = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
-			Pair<Transaction, Integer> result = Controller.getInstance().createPoll(creator, this.txtName.getText(),this.txtareaDescription.getText(), this.optionsTableModel.getOptions(), fee);
+			Pair<Transaction, Integer> result = Controller.getInstance().createPoll(creator, this.txtName.getText(), this.txtareaDescription.getText(), this.optionsTableModel.getOptions(), fee);
 			
 			//CHECK VALIDATE MESSAGE
 			switch(result.getB())
@@ -255,9 +329,7 @@ public class CreatePollFrame extends JFrame
 				
 			case Transaction.NOT_YET_RELEASED:
 				
-				Date release = new Date(Transaction.VOTING_RELEASE);	
-				DateFormat format = DateFormat.getDateTimeInstance();
-				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + format.format(release) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + DateTimeFormat.timestamptoString(Transaction.VOTING_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 			
 			case Transaction.NAME_NOT_LOWER_CASE:
@@ -269,7 +341,12 @@ public class CreatePollFrame extends JFrame
 			case Transaction.NEGATIVE_FEE:
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
-				break;	
+				break;
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;				
 				
 			case Transaction.NO_BALANCE:
 			

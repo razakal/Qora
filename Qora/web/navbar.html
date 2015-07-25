@@ -1,0 +1,111 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/index/main.html" class="navbar-brand"><img src="/index/img/logo_header.png" alt="" class="logo-header"/></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        {% if activeProfile is null %}{% else%}
+        <li><a href="/index/mergedblog.html?blogname={{activeProfile.getName().getName()}}">Home</a></li>
+        {% endif %}
+        <li><a href="/index/webdirectory.html">Webdirectory</a></li>
+        <li><a href="/index/blogdirectory.html">Blogdirectory</a></li>
+        {% if activeProfile is null %}{% else%}
+        {% if blogfollows.size > 0 %}
+        <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Blog <span class="caret"></span></a>
+          <ul role="menu" class="dropdown-menu">{% for blogfollow in blogfollows %}
+            <li><a href="/index/blog.html?blogname={{blogfollow}}">{{blogfollow}}</a></li>          {% if  loop.index   != blogfollows.size()  - 1 %}
+            <li class="divider"></li>          {% endif %}
+            {% endfor %}
+          </ul>
+        </li>
+        {% else%}
+        {% endif %}
+        {% endif%}
+        <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="glyphicon glyphicon-th"></span></a>
+          <div role="menu" class="dropdown-menu">
+            <div class="menu-grid">
+              <div class="list">
+                <div class="row">
+                  <div class="col-sm-4 col-xs-6"><a href="/index/blockexplorer.html">
+                      <div class="menu"><span class="glyphicon glyphicon-random"></span><a href="/index/blockexplorer.html">Block Explorer</a></div></a></div>
+                  <div class="col-sm-4 col-xs-6"><a href="/index/blog.html">
+                      <div class="menu"><span class="glyphicon glyphicon-edit"></span><a href="/index/blog.html">Blog</a></div></a></div>
+                  <div class="col-sm-4 col-xs-6"><a href="/index/websitecreation.html">
+                      <div class="menu"><span class="glyphicon glyphicon-file"></span><a href="/index/websitecreation.html">Web Builder</a></div></a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a href="/index/settings.html"><span class="glyphicon glyphicon-cog"></span></a></li>
+        {% if activeProfile is null %}
+		<li class="dropdown">
+        <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Connect <span class="caret"></span></a>
+		<ul role="menu" class="dropdown-menu">
+      {% if profiles is empty %}
+      <li><a href="/index/settings.html">
+      <span class="item"><span class="item-left">
+        <i id="prof-glyph" class="glyphicon glyphicon-exclamation-sign"></i>
+        <span class="item-info"><span>Profiles disabled</span></span></span><span class="item-right"></span></span></a></li>
+		{% else %}
+		{% for profile in profiles %}
+            <li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&amp;switchprofile={{profile.getName().getName()}}"><span class="item"><span class="item-left">
+              {% if profile.getAvatarOpt() is empty%}<img src="/index/img/qora-user.png" alt="" class="prof-pic"/>
+              {%else%}
+              <img src="{{profile.getAvatarOpt()}}" alt="" class="prof-pic"/>
+              {%endif%}
+              <span class="item-info"><span>{{profile.getName().getName()}}</span></span></span><span class="item-right"></span></span>
+            </a></li>
+              {% if  loop.index   != profiles.size()  - 1 %}
+            <li class="divider"></li>
+            {% endif %}
+            {% endfor %}
+            </ul>
+          </li>
+          {% endif %}
+          </ul>
+        {% else %}
+        {% if profiles is not empty %}
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">{{activeProfile.getName().getName()}} <span class="caret"></span></a>
+          <ul role="menu" class="dropdown-menu">{% for profile in profiles %}
+            <li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&amp;switchprofile={{profile.getName().getName()}}"><span class="item"><span class="item-left">
+              {% if profile.getAvatarOpt() is empty%}<img src="/index/img/qora-user.png" alt="" class="prof-pic"/>
+              {%else%}
+              <img src="{{profile.getAvatarOpt()}}" alt="" class="prof-pic"/>
+              {%endif%}
+              <span class="item-info"><span>{{profile.getName().getName()}}</span></span></span><span class="item-right"></span></span>
+            </a></li>
+              {% if  loop.index   != profiles.size()  - 1 %}
+            <li class="divider"></li>
+            {% endif %}
+            {% endfor %}
+            <li class="divider"></li>
+            <li><a href="/index/blog.html?disconnect=true">
+            <span class="item"><span class="item-left">
+              <i id="prof-glyph" class="glyphicon glyphicon-off"></i>
+              <span class="item-info"><span>Disconnect</span></span></span><span class="item-right"></span></span></a></li>
+          </ul>
+        </li>
+        {% endif%}
+        {% endif %}
+      </ul>
+      <div class="navbar-form navbar-left">{{leftnavbar}}</div>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <div class="main-tabs">
+      <div class="container">
+        <div class="row">
+          <ul role="tablist" class="nav nav-tabs">
+            <li class="active"><a href="/index/main.html?search=">Web</a></li>
+            <li><a href="/index/blogsearch.html?search=">Blog</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

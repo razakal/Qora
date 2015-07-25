@@ -3,52 +3,49 @@ package api;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.mapdb.Fun.Tuple2;
-import org.mapdb.Fun.Tuple4;
-
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Longs;
 
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
+import utils.APIUtils;
 import utils.Converter;
 import utils.Pair;
+import at.AT_Constants;
+import at.AT_Transaction;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Longs;
+
 import controller.Controller;
 import database.DBSet;
-import at.AT;
-import at.AT_Constants;
-import at.AT_Error;
-import at.AT_Transaction;
 
 @Path("at")
 @Produces(MediaType.APPLICATION_JSON)
 public class ATResource 
 {
+	@Context
+	HttpServletRequest request;
 	
 	@GET
 	@Path("id/{id}")
-	public String getAT(@PathParam("id") String id)
+	public static String getAT(@PathParam("id") String id)
 	{
 		return DBSet.getInstance().getATMap().getAT(id).toJSON().toJSONString();
 	}
@@ -62,7 +59,7 @@ public class ATResource
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/transactions/id/{id}")
-	public String getATTransactionsBySender(@PathParam("id") String id)
+	public static String getATTransactionsBySender(@PathParam("id") String id)
 	{
 		List<AT_Transaction> txs = DBSet.getInstance().getATTransactionMap().getATTransactionsBySender(id);
 		
@@ -75,11 +72,12 @@ public class ATResource
 	
 	}
 	
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/creator/{creator}")
-	public String getATsByCreator(@PathParam("creator") String creator)
+	public static String getATsByCreator(@PathParam("creator") String creator)
 	{
-		Iterable ats = DBSet.getInstance().getATMap().getATsByCreator(creator);
+		Iterable<String> ats = DBSet.getInstance().getATMap().getATsByCreator(creator);
 		Iterator<String> iter = ats.iterator();
 		
 		JSONArray json = new JSONArray();
@@ -90,11 +88,12 @@ public class ATResource
 		return json.toJSONString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/type/{type}")
 	public String getATsByType(@PathParam("type") String type)
 	{
-		Iterable ats = DBSet.getInstance().getATMap().getTypeATs(type);
+		Iterable<String> ats = DBSet.getInstance().getATMap().getTypeATs(type);
 		Iterator<String> iter = ats.iterator();
 		
 		JSONArray json = new JSONArray();
@@ -109,7 +108,7 @@ public class ATResource
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/transactions/recipient/{id}")
-	public String getATTransactionsByRecipient(@PathParam("id") String id)
+	public static String getATTransactionsByRecipient(@PathParam("id") String id)
 	{
 		List<AT_Transaction> txs = DBSet.getInstance().getATTransactionMap().getATTransactionsByRecipient(id);
 		
@@ -169,6 +168,8 @@ public class ATResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			APIUtils.askAPICallAllowed("POST at "+ x, request);
 			
 			//GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(creator);				
@@ -335,6 +336,8 @@ public class ATResource
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NOT_YET_RELEASED);	
 			case Transaction.NEGATIVE_FEE:
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+			case Transaction.FEE_LESS_REQUIRED:
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
 			case Transaction.NEGATIVE_AMOUNT:
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_AMOUNT);	
 			case Transaction.NO_BALANCE:

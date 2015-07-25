@@ -1,14 +1,14 @@
 package gui.models;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
+import qora.block.Block;
+import utils.DateTimeFormat;
+import utils.NumberAsString;
+import utils.ObserverMessage;
 import controller.Controller;
 import database.BlockMap;
 import database.SortableList;
-import qora.block.Block;
-import utils.ObserverMessage;
 
 @SuppressWarnings("serial")
 public class BlocksTableModel extends QoraTableModel<byte[], Block> implements Observer{
@@ -75,9 +75,7 @@ public class BlocksTableModel extends QoraTableModel<byte[], Block> implements O
 			
 		case COLUMN_TIMESTAMP:
 			
-			Date date = new Date(block.getTimestamp());
-			DateFormat format = DateFormat.getDateTimeInstance();
-			return format.format(date);
+			return DateTimeFormat.timestamptoString(block.getTimestamp());
 			
 		case COLUMN_GENERATOR:
 			
@@ -93,7 +91,7 @@ public class BlocksTableModel extends QoraTableModel<byte[], Block> implements O
 			
 		case COLUMN_FEE:	
 			
-			return block.getTotalFee().toPlainString();
+			return NumberAsString.getInstance().numberAsString(block.getTotalFee());
 			
 		}
 		

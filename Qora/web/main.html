@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Qora Web">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>Qora Web</title>
+    <link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
+    <link href="/index/libs/css/style.css" rel="stylesheet">
+    <style type="text/css">
+      html,
+      body,
+      .header {
+      height: 65%;
+      }
+      .main-tabs {
+      display: none;
+      }
+      .container {
+      height: 100%;
+      }
+      .container {
+      display: table;
+      vertical-align: middle;
+      }
+      .vertical-center-row {
+      display: table-cell;
+      vertical-align: middle;
+      }
+      .content {
+      margin: auto;
+      }
+      .main-logo {
+      margin-left: auto;
+      margin-right: auto;
+      }
+      .footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #ffffff;
+      box-shadow: 0px 0px 3px 0px #ccc;
+      }
+      .main-logo img {
+      -webkit-animation: fadein 4s;
+      -moz-animation: fadein 4s;
+      -o-animation: fadein 4s;
+      -ms-animation: fadein 4s;
+      animation: fadein 4s;
+      }
+      @keyframes fadein {
+      from {
+      opacity: 0;
+      }
+      to {
+      opacity: 1;
+      }
+      }
+      @-webkit-keyframes fadein {
+      from {
+      opacity: 0;
+      }
+      to {
+      opacity: 1;
+      }
+      }
+      @-ms-keyframes fadein {
+      from {
+      opacity: 0;
+      }
+      to {
+      opacity: 1;
+      }
+      }
+      @-o-keyframes fadein {
+      from {
+      opacity: 0;
+      }
+      to {
+      opacity: 1;
+      }
+      }
+      @media (max-width: 768px) {
+      .footer {
+      position: absolute;
+      width: 100%;
+      }
+      .main-logo {
+      margin-left: auto;
+      margin-right: auto;
+      }
+      }
+      @media (min-width: 768px) {
+      .footer {
+      position: absolute;
+      bottom: 0;
+      height: 60px;
+      width: 100%;
+      }
+      }
+      .btn-link {
+      color: #555;
+      }
+      select#kind {
+      display: none;
+      }
+      .btn-link:hover,
+      .btn-link:focus {
+      color: #ffffff;
+      background-color: #6467FF;
+      border-radius: 2px;
+      -webkit-transition: background-color 500ms linear;
+      -moz-transition: background-color 500ms linear;
+      -o-transition: background-color 500ms linear;
+      -ms-transition: background-color 500ms linear;
+      transition: background-color 500ms linear;
+      -webkit-transition: color 250ms linear;
+      -moz-transition: color 250ms linear;
+      -o-transition: color 250ms linear;
+      -ms-transition: color 250ms linear;
+      transition: color 250ms linear;
+      }
+      .navbar-default .btn-link {
+      color: #6467FF;
+      }
+      textarea, textarea.form-control, input.form-control, input[type=text], input[type=number], [type=text].form-control {
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+      -webkit-box-shadow: inset 0 -1px 0 #555;
+      box-shadow: inset 0 -1px 0 #555;
+      font-size: 16px;
+      }
+      a {
+      color: #555;
+      }
+      a:hover,
+      a:focus {
+      color: #6467FF;
+      text-decoration: none;
+      }
+      a.navbar-brand {
+      display: none;
+      }
+      .navbar-form.navbar-left {
+      display: none;
+      }
+      .navbar {
+      border: none;
+       -webkit-box-shadow: 0 0px 0px rgba(0,0,0,0.3);
+       box-shadow: 0 0px 0px rgba(0,0,0,0.3);
+      }
+      .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
+      color: #6467FF;
+      background-color: #ffffff;
+      }
+      .navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
+      background-color: #ffffff;
+      color: #6467ff;
+      }
+    </style>
+  </head>
+  <body><div class="header"><div class="container">{{navbar}}</div></div>
+    <div class="container">
+      <div class="vertical-center-row">
+        <div align="center">
+          <div id="content" class="content">
+            <div id="main-logo" class="main-logo"><img alt="" src="img/qora.png"></div><br>
+            <div id="search-area" class="search-area">
+              <select id="kind" name="kind" class="form-control">
+                <option value="1">search by value</option>
+                <option value="2">open page that matches the name</option>
+              </select><br>
+              <div class="form-inline">
+                <div class="input-group">
+                  <label for="searchkey" class="sr-only">Search</label>
+                  <input id="searchkey" autofocus="autofocus" size="75" type="text" value="" class="form-control"><span class="input-group-btn">
+                    <button id="button" type="button" value="Search" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container"></div>
+    </footer>
+    <script src="/index/libs/jquery/jquery.2.js"></script>
+    <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    var transformToAssocArray;
+    transformToAssocArray = function(prmstr) {
+        var i, params, prmarr, tmparr;
+        params = {};
+        prmarr = prmstr.split('&');
+        i = 0;
+        while (i < prmarr.length) {
+            tmparr = prmarr[i].split('=');
+            params[tmparr[0]] = tmparr[1];
+            i++;
+        }
+        return params;
+    };
+    var getSearchParameters;
+    getSearchParameters = function() {
+        var prmstr;
+        prmstr = decodeURIComponent(window.location.search.substr(1));
+        if (prmstr != null && prmstr != '') {
+            return transformToAssocArray(prmstr);
+        } else {
+            return {};
+        }
+    };
+    $(document).ready(function() {
+        $("#button").click(function() {
+            var searchval, url, value;
+            value = $("#kind")[0].selectedIndex;
+            if (value == 1) {
+                url = $('#searchkey').val();
+                document.location.href = '/' + url;
+                return 0;
+            } else {
+                searchval = $('#searchkey').val();
+                document.location.href = '/index/main.html?search=' + searchval;
+                return 0;
+            }
+        });
+        $("#searchkey").keypress(function(e) {
+            if (e.which == 13) {
+                $("#button").trigger("click");
+            }
+        });
+        $("#searchkey").val(getSearchParameters().search);
+        if (getSearchParameters().search == void 0) {
+            $('#searchkey').val('');
+        }
+    });
+    </script>
+  </body>
+</html>

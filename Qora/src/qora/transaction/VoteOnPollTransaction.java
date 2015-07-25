@@ -11,17 +11,18 @@ import ntp.NTP;
 
 import org.json.simple.JSONObject;
 
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Crypto;
 import qora.voting.Poll;
 import qora.voting.PollOption;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import database.DBSet;
 
 public class VoteOnPollTransaction extends Transaction 
 {
@@ -287,7 +288,7 @@ public class VoteOnPollTransaction extends Transaction
 		{
 			return NEGATIVE_FEE;
 		}
-		
+	
 		return VALIDATE_OKE;
 	}
 	

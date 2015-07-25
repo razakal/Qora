@@ -176,7 +176,7 @@ public class GenesisTransaction extends Transaction {
 		{
 			return INVALID_ADDRESS;
 		}
-		
+
 		return VALIDATE_OKE;
 	}
 	

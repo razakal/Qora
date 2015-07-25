@@ -7,20 +7,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import org.mapdb.Fun.Tuple2;
-import org.mapdb.Fun.Tuple4;
 
-import at.AT_Transaction;
-
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-
-import controller.Controller;
-import database.DBSet;
-import database.wallet.SecureWalletDatabase;
-import database.wallet.WalletDatabase;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
@@ -44,6 +36,15 @@ import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
 import utils.ObserverMessage;
 import utils.Pair;
+import at.AT_Transaction;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+
+import controller.Controller;
+import database.DBSet;
+import database.wallet.SecureWalletDatabase;
+import database.wallet.WalletDatabase;
 
 public class Wallet extends Observable implements Observer
 {
@@ -52,6 +53,9 @@ public class Wallet extends Observable implements Observer
 	
 	private WalletDatabase database;
 	private SecureWalletDatabase secureDatabase;
+	
+	private int secondsToUnlock = -1;
+	private Timer lockTimer = new Timer();
 	
 	//CONSTRUCTORS
 	
@@ -71,6 +75,11 @@ public class Wallet extends Observable implements Observer
 	
 	//GETTERS/SETTERS
 	
+	public void setSecondsToUnlock(int seconds)
+	{
+		this.secondsToUnlock = seconds;
+	}
+
 	public int getVersion()
 	{
 		return this.database.getVersion();
@@ -94,6 +103,11 @@ public class Wallet extends Observable implements Observer
 	public Account getAccount(String address)
 	{
 		return this.database.getAccountMap().getAccount(address);
+	}
+	
+	public boolean isWalletDatabaseExisting()
+	{
+		return database != null;
 	}
 	
 	public BigDecimal getUnconfirmedBalance(String address)
@@ -555,6 +569,19 @@ public class Wallet extends Observable implements Observer
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(ObserverMessage.WALLET_STATUS, STATUS_UNLOCKED));
 		
+		if(this.secondsToUnlock > 0)
+		{
+			this.lockTimer.cancel(); 
+			this.lockTimer = new Timer();
+			
+			TimerTask action = new TimerTask() {
+		        public void run() {
+		            lock();
+		        }
+		    };
+		    
+		    this.lockTimer.schedule(action, this.secondsToUnlock*1000);
+		}
 		return true;
 	}
 	
@@ -572,6 +599,9 @@ public class Wallet extends Observable implements Observer
 		//NOTIFY
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(ObserverMessage.WALLET_STATUS, STATUS_LOCKED));
+		
+		this.secondsToUnlock = -1;
+		this.lockTimer.cancel(); 
 		
 		//LOCK SUCCESSFULL
 		return true;
@@ -1187,6 +1217,7 @@ public class Wallet extends Observable implements Observer
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) 
 	{
@@ -1404,12 +1435,12 @@ public class Wallet extends Observable implements Observer
 		
 		if (message.getType() == ObserverMessage.ADD_AT_TX_TYPE)
 		{
-			this.processATTransaction( (Tuple2) message.getValue() );
+			this.processATTransaction( (Tuple2<Tuple2<Integer, Integer>, AT_Transaction>) message.getValue() );
 		}
 		
 		if (message.getType() == ObserverMessage.REMOVE_AT_TX)
 		{
-			this.orphanATTransaction( (Tuple2) message.getValue() );
+			this.orphanATTransaction( (Tuple2<Tuple2<Integer, Integer>, AT_Transaction>) message.getValue() );
 		}
 		
 		//ADD ORDER

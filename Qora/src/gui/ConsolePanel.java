@@ -63,7 +63,7 @@ public class ConsolePanel extends JPanel
 		this.areaConsole.setLineWrap(true);
 		this.areaConsole.setEditable(false);
 		JScrollPane scrollPane = new JScrollPane(this.areaConsole);
-		JScrollBar vertical = scrollPane.getVerticalScrollBar();
+		final JScrollBar vertical = scrollPane.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
 		this.add(scrollPane, areaGBC);
 		
@@ -79,6 +79,13 @@ public class ConsolePanel extends JPanel
 				cmdHistory.add(command);
 				INTcmdHistory = cmdHistory.size();
 				
+				if(command.toLowerCase().equals("clear"))
+				{
+					areaConsole.setText("");
+					txtCommand.setText("");
+					return;
+				}
+					
 				areaConsole.append("[COMMAND] " + command + "\n");
 				
 				//EMPTY COMMAND FIELD
@@ -89,6 +96,8 @@ public class ConsolePanel extends JPanel
 				
 				//APPEND RESULT
 				areaConsole.append("[RESULT] " + result + "\n");
+				areaConsole.setCaretPosition(areaConsole.getDocument().getLength());
+
             }
 		});
 		

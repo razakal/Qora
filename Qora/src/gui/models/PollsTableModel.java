@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import controller.Controller;
 import qora.voting.Poll;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.DBSet;
 import database.SortableList;
@@ -83,7 +84,7 @@ public class PollsTableModel extends QoraTableModel<String, Poll> implements Obs
 			
 		case COLUMN_VOTES:
 			
-			return poll.getTotalVotes().toPlainString();
+			return NumberAsString.getInstance().numberAsString(poll.getTotalVotes());
 			
 		}
 		

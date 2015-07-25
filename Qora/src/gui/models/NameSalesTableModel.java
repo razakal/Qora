@@ -6,6 +6,7 @@ import java.util.Observer;
 
 import controller.Controller;
 import qora.naming.NameSale;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import utils.Pair;
 import database.DBSet;
@@ -87,7 +88,7 @@ public class NameSalesTableModel extends QoraTableModel<String, BigDecimal> impl
 			
 		case COLUMN_PRICE:
 			
-			return nameSale.getAmount().toPlainString();
+			return NumberAsString.getInstance().numberAsString(nameSale.getAmount());
 			
 		}
 		

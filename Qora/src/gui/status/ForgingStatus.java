@@ -1,7 +1,5 @@
 package gui.status;
 
-import gui.AccountsPanel;
-
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -16,7 +14,6 @@ import javax.swing.ToolTipManager;
 
 import qora.BlockGenerator;
 import qora.account.Account;
-import qora.assets.Asset;
 import utils.GUIUtils;
 import utils.ObserverMessage;
 import controller.Controller;
@@ -45,17 +42,23 @@ public class ForgingStatus extends JLabel implements Observer {
 				{
 					BigDecimal totalBalance = BigDecimal.ZERO.setScale(8);
 		           	
-		        	Asset asset = AccountsPanel.getAsset();
-		            if(asset == null || asset.getKey() == 0l)
-		            {
-			        	for(Account account: Controller.getInstance().getAccounts())
-			        	{
-			        		totalBalance = totalBalance.add(account.getConfirmedBalance());
-			        	}
-		            }
-		            long totalBalanceInt = totalBalance.longValue();
-		            	
-		            setToolTipText("Approx time to find the block: "+getTimeToGoodView((60*5+19)*Controller.getInstance().getLastBlock().getGeneratingBalance()/totalBalanceInt)+".");
+		            for(Account account: Controller.getInstance().getAccounts())
+			        {
+			        	totalBalance = totalBalance.add(account.getConfirmedBalance());
+			        }
+			        long totalBalanceInt = totalBalance.longValue();
+		            
+			        String timeForge = "";
+			        if(totalBalanceInt>0)
+			        {
+			        	timeForge = getTimeToGoodView((60*5+19)*Controller.getInstance().getLastBlock().getGeneratingBalance()/totalBalanceInt);
+			        }
+			        else
+			        {
+			        	timeForge = "infinity";
+			        }
+			        
+		            setToolTipText("Approx time to find the block: " + timeForge + ".");
 				}
 				else if (Controller.getInstance().getForgingStatus() == BlockGenerator.ForgingStatus.FORGING_DISABLED && Controller.getInstance().getStatus() == Controller.STATUS_OKE) 
 				{

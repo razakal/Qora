@@ -14,12 +14,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -47,6 +45,8 @@ import qora.transaction.MessageTransaction;
 import qora.transaction.Transaction;
 import qora.wallet.Wallet;
 import utils.Converter;
+import utils.DateTimeFormat;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.TableMenuPopupUtil;
@@ -480,7 +480,7 @@ public class MessagesTableModel extends JTable implements Observer{
 					
 					if( messageBufs.get(row).getToPublicKey() == null )
 					{
-						messageBufs.get(row).setRecipientPublicKey(Controller.getInstance().getPublicKeyFromAddress( messageBufs.get(row).getRecipient()));
+						messageBufs.get(row).setRecipientPublicKey(Controller.getInstance().getPublicKeyByAddress( messageBufs.get(row).getRecipient()));
 					}
 					publicKey = messageBufs.get(row).getToPublicKey();    				
 				}
@@ -529,28 +529,6 @@ public class MessagesTableModel extends JTable implements Observer{
 		this.setRowHeight(row, textHeight);
 	}
 	
-/*	
-	private void updateBlock()
-	{
-		for (int j = 0; j < messageBufs.size(); j++) 
-		{	
-			try
-			{
-				if( DBSet.getInstance().getTransactionMap().contains(messageBufs.get(j).getSignature()) )
-				{
-					messageBufs.get(j).setConfirmations(0);
-				}
-				else
-				{
-					messageBufs.get(j).setConfirmations(Controller.getInstance().getTransaction(messageBufs.get(j).getSignature()).getConfirmations());
-				}	
-			} catch ( Exception e ) {
-				messageBufs.get(j).setConfirmations(0);
-			}
-		}
-		this.repaint();
-	}
-*/	
 	int lineCount( String text ) 
 	{
 		int lineCount = 1;
@@ -688,9 +666,6 @@ public class MessagesTableModel extends JTable implements Observer{
 		
 		public String getDecrMessageHtml(int width, boolean selected, boolean images)
 		{
-			Date date = new Date( timestamp );
-			DateFormat format = DateFormat.getDateTimeInstance();
-			
 			Account account = Controller.getInstance().getAccountByAddress( sender );
 			String imginout = "";
 			if(account != null)
@@ -757,6 +732,13 @@ public class MessagesTableModel extends JTable implements Observer{
 			decrMessage = decrMessage.replace( "<" , "&lt;" );
 			decrMessage = decrMessage.replace( ">" , "&gt;" );
 			decrMessage = decrMessage.replace( "\n" , "<br>" );
+			
+			String fontsmall = "";
+			
+			if(amount.compareTo(new BigDecimal(100000)) >= 0)
+			{
+				fontsmall = " size='2'";
+			}
 		
 			return	  "<html>\n"
 					+ "<body width='" + width + "'>\n"
@@ -766,9 +748,9 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ recipient+"\n</font></td>\n"
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
 					+ "<font color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
-					+ format.format(date) + "\n<br>\n"
-					+ "Amount: " +  amount.toPlainString()+" Fee: "
-					+ fee.toPlainString()
+					+ DateTimeFormat.timestamptoString(timestamp) + "\n<br>\n"
+					+ "<font"+fontsmall+">Amount: " +  NumberAsString.getInstance().numberAsString(amount)+" Fee: "
+					+ NumberAsString.getInstance().numberAsString(fee)+"</font>"
 					+ "\n</font></td></tr></table>"
 					+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
 					+ "<td width='" + width + "'>\n"
@@ -782,9 +764,6 @@ public class MessagesTableModel extends JTable implements Observer{
 		
 		public String getDecrMessageTXT()
 		{
-			Date date = new Date( timestamp );
-			DateFormat format = DateFormat.getDateTimeInstance();
-			
 			Account account = Controller.getInstance().getAccountByAddress( sender );
 			
 			String imginout = "";
@@ -823,11 +802,11 @@ public class MessagesTableModel extends JTable implements Observer{
 			{
 				strconfirmations = strconfirmations + " !";
 			}
-			
-			return 	  "Date: " + format.format(date) + "\n"
+						
+			return 	  "Date: " + DateTimeFormat.timestamptoString(timestamp) + "\n"
 					+ "Sender: " + sender + "\n"
 					+ "Recipient: " + recipient + "\n"
-					+ "Amount: " +  amount.toPlainString() + " Fee: " + fee.toPlainString() + "\n"
+					+ "Amount: " +  NumberAsString.getInstance().numberAsString(amount) + " Fee: " + NumberAsString.getInstance().numberAsString(fee) + "\n"
 					+ "Type: " + imginout + ". " + imglock + "\n"
 					+ "Confirmations: " + strconfirmations + "\n"
 					+ "[MESSAGE START]\n"

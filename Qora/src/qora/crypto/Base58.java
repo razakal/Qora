@@ -116,4 +116,13 @@ public class Base58 {
          return null;
       return bytes;
    }
+   
+	public static String encode(BigInteger id) {
+		byte[] array = id.toByteArray();
+		return encode(array);
+	}
+	
+   public static BigInteger decodeBI(String input) {
+	   return new BigInteger(decode(input));
+   }
 }

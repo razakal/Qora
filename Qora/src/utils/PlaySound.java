@@ -48,10 +48,10 @@ public class PlaySound {
 		
 			new Thread(new Runnable() {
 				public void run() {
-					try {
-			    		File soundFile = new File( "sounds/" + url ); 
+					File soundFile = new File( "sounds/" + url ); 
+					try (AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);) {
 			    	    
-			    	    AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);
+			    	    
 			    	    
 			    	    Clip clip = AudioSystem.getClip();
 			    	    

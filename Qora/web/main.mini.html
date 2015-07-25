@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Qora Web Server">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>Qora Web</title>
+    <link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
+    <link href="/index/libs/css/style.css" rel="stylesheet">
+    <link href="/index/libs/css/sidebar.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+      padding-top: 50px;
+      }
+      .sub-header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      }
+      .navbar-fixed-top {
+      border: 0;
+      z-index: 9999;
+      }
+      .sidebar {
+      display: none;
+      }
+      @media (min-width: 768px) {
+      .sidebar {
+      position: fixed;
+      top: 51px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee;
+      }
+      }
+      .nav-sidebar {
+      margin-right: -21px;
+      margin-bottom: 20px;
+      margin-left: -20px;
+      }
+      .nav-sidebar > li > a {
+      padding-right: 20px;
+      padding-left: 20px;
+      }
+      .nav-sidebar > .active > a,
+      .nav-sidebar > .active > a:hover,
+      .nav-sidebar > .active > a:focus {
+      color: #fff;
+      background-color: #428bca;
+      }
+      .main {
+      padding-top: 20px;
+      }
+      .main-tabs {
+      width: 100%;
+      padding-top: 15px;
+      padding-left: 0px;
+      padding-right: 0px;
+      background-color: lightgray;
+      }
+      img.logo-header {
+      background-color: transparent;
+      height: 100%;
+      }
+      .col-lg-8 {
+      padding-left: 0px;
+      }
+      @media (min-width: 768px) {
+      .main {
+      padding-right: 40px;
+      }
+      }
+      .main .page-header {
+      margin-top: 0;
+      }
+      .placeholders {
+      margin-bottom: 30px;
+      text-align: center;
+      }
+      .placeholders h4 {
+      margin-bottom: 0;
+      }
+      .placeholder {
+      margin-bottom: 20px;
+      }
+      .placeholder img {
+      display: inline-block;
+      border-radius: 50%;
+      }
+      .r-t {
+      margin: 0px;
+      }
+      .r-l {
+      margin: 0px;
+      }
+      span.label.label-default {
+      background-color: #fff;
+      color: lightgray;
+      font-size: 90%;
+      line-height: 1;
+      }
+      span.label.label-default a {
+      color: #ddd;
+      text-decoration: none;
+      }
+      a.r-l:hover,
+      a.r-l:focus {
+      color: #6467FF;
+      text-decoration: none;
+      }
+      .navbar-header {
+      width: 110px;
+      }
+    </style>
+  </head>
+  <body>
+	{{navbar}}
+    <div class="container">
+      <div class="row">
+        <div class="main">
+          <warning></warning>
+          <div class="col-lg-8">
+            <div class="res-block"></div>
+            <ul class="list-unstyled">
+            	 {% for searchresult in searchresults %}
+             <li class="q"><a href="{{searchresult.titlelink}}">
+ 			<h5 class="r-t">{% autoescape true %}{{searchresult.title | abbreviate(64)}}{% endautoescape %}</h5><a><a href="{{searchresult.namelink}}" class="r-l">{{searchresult.name}} {%if searchresult.getFollowerOpt() is not null %} ({{searchresult.getFollowerOpt().size()}}) {%endif%}</a><span class="label label-default"><a href="{{searchresult.keyslink}}"/>rawdata</a></span>
+			<p>{% autoescape true %}{{searchresult.description | abbreviate(150)}}{% endautoescape %}</p></a></a></li>
+			{% endfor %}
+
+				{% if keyvaluepairs is not empty %}
+              	<br><div ng-app="myApp" ng-controller="AppController"><div class="panel panel-default"><div class="panel-heading">Results on :{{ dataname }}</div>
+				<table class="table">
+	              {% for keyvalue in keyvaluepairs %}
+	              {% autoescape true %}
+	              <tr><td>{{ keyvalue.key }}</td><td><code>{{ keyvalue.value }}</code></td></tr></div></div>
+	             {% endautoescape %}
+	              {% endfor %}
+	              </table>
+				{% endif %}
+            </ul>
+          </div>
+          <div class="col-lg-4"></div>
+        </div>
+      </div>
+    </div>
+    <script src="/index/libs/jquery/jquery.2.js"></script>
+    <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
+    <script src="/index/libs/angular/angular.1.4.js"></script>
+    <script src="/index/libs/js/sidebar.js"></script>
+    <script type="text/javascript">
+    var transformToAssocArray;
+    transformToAssocArray = function(prmstr) {
+        var i, params, prmarr, tmparr;
+        params = {};
+        prmarr = prmstr.split('&');
+        i = 0;
+        while (i < prmarr.length) {
+            tmparr = prmarr[i].split('=');
+            params[tmparr[0]] = tmparr[1];
+            i++;
+        }
+        return params;
+    };
+    var getSearchParameters;
+    getSearchParameters = function() {
+        var prmstr;
+        prmstr = decodeURIComponent(window.location.search.substr(1));
+        if (prmstr != null && prmstr != '') {
+            return transformToAssocArray(prmstr);
+        } else {
+            return {};
+        }
+    };
+    $(document).ready(function() {
+        var searchval;
+        $('ul.nav-tabs > li').removeClass('active');
+        if (window.location.pathname === '/index/blogsearch.html') {
+            $('ul.nav-tabs > li:nth-child(2)').addClass('active');
+        } else {
+            $('ul.nav-tabs > li:nth-child(1)').addClass('active');
+        }
+        $('#name').val(getSearchParameters().search);
+        if (getSearchParameters().search === void 0) {
+            $('#name').val('');
+        }
+        $('#name').bind('oninput', function() {
+            $('#name').val(this);
+        });
+        $('#name').change(function() {
+            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
+            $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
+        });
+        $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
+        $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
+        searchval = $('#name').val();
+        $('#name').val(searchval);
+        $('#button').click(function() {
+        	
+            var url;
+            url = void 0;
+            searchval = $('#name').val();
+              if (window.location.pathname === '/index/blogsearch.html') {
+       		 	document.location.href = '/index/blogsearch.html?search=' + searchval;
+       		 } else {
+       		 	document.location.href = '/index/main.html?search=' + searchval;
+        	}
+        });
+        $('#name').keypress(function(e) {
+            if (e.which === 13) {
+                $('#button').trigger('click');
+            }
+        });
+    });
+    </script>
+    <script type="text/javascript">
+    var myApp = angular.module('myApp', []);
+    myApp.controller('AppController', function($scope) {
+        $scope.steps = {};
+    });
+    </script>
+  </body>
+</html>

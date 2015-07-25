@@ -17,7 +17,19 @@ public class Gui extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 
-	public Gui() throws Exception
+	private static Gui maingui;
+	private MainFrame mainframe;
+	public static Gui getInstance() throws Exception
+	{
+		if(maingui == null)
+		{
+			maingui = new Gui();
+		}
+		
+		return maingui;
+	}
+	
+	private Gui() throws Exception
 	{
 		//USE SYSTEM STYLE
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -25,7 +37,8 @@ public class Gui extends JFrame{
         UIManager.put("Button.focus", new Color(0, 0, 0, 0));
         UIManager.put("TabbedPane.focus", new Color(0, 0, 0, 0));
         UIManager.put("ComboBox.focus", new Color(0, 0, 0, 0));
-		
+        UIManager.put("TextArea.font", UIManager.get("TextField.font"));
+        
         //CHECK IF WALLET EXISTS
         if(!Controller.getInstance().doesWalletExists())
         {
@@ -34,13 +47,27 @@ public class Gui extends JFrame{
         }
         else
         {
-        	new MainFrame();
+        mainframe =	new MainFrame();
         }
+        
+	}
+	
+	public static boolean isGuiStarted()
+	{
+		return maingui != null;
 	}
 	
 	public void onWalletCreated()
 	{
-		new MainFrame();
+		mainframe = new MainFrame();
+	}
+	
+	public void bringtoFront()
+	{
+		if(mainframe != null)
+		{
+			mainframe.toFront();
+		}
 	}
 
 	public void onCancelCreateWallet() 

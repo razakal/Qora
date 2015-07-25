@@ -22,6 +22,7 @@ public class Menu extends JMenuBar
 {
 	private static final long serialVersionUID = 5237335232850181080L;
 	public static JMenuItem webServerItem;
+	public static JMenuItem blockExplorerItem;
 	
 	public Menu()
 	{
@@ -66,7 +67,6 @@ public class Menu extends JMenuBar
         		try {
         			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()));
 				} catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
         	}
@@ -74,6 +74,24 @@ public class Menu extends JMenuBar
         fileMenu.add(webServerItem);   
         
         webServerItem.setVisible(Settings.getInstance().isWebEnabled());
+        
+        //WEB SERVER
+        blockExplorerItem = new JMenuItem("Built-in BlockExplorer");
+        blockExplorerItem.getAccessibleContext().setAccessibleDescription("http://127.0.0.1:"+Settings.getInstance().getWebPort()+"/index/blockexplorer.html");
+        blockExplorerItem.addActionListener(new ActionListener()
+        {
+        	public void actionPerformed(ActionEvent e)
+        	{
+        		try {
+        			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()+"/index/blockexplorer.html"));
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+        	}
+        });
+        fileMenu.add(blockExplorerItem);   
+        
+        blockExplorerItem.setVisible(Settings.getInstance().isWebEnabled());
         
         //ABOUT
         JMenuItem aboutItem = new JMenuItem("About");

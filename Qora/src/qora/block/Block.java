@@ -143,9 +143,14 @@ public class Block {
 			fee = fee.add(transaction.getFee());
 		}
 		
-		fee = fee.add(BigDecimal.valueOf(this.atFees,8));
+		fee = fee.add(BigDecimal.valueOf(this.atFees, 8));
 
 		return fee;
+	}
+	
+	public BigDecimal getATfee()
+	{
+		return BigDecimal.valueOf(this.atFees, 8);
 	}
 	
 	public void setTransactionData(int transactionCount, byte[] rawTransactions)
@@ -411,7 +416,7 @@ public class Block {
 		block.put("transactionsSignature", Base58.encode(this.transactionsSignature));
 		block.put("generatorSignature", Base58.encode(this.generatorSignature));
 		block.put("signature",  Base58.encode(this.getSignature()));
-		
+		block.put("height", this.getHeight());
 
 		//CREATE TRANSACTIONS
 		JSONArray transactionsArray = new JSONArray();
@@ -722,6 +727,15 @@ public class Block {
 			db.getTransactionMap().delete(transaction);
 		}
 		
+		//DELETE CONFIRMED TRANSACTIONS FROM UNCONFIRMED TRANSACTIONS LIST
+		List<Transaction> unconfirmedTransactions = new ArrayList<Transaction>(db.getTransactionMap().getValues());
+		for (Transaction transaction : unconfirmedTransactions) {
+			if(db.getTransactionParentMap().contains(transaction.getSignature()))
+			{
+				db.getTransactionMap().delete(transaction);
+			}
+		}
+		
 		//PROCESS FEE
 		BigDecimal blockFee = this.getTotalFee();
 		if(blockFee.compareTo(BigDecimal.ZERO) == 1)
@@ -803,10 +817,13 @@ public class Block {
 		//SET PARENT AS LAST BLOCK
 		db.getBlockMap().setLastBlock(this.getParent(db));
 				
-		//ADD ORPHANED TRANASCTIONS BACK TO DATABASE
 		for(Transaction transaction: this.getTransactions())
 		{
+			//ADD ORPHANED TRANASCTIONS BACK TO DATABASE
 			db.getTransactionMap().add(transaction);
+			
+			//DELETE ORPHANED TRANASCTIONS FROM PARETN DATABASE
+			db.getTransactionParentMap().delete(transaction.getSignature());
 		}
 	}
 	

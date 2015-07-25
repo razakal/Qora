@@ -7,6 +7,7 @@ import at.AT;
 import controller.Controller;
 import qora.account.Account;
 import qora.crypto.Base58;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.SortableList;
 
@@ -88,7 +89,7 @@ public class ATTableModel extends QoraTableModel<Long, AT> implements Observer
 		case COLUMN_AMOUNT:
 		{
 			Account account = new Account(Base58.encode(at.getId()));
-			return account.getConfirmedBalance().toPlainString();
+			return NumberAsString.getInstance().numberAsString(account.getConfirmedBalance());
 		}	
 		case COLUMN_CREATOR:
 			

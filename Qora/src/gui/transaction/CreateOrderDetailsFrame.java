@@ -5,16 +5,18 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import qora.crypto.Base58;
 import qora.transaction.CreateOrderTransaction;
+import utils.DateTimeFormat;
 
 @SuppressWarnings("serial")
 public class CreateOrderDetailsFrame extends JFrame
@@ -96,9 +98,7 @@ public class CreateOrderDetailsFrame extends JFrame
 						
 		//TIMESTAMP
 		detailGBC.gridy = 3;
-		Date date = new Date(orderCreation.getTimestamp());
-		DateFormat format = DateFormat.getDateTimeInstance();
-		JLabel timestamp = new JLabel(format.format(date));
+		JLabel timestamp = new JLabel(DateTimeFormat.timestamptoString(orderCreation.getTimestamp()));
 		this.add(timestamp, detailGBC);
 		
 		//LABEL CREATOR

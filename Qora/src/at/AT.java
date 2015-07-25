@@ -5,11 +5,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.json.simple.JSONObject;
-import org.mapdb.Fun.Tuple4;
 
 import qora.account.Account;
 import qora.crypto.Base58;

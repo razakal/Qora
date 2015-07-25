@@ -10,6 +10,8 @@ import java.util.TimeZone;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import controller.Controller;
+
 public class BuildTime
 {
 	private static String bufgetBuildDateTime = "";
@@ -39,22 +41,22 @@ public class BuildTime
 		    	try {
 					@SuppressWarnings("resource")
 					JarFile jf = new JarFile(file);
-					ZipEntry ze = jf.getEntry("Start.class");
+					ZipEntry ze = jf.getEntry("META-INF/MANIFEST.MF");
 					d = new Date(ze.getTime ());
 
 					SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					//f.setTimeZone(TimeZone.getTimeZone("UTC"));
+					
 					bufgetBuildDateTime = f.format(d);
 		    	} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		    }
 	    	else
 	    	{
 	    		//GET BUILD DATE FOR DEBUG VERSION
-	    		Class<?> currentClass = new Object() {}.getClass().getEnclosingClass();
-	    		URL resource = currentClass.getResource(currentClass.getSimpleName() + ".class");
+	    		
+	    		URL resource = Controller.class.getResource(Controller.class.getSimpleName() + ".class");
+	    		
 	    		if (resource != null) 
 	    		{
 	    			if (resource.getProtocol().equals("file")) 

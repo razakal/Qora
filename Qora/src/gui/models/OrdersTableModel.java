@@ -7,6 +7,7 @@ import java.util.Observer;
 import controller.Controller;
 import qora.assets.Asset;
 import qora.assets.Order;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.SortableList;
 
@@ -71,11 +72,11 @@ public class OrdersTableModel extends QoraTableModel<BigInteger, Order> implemen
 		{
 		case COLUMN_PRICE:
 			
-			return order.getPrice().toPlainString();
+			return NumberAsString.getInstance().numberAsString(order.getPrice());
 		
 		case COLUMN_AMOUNT:
 			
-			return order.getAmountLeft().toPlainString();
+			return NumberAsString.getInstance().numberAsString(order.getAmountLeft());
 			
 		}
 		

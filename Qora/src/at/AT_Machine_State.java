@@ -333,11 +333,11 @@ public class AT_Machine_State
 		json.put("machineData", Converter.toHex(ap_data.array()) );
 		json.put("currentBalance", BigDecimal.valueOf(getG_balance(), 8).toPlainString() );
         json.put("prevBalance", BigDecimal.valueOf(getP_balance(), 8).toPlainString() );
-        json.put("frozen", (freezeOnSameBalance()) ? "true":"false");
-        json.put("running", (getMachineState().isRunning()) ? "true":"false");
-        json.put("stopped", (getMachineState().isStopped()) ? "true":"false");
-        json.put("finished", (getMachineState().isFinished()) ? "true":"false");
-        json.put("dead", (getMachineState().isDead()) ? "true":"false");
+        json.put("frozen", freezeOnSameBalance());
+        json.put("running", getMachineState().isRunning());
+        json.put("stopped", getMachineState().isStopped());
+        json.put("finished", getMachineState().isFinished());
+        json.put("dead", getMachineState().isDead());
         
         return json;
 		

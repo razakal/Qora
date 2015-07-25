@@ -151,7 +151,7 @@ public abstract class DBMap<T, U> extends Observable {
 				this.setChanged();
 				if ( this.getObservableData().get(NOTIFY_ADD).equals( ObserverMessage.ADD_AT_TX_TYPE ) )
 				{
-					this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_ADD), new Tuple2(key,value)));
+					this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_ADD), new Tuple2<T,U>(key,value)));
 				}
 				else
 				{
@@ -191,7 +191,7 @@ public abstract class DBMap<T, U> extends Observable {
 					this.setChanged();
 					if ( this.getObservableData().get(NOTIFY_REMOVE).equals( ObserverMessage.REMOVE_AT_TX ))
 					{
-						this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_REMOVE), new Tuple2(key,value)));
+						this.notifyObservers(new ObserverMessage(this.getObservableData().get(NOTIFY_REMOVE), new Tuple2<T,U>(key,value)));
 					}
 					else
 					{

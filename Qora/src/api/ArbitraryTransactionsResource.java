@@ -2,10 +2,12 @@ package api;
 
 import java.math.BigDecimal;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
@@ -15,6 +17,7 @@ import qora.account.PrivateKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
+import utils.APIUtils;
 import utils.Pair;
 import controller.Controller;
 
@@ -22,6 +25,10 @@ import controller.Controller;
 @Produces(MediaType.APPLICATION_JSON)
 public class ArbitraryTransactionsResource 
 {
+	
+	@Context
+	HttpServletRequest request;
+	
 	@POST
 	@Consumes(MediaType.WILDCARD)
 	public String createArbitraryTransaction(String x)
@@ -69,13 +76,17 @@ public class ArbitraryTransactionsResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_NO_EXISTS);
 			}
-						
+			
+			
+			
 			//CHECK WALLET UNLOCKED
 			if(!Controller.getInstance().isWalletUnlocked())
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
 				
+			APIUtils.askAPICallAllowed("POST arbitrarytransactions\n" + x, request );
+			
 			//GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(creator);				
 			if(account == null)
@@ -86,32 +97,7 @@ public class ArbitraryTransactionsResource
 			//SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance().createArbitraryTransaction(account, service, dataBytes, bdFee);
 				
-			switch(result.getB())
-			{
-			case Transaction.VALIDATE_OKE:
-				
-				return result.getA().toJson().toJSONString();
-				
-			case Transaction.NOT_YET_RELEASED:
-				
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NOT_YET_RELEASED);			
-			
-			case Transaction.INVALID_DATA_LENGTH:
-				
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_DATA_LENGTH);	
-
-			case Transaction.NEGATIVE_FEE:
-					
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
-					
-			case Transaction.NO_BALANCE:	
-					
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NO_BALANCE);
-			
-			default:
-				
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_UNKNOWN);	
-			}
+			return checkArbitraryTransaction(result);
 		}
 		catch(NullPointerException e)
 		{
@@ -124,6 +110,39 @@ public class ArbitraryTransactionsResource
 			//JSON EXCEPTION
 			//e.printStackTrace();
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
+		}
+	}
+
+	public static String checkArbitraryTransaction(Pair<Transaction, Integer> result) {
+		switch(result.getB())
+		{
+		case Transaction.VALIDATE_OKE:
+			
+			return result.getA().toJson().toJSONString();
+			
+		case Transaction.NOT_YET_RELEASED:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NOT_YET_RELEASED);			
+		
+		case Transaction.INVALID_DATA_LENGTH:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_DATA_LENGTH);	
+
+		case Transaction.NEGATIVE_FEE:
+				
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				
+		case Transaction.FEE_LESS_REQUIRED:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
+			
+		case Transaction.NO_BALANCE:	
+				
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NO_BALANCE);
+		
+		default:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_UNKNOWN);	
 		}
 	}
 }

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Qora Web Server">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>Qora Web</title>
+    <link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
+    <link href="/index/libs/css/style.css" rel="stylesheet">
+    <link href="/index/libs/css/sidebar.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+      padding-top: 50px;
+      }
+      .sub-header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      }
+      .navbar-fixed-top {
+      border: 0;
+      z-index: 9999;
+      }
+      .sidebar {
+      display: none;
+      }
+      @media (min-width: 768px) {
+      .sidebar {
+      position: fixed;
+      top: 51px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee;
+      }
+      }
+      .nav-sidebar {
+      margin-right: -21px;
+      margin-bottom: 20px;
+      margin-left: -20px;
+      }
+      .nav-sidebar > li > a {
+      padding-right: 20px;
+      padding-left: 20px;
+      }
+      .nav-sidebar > .active > a,
+      .nav-sidebar > .active > a:hover,
+      .nav-sidebar > .active > a:focus {
+      color: #fff;
+      background-color: #428bca;
+      }
+      .main {
+      padding-top: 20px;
+      }
+      .main-tabs {
+      width: 100%;
+      padding-top: 15px;
+      padding-left: 0px;
+      padding-right: 0px;
+      background-color: lightgray;
+      }
+      img.logo-header {
+      background-color: transparent;
+      height: 100%;
+      }
+      .col-lg-8 {
+      padding-left: 0px;
+      }
+      @media (min-width: 768px) {
+      .main {
+      padding-right: 40px;
+      }
+      }
+      .main .page-header {
+      margin-top: 0;
+      }
+      .placeholders {
+      margin-bottom: 30px;
+      text-align: center;
+      }
+      .placeholders h4 {
+      margin-bottom: 0;
+      }
+      .placeholder {
+      margin-bottom: 20px;
+      }
+      .placeholder img {
+      display: inline-block;
+      border-radius: 50%;
+      }
+      .r-t {
+      margin: 0px;
+      }
+      .r-l {
+      margin: 0px;
+      }
+      span.label.label-default {
+      background-color: #fff;
+      color: lightgray;
+      font-size: 90%;
+      line-height: 1;
+      }
+      span.label.label-default a {
+      color: #ddd;
+      text-decoration: none;
+      }
+      a.r-l:hover,
+      a.r-l:focus {
+      color: #6467FF;
+      text-decoration: none;
+      }
+      .navbar-header {
+      width: 110px;
+      }
+      .error-template {
+      padding: 40px 15px;
+      text-align: center;
+      }
+      .error-actions {
+      margin-top: 15px;
+      margin-bottom: 15px;
+      width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+      }
+      .error-actions .btn {
+      margin-right: 10px;
+      }
+      .btn-link {
+      color: #6467ff;
+      font-weight: normal;
+      border-radius: 0;
+      }
+      .btn-link:hover, .btn-link:focus {
+      color: #6467ff;
+      }
+      .btn-link:hover, .btn-link:focus {
+        color: #ffffff;
+        background-color: #6467FF;
+        border-radius: 2px;
+        -webkit-transition: background-color 500ms linear;
+        -moz-transition: background-color 500ms linear;
+        -o-transition: background-color 500ms linear;
+        -ms-transition: background-color 500ms linear;
+        transition: background-color 500ms linear;
+        -webkit-transition: color 250ms linear;
+        -moz-transition: color 250ms linear;
+        -o-transition: color 250ms linear;
+        -ms-transition: color 250ms linear;
+        transition: color 250ms linear;
+      }
+      .navbar-form.navbar-left {
+      display: none;
+      }
+    </style>
+  </head>
+  <body>
+    {{navbar}}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <h1>
+                    </h1>
+                <h2>
+                    {{title}}</h2>
+                <div class="error-details">
+                    <h4>You can search Qora web using the search box below</h4>
+                </div><br>
+                <div class="error-actions">
+                  <div class="input-group">
+                    <label for="searchkey" class="sr-only">Search</label>
+                    <input id="searchkey" size="35" autofocus="autofocus" type="text" value="" class="form-control"><span class="input-group-btn">
+                      <button id="button" type="button" value="!searchval!" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script src="/index/libs/jquery/jquery.2.js"></script>
+    <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
+    <script src="/index/libs/angular/angular.1.4.js"></script>
+    <script src="/index/libs/js/sidebar.js"></script>
+    <script type="text/javascript">
+    var transformToAssocArray;
+    transformToAssocArray = function(prmstr) {
+        var i, params, prmarr, tmparr;
+        params = {};
+        prmarr = prmstr.split('&');
+        i = 0;
+        while (i < prmarr.length) {
+            tmparr = prmarr[i].split('=');
+            params[tmparr[0]] = tmparr[1];
+            i++;
+        }
+        return params;
+    };
+    var getSearchParameters;
+    getSearchParameters = function() {
+        var prmstr;
+        prmstr = decodeURIComponent(window.location.search.substr(1));
+        if (prmstr != null && prmstr != '') {
+            return transformToAssocArray(prmstr);
+        } else {
+            return {};
+        }
+    };
+    var blogloc;
+    blogloc = function() {
+        var url;
+        url = '/index/blogsearch.html?search=' + $("#searchkey").val();
+        return url;
+    };
+    var webloc;
+    webloc = function() {
+        var url;
+        url = '/?search=' + $("#searchkey").val();
+        return url;
+    };
+    $(document).ready(function() {
+        var searchval;
+        $('ul.nav-tabs > li').removeClass('active');
+        if (window.location.pathname === '/index/blogsearch.html') {
+            $('ul.nav-tabs > li:nth-child(2)').addClass('active');
+        } else {
+            $('ul.nav-tabs > li:nth-child(1)').addClass('active');
+        }
+        $('#searchkey').val(getSearchParameters().search);
+        if (getSearchParameters().search === void 0) {
+            $('#searchkey').val('');
+        }
+
+        $('#searchkey').val(searchval);
+        $('[id="button"]').click(function() {
+            var url;
+            url = void 0;
+            searchval = $('#searchkey').val();
+            document.location.href = "http://" + window.location.host + '/index/main.html?search=' + searchval;
+        });
+        $('[id="searchkey"]').keypress(function(e) {
+            if (e.which === 13) {
+                $('#button').trigger('click');
+            }
+        });
+    });
+    </script>
+    <script type="text/javascript">
+    var myApp = angular.module('myApp', []);
+    myApp.controller('AppController', function($scope) {
+        $scope.steps = {};
+    });
+    </script>
+  </body>
+</html>

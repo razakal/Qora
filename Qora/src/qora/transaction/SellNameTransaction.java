@@ -9,16 +9,17 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.NameSale;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import database.DBSet;
 
 public class SellNameTransaction extends Transaction 
 {
@@ -102,7 +103,7 @@ public class SellNameTransaction extends Transaction
 		//ADD REGISTRANT/NAME/VALUE
 		transaction.put("owner", this.owner.getAddress());
 		transaction.put("name", this.nameSale.getKey());
-		transaction.put("amount", this.nameSale.getAmount());
+		transaction.put("amount", this.nameSale.getAmount().toPlainString());
 						
 		return transaction;	
 	}

@@ -11,23 +11,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.crypto.InvalidCipherTextException;
 
-import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.AEScrypto;
 import qora.crypto.Base58;
 import qora.transaction.MessageTransaction;
 import utils.Converter;
+import utils.DateTimeFormat;
+import controller.Controller;
 
 @SuppressWarnings("serial")
 public class MessageTransactionDetailsFrame extends JFrame
@@ -113,9 +117,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 						
 		//TIMESTAMP
 		detailGBC.gridy = 3;
-		Date date = new Date(messageTransaction.getTimestamp());
-		DateFormat format = DateFormat.getDateTimeInstance();
-		JLabel timestamp = new JLabel(format.format(date));
+		JLabel timestamp = new JLabel(DateTimeFormat.timestamptoString(messageTransaction.getTimestamp()));
 		this.add(timestamp, detailGBC);
 		
 		//LABEL SENDER
@@ -197,7 +199,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 	            		PrivateKeyAccount accountRecipient = Controller.getInstance().getPrivateKeyAccountByAddress(account.getAddress());
 	    				privateKey = accountRecipient.getPrivateKey();		
 	    				
-	    				publicKey = Controller.getInstance().getPublicKeyFromAddress(messageTransaction.getRecipient().getAddress());    				
+	    				publicKey = Controller.getInstance().getPublicKeyByAddress(messageTransaction.getRecipient().getAddress());    				
 	        		}
 	        		
 	        		try {

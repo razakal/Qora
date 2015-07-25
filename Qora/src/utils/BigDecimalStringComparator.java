@@ -11,9 +11,11 @@ public class BigDecimalStringComparator implements Comparator<String> {
 	{	
 		try
 		{
-			BigDecimal one = new BigDecimal(a);
-			BigDecimal two = new BigDecimal(b);
-			
+			String a2 = a.replace("," , "");
+			String b2 = b.replace("," , "");
+					
+			BigDecimal one = new BigDecimal(a2);
+			BigDecimal two = new BigDecimal(b2);
 			return one.compareTo(two);
 		}
 		catch(Exception e)

@@ -8,6 +8,7 @@ import javax.swing.UIManager;
 import api.ApiClient;
 import controller.Controller;
 import settings.Settings;
+import utils.SysTray;
 
 public class Start {
 
@@ -36,14 +37,22 @@ public class Start {
 				//STARTING NETWORK/BLOCKCHAIN/RPC
 				Controller.getInstance().start();
 				
-				if(Settings.getInstance().isGuiEnabled())
+				try
 				{
-					//START GUI
-					new Gui();
+					if(Settings.getInstance().isGuiEnabled())
+					{
+						//START GUI
+						if(Gui.getInstance() != null)
+						{					
+							SysTray.getInstance().createTrayIcon();
+						}
+					}
+				} catch(Exception e) {
+					System.out.println("GUI ERROR: " + e.getMessage());
 				}
-			}
-			catch(Exception e)
-			{
+				
+			} catch(Exception e) {
+				
 				e.printStackTrace();
 				
 				//USE SYSTEM STYLE
@@ -56,7 +65,7 @@ public class Start {
 				//ERROR STARTING
 				System.out.println("STARTUP ERROR: " + e.getMessage());
 				
-				if(Settings.getInstance().isGuiEnabled())
+				if(Gui.isGuiStarted())
 				{
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Startup Error", JOptionPane.ERROR_MESSAGE);
 				}

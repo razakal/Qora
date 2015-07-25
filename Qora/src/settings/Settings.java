@@ -3,15 +3,16 @@ package settings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import network.Peer;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
-import network.Peer;
 
 public class Settings {
 
@@ -30,7 +31,7 @@ public class Settings {
 	private static final boolean DEFAULT_GUI_CONSOLE_ENABLED = true;
 	
 	//WEB
-	private static final int DEFAULT_WEB_PORT = 9083;
+	private static final int DEFAULT_WEB_PORT = 9090;
 	private static final String DEFAULT_WEB_ALLOWED = "127.0.0.1";
 	private static final boolean DEFAULT_WEB_ENABLED = true;
 	
@@ -45,13 +46,23 @@ public class Settings {
 	private static final String DEFAULT_WALLET_DIR = "wallet";
 	
 	private static final boolean DEFAULT_GENERATOR_KEY_CACHING = false;
+	private static final boolean DEFAULT_CHECKPOINTING = true;
 
 	private static final boolean DEFAULT_SOUND_RECEIVE_COIN = true;
 	private static final boolean DEFAULT_SOUND_MESSAGE = true;
 	private static final boolean DEFAULT_SOUND_NEW_TRANSACTION = true;
 	
+	private static final boolean DEFAULT_BLOCKEXPLORER_BOOST = false;
 	
 	private static final int DEFAULT_MAX_BYTE_PER_FEE = 512;
+	private static final boolean ALLOW_FEE_LESS_REQUIRED = false;
+	
+	private static final BigDecimal DEFAULT_BIG_FEE = new BigDecimal(1000);
+	private static final String DEFAULT_BIG_FEE_MESSAGE = "Do you really want to set such a large fee?\nThese coins will go to the forgers.";
+	
+	//DATE FORMAT
+	private static final String DEFAULT_TIME_ZONE = "";
+	private static final String DEFAULT_TIME_FORMAT = "";
 	
 	private static Settings instance;
 	
@@ -370,6 +381,16 @@ public class Settings {
 		return DEFAULT_GENERATOR_KEY_CACHING;
 	}
 	
+	public boolean isCheckpointingEnabled() 
+	{
+		if(this.settingsJSON.containsKey("checkpoint"))
+		{
+			return ((Boolean) this.settingsJSON.get("checkpoint")).booleanValue();
+		}
+		
+		return DEFAULT_CHECKPOINTING;
+	}
+	
 	public boolean isSoundReceivePaymentEnabled() 
 	{
 		if(this.settingsJSON.containsKey("soundreceivepayment"))
@@ -410,6 +431,26 @@ public class Settings {
 		return DEFAULT_MAX_BYTE_PER_FEE;
 	}
 	
+	public boolean isAllowFeeLessRequired() 
+	{
+		if(this.settingsJSON.containsKey("allowfeelessrequired"))
+		{
+			return ((Boolean) this.settingsJSON.get("allowfeelessrequired")).booleanValue();
+		}
+		
+		return ALLOW_FEE_LESS_REQUIRED;
+	}
+	
+	public BigDecimal getBigFee() 
+	{
+		return DEFAULT_BIG_FEE;
+	}
+	
+	public String getBigFeeMessage() 
+	{
+		return DEFAULT_BIG_FEE_MESSAGE;
+	}
+
 	public boolean isGuiEnabled() 
 	{
 		if(this.settingsJSON.containsKey("guienabled"))
@@ -418,5 +459,33 @@ public class Settings {
 		}
 		
 		return DEFAULT_GUI_ENABLED;
+	}
+	
+	public boolean isBlockExplorerBoost() 
+	{
+		if(this.settingsJSON.containsKey("blockexplorerboost"))
+		{
+			return ((Boolean) this.settingsJSON.get("blockexplorerboost")).booleanValue();
+		}
+		
+		return DEFAULT_BLOCKEXPLORER_BOOST;
+	}
+	
+	public String getTimeZone()
+	{
+		if(this.settingsJSON.containsKey("timezone")) {
+			return (String) this.settingsJSON.get("timezone");
+		}
+		
+		return DEFAULT_TIME_ZONE;
+	}
+	
+	public String getTimeFormat()
+	{
+		if(this.settingsJSON.containsKey("timeformat")) {
+			return (String) this.settingsJSON.get("timeformat");
+		}
+		
+		return DEFAULT_TIME_FORMAT;
 	}
 }

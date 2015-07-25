@@ -12,6 +12,7 @@ import org.mapdb.Fun.Tuple2;
 
 import controller.Controller;
 import qora.assets.Asset;
+import utils.NumberAsString;
 import utils.Pair;
 
 public class BalanceRenderer implements ListCellRenderer<Pair<Tuple2<String, Long>, BigDecimal>> 
@@ -30,7 +31,7 @@ public class BalanceRenderer implements ListCellRenderer<Pair<Tuple2<String, Lon
 		if(value != null)
 		{
 			Asset asset = Controller.getInstance().getAsset(value.getA().b);		
-			renderer.setText("(" + asset.getKey() + ") " + asset.getName() + " - " + value.getB().toPlainString());
+			renderer.setText("(" + asset.getKey() + ") " + asset.getName() + " - " + NumberAsString.getInstance().numberAsString(value.getB()));
 		}
 		
 		return renderer;

@@ -9,6 +9,7 @@ import javax.swing.table.AbstractTableModel;
 import org.mapdb.Fun.Tuple2;
 
 import qora.account.Account;
+import utils.NumberAsString;
 import utils.ObserverMessage;
 import utils.Pair;
 import controller.Controller;
@@ -69,7 +70,7 @@ public class BalancesTableModel extends AbstractTableModel implements Observer
 			
 		case COLUMN_BALANCE:
 			
-			return account.getConfirmedBalance(this.key).toPlainString();
+			return NumberAsString.getInstance().numberAsString(account.getConfirmedBalance(this.key));
 		}
 		
 		return null;

@@ -261,6 +261,12 @@ public class TransferAssetTransaction extends Transaction {
 			return NO_BALANCE;
 		}
 		
+		//CHECK IF SENDER HAS ENOUGH QORA BALANCE
+		if(this.sender.getConfirmedBalance(fork).compareTo(BigDecimal.ZERO) == -1)
+		{
+			return NO_BALANCE;
+		}
+		
 		//CHECK IF AMOUNT IS DIVISIBLE
 		if(!db.getAssetMap().get(this.key).isDivisible())
 		{
@@ -289,7 +295,7 @@ public class TransferAssetTransaction extends Transaction {
 		{
 			return NEGATIVE_FEE;
 		}
-		
+				
 		return VALIDATE_OKE;
 	}
 

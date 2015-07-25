@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONArray;
@@ -23,6 +25,7 @@ import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import qora.voting.Poll;
 import qora.voting.PollOption;
+import utils.APIUtils;
 import utils.Pair;
 import controller.Controller;
 
@@ -30,6 +33,9 @@ import controller.Controller;
 @Produces(MediaType.APPLICATION_JSON)
 public class PollsResource 
 {
+	@Context
+	HttpServletRequest request;
+	
 	@POST
 	@Consumes(MediaType.WILDCARD)
 	public String createPoll(String x)
@@ -88,6 +94,8 @@ public class PollsResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			APIUtils.askAPICallAllowed("Post polls " + x, request);
 				
 			//GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(creator);				
@@ -144,6 +152,10 @@ public class PollsResource
 			case Transaction.NEGATIVE_FEE:
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
 					
 			case Transaction.NO_BALANCE:	
 					
@@ -209,6 +221,8 @@ public class PollsResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			APIUtils.askAPICallAllowed("POST polls/vote/" + name + "\n"+x, request);
 				
 			//GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(voter);				
@@ -267,6 +281,10 @@ public class PollsResource
 			case Transaction.NEGATIVE_FEE:
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
 					
 			case Transaction.NO_BALANCE:	
 					

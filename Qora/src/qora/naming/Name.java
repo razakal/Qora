@@ -5,12 +5,14 @@ import java.util.Arrays;
 
 import org.json.simple.JSONObject;
 
+import qora.account.Account;
+import qora.crypto.Base58;
+import utils.NumberAsString;
+
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 
 import database.DBSet;
-import qora.account.Account;
-import qora.crypto.Base58;
 
 public class Name {
 
@@ -176,5 +178,10 @@ public class Name {
 		}
 		
 		return false;
+	}
+	
+	public String getNameBalanceString()
+	{
+		return NumberAsString.getInstance().numberAsString(this.getOwner().getBalance(0)) + " - " + this.getName();
 	}
 }

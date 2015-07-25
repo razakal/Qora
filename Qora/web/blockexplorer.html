@@ -1,0 +1,3175 @@
+<!DOCTYPE html>
+<html style='height:100%'>
+	<head>
+	<title>Qora BlockExplorer</title>
+	<link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
+    <script src="/index/libs/jquery/jquery.2.js"></script>
+	<script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
+	<link href="/index/libs/css/style.css" rel="stylesheet">
+	<script src="/index/libs/js/sidebar.js"></script>
+	<script src="/index/libs/js/common.js"></script>
+	<link href="/index/libs/css/sidebar.css" rel="stylesheet">
+	<script src="/index/libs/js/Base58.js" charset="utf-8"></script>
+	<style type="text/css">
+      body {
+      padding-top: 50px;
+      }
+      .sub-header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      }
+      .navbar-fixed-top {
+      border: 0;
+      z-index: 9999;
+      }
+      .sidebar {
+      display: none;
+      }
+      @media (min-width: 768px) {
+      .sidebar {
+      position: fixed;
+      top: 51px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee;
+      }
+      }
+      .nav-sidebar {
+      margin-right: -21px;
+      margin-bottom: 20px;
+      margin-left: -20px;
+      }
+      .nav-sidebar > li > a {
+      padding-right: 20px;
+      padding-left: 20px;
+      }
+      .nav-sidebar > .active > a,
+      .nav-sidebar > .active > a:hover,
+      .nav-sidebar > .active > a:focus {
+      color: #fff;
+      background-color: #428bca;
+      }
+      .main {
+      padding-top: 20px;
+      }
+      .main-tabs {
+      width: 100%;
+      padding-top: 15px;
+      padding-left: 0px;
+      padding-right: 0px;
+      background-color: lightgray;
+      }
+      img.logo-header {
+      background-color: transparent;
+      height: 100%;
+      }
+      .col-lg-8 {
+      padding-left: 0px;
+      }
+      @media (min-width: 768px) {
+      .main {
+      padding-right: 40px;
+      }
+      }
+      .main .page-header {
+      margin-top: 0;
+      }
+      .placeholders {
+      margin-bottom: 30px;
+      text-align: center;
+      }
+      .placeholders h4 {
+      margin-bottom: 0;
+      }
+      .placeholder {
+      margin-bottom: 20px;
+      }
+      .placeholder img {
+      display: inline-block;
+      border-radius: 50%;
+      }
+      .r-t {
+      margin: 0px;
+      }
+      .r-l {
+      margin: 0px;
+      }
+      span.label.label-default {
+      background-color: #fff;
+      color: lightgray;
+      font-size: 90%;
+      line-height: 1;
+      }
+      span.label.label-default a {
+      color: #ddd;
+      text-decoration: none;
+      }
+      a.r-l:hover,
+      a.r-l:focus {
+      color: #6467FF;
+      text-decoration: none;
+      }
+      .navbar-header {
+      width: 110px;
+      }
+	</style>
+	<script type="text/javascript">
+	
+var loading = true;
+	
+function getXmlHttp(){
+	var xmlhttp;
+	try {
+		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+	} catch (e) {
+		try {
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (E) {
+			xmlhttp = false;
+		}
+	}
+	if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+		xmlhttp = new XMLHttpRequest();
+	}
+	return xmlhttp;
+}
+
+function getResponseJson (url){
+	var xmlhttp = getXmlHttp()
+	xmlhttp.open('GET', url, false);
+	xmlhttp.send(null);
+	
+	if (xmlhttp.readyState == 4) {
+		if(xmlhttp.status == 200) {
+			return JSON.parse(xmlhttp.responseText);
+		}
+	}
+}
+
+function asyncAjax (url, type){
+	var xmlhttp = getXmlHttp()
+	xmlhttp.open('GET', url, true);
+	
+	loading = true;
+	setTimeout(function() {if(loading){document.getElementById('loading').style.display = 'block'; }}, 250);
+	
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4) {
+			if(xmlhttp.status == 200) {
+				var data = JSON.parse(xmlhttp.responseText);
+
+				if(type == 'blocks')
+				{
+					document.getElementById('main').innerHTML = blocks(data);
+				}
+				
+				if(type == 'topRichest')
+				{
+					document.getElementById('main').innerHTML = topRichest(data);
+				}
+				
+				if(type == 'mainQuery')
+				{
+					document.getElementById('main').innerHTML = mainQuery(data)
+				}
+				
+				if(type == 'aTs')
+				{
+					document.getElementById('main').innerHTML = aTs(data)
+				}
+				
+				if(type == 'polls')
+				{
+					document.getElementById('main').innerHTML = polls(data)
+				}
+				
+				if(type == 'poll')
+				{
+					document.getElementById('main').innerHTML = poll(data)
+				}
+				
+				if(type == 'assets')
+				{
+					document.getElementById('main').innerHTML = assets(data)
+				}
+				
+				if(type == 'asset')
+				{
+					document.getElementById('main').innerHTML = asset(data)
+				}
+				
+				if(type == 'trades')
+				{
+					document.getElementById('main').innerHTML = trades(data)
+				}
+				
+				if(type == 'search')
+				{
+					document.getElementById('main').innerHTML = search(data)
+				}
+				
+				document.getElementById('loading').style.display = 'none';
+				loading = false;
+
+			}
+		}
+	};
+	xmlhttp.send(null);
+}
+
+function secToFine(time) {
+	time = Math.floor( time/1000 );
+	
+	var mins = ~~(time / 60);
+	var secs = time % 60;
+
+	// Hours, minutes and seconds
+	var hrs = ~~(time / 3600);
+	var mins = ~~((time % 3600) / 60);
+	var secs = time % 60;
+	
+	ret = "";
+
+	if (hrs > 0)
+		ret += "" + hrs + (hrs > 1 ? " hours " : " hour ");
+
+	ret += "" + mins + (mins > 1 ? " mins " : " min ");
+	ret += "" + secs + ' secs';
+	return ret;
+}
+
+function getAssetNameMini(assetKey, assetName) {
+	if(assetName.length > 4)
+	{
+		return '<abbr title="' + '(' + assetKey + ') ' + assetName + '"><a  href=?asset='+assetKey+' ><font size=-2 color=black>' + getAssetName(assetKey, assetName.substr(0, 4))+ '</font></a></abbr>';
+	}
+	else
+	{
+		return '<a class=without href=?asset='+assetKey+'><font size=-2 color=black>' + getAssetName(assetKey, assetName)+ '</font></a>';
+	}
+}
+
+function getAssetNameMiniGrey(assetKey, assetName) {
+	if(assetName.length > 4)
+	{
+		return '<abbr title="' + '(' + assetKey + ') ' + assetName + '"><a class=without href=?asset='+assetKey+'><font size=-2 color=#e0e0e0>' + getAssetName(assetKey, assetName.substr(0, 4))+ '</font></a></abbr>';
+	}
+	else
+	{
+		return '<a class=without href=?asset='+assetKey+'><font size=-2 color=#e0e0e0>' + getAssetName(assetKey, assetName)+ '</font></a>';
+	}
+}
+
+function getAssetName(assetKey, assetName) {
+	if(assetKey == 0)
+	{
+		return htmlFilter(assetName);
+	}
+	else
+	{
+		return '(' + assetKey + ')' + htmlFilter(assetName);
+	}
+}
+
+function getAssetName2(assetKey, assetName) {
+	return '(' + assetKey + ')' + htmlFilter(assetName);
+}
+function addCommas(str)
+{
+	strbuf = str.toString();
+	if( strbuf.indexOf('.') == -1)
+	{
+		return strbuf.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1,');
+	}
+	return strbuf.replace(/(\d)(?=(\d\d\d)+([^\d]))/g, '$1,');
+}
+
+function aTs (data)
+{
+	var output = '';
+	
+	output += lastBlock(data.lastBlock);
+	
+	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="680">';
+	output += '<tr><td>'; 
+	
+	output += '<center><h3>AT Accounts</h3>';
+		
+	for(key in data.aTs) {
+		
+		output += '<table class="table table-striped" style="border: 1px solid #ddd;"><tr bgcolor="f1f1f1"><td>';
+		
+		output += '<table width="100%">';
+		
+		output += '<tr><td> ';
+		
+		output += '<b><a href=?addr='+key+'>'+key+'</a></td>';
+		
+		output += '<td align=right>';
+
+		if(data.aTs[key].accountBalance != '0.00000000')
+		{
+			output += '<b>';
+		}
+		output += addCommas(data.aTs[key].accountBalance) + ' Qora';
+		
+		output += '</table>';
+		
+		output += '<tr><td>';
+		output += '<table width="100%"><tr>'
+
+		output += '<td>';
+		output += '<b>Name: </b>' + data.aTs[key].name;
+		output += '<br><b>Creator:</b> <a href=?addr='+data.aTs[key].creator+'>'+data.aTs[key].creator+'</a>';
+		output += '<br><b>AT Type:</b> ' + data.aTs[key].type;
+		
+		output += '<br><b>Description:</b> ' + htmlFilter(wordwrap(data.aTs[key].description, 80, '\n', true));
+		output += '<br><b>Tags:</b> ' + htmlFilter(wordwrap(data.aTs[key].tags, 80, '\n', true));
+		//output += '<br><b>Dead:</b> ' + data.aTs[key].state.dead;
+		//output += '<br><b>Frozen:</b> ' + data.aTs[key].state.frozen;
+		output += '</td>';
+		
+		output += '</tr></table>';
+		
+		output += '</table>';
+		
+	}
+
+	return output;
+}
+
+function blocks(data)
+{
+	var output = '';
+	
+	output += lastBlock(data.lastBlock);
+
+	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="">';
+	output += '<tr><td align=left>';
+	output += '<a href=?unconfirmed>Unconfirmed transactions: '+data.unconfirmedTxs+'</a>.';
+	
+	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="1180"  class="table table-striped" style="border: 1px solid #ddd;">';
+	output += '<tr><td><b>Height<td><b>Time<td><b>Generator<td><b>Gen.balance<td><b>TXs<td><b>Fee<td><b>AT Amount<td><b>Amount'; 
+
+	for(var i = data.maxHeight; i >= data.maxHeight-20; i--)
+	{
+		output += '<tr>';
+		output += '<td><a href=?block='+i+'>'+i+'</a><td>'+data[i].dateTime+'<td>'+'<a href=?addr='+data[i].generator+'>'+data[i].generator;
+		output += '<td>'+addCommas(data[i].generatingBalance)+'<td>'+data[i].transactionCount;
+		output += '<td>'+addCommas(data[i].totalFee)+'<td>'+addCommas(data[i].totalATAmount)+'<td>'+addCommas(data[i].totalAmount);
+	}
+	
+	output += '<tr><td colspan=4>';
+	if(data.maxHeight != data.lastBlock.height)
+	{
+		if(data.lastBlock.height < data.maxHeight + 21)
+		{
+			output += '<a href=?startBlock='+(data.lastBlock.height)+'>Later';
+		}
+		else
+		{
+			output += '<a href=?startBlock='+(data.maxHeight+21)+'>Later';
+		}
+	}
+	
+	output += '<td colspan=4 align=right><a href=?startBlock='+(data.maxHeight-21)+'>Previous';
+	
+	return output;
+}
+		
+function topRichest(data)
+{
+	var output = "";
+	
+	output += lastBlock(data.lastBlock);
+
+	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="900">';
+	output += '<tr><td align=center>';
+	
+	output += 'Total coins in the system: ' + 
+		addCommas(data.allTotal) + ' '+ getAssetName(data.assetKey, data.assetName) + '<br>';
+	output += 'minus ' + addCommas(data.allinOrders) + 
+		' '+getAssetName(data.assetKey, data.assetName) + ' in order = ' + 
+		addCommas(data.all) + ' ' + getAssetName(data.assetKey, data.assetName) + '<br>';
+	
+	
+	if(data.limit == -1)
+	{
+		buf = ''	
+		output += '<h3>'+'All non-empty '+getAssetName(data.assetKey, data.assetName)+' addresses ('+data.count+') </h2>';	
+	}
+	else if (data.limit == -2)
+	{
+		output += '<h3>'+'All '+getAssetName(data.assetKey, data.assetName)+' addresses ('+data.count+')</h2>';	
+	}
+	else
+	{
+		output += '<h3>'+'Top '+data.limit+' '+getAssetName(data.assetKey, data.assetName)+' Richest</h2>';	
+	}
+	
+	
+	var table = '<table id=top100 BORDER=0 width="10%" cellpadding=10 cellspacing=0 class="table table-striped" style="border: 1px solid #ddd; width: auto;"><tr><td><b>#<td><b>Address<td><b>Balance<td><b>Prop.'; 
+
+	for(key in data.top) {
+		table += '<tr>';		
+		table += '<td>'+ key + '<td>' + '<a href=?addr='+data.top[key].address+'>' + data.top[key].address;
+		table += '<td>' + addCommas(data.top[key].balance) + '<td>' +  ((data.top[key].balance / data.allTotal) * 100).toFixed(2) + " %";
+	}
+	table += '</table>';
+	
+	output += table;
+	
+	if(data.assetKey != 0)
+	{
+		assetUrl = '&asset='+data.assetKey;
+	}
+	else
+	{
+		assetUrl = '';
+	}	
+	
+	output += '<br><a href=?top=100'+assetUrl+'>Top 100</a> | <a href=?top=250'+assetUrl+'>Top 250</a> | <a href=?top=all'+assetUrl+'>All addresses</a> | <a href=?top=allnotzero'+assetUrl+'>All non-empty addresses';
+	
+	output += '<br><br><font size=-2>';
+	
+	var assetstxt = "";
+	for(key in data.assets) {
+		assetstxt += '<a href=?top=100&asset='+key+'>'+'(' + key + ')' + data.assets[key] + '</a>' + ', ';
+	}
+	output += assetstxt.slice(0, -2) + '</font>';
+	
+	return output;
+}		
+	
+	
+function polls(data)
+{
+	var output = "";
+	
+	output += lastBlock(data.lastBlock);
+
+	output += '<h3>Polls</h3>';
+	
+	var table = '<table id=top100 BORDER=0 cellpadding=10 cellspacing=0 class="table table-striped" style="border: 1px solid #ddd; width: auto;">';
+	
+	table += '<tr><td><b>Poll<td><b>Votes'; 
+	
+	for(key in data.pools) {
+		table += '<tr>';
+		
+		table += '<td>' + '<a href=?poll='+encodeURIComponent(key)+'>' + htmlFilter(key) + '</a>';
+		if(data.pools[key].new)
+		{
+			table += ' <b>New!</b>';
+		}
+		table += '<td>' + addCommas(data.pools[key].totalVotes);
+		
+	}
+	table += '</table>';
+	
+	output += table;
+	
+	return output;
+}		
+
+function poll(data)
+{
+	var output = "";
+	
+	output += lastBlock(data.lastBlock);
+	
+	output += '<table width="" border=0><tr><td align=left><br>';
+	
+	output += '<font size=+1><b>Poll:</b> <a href=?poll='+encodeURIComponent(data.pool.name)+'>'+htmlFilter(data.pool.name)+'</a></font><br><br>';
+	
+	
+	output += '<b>Description:</b><br>'+htmlFilter(wordwrap(data.pool.description, 100, '\n', true))+'<br><br>';
+
+	output += '<b>Creator:</b> <a href=?addr='+data.pool.creator+'>'+data.pool.creator+'</a><br><br>';
+	
+	if(data.pool.hasOwnProperty('dateTime'))
+	{
+		output += '<b>Creation date:</b> ' + data.pool.dateTime + '<br><br>';
+	}
+	
+	output += '<table border="0" cellspacing="5" class="table">';
+	output += '<tr><td><b>Option</b></td><td><b>Votes</b></td><td width="390"><b>% of total</b></td></tr>';
+
+	for(key in data.pool.options) {
+		output += '<tr>';
+		output += '<td>'+htmlFilter(key);
+		output += '<td>'+addCommas(data.pool.options[key]);
+		
+		if(data.pool.totalVotes!='0.00000000')
+		{
+			procent = data.pool.options[key]/data.pool.totalVotes;	
+			procentRound = (procent*100).toFixed(2);
+			width = Math.round(procent * 300);
+		}
+		else
+		{
+			procentRound = '0';
+			width = 0;
+		}
+		
+		output += '<td><img src=img/bar_left.gif border=0 height=11 width=2><img src=img/bar.gif border=0 height=11 width='+width+'><img src=img/bar_right.gif border=0 height=11 width=2> ['+procentRound+'%]';
+	}
+
+	//output += '<tr><td colspan="3"></td></tr>';
+	output += '<tr><td><b>All Votes:</b></td><td align="left" colspan="2">';
+	output += addCommas(data.pool.totalVotes);
+	output += '</td></tr></tbody></table>';
+	
+	output += '<br>';
+	
+	output += '<table border="0" cellspacing="5" class="table table-condensed">';
+	output += '<tr><td><b>Address</b></td><td><b>Option</b></td><td><b>Votes</b></td></tr>';
+	
+	for(key in data.pool.votes) {
+		output += '<tr>';
+		output += '<td>'+'<a href=?addr='+key+'>'+key+'</a>';
+		output += '<td>'+htmlFilter(data.pool.votes[key].option);
+		output += '<td>'+addCommas(data.pool.votes[key].votes);
+	}
+	output += '</table>';
+	
+	return output;
+}	
+
+function assets(data)
+{
+	var output = "";
+	
+	output += lastBlock(data.lastBlock);
+
+	output += '<table width="1280" border=0><tr><td align=left><br>';
+	
+	output += '<a href="?assets"><h3 style="display:inline;">Assets</h3></a>';
+	
+	output += '<br><br>';
+	
+	// style="background: #f4f4f4;"
+	
+	var table = '<table width=100% BORDER=0 cellpadding=10 cellspacing=0 class="table table-striped" style="border: 1px solid #ddd;"><tr>';
+	table += '<td><b>Key<td><b>Assets<td><b>Operations<td><b>Description'; 
+
+	for(key in data.assets) {
+		table += '<tr>';
+		table += '<td>' + key;
+		
+		table += '<td>' + '<a href=?asset='+encodeURIComponent(key)+'>' + htmlFilter(data.assets[key].name) + '</a>';
+		
+		table += '<td>' + data.assets[key].operations;
+	
+		table += '<td>' + htmlFilter(data.assets[key].description);
+	}
+	table += '</table>';
+
+	output += table;
+		
+	return output;
+}		
+
+function asset(data)
+{
+	var output = "";
+	
+	output += lastBlock(data.lastBlock);
+	
+	output += '<table width="1280" border=0><tr><td align=left><br>';
+	
+	output += '<a href="?assets"><h3 style="display:inline;">Assets</h3></a>';
+	
+	output += '<h3 style="display:inline;"> | </h3>';
+	
+	output += '<a href="?asset='+data.asset.this.key+'"><h3 style="display:inline;">';
+	output += getAssetName2(data.asset.this.key, data.asset.this.name)+'</h3></a>';
+	
+	output += '<br><br>';
+	
+	output += '<b>Key:</b> ' + data.asset.this.key;
+	
+	output += '<br><br>';
+	
+	output += '<b>Owner:</b> <a href=?addr='+data.asset.this.owner+'>' + data.asset.this.owner + '</a>';
+	
+	output += '<br><br>';
+	
+	
+	output += '<b>Description:</b> ' + htmlFilter(wordwrap(data.asset.this.description, 80, '\n', true));
+	
+	output += '<br><br>';
+	
+	output += '<b>Divisible:</b> ' + data.asset.this.isDivisible;
+		
+	output += '<br><br>';
+	
+	output += '<b>Quantity:</b> ' + addCommas(data.asset.this.quantity) + ' ' + getAssetNameMini(data.asset.this.key, data.asset.this.name);	
+	
+	output += '<br><br>';
+	
+	if(data.asset.this.key != 0)
+	{
+		assetUrl = '&asset='+data.asset.this.key;
+	}
+	else
+	{
+		assetUrl = '';
+	}	
+	
+	output += '<b>Holders:</b> <a href=?top=allnotzero'+assetUrl+'>View</a>';
+		
+	output += '<br><br>';
+	
+	output += '<h3>Available pairs</h3>';
+	
+	output += '<table border="0" cellspacing="10" class="table table-striped" style="border: 1px solid #ddd;"><tr>';
+	output += '<td><b>Pair</b></td><td><b>Orders<br>Count</b></td>';
+	output += '<td><b>Open Orders Volume</b></td>';
+	output += '<td><b>Trades<br>Count</b></td><td><b>Trades Volume</b></td>';
+	output += '<td><b>Description</b></td></tr>';
+	
+	for(key in data.asset.pairs) {
+		output += '<tr>';
+		
+		output += '<td><b>';
+		output += '<a href="?asset='+data.asset.this.key+'&asset='+key+'">';
+		output += getAssetName2(data.asset.this.key, data.asset.this.name);
+		output += '/' + getAssetName2(key, data.asset.pairs[key].assetName);
+		
+		output += '<td>' + data.asset.pairs[key].openOrdersCount;
+		
+		output += '<td nowrap>';
+		if(data.asset.pairs[key].ordersPriceVolume == '0.00000000')
+		{
+			output += '<font color=#e1e1e1>' + addCommas(data.asset.pairs[key].ordersPriceVolume) + ' ' + getAssetNameMiniGrey(key, data.asset.pairs[key].assetName) + '</font>';
+		}
+		else
+		{
+			output += '<font color=black>' + addCommas(data.asset.pairs[key].ordersPriceVolume) + ' ' + getAssetNameMini(key, data.asset.pairs[key].assetName) + '</font>';
+		}
+		
+		if(data.asset.pairs[key].ordersAmountVolume == '0.00000000')
+		{
+			output += '<br><font color=#e0e0e0>' + addCommas(data.asset.pairs[key].ordersAmountVolume) + ' ' + getAssetNameMiniGrey(data.asset.this.key, data.asset.this.name) + '</font>';
+		}
+		else
+		{
+			output += '<br><font color=black>' + addCommas(data.asset.pairs[key].ordersAmountVolume) + ' ' + getAssetNameMini(data.asset.this.key, data.asset.this.name) + '</font>';
+		}
+		
+		output += '<td>' + data.asset.pairs[key].tradesCount;
+		
+		output += '<td nowrap>';
+		if(data.asset.pairs[key].tradeAmountVolume == '0.00000000')
+		{
+			output += '<font color=#e1e1e1>' + addCommas(data.asset.pairs[key].tradeAmountVolume) + ' ' + getAssetNameMiniGrey(key, data.asset.pairs[key].assetName);
+		}
+		else
+		{
+			output += '<font color=black>' + addCommas(data.asset.pairs[key].tradeAmountVolume) + ' ' + getAssetNameMini(key, data.asset.pairs[key].assetName);
+		}
+		if(data.asset.pairs[key].tradesPriceVolume == '0.00000000')
+		{
+			output += '<br><font color=#e1e1e1>' + addCommas(data.asset.pairs[key].tradesPriceVolume) + ' ' + getAssetNameMiniGrey(data.asset.this.key, data.asset.this.name);
+		}
+		else
+		{
+			output += '<br><font color=black>' + addCommas(data.asset.pairs[key].tradesPriceVolume) + ' ' + getAssetNameMini(data.asset.this.key, data.asset.this.name);
+		}
+		
+		output += '<td>' + htmlFilter(data.asset.pairs[key].description);
+	}
+	output += '<tr><td><b>Total:';
+	output += '<td>' + data.asset.totalOpenOrdersCount;
+	output += '<td>'+addCommas(data.asset.totalOrdersVolume) + ' ' + getAssetNameMini(data.asset.this.key, data.asset.this.name);
+	output += '<td>' + data.asset.totalTradesCount;
+	output += '<td>'+addCommas(data.asset.totalTradesVolume) + ' ' + getAssetNameMini(data.asset.this.key, data.asset.this.name);
+	output += '<td>';
+
+	return output;
+}
+
+function trades(data)
+{
+	var output = "";
+	
+	output += lastBlock(data.lastBlock);
+	
+	output += '<table width="1180" border=0><tr><td align=left><br>';
+	
+	output += '<a href="?assets"><h3 style="display:inline;">Assets</h3></a>';
+	
+	output += '<h3 style="display:inline;"> | </h3>';
+	
+	output += '<a href="?trades='+data.assetHave+'-'+data.assetWant+'"><h3 style="display:inline;">';
+	output += getAssetName2(data.assetHave, data.assetHaveName)+'/';
+	output += getAssetName2(data.assetWant, data.assetWantName)+'</h3></a>';
+	
+	output += '<br><br>';
+	
+	output += '<table border="0" cellspacing="10"><tr valign="top"><td width="600">';
+	output += '<h4>Sell Orders</h4></td><td width="10">&nbsp;<td width="600"><h4>Buy Orders</h4></td></tr>';
+	output += '<tr valign="top"><td width="600"><table border="0" cellspacing="3" cellpadding="5" class="table table-striped" style="border: 1px solid #ddd;">';
+	output += '<tr bgcolor="e0e0e0"><td><b>tx<td width="190"><b>Price</b></td><td width="190"><b>Amount</b></td><td width="190"><b>Total</b></td></tr>';
+	
+	for(key in data.sells) {
+		output += '<tr>';
+		
+		output += '<td><a href=?tx='+key+'>#';
+		output += '<td>' + addCommas(data.sells[key].price) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+		output += '<td>' + addCommas(data.sells[key].amount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+		output += '<td>' + addCommas(data.sells[key].sellingAmount) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+	}
+	
+	output += '<tr bgcolor="#f9f9f9">';
+	
+	output += '<td colspan=2><b>Total:<td>' + addCommas(data.sellsSumAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+	output += '<td>' + addCommas(data.sellsSumTotal) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+	
+	output += '</table>';
+	
+	output += '<td width="10">&nbsp;<td width="600"><table border="0" cellspacing="3" cellpadding="5" class="table table-striped" style="border: 1px solid #ddd;">';
+	output += '<tr bgcolor="e0e0e0"><td><b>tx<td width="190"><b>Price</b></td><td width="190"><b>Amount</b></td><td width="190"><b>Total</b></td></tr>';
+	
+	for(key in data.buys) {
+		output += '<tr>';
+	
+		output += '<td><a href=?tx='+key+'>#';
+		output += '<td>' + addCommas(data.buys[key].buyingPrice) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+		output += '<td>' + addCommas(data.buys[key].buyingAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+		output += '<td>' + addCommas(data.buys[key].amount) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+	}
+
+	output += '<tr bgcolor="#f9f9f9">';
+	
+	output += '<td colspan=2><b>Total:<td>' + addCommas(data.buysSumAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+	output += '<td>' + addCommas(data.buysSumTotal) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+	
+	output += '</table>';
+	
+	output += '<tr><td colspan=3 width="100%" align=center>';
+	
+	output += '<h4 style="text-align: left;">Trade History</h4>';
+	
+	output += '<table border="0" cellspacing="3" cellpadding="5" width="100%" class="table table-striped" style="border: 1px solid #ddd;">';
+	output += '<tr bgcolor="e0e0e0"><td align=center><b>tx<td align=center><b>Timestamp<td align=center><b>Type</b></td>';
+	output += '<td align=right><b><a href=?asset='+data.assetHave+'>'+getAssetName2(data.assetHave, data.assetHaveName)+'</b></td><td align=center><b>Price</b></td>';
+	
+	output += '<td><b><a href=?asset='+data.assetWant+'>'+getAssetName2(data.assetWant, data.assetWantName)+'</b></td></tr>';
+	
+	for(key in data.trades) {
+		output += '<tr>';
+			
+		output += '<td align=center><a href=?trade='+data.trades[key].initiatorTxSignature+'/'+data.trades[key].targetTxSignature+'>#';
+		output += '<td align=center>' + data.trades[key].dateTime;
+		output += '<td align=center>' + data.trades[key].type;
+		
+		
+		if(data.trades[key].type == 'sell')
+		{
+			output += '<td align=right style="line-height: 150%;">';
+
+			if(data.trades[key].initiatorCreator == data.assetHaveOwner)
+			{
+				output += ' <b>&#9654;</b> ';
+			}
+			
+			if(data.trades[key].initiatorCreator == data.assetWantOwner)
+			{
+				output += ' <b>&#9655;</b> ';
+			}
+			output += '<a href=?addr='+data.trades[key].initiatorCreator+'>' + data.trades[key].initiatorCreator + '</a>';
+			output += '<br>';
+			output += addCommas(data.trades[key].price);
+			output += ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+			output += ' <img src=img/grright.png style="vertical-align: middle;">';
+
+			output += '<td align=center>' + addCommas(data.trades[key].realReversePrice);
+			
+			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+		
+			output += '<td style="line-height: 150%;">';
+			output += '<a href=?addr='+data.trades[key].targetCreator+'>' + data.trades[key].targetCreator + '</a>';
+			
+			if(data.trades[key].targetCreator == data.assetHaveOwner)
+			{
+				output += ' <b>&#9664;</b> ';
+			}
+			if(data.trades[key].targetCreator == data.assetWantOwner)
+			{
+				output += ' <b>&#9665;</b> ';
+			}
+			
+			output += '<br>';
+			output += '<img src=img/grleft.png style="vertical-align: middle;"> ';
+			output += addCommas(data.trades[key].amount);
+			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+
+		}
+		else
+		{
+			output += '<td align=right style="line-height: 150%;">';
+
+			if(data.trades[key].targetCreator == data.assetHaveOwner)
+			{
+				output += ' <b>&#9654;</b> ';
+			}
+			
+			if(data.trades[key].targetCreator == data.assetWantOwner)
+			{
+				output += ' <b>&#9655;</b> ';
+			}
+			output += '<a href=?addr='+data.trades[key].targetCreator+'>' + data.trades[key].targetCreator + '</a>';
+			output += '<br>';
+			output += addCommas(data.trades[key].price);
+			output += ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+			output += ' <img src=img/grright.png style="vertical-align: middle;">';
+
+			output += '<td align=center>' + addCommas(data.trades[key].realReversePrice);
+			
+			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+		
+			output += '<td style="line-height: 150%;">';
+			output += '<a href=?addr='+data.trades[key].initiatorCreator+'>' + data.trades[key].initiatorCreator + '</a>';
+			
+			if(data.trades[key].initiatorCreator == data.assetHaveOwner)
+			{
+				output += ' <b>&#9664;</b> ';
+			}
+			if(data.trades[key].initiatorCreator == data.assetWantOwner)
+			{
+				output += ' <b>&#9665;</b> ';
+			}
+			
+			output += '<br>';
+			output += '<img src=img/grleft.png style="vertical-align: middle;"> ';
+			output += addCommas(data.trades[key].amount);
+			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);		
+		}
+		/*
+		output += ' <img src=img/grright.png style="vertical-align: middle;">';
+		
+		if(data.trades[key].type == 'sell')
+		{
+			output += '<td align=center>' + addCommas(data.trades[key].realReversePrice);
+		}
+		else
+		{
+			output += '<td align=center>' + addCommas(data.trades[key].realPrice);
+		}
+		
+		output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+		
+		output += '<td style="line-height: 150%;">';
+		output += '<a href=?addr='+data.trades[key].initiatorCreator+'>' + data.trades[key].initiatorCreator + '</a>';
+		if(data.trades[key].initiatorCreator == data.assetHaveOwner)
+		{
+			output += ' <b>&bull;</b> ';
+		}
+		if(data.trades[key].initiatorCreator == data.assetWantOwner)
+		{
+			output += ' <b>&#9674;</b> ';
+		}
+		
+		output += '<br><img src=img/grleft.png style="vertical-align: middle;"> ';
+		output += addCommas(data.trades[key].price);
+
+		if(data.trades[key].type == 'sell')
+		{
+			output += ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+		}
+		else
+		{
+			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+		}
+		*/
+	}
+	
+	output += '</table>';
+	
+	output += '</table>';
+	
+	output += '<b>Trade Volume:</b>&nbsp;&nbsp;&nbsp;&nbsp;' + addCommas(data.tradeHaveAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+	output += '&nbsp;&nbsp;&nbsp;&nbsp;' + addCommas(data.tradeWantAmount) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+	
+	output += '<br><br><b>Go To: <a href=?asset=' + data.assetHave + '>' + getAssetName2(data.assetHave, data.assetHaveName) + '</a>';
+	output += '&nbsp;&nbsp;<a href=?asset='+data.assetWant+'>'+getAssetName2(data.assetWant, data.assetWantName) + '</a>';
+	output += '&nbsp;&nbsp;<a href=?asset='+data.assetWant+'&asset='+data.assetHave+'>'+ getAssetName2(data.assetWant, data.assetWantName) + '/' + getAssetName2(data.assetHave, data.assetHaveName);
+	output += '</b>';
+	
+	return output;
+}
+
+function mainQuery(data) {
+	
+	var output = '';
+
+	output += lastBlock(data.lastBlock);
+	
+	try {
+	
+		if(data.type == 'standardAccount' || data.type == 'at')
+		{
+			if(data.withoutBlocks)
+			{
+				withoutBlocks = '&withoutBlocks';
+			}
+			else
+			{
+				withoutBlocks = '';
+			}
+	
+			if(data.allOnOnePage)
+			{
+				allOnOnePage = '&allOnOnePage';
+			}
+			else
+			{
+				allOnOnePage = '';
+			}
+			
+			urlstart = '?addr=' + data.address+'&start=' + data.start + withoutBlocks + allOnOnePage;
+			url = '?addr=' + data.address + withoutBlocks + allOnOnePage;
+		}
+		
+		if(data.hasOwnProperty('error'))
+		{
+			return '<h2>' + data.error + '</h2>';
+		}
+
+		var transactionTypes = ["", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name Purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction", "Asset Issue", "Asset Transfer", "Order Creation", "Cancel Order", "Multi Payment", "Deploy AT", "Message"];
+
+		if(data.type == 'standardAccount')
+		{
+			output +=  '<table width="1280" border=0><tr><td align=left>';	
+			
+			output += '<br>';
+			output +='<font size="+1">Standard Account: <a href="?addr=' + data.address + '">' + data.address + '</a></font>';
+			output += '<br><br>';
+			
+			if(data.countTx.hasOwnProperty('txsCount'))
+			{
+				output += 'Transactions count: ' + data.countTx.txsCount + '<br>Including:<br>';
+
+				for(key in data.countTx.txsTypesCount) {
+					output += '&nbsp;&nbsp;&nbsp;'+transactionTypes[key]+': '+data.countTx.txsTypesCount[key]+ '<br>\n';
+				}
+			}
+			else
+			{
+				output += 'Transactions count: 0<br>';
+			}
+			
+			if(data.countTx.tradesCount > 0)
+			{
+				output += '<br>+ Trades: ' + data.countTx.tradesCount + '<br>\n';
+			}
+			
+			if(data.countTx.aTTxsCount > 0)
+			{
+				output += '<br>+ AT Transactions: ' + data.countTx.aTTxsCount + '<br>\n';
+			}
+			
+			output += '<br>Received: ' + addCommas(data.totalBalance.receivedQora) + ' Qora'+'<br>';
+			
+			if(data.countTx.blocksCount > 0)
+			{
+				output += '&nbsp;&nbsp;&nbsp;Including total fee: '+addCommas(data.totalBalance.totalGeneratedFee)+' Qora ';
+				output += 'from generated ' + data.countTx.blocksCount +' blocks.'+'<br>';
+				if(data.withoutBlocks)
+				{
+					output += '&nbsp;&nbsp;&nbsp;<font size="-2"><a href=' + url.replace('&withoutBlocks', '')+'>show with generated blocks</a></font><br>';
+				}
+				else
+				{
+					output += '&nbsp;&nbsp;&nbsp;<font size="-2"><a href='+url.replace('&withoutBlocks', '')+'&withoutBlocks'+'>show without generated blocks</a></font><br>';
+				}
+			}
+			
+			output += '<br>Send: ' + addCommas(data.totalBalance.sendQora) + ' Qora'+'<br>';
+			output += '<br>';
+
+			output += '<font size=+1><b>total balance:<br>';
+			
+			var totalBalance = "";
+			for(key in data.totalBalance) {
+				if(isFinite(key))
+				{
+					totalBalance += '&nbsp;&nbsp;' + addCommas(data.totalBalance[key].amount);
+					totalBalance += ' <a href=?asset='+key+'>'+getAssetName(key, data.totalBalance[key].assetName) + '</a>';
+					totalBalance += '<br>';
+				}
+			}
+
+			output += totalBalance+ '</font></b><br>';
+
+		}
+
+		if(data.type == 'block')
+		{
+			url = '?block=' + data.blockHeight;
+			urlstart = url;
+			
+			output +=  '<table width="1280" border=0><tr><td align=left>';	
+			output += '<font size="+1">Block Height: ';
+			if(data.hasOwnProperty('parentBlockSignature'))
+			{
+				output += '<a style="text-decoration: none" href="?block='+(data.blockHeight-1)+'"><b>&lt;</b></a> ';
+			}
+			output += '<a href="?block='+data.blockHeight+'">'+data.blockHeight+'</a> ';
+			if(data.hasOwnProperty('childBlockSignature'))
+			{
+				output += '<a style="text-decoration: none" href="?block='+(data.blockHeight+1)+'"><b>&gt;</b></a>';
+			}
+			output += '</font>';
+			output += '<br><br>';
+
+			
+			if(data.countTx.hasOwnProperty('txsCount'))
+			{
+				output += 'Transactions count: ' + data.countTx.txsCount + '<br>Including:<br>';
+
+				for(key in data.countTx.txsTypesCount) {
+					output += '&nbsp;&nbsp;&nbsp;'+transactionTypes[key]+': '+data.countTx.txsTypesCount[key]+ '<br>\n';
+				}
+			}
+			else
+			{
+				output += 'Transactions count: 0<br>';
+			}
+			
+			if(data.countTx.tradesCount > 0)
+			{
+				output += '<br>+ Trades: ' + data.countTx.tradesCount + '<br>\n';
+			}
+			
+			if(data.countTx.aTTxsCount > 0)
+			{
+				output += '<br>+ AT Transactions: ' + data.countTx.aTTxsCount + '<br>\n';
+			}
+
+			output += '<br>Total Amount: '+ data.totalAmount + ' Qora';
+			output += '<br>Total AT Amount: '+ data.totalATAmount + ' Qora';
+			output += '<br>Total Fee: '+ data.totalFee + ' Qora';
+			
+			
+			output += '<br><br>';
+			
+			if(data.hasOwnProperty('parentBlockSignature'))
+			{
+				output += 'Parent block '+(data.blockHeight-1)+', signature: ';
+				output += '<a style="font-size: 9px;" href=?block='+ data.parentBlockSignature + '>' + data.parentBlockSignature + '</a>';
+				output += '<br><br>';
+			}
+			
+			output += '<b>Current block '+(data.blockHeight)+', signature:</b> '
+			output += '<a style="font-size: 9px;" href=?block='+ data.blockSignature + '>' + data.blockSignature + '</a>';
+			output += '<br><br>';
+			
+			if(data.hasOwnProperty('childBlockSignature'))
+			{
+				output += 'Child block '+(data.blockHeight+1)+', signature: ';
+				output += '<a style="font-size: 9px;" href=?block='+ data.childBlockSignature + '>' + data.childBlockSignature + '</a>';
+				output += '<br><br>';
+			}
+			
+		}
+		
+		if(data.type == 'name')
+		{
+			if(data.allOnOnePage)
+			{
+				allOnOnePage = '&allOnOnePage';
+			}
+			else
+			{
+				allOnOnePage = '';
+			}
+			
+			urlstart = '?name=' + data.name+'&start=' + data.start + allOnOnePage;
+			url = '?name=' + data.name + allOnOnePage;
+			
+			output +=  '<table width="1280" border=0><tr><td align=left>';	
+			output += '<font size="+1">Name: <a href=?name='+encodeURIComponent(data.name)+'>' + htmlFilter(data.name) + '</a></font>';
+			
+			output += '<br><br>';
+		}
+		
+		if(data.type == 'transaction')
+		{
+			url = '?tx=' + data[1].transaction.signature;
+			urlstart = url;
+			output +=  '<table width="1280" border=0><tr><td align=left>';	
+			output += '<font size="+1">Standard Transaction</font><br>';
+			
+			
+		}
+
+		if(data.type == 'unconfirmed')
+		{
+			url = '?unconfirmed';
+			urlstart = url;
+			output +=  '<table width="1280" border=0><tr><td align=left>';	
+			output += '<font size="+1">Unconfirmed Transactions</font><br><br>';
+			output += 'Transactions count: ' + data.start + '<br>';
+
+		}
+		
+		if(data.type == 'atTransaction')
+		{
+			url = '?atTx=' + data.atTransaction;
+			urlstart = url;
+			output +=  '<table width="1280" border=0><tr><td align=left>';	
+			output += '<font size="+1">Automated Transaction</font><br>';
+		}
+
+
+		if(data.type == 'at')
+		{
+			output += '<table width="1280" border=0><tr><td align=left>';	
+			output += '<br><font size="+1">AT Account: <a href=?addr='+data.address+'>' + data.address + '</a></font>';
+
+			output += '<table width="100%" border=0><tr><td valign=top align=left rowspan=2>';	
+			output += '<br><b>Creator:</b> <a href=?addr='+data.at.creator+'>' + data.at.creator + '</a>';
+			output += '<br><br><b>AT Type:</b> ' + data.at.type;
+			output += '<br><br><b>Description:</b> ' + htmlFilter(wordwrap(data.at.description, 80, '\n', true));
+			output += '<br><br><b>Tags:</b> ' + htmlFilter(wordwrap(data.at.tags, 80, '\n', true));
+			output += '<br><br><b>Min Activation Amount:</b> ' + data.at.minActivation + ' Qora';
+			output += '<br><br><b>Dead:</b> ' + data.at.state.dead;
+			output += '<br><br><b>Frozen:</b> ' + data.at.state.frozen;
+			
+			output += '<td><br><b>Code:</b><pre>';
+			if(data.at.state.machineCode != '')
+			{
+				output += wordwrap(data.at.state.machineCode, 100, '<br>', true);
+			}
+			else
+			{
+				output += '<b>No</b>';
+			}
+			output += '<tr>';
+			output += '<td><b>Data:</b><pre>';
+			if(data.at.state.machineData != '')
+			{
+				output += wordwrap(data.at.state.machineData, 100, '<br>', true);
+			}
+			else
+			{
+				output += '<b>No</b>';
+			}
+			output += '</table>';
+			output += '<br><br><font size="+1"><b>Balance:</b> '+addCommas(data.at.accountBalance)+' Qora</font>';
+			output += '<br><br>';
+		}						
+		
+		if(data.type == 'trade')
+		{
+			url = '?trade=' + data.trade;
+			urlstart = url;
+			output +=  '<table width="1280" border=0><tr><td align=left>';	
+			output += '<font size="+1">Trade</font><br>';
+		}
+		
+		if(data.type == 'standardAccount' || data.type == 'name' || data.type == 'at')
+		{
+			output += pages(data.countTx.allCount, data.txOnPage, data.start, data.end, url, data.allOnOnePage);
+		}	
+		output += '<br>';
+		
+		{
+			for (var i = data.start; i >= data.end; i--)
+			{
+				if(!data.hasOwnProperty(i))
+				{
+					continue;
+				}
+				
+				output += '<a name='+i+'></a>';
+
+				if(data[i].type == 'block') // block
+				{
+					output += '<table width=100%><tr><td>';
+					
+					output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+
+					if(data.type == 'block')
+					{
+						output += '<tr><td><a class=without href='+ urlstart + '>##</a>&nbsp;&nbsp;';
+					}
+					else
+					{
+						output += '<tr><td><a class=without href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+					}
+					
+					output += '<a href=?block='+data[i].block.signature+'>'+data[i].block.signature.substr(0, 80)+'...'+'</a></td>';
+					
+					output += '<td align=right width=250>Height: <a href=?block='+data[i].block.height+'>'+data[i].block.height+'</a>';
+					output += ' / confirmations: '+data[i].block.confirmations+'</td>';
+						
+					output += '<td align=right width=200>'+data[i].block.dateTime+'</td></tr></table>';
+					
+					output += '<tr><td>';
+					output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+					output += '<b>Action</b></td><td width="290"><b>Generator</b></td><td><b>Fee</b></td>';
+					if(data[i].hasOwnProperty('balance'))
+					{
+						output += '<td width=180><b>Balance</b></td>';
+					}
+					output += '</tr>';
+					output += '<tr><td align="center"><img src="img/00_generating.png"><br><font size="-2">Generating</font></td>';
+					if(data[i].type == 'block')
+					{
+						output += '<td><a href=?addr='+data[i].block.generator+'>'+data[i].block.generator+'</a>';
+					}
+					else
+					{
+						output += '<td><font color="dimgray">'+data[i].block.generator+'</font></td>';
+					}
+					output += '<td>'+addCommas(data[i].block.fee)+' <font size="-2">Qora</font>'+'</td>';
+					
+					if(data[i].hasOwnProperty('balance'))
+					{
+						output += '<td>'+printBalance(data[i].balance)+'</td>';
+					}
+					
+					output += '</tr></table>';
+					
+					output += '</table>';
+				}
+			
+				if(data[i].type == 'trade') // Trade
+				{
+					output += '<table width="100%"><tr><td>';
+					
+					output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+					output += '<tr><td><a class=without href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+					output += '<a href=?trade='+data[i].trade.initiatorTxSignature+'/'+data[i].trade.targetTxSignature+'>';
+					output += (data[i].trade.initiatorTxSignature+'/'+data[i].trade.targetTxSignature).substr(0, 100)+'...</a></td>';
+					output += '<td align=right width=250>Height: <a href=?block='+data[i].trade.height+'>'+data[i].trade.height+'</a>';
+					output += ' / confirmations: '+data[i].trade.confirmations+'</td>';
+					output += '<td align=right width=200>'+data[i].trade.dateTime+'</td></tr></table>';
+					
+					output += '<tr><td>';
+					output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+					
+					output += '<b>Action</b></td><td width="290"><b>Seller</b></td><td width="290"><b>Buyer</b></td>';
+					output += '<td width=135><b>Have</b></td><td width=135><b>Want</b></td><td width=135><b>Price</b></td>';
+					
+					if(data[i].hasOwnProperty('balance'))
+					{
+						output += '<td width=180><b>Balance</b></td>';
+					}
+					output += '</tr>';
+						
+					output += '<tr><td align="center">';
+					
+					output += '<img src=img/asset_trade.png>';
+					
+					output += '<br><font size="-2">Asset Trade</font></td>';
+					
+					var img1 = '';
+					var img2 = '';
+					
+					if(data[i].trade.targetCreator == data.address)
+					{
+						output += '<td><font color="dimgray">'+data[i].trade.targetCreator+'</font>';
+						img1 = 'img/redright.png';
+					}
+					else
+					{
+						output += '<td><a href=?addr='+data[i].trade.targetCreator+'>'+data[i].trade.targetCreator+'</a>';
+						img1 = 'img/grright.png';
+					}
+					
+					if(data[i].trade.targetCreator == data[i].trade.initiatorCreator)
+					{
+						img1 = 'img/grright.png';
+					}
+					
+					output += '<p>';
+					
+					output += addCommas(data[i].trade.amount) + ' ' + getAssetNameMini(data[i].trade.initiatorWant, data[i].trade.wantName);
+					
+					output += ' <img src='+img1+' style="vertical-align: middle;">';
+					
+					output += '</p>';
+					
+					output += '</td>';
+					
+					if(data[i].trade.initiatorCreator == data.address)
+					{
+						output += '<td><font color="dimgray">'+data[i].trade.initiatorCreator+'</font><br>';
+						img2 = 'img/redleft.png';
+					}
+					else
+					{
+						output += '<td><a href=?addr='+data[i].trade.initiatorCreator+'>'+data[i].trade.initiatorCreator+'</a>';
+						img2 = 'img/grleft.png';
+					}
+
+					if(data[i].trade.targetCreator == data[i].trade.initiatorCreator)
+					{
+						img2 = 'img/grleft.png';
+					}
+					
+					output += '<p>';
+					output += '<img src='+img2+' style="vertical-align: middle;"> ';
+					
+					output += '' + addCommas(data[i].trade.price) + ' ' + getAssetNameMini(data[i].trade.initiatorHave, data[i].trade.haveName);
+					
+					output += '</p>';
+					output += '</td>';
+					
+					output += '<td>' + ' <a href=?asset='+data[i].trade.initiatorWant+'>'+getAssetName(data[i].trade.initiatorWant, data[i].trade.wantName) + '</a>';
+
+					output += '<td>' + ' <a href=?asset='+data[i].trade.initiatorHave+'>'+getAssetName(data[i].trade.initiatorHave, data[i].trade.haveName) + '</a>';
+					
+					output += '<td>' + addCommas(data[i].trade.realPrice);
+					output += '<br>'+getAssetNameMini(data[i].trade.initiatorHave, data[i].trade.haveName);
+					output += '/'+getAssetNameMini(data[i].trade.initiatorWant, data[i].trade.wantName);
+					
+					if(data[i].hasOwnProperty('balance'))
+					{
+						output += '<td>' + printBalance(data[i].balance) + '</td>';
+					}
+					
+					output += '</tr></table>';
+					
+					output += '</table>';
+				}
+
+				if(data[i].type == 'atTransaction') // Automated Transaction
+				{
+					output += '<table width="100%"><tr><td>';
+					
+					output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+					
+					output += '<tr><td><a class=without href='+ urlstart + '#' + i + '>#' + i + '</a> ';
+					
+					output += '<a href=?atTx='+data[i].atTransaction.blockHeight+':'+data[i].atTransaction.seq+'>';
+					output += data[i].atTransaction.blockHeight+':'+data[i].atTransaction.seq + '</a></td>';
+					output += '<td align=right width=250>';
+					if(data.type != 'block')
+					{
+						output += 'Height: <a href=?block='+data[i].atTransaction.blockHeight+'>'+data[i].atTransaction.blockHeight+'</a>';
+						output += ' / confirmations: '+data[i].atTransaction.confirmations;
+					}
+					output += '</td>';
+					output += '<td align=right width=200>'+data[i].atTransaction.dateTime+'</td></tr></table>';
+					
+					output += '<tr><td>';
+
+					output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+						
+					output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
+					output += '<td><b>Recipient</b></td><td><b>Seq</b></td>';
+					if(data[i].hasOwnProperty('balance'))
+					{
+						output += '<td width=180><b>Balance</b></td>';
+					}
+					output += '</tr>';
+					output += '<tr><td align="center" rowspan=2>';
+					
+					if(data[i].atTransaction.sender == data.address)
+					{
+						output += '<img src=img/at_tx_out.png>';
+					}
+					else
+					{
+						output += '<img src=img/at_tx_in.png>';
+					}
+					output += '<br><font size="-2">Automated Transaction</font></td>';
+					
+					if(data[i].atTransaction.sender == data.address)
+					{
+						output += '<td rowspan=2><font color="dimgray">'+data[i].atTransaction.sender+'</font></td>';
+					}
+					else
+					{
+						output += '<td rowspan=2><a href=?addr='+data[i].atTransaction.sender+'>'+data[i].atTransaction.sender+'</a></td>';
+					}
+					output += '<td>'+addCommas(data[i].atTransaction.amount)+' <font size="-2">Qora</font>';
+					
+					if(data[i].atTransaction.recipient == data.address)
+					{
+						output += '<td><font color="dimgray">'+data[i].atTransaction.recipient+'</font></td>';
+					}
+					else
+					{
+						if(data[i].atTransaction.recipient == '11111111111111111111111111')
+						{
+							output += '<td>11111111111111111111111111<br>';
+							output += '(generator of <a href=?block='+data[i].atTransaction.blockHeight+'>'+ data[i].atTransaction.blockHeight +'</a> block: ';
+							output += '<a href=?addr='+data[i].atTransaction.generatorAddress+'>'+data[i].atTransaction.generatorAddress+'</a>)' ;
+						}
+						else
+						{						
+							output += '<td><a href=?addr='+data[i].atTransaction.recipient+'>'+data[i].atTransaction.recipient+'</font></td>';
+						}
+					}
+					
+					output += '<td>'+data[i].atTransaction.seq;
+					
+					if(data[i].hasOwnProperty('balance'))
+					{
+						output += '<td rowspan=2>'+printBalance(data[i].balance)+'</td>';
+					}
+					output += '</tr>';
+						
+					var message = data[i].atTransaction.message;
+					if(message == '')
+					{
+						message = '<b>no</b>';
+					}
+					output += '<tr><td colspan=3><b>Message:</b> ' + wordwrap(message, 80, '<br>', true);
+					
+					output += '</table>';
+					
+					output += '</table>';
+				}
+					
+				if(data[i].type == 'transaction')
+				{
+					if(data[i].transaction.type == 1) // Genesis
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
+						output += '<td><b>Recipient</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/01_genesis.jpg>';
+						output += '<br><font size="-2">Genesis</font></td>';
+						
+						output += '<td>Genesis</td>';
+						
+						output += '<td>'+addCommas(data[i].transaction.amount)+' <font size="-2">Qora</font>';
+						output += '<br>fee: '+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						if(data[i].transaction.recipient == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.recipient+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.recipient+'>'+data[i].transaction.recipient+'</font></td>';
+						}
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						
+						output += '</tr></table>';
+						
+						output += '</table>';
+					}
+					
+					if(data[i].transaction.type == 2) // Payment
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+						
+						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
+						output += '<td><b>Recipient</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						if(data[i].transaction.sender == data.address)
+						{
+							output += '<img src=img/02_payment_out.png>';
+						}
+						else
+						{
+							output += '<img src=img/02_payment_in.png>';
+						}
+						output += '<br><font size="-2">Payment</font></td>';
+						
+						if(data[i].transaction.sender == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.sender+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.sender+'>'+data[i].transaction.sender+'</a></td>';
+						}
+						output += '<td>'+addCommas(data[i].transaction.amount)+' <font size="-2">Qora</font>';
+						output += '<br>fee: '+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						if(data[i].transaction.recipient == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.recipient+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.recipient+'>'+data[i].transaction.recipient+'</font></td>';
+						}
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table>';
+					}
+					
+					if(data[i].transaction.type == 3) // Name registration
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Owner</b></td><td width=100><b>Fee</b></td>';
+						output += '<td><b>Name:</b> <a href="?name='+encodeURIComponent(data[i].transaction.name)+'">'+htmlFilter(data[i].transaction.name)+'</a></td>';
+						output += '<td><b>Site:</b> <a href=/' + encodeURIComponent(data[i].transaction.name) + '>http://'+ document.location.host + '/' + htmlFilter(data[i].transaction.name) +'</a></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/03_name_registration.png>';
+						output += '<br><font size="-2">Name Registration</font></td>';
+						
+						if(data[i].transaction.owner == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.owner+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.owner+'>'+data[i].transaction.owner+'</a></td>';
+						}
+						output += '<td>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font>';
+						
+						output += '<td colspan=2><b>';
+						if(data[i].transaction.сompressed)
+						{
+							output += 'Compressed';
+						}
+						output += ' Value:</b><pre style="width: 95%;">'+htmlFilter(wordwrap(data[i].transaction.value, 80, '\n', true))+'</pre>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 4) // Name Update
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a> ';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+						
+						output += '<b>Action</b></td><td width="290"><b>New Owner</b></td><td width=100><b>Fee</b></td>';
+						output += '<td><b>Name:</b> <a href="?name='+encodeURIComponent(data[i].transaction.name)+'">'+htmlFilter(data[i].transaction.name)+'</a></td>';
+						output += '<td><b>Site:</b> <a href=/' + encodeURIComponent(data[i].transaction.name) + '>http://'+ document.location.host + '/' + htmlFilter(data[i].transaction.name) +'</a></td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/04_name_update.png>';
+						output += '<br><font size="-2">Name Update</font></td>';
+						
+						if(data[i].transaction.newOwner == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.newOwner+'</font>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.newOwner+'>'+data[i].transaction.newOwner+'</a>';
+						}
+						output += '<br><font color="e5e5e5">'+data[i].transaction.owner+'</font>';
+						
+						output += '<td>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font>';
+						
+						output += '<td colspan=2><b>New ';
+						if(data[i].transaction.сompressed)
+						{
+							output += 'Compressed';
+						}
+						output += ' Value:</b><pre style="width: 95%;">'+htmlFilter(wordwrap(data[i].transaction.newValue, 80, '\n', true))+'</pre>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					
+					if(data[i].transaction.type == 5) // Name to Sale
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Owner</b></td><td width=100><b>Fee</b></td>';
+						output += '<td width=200><b>Price</b></td><td><b>Name</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/05_name_sale.png>';
+						output += '<br><font size="-2">Name to Sale</font></td>';
+						
+						if(data[i].transaction.owner == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.owner+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.owner+'>'+data[i].transaction.owner+'</a></td>';
+						}
+						output += '<td>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td>'+addCommas(data[i].transaction.amount)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td><a href="?name='+encodeURIComponent(data[i].transaction.name)+'">' + htmlFilter(data[i].transaction.name) + '</td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 6) // Cancel Name Sale
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+						
+						output += '<b>Action</b></td><td width="290"><b>Owner</b></td><td width=200><b>Fee</b></td>';
+						output += '<td><b>Name</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/06_cancel_name_sale.png>';
+						output += '<br><font size="-2">Cancel Name Sale</font></td>';
+						
+						if(data[i].transaction.owner == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.owner+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.owner+'>'+data[i].transaction.owner+'</a></td>';
+						}
+						
+						output += '<td>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td><a href="?name='+encodeURIComponent(data[i].transaction.name)+'">' + htmlFilter(data[i].transaction.name) + '</td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 7) // Name Purchase
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Seller</b></td><td><b>Name</b></td><td width=200><b>Amount</b></td>';
+						output += '<td><b>Buyer</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						if(data[i].transaction.seller == data.address)
+						{
+							output += '<img src=img/07_name_purchase_in.png>';
+							output += '<br><font size="-2">Name Selling</font></td>';
+						}
+						else
+						{
+							output += '<img src=img/07_name_purchase_out.png>';
+							output += '<br><font size="-2">Name Buying</font></td>';
+						}
+						
+						if(data[i].transaction.seller == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.seller+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.seller+'>'+data[i].transaction.seller+'</a></td>';
+						}
+						
+						output += '<td><a href="?name='+encodeURIComponent(data[i].transaction.name)+'">'+htmlFilter(data[i].transaction.name)+'</a></td>';
+						
+						output += '<td>'+addCommas(data[i].transaction.amount)+' <font size="-2">Qora</font>';
+						output += '<br>fee: '+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						if(data[i].transaction.buyer == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.buyer+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.buyer+'>'+data[i].transaction.buyer+'</font></td>';
+						}
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 8) // Poll Creation
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Creator</b></td><td width=100><b>Fee</b></td>';
+						output += '<td><b>Poll</b></td><td><b>Options</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top" rowspan=2>';
+						
+						output += '<img src=img/08_poll_creation.jpg>';
+						output += '<br><font size="-2">Poll Creation</font></td>';
+						
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<td rowspan=2><font color="dimgray">'+data[i].transaction.creator+'</font></td>';
+						}
+						else
+						{
+							output += '<td rowspan=2><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
+						}
+						output += '<td rowspan=2>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+
+						output += '<td><a href="?poll=' + encodeURIComponent(data[i].transaction.name) + '">'+htmlFilter(data[i].transaction.name)+'</a></td>';
+						
+						output += '<td><ul>';
+						
+						for(key in data[i].transaction.options) {
+							output += '<li>' + htmlFilter(data[i].transaction.options[key]) + '</li>';
+						}
+						output += '</ul></td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr>';
+						output += '<tr><td colspan=2><b>Description:</b> ' + htmlFilter(data[i].transaction.description);
+						output += '</table>';
+						
+						output += '</table><br>';
+					}
+					
+					
+					if(data[i].transaction.type == 9) // Poll Vote
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+						
+						output += '<b>Action</b></td><td width="290"><b>Creator</b></td><td width=100><b>Fee</b></td>';
+						output += '<td><b>Poll</b></td><td><b>Option</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/09_poll_vote.jpg>';
+						output += '<br><font size="-2">Poll Vote</font></td>';
+						
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.creator+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
+						}
+						output += '<td>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td><a href="?poll=' + encodeURIComponent(data[i].transaction.poll) + '">'+htmlFilter(data[i].transaction.poll)+'</a></td>';
+						
+						output += '<td>'+htmlFilter(data[i].transaction.optionString)+'</td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 10) // Arbitrary Transaction
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Creator</b></td><td width=150><b>Fee:</b> '+addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font>'+'</td>';
+						output += '<td><b>data (base58):</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/10_arbitrary_transaction.png>';
+						output += '<br><font size="-2">Arbitrary Transaction</font></td>';
+						
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.creator+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
+						}
+						
+						output += '<td><b>Service:</b> '+data[i].transaction.service+'</td>';
+						
+						
+						buf = uintToString(Base58.decode(data[i].transaction.data));
+
+						buf = buf.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g, '&quot;');
+
+						output += '<td><abbr title="'+buf+'"><pre>'+wordwrap(data[i].transaction.data, 70, '\n', true)+'</pre></td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 11) // Asset issue
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+						
+						output += '<b>Action</b></td><td width="290"><b>Creator</b></td>';
+						output += '<td width="100"><b>Fee</b></td><td><b>Name:</b> ';
+						output += '<a href=?asset='+data[i].transaction.asset+'>'+htmlFilter(data[i].transaction.assetName)+'</a>'
+						output += '</td><td><b>Key</b><td align=center><b>Quantity</b><td><b>Divisible</b>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/11_asset_issue.png>';
+						output += '<br><font size="-2">Asset Issue</font></td>';
+						
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.creator+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
+						}
+						output += '<td>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td><b>Description:</b> '+htmlFilter(data[i].transaction.description)+'</td>';
+						
+						output += '<td align=center>'+data[i].transaction.asset+'</td>';
+						output += '<td align=center>'+addCommas(data[i].transaction.quantity)+'</td>';
+						output += '<td align=center>'+data[i].transaction.divisible+'</td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+
+					if(data[i].transaction.type == 12) // Asset Payment
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
+						output += '<td><b>Asset</b></td><td><b>Recipient</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						if(data[i].transaction.sender == data.address)
+						{
+							output += '<img src=img/12_asset_transfer_out.png>';
+						}
+						else
+						{
+							output += '<img src=img/12_asset_transfer_in.png>';
+						}
+						
+						output += '<br><font size="-2">Asset Transfer</font></td>';
+						
+						if(data[i].transaction.sender == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.sender+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.sender+'>'+data[i].transaction.sender+'</a></td>';
+						}
+						output += '<td>'+addCommas(data[i].transaction.amount);
+						output += ' ' + getAssetNameMini(data[i].transaction.asset, data[i].transaction.assetName);
+						
+						output += '<br>fee: '+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td>' + ' <a href=?asset='+data[i].transaction.asset+'>'+getAssetName(data[i].transaction.asset, data[i].transaction.assetName) + '</a>';
+						
+						if(data[i].transaction.recipient == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.recipient+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.recipient+'>'+data[i].transaction.recipient+'</font></td>';
+						}
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 13) // Asset order creation
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Сreator</b></td><td width=100><b>Fee</b></td>';
+						output += '<td width=135><b>Have</b></td><td width=135><b>Want</b></td>';
+						output += '<td width=135><b>Price</b></td><td width=135><b>Amount</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/13_order_creation.png>';
+						output += '<br><font size="-2">Order Creation</font></td>';
+						
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.creator+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
+						}
+						
+						output += '<td>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td>' + ' <a href=?asset='+data[i].transaction.order.have+'>'+getAssetName(data[i].transaction.order.have, data[i].transaction.haveName) + '</a>';
+						
+						output += '<td>' + ' <a href=?asset='+data[i].transaction.order.want+'>'+getAssetName(data[i].transaction.order.want, data[i].transaction.wantName) + '</a>';
+						
+						output += '<td>'+addCommas(data[i].transaction.order.price);
+						
+						output += '<br>'+getAssetNameMini(data[i].transaction.order.want, data[i].transaction.wantName);
+						output += '/'+getAssetNameMini(data[i].transaction.order.have, data[i].transaction.haveName);
+						
+						output += '<td>'+addCommas(data[i].transaction.order.amount);
+						
+						output += ' '+getAssetNameMini(data[i].transaction.order.have, data[i].transaction.haveName);
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+
+					if(data[i].transaction.type == 14) // Asset cancel order
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Сreator</b></td><td width=100><b>Fee</b></td>';
+						output += '<td width=135><b>Have</b></td><td width=135><b>Want</b></td>';
+						output += '<td width=135><b>Price</b></td><td width=135><b>Amount<font size=-2> left from <a href=?order='+data[i].transaction.order+'>order</a></b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						output += '<img src=img/14_cancel_order.png>';
+						output += '<br><font size="-2">Cancel Order</font></td>';
+						
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.creator+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
+						}
+						
+						output += '<td>'+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td>' + ' <a href=?asset='+data[i].transaction.orderSource.have+'>'+getAssetName(data[i].transaction.orderSource.have, data[i].transaction.orderSource.haveName) + '</a>';
+						
+						output += '<td>' + ' <a href=?asset='+data[i].transaction.orderSource.want+'>'+getAssetName(data[i].transaction.orderSource.want, data[i].transaction.orderSource.wantName) + '</a>';
+						
+						output += '<td>'+addCommas(data[i].transaction.orderSource.price);
+						
+						output += '<br>'+getAssetNameMini(data[i].transaction.orderSource.want, data[i].transaction.orderSource.wantName);
+						output += '/'+getAssetNameMini(data[i].transaction.orderSource.have, data[i].transaction.orderSource.haveName);
+						
+						output += '<td>'+addCommas(data[i].transaction.orderSource.amountLeft);
+						
+						output += ' '+getAssetNameMini(data[i].transaction.orderSource.have, data[i].transaction.orderSource.haveName);
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 15) // Multi Payment
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
+						output += '<td><b>Recipient</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top">';
+						
+						if(data[i].transaction.sender == data.address)
+						{
+							output += '<img src=img/15_multi_payment_out.png>';
+						}
+						else
+						{
+							output += '<img src=img/15_multi_payment_in.png>';
+						}
+						output += '<br><font size="-2">Multi Payment</font></td>';
+						
+						if(data[i].transaction.sender == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.sender+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.sender+'>'+data[i].transaction.sender+'</a></td>';
+						}
+						
+						output += '<td>'+addCommas(data[i].transaction.totalAmount)+' '+getAssetNameMini(data[i].transaction.asset, data[i].transaction.assetName);
+						output += '<br>fee: '+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+
+						output += '<td>';
+						for(key in data[i].transaction.payments) {
+							output += addCommas(data[i].transaction.payments[key].amount) + ' ' + getAssetNameMini(data[i].transaction.asset, 
+								data[i].transaction.assetName) + ' -> ';					
+							if(data[i].transaction.payments[key].recipient == data.address)
+							{
+								output += '<font color="dimgray">'+data[i].transaction.payments[key].recipient+'</font>';
+							}
+							else
+							{
+								output += '<a href=?addr=' + data[i].transaction.payments[key].recipient + '>' + data[i].transaction.payments[key].recipient + '</font></a>';
+							}
+							output += '<br>';
+						}
+						output += '</td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					
+					if(data[i].transaction.type == 16) // Deploy AT
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Creator</b></td><td width=200><b>Amount</b></td>';
+						output += '<td><b>Values';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top" rowspan=2>';
+						
+						output += '<img src=img/16_deploy_at.png>';
+						output += '<br><font size="-2">Deploy AT</font></td>';
+						
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.creator+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
+						}
+						output += '<td>'+addCommas(data[i].transaction.amount)+' <font size="-2">Qora</font>';
+						output += '<br>fee: '+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						output += '<td><b>Name: </b>' + data[i].transaction.name;
+						if(data[i].transaction.atAddress == data.address)
+						{
+							output += '<br><b>AT Address: </b> <font color="dimgray">' + data[i].transaction.atAddress + '</font>';
+						}
+						else
+						{
+							output += '<br><b>AT Address: </b><a href=?addr='+data[i].transaction.atAddress+'>' + data[i].transaction.atAddress + '</a>';
+						}
+						output += '<br><b>AT Type:</b> ' + data[i].transaction.atType;
+						output += '<br><b>Description:</b> ' + data[i].transaction.description;
+						output += '<br><b>Tags:</b> ' + data[i].transaction.tags;
+						output += '</td>';
+						
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td rowspan=2>' + printBalance(data[i].balance) + '</td>';
+						}
+						output += '</tr>';
+						
+						
+						output += '<tr><td colspan=3><b>Creation Bytes:</b><pre>' + wordwrap(data[i].transaction.creationBytes, 138, '\n', true);
+						
+						output += '</tr></table>';
+						
+						output += '</table><br>';
+					}
+					
+					if(data[i].transaction.type == 17) // Message
+					{
+						output += '<table width="100%"><tr><td>';
+						
+						output += '<table width="100%" style="border-top: 1px solid #ddd; background-color: #f1f1f1; border-spacing: 7px; border-collapse: separate;">';
+						
+						output += '<tr><td><a href='+ urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
+						
+						output += '<a href=?tx='+data[i].transaction.signature+'>'+data[i].transaction.signature+'</a></td>';
+						output += '<td align=right width=250>';
+						if(data[i].transaction.hasOwnProperty('blockHeight'))
+						{
+							output += 'Height: <a href=?block='+data[i].transaction.blockHeight+'>'+data[i].transaction.blockHeight+'</a>';
+							output += ' / confirmations: '+data[i].transaction.confirmations;
+						}
+						output += '</td>';
+						output += '<td align=right width=200>'+data[i].transaction.dateTime+'</td></tr></table>';
+						
+						output += '<tr><td>';
+						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
+
+						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
+						output += '<td><b>Recipient</b></td><td><b>isText</b></td><td><b>Encrypted</b></td>';
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td width=180><b>Balance</b></td>';
+						}
+						output += '</tr>';
+						output += '<tr><td align="center" valign="top" rowspan=2>';
+						
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<img src=img/17_message_out.png>';
+						}
+						else
+						{
+							output += '<img src=img/17_message_in.png>';
+						
+						}
+						output += '<br><font size="-2">Message</font></td>';
+							
+						if(data[i].transaction.creator == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.creator+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
+						}
+						output += '<td>'+addCommas(data[i].transaction.amount)+' <font size="-2">Qora</font>';
+						output += '<br>fee: '+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
+						
+						if(data[i].transaction.recipient == data.address)
+						{
+							output += '<td><font color="dimgray">'+data[i].transaction.recipient+'</font></td>';
+						}
+						else
+						{
+							output += '<td><a href=?addr='+data[i].transaction.recipient+'>'+data[i].transaction.recipient+'</font></td>';
+						}
+						
+						output += '<td>'+data[i].transaction.isText+'</td>';
+						output += '<td>'+data[i].transaction.encrypted+'</td>';
+						
+						if(data[i].hasOwnProperty('balance'))
+						{
+							output += '<td rowspan=2>'+printBalance(data[i].balance)+'</td>';
+						}
+						output += '</tr>';
+						
+						output += '<tr><td colspan=5><b>Message:</b> <pre>';
+						if(data[i].transaction.encrypted)
+						{
+							output += '<font color=red>encrypted</font>';
+						}
+						else
+						{
+							if(data[i].transaction.isText)
+							{
+								buf = htmlFilter(uintToString(Base58.decode(data[i].transaction.data)));
+								output += wordwrap(buf, 120, '\n', true);
+							}
+							else
+							{
+								output += '<b>base58:</b> ' + wordwrap(data[i].transaction.data, 120, '\n', true);
+							}
+						}
+												
+						output += '</pre></td>';
+						
+						output += '</table>';
+						
+						output += '</table><br>';
+					}
+				}
+
+			}
+		
+			if(data.type == 'standardAccount' || data.type == 'name' || data.type == 'at')
+			{
+				output += pages(data.countTx.allCount, data.txOnPage, data.start, data.end, url, data.allOnOnePage);
+			}
+			
+			output +=  '</table>';
+			
+			if(data.lastBlock.boost != 'ok' && (data.type != 'block')  && (data.type != 'unconfirmed'))
+			{
+				output +=  'You can speed up the output by turning on boost mode in settings.';	
+			}
+		}
+
+	} catch(e) {
+		//output = e;
+	}
+	
+	return output;
+	
+	
+}
+
+function uintToString(uintArray) {
+    var encodedString = String.fromCharCode.apply(null, uintArray),
+        decodedString = decodeURIComponent(escape(encodedString));
+    return decodedString;
+}
+
+function htmlFilter(str)
+{
+	return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+}
+	
+function pages(dataallCount, datatxOnPage, datastart, dataend, url, allOnOnePage)
+{
+	var pages = '';
+	var start = 0;
+	var end = 0;
+	var k = 0;
+
+	pages += '<table width="100%"><tr><td>Pages: ';
+	
+	if(datastart < dataallCount)
+	{
+		pages += '<a class=without style="font-size: 15px;" href=' + url + '&start=' + ( datastart + datatxOnPage + 1 ) + '>«</a> ';
+	}
+		
+	do {
+		k++;
+		if(k == 1)
+		{
+			start = dataallCount;
+		}
+		else
+		{
+			start = end - 1;
+		}
+		
+		if(start > datatxOnPage)
+		{
+			end = start - datatxOnPage;
+		}
+		else
+		{
+			end = 1;
+		}
+		
+		if(datastart <= start && datastart >= end && !allOnOnePage)
+		{
+			pages += '<b><nobr>['+ start + '-' + end + ']</nobr></b> ';
+		}
+		else
+		{
+			pages += '<nobr><a class=without href='+url.replace( '&allOnOnePage', '')+'&start='+start+'>'+ start +'-' + end +'</a></nobr> ';
+		}
+	} while (end > 1)
+	
+	if(dataend > 1)
+	{
+		pages += ' <a class=without style="font-size: 15px;" href=' + url + '&start=' + ( dataend - 1 ) + '>»</a>';
+	}
+	
+	if(allOnOnePage)
+	{
+		pages += '&nbsp;<b><nobr>[All on one page]</nobr></b>';
+	}
+	else
+	{
+		pages += '&nbsp;<a class=without href=' + url.replace( '&allOnOnePage', '') + '&allOnOnePage' + '>All on one page</a>';
+	}
+	
+	pages +=  '</table>';
+		
+	return pages;
+}	
+	
+function printBalance(balance)
+{
+	var output = '';
+	for(key in balance)
+	{
+		output += ''+addCommas(balance[key].amount)+' '+ getAssetNameMini(key, balance[key].assetName) +'<br>';
+	}	
+	return output;
+}
+
+function search(data)
+{
+	var output = "";
+
+	if(data.hasOwnProperty('error'))
+	{
+		return '<h2>' + data.error + '</h2>';
+	}
+		
+	var foundList = "";
+	var foundOne = "";
+	
+	for(key in data.foundList) {
+		switch (data.foundList[key]) {
+			case 'standardAccount':
+				foundList += '<li><a href="?addr='+encodeURIComponent(data.query)+'">Standard Account: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?addr='+encodeURIComponent(data.query);
+				break
+			case 'atAccount':
+				foundList += '<li><a href="?addr='+encodeURIComponent(data.query)+'">AT Account: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?addr='+encodeURIComponent(data.query);
+				break
+			case 'transactionSignature':
+				foundList += '<li><a href="?tx='+encodeURIComponent(data.query)+'">Transaction: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?tx='+encodeURIComponent(data.query);
+				break
+			case 'blockSignature':
+			case 'blockHeight':
+			case 'blockLast':
+				foundList += '<li><a href="?block='+encodeURIComponent(data.query)+'">Block: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?block='+encodeURIComponent(data.query);
+				break
+			case 'name':
+				foundList += '<li><a href="?name='+encodeURIComponent(data.query)+'">Name: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?name='+encodeURIComponent(data.query);
+				break	
+			case 'asset':
+				foundList += '<li><a href="?asset='+encodeURIComponent(data.query)+'">Asset: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?asset='+encodeURIComponent(data.query);
+				break	
+			case 'pool':
+				foundList += '<li><a href="?pool='+encodeURIComponent(data.query)+'">Pool: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?pool='+encodeURIComponent(data.query);
+				break	
+			case 'trade':
+				foundList += '<li><a href="?trade='+encodeURIComponent(data.query)+'">Trade: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?trade='+encodeURIComponent(data.query);
+				break	
+			case 'atTx':
+				foundList += '<li><a href="?atTx='+encodeURIComponent(data.query)+'">AT Transaction: '+htmlFilter(data.query)+'</a></li>';
+				foundOne = '?atTx='+encodeURIComponent(data.query);
+				break	
+		}
+	}
+
+	if(data.foundCount == 1)
+	{
+		document.location.href = foundOne;
+		return null;
+	}
+	
+	output += lastBlock(data.lastBlock);
+	
+	if(data.foundCount == 0)
+	{
+		output += "<h2>Search no results</h2>";
+	}
+	else 
+	{
+		output += '<table width="" border=0><tr><td align=left>';
+		output += "<h2>Search results:</h2>";
+		output += "<ul>";
+		output += foundList;
+		output += "</ul>";
+		
+	}
+	
+	return output;
+}
+
+function lastBlock(lastBlock)
+{
+	var output = '';
+	output += 'Last processed block: <a href=?block='+lastBlock.height+'>' + lastBlock.height + '</a>';
+	output += ' (' + lastBlock.dateTime +', ' + secToFine(new Date().getTime() - lastBlock.timestamp) + ' ago'+ ') ';
+	output += '<br><br>';
+	
+	return output;
+}
+	
+function parseUrlQuery() {
+    var data = {};
+    if(document.location.search) {
+        var pair = (location.search.substr(1)).split('&');
+        for(var i = 0; i < pair.length; i ++) {
+            var param = pair[i].split('=');
+            data[param[0]] = param[1];
+        }
+    }
+    return data;
+}
+
+function getQueryParams(name) {
+   qs = location.search;
+
+   var params = [];
+   var tokens;
+   var re = /[?&]?([^=]+)=([^&]*)/g;
+
+   while (tokens = re.exec(qs))
+   { 
+       if (decodeURIComponent(tokens[1]) == name)
+       params.push(decodeURIComponent(tokens[2]));
+   }
+
+   return params;
+}
+
+function buttonSearch() {
+   document.location.href = '?q=' + encodeURIComponent(document.getElementById('q').value);
+}
+
+function start() {
+    
+	document.getElementById('main').innerHTML = '';
+	 
+	document.getElementById('home').href = document.location.pathname;
+	document.getElementById('home2').href = document.location.pathname;
+	
+	document.getElementById('menuBlocks').setAttribute('class', '');
+	document.getElementById('menuTop100Richest').setAttribute('class', '');
+	document.getElementById('menuPolls').setAttribute('class', '');
+	document.getElementById('menuAssets').setAttribute('class', '');
+	document.getElementById('menuATs').setAttribute('class', '');
+	
+	var params = parseUrlQuery();
+	
+	var title = 'Qora BlockExplorer';
+	
+	if(params.hasOwnProperty('aTs'))
+	{
+		asyncAjax('blockexplorer.json?aTs', 'aTs')
+		
+		document.title = title + ' - AT';
+	
+		document.getElementById('menuATs').setAttribute('class', 'active');
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('polls'))
+	{
+		asyncAjax('blockexplorer.json?polls', 'polls')
+		
+		document.title = title + ' - Polls';
+		
+		document.getElementById('menuPolls').setAttribute('class', 'active');
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('assets'))
+	{
+		asyncAjax('blockexplorer.json?assets', 'assets')
+		
+		document.title = title + ' - Assets';
+		
+		document.getElementById('menuAssets').setAttribute('class', 'active');
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('top'))
+	{
+		if(isFinite(params['top']))
+		{
+			limit = params['top'];
+		}
+		else if(params['top'] == 'allnotzero')
+		{
+			limit = -1;
+		}
+		else if(params['top'] == 'all')
+		{
+			limit = -2;
+		}
+		else
+		{
+			limit = 100;
+		}
+		
+		if(params.hasOwnProperty('asset') && isFinite(params['asset']))
+		{
+			asset = params['asset'];
+		}
+		else
+		{
+			asset = 0;
+		}
+		
+		asyncAjax('blockexplorer.json?top='+limit+'&asset='+asset, 'topRichest')
+		
+		document.title = title + ' - Top ' + limit;
+	
+		document.getElementById('menuTop100Richest').setAttribute('class', 'active');
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('addr'))
+	{
+		if(params.hasOwnProperty('start') && isFinite(params['start']))
+		{
+			start = params['start'];
+		}
+		else
+		{
+			start = -1;
+		}
+		
+		if(params.hasOwnProperty('withoutBlocks'))
+		{
+			withoutBlocks = '&withoutBlocks';
+		}
+		else
+		{
+			withoutBlocks = '';
+		}
+		
+		if(params.hasOwnProperty('allOnOnePage'))
+		{
+			allonOnePage = '&allOnOnePage';
+		}
+		else
+		{
+			allonOnePage = '';
+		}
+		
+		asyncAjax('blockexplorer.json?addr=' + params['addr'] + '&start=' + start + withoutBlocks + allonOnePage , 'mainQuery');
+		
+		if(params['addr'].substring(0, 1) == 'A')
+		{
+			document.title = title + ' - AT Address - ' + params['addr'];
+		}
+		else if(params['addr'].substring(0, 1) == 'Q')
+		{
+			document.title = title + ' - Address - ' + params['addr'];
+		}
+		
+		document.getElementById('q').value = decodeURIComponent(params['addr']);
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('name'))
+	{
+		if(params.hasOwnProperty('start') && isFinite(params['start']))
+		{
+			start = params['start'];
+		}
+		else
+		{
+			start = -1;
+		}
+		
+		if(params.hasOwnProperty('allOnOnePage'))
+		{
+			allonOnePage = '&allOnOnePage';
+		}
+		else
+		{
+			allonOnePage = '';
+		}
+		
+		asyncAjax('blockexplorer.json?name=' + params['name'] + '&start=' + start + allonOnePage , 'mainQuery');
+		
+		document.title = title + ' - Name - ' + decodeURIComponent (params['name']);
+		
+		document.getElementById('q').value = decodeURIComponent(params['name']);
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('tx'))
+	{
+		asyncAjax('blockexplorer.json?tx=' + params['tx'], 'mainQuery');
+		
+		document.title = title + ' - Transaction - ' + params['tx'];
+		
+		document.getElementById('q').value = decodeURIComponent(params['tx']);
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('trade'))
+	{
+		asyncAjax('blockexplorer.json?trade=' + params['trade'], 'mainQuery');
+		
+		document.title = title + ' - Trade - ' + params['trade'];
+		
+		document.getElementById('q').value = decodeURIComponent(params['trade']);
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('atTx'))
+	{
+		
+		asyncAjax('blockexplorer.json?atTx=' + params['atTx'], 'mainQuery');
+		
+		document.title = title + ' - AT TX - ' + params['atTx'];
+		
+		document.getElementById('q').value = decodeURIComponent(params['atTx']);
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('poll'))
+	{
+		asyncAjax('blockexplorer.json?poll=' + params['poll'], 'poll');
+		
+		document.title = title + ' - Poll - ' + decodeURIComponent(params['poll']);
+		
+		document.getElementById('q').value = decodeURIComponent(params['poll']);
+		
+		document.getElementById('menuPolls').setAttribute('class', 'active');
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('asset'))
+	{
+		var assets = getQueryParams('asset');
+		if(assets.length == 2)
+		{
+			asyncAjax('blockexplorer.json?asset=' + assets[0] + '&asset='+assets[1], 'trades');
+			
+			document.title = title + ' - Trades - ' + assets[0] + ' - '+ assets[1];
+		}
+		else
+		{
+			asyncAjax('blockexplorer.json?asset=' + params['asset'], 'asset');
+			
+			document.title = title + ' - Asset - ' + params['asset'];
+			
+			document.getElementById('q').value = decodeURIComponent(params['asset']);
+		}
+		
+		document.getElementById('menuAssets').setAttribute('class', 'active');
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('block'))
+	{
+		
+		asyncAjax('blockexplorer.json?block=' + params['block'], 'mainQuery');
+		
+		document.title = title + ' - Block - ' + params['block'];
+		
+		document.getElementById('q').value = decodeURIComponent(params['block']);
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('unconfirmed'))
+	{
+		
+		asyncAjax('blockexplorer.json?unconfirmed', 'mainQuery');
+		
+		document.title = title + ' - Unconfirmed Transactions';
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('startBlock'))
+	{
+		asyncAjax('blockexplorer.json?blocks&start=' + params['startBlock'], 'blocks');
+
+		document.title = title + ' - Start from ' + params['startBlock'] + ' block';
+		
+		return;
+	}
+	
+	if(params.hasOwnProperty('q'))
+	{
+		asyncAjax('blockexplorer.json?q=' + params['q'], 'search');
+
+		document.title = title + ' - Search - ' + decodeURIComponent(params['q']);
+		document.getElementById('q').value = params['q'];
+		
+		return;
+	}
+	
+	asyncAjax('blockexplorer.json?blocks', 'blocks');
+	
+	document.title = title;
+	
+	document.getElementById('menuBlocks').setAttribute('class', 'active');
+	
+}
+	</script>
+</head>
+<body onload='start()' topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style='height:100%'>
+	<div align="center" style='height:100%'>
+<table width="100%" height=85% cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td valign="top" align="" colspan="3" height="1" nowrap>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/index/main.html" class="navbar-brand"><img src="img/logo_header.png" alt="" class="logo-header"></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a id=home href=''>BlockExplorer</a></li>
+			
+			<li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="glyphicon glyphicon-th"></span></a>
+          <div role="menu" class="dropdown-menu">
+            <div class="menu-grid">
+              <div class="list">
+                <div class="row">
+					<div class="col-sm-4 col-xs-6"><a href="/index/webdirectory.html">
+                      <div class="menu"><span class="glyphicon glyphicon-globe"></span><a href="/index/webdirectory.html">Webdirectory</a></div></a></div>
+					<div class="col-sm-4 col-xs-6"><a href="/index/blogdirectory.html">
+                      <div class="menu"><span class="glyphicon glyphicon-list"></span><a href="/index/blogdirectory.html">Blogdirectory</a></div></a></div>
+                  <div class="col-sm-4 col-xs-6"><a href="/index/blog.html">
+                      <div class="menu"><span class="glyphicon glyphicon-edit"></span><a href="/index/blog.html">Blog</a></div></a></div>
+                  <div class="col-sm-4 col-xs-6"><a href="/index/websitecreation.html">
+                      <div class="menu"><span class="glyphicon glyphicon-file"></span><a href="/index/websitecreation.html">Web Builder</a></div></a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+            
+          </ul>
+          <div class="navbar-form navbar-left">
+            <div class="input-group">
+              <label for="name" class="sr-only">Search</label>
+              <input id="q" size="55" type="text" value="" class="form-control" onkeydown="if (event.keyCode == 13) buttonSearch()"><span class="input-group-btn">
+                <button id="button" type="button" value="!searchval!" class="btn btn-link" onClick="buttonSearch()"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+	
+ <div class="container-fluid">
+      <div class="row">
+        <div class="main-tabs">
+          <div class="container">
+            <div class="row">
+              <ul role="tablist" class="nav nav-tabs">
+                <li id=menuBlocks><a href="#" id=home2>Blocks</a></li>
+				<li id=menuTop100Richest><a href="?top=100">Top 100 Richest</a></li>
+				<li id=menuPolls><a href="?polls">Polls</a></li>
+				<li id=menuAssets><a href="?assets">Assets</a></li>
+				<li id=menuATs><a href="?aTs">ATs</a></li>				
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</td>
+</tr>
+<tr>
+<td colspan="3" valign="top" align="center" width="100%">
+
+<br> 
+
+<div id="loading" style='display:none;'><img src="img/loading.gif" alt="Banner" /></div>
+
+<div id='main'></div>
+
+</td>
+</tr>
+</table>
+
+
+<table border="0" height=15% width="100%" cellspacing=0 cellpadding=0>
+<tr valign="bottom">
+<td align="center" style='padding-top:15px; padding-bottom:5px;'>
+<a href=http://qora.org><img border="0" src="img/logo_bottom.png"></a>
+</td>
+</tr>
+</table>
+
+</table>
+</body>
+</html>

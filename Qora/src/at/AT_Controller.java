@@ -156,6 +156,7 @@ public abstract class AT_Controller {
 				return AT_Error.INCORRECT_VERSION.getCode();
 			}
 
+			@SuppressWarnings("unused") //needed for AT don't delete
 			short reserved = b.getShort(); //future: reserved for future needs
 
 			short codePages = b.getShort();
@@ -182,6 +183,7 @@ public abstract class AT_Controller {
 				return AT_Error.INCORRECT_USER_PAGES.getCode();
 			}
 
+			@SuppressWarnings("unused") //needed for AT don't delete
 			long minActivationAmount = b.getLong();
 
 			int codeLen;
@@ -555,20 +557,6 @@ public abstract class AT_Controller {
 		return new Tuple2<Long, Long>(totalAmount, totalFees);
 	}
 	
-	private static long getATAccountBalance( String id ) 
-	{
-
-		Account account = new Account( id );
-
-		BigDecimal balance = account.getConfirmedBalance();
-
-		byte[] balanceBytes = balance.unscaledValue().toByteArray();
-		byte[] fill = new byte[8 - balanceBytes.length];
-		balanceBytes = Bytes.concat(fill, balanceBytes);
-
-		return Longs.fromByteArray(balanceBytes);
-
-	}
 
 	private static long getATAccountBalance( byte[] id )
 	{

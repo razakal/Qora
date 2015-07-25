@@ -12,19 +12,29 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 
-import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.transaction.Transaction;
+import settings.Settings;
+import utils.DateTimeFormat;
 import utils.Pair;
+import controller.Controller;
 
 @SuppressWarnings("serial")
 public class IssueAssetFrame extends JFrame
@@ -119,9 +129,16 @@ public class IssueAssetFrame extends JFrame
       	//TXTAREA DESCRIPTION
       	txtGBC.gridy = 2;
       	this.txtareaDescription = new JTextArea();
-      	this.txtareaDescription.setRows(4);
+       	
+      	this.txtareaDescription.setRows(6);
+      	this.txtareaDescription.setColumns(20);
       	this.txtareaDescription.setBorder(this.txtName.getBorder());
-      	this.add(this.txtareaDescription, txtGBC);
+
+      	JScrollPane scrollDescription = new JScrollPane(this.txtareaDescription);
+      	scrollDescription.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      	scrollDescription.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.add(scrollDescription, txtGBC);
+      	
       	
       	//LABEL QUANTITY
       	labelGBC.gridy = 3;
@@ -232,8 +249,72 @@ public class IssueAssetFrame extends JFrame
 				
 				return;
 			}
+			
+			//CHECK BIG FEE
+			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), Settings.getInstance().getBigFeeMessage(),
+		                "Confirmation",
+		                JOptionPane.YES_NO_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+				}
+				if (n == JOptionPane.NO_OPTION) {
+					
+					txtFee.setText("1");
+					
+					//ENABLE
+					this.issueButton.setEnabled(true);
+					
+					return;
+				}
+			}
 		
-			//CREATE POLL
+			BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForIssueAssetTransaction(this.txtName.getText(), this.txtareaDescription.getText()).getA();
+			if(fee.compareTo(recommendedFee) < 0)
+			{
+				int n = -1;
+				if(Settings.getInstance().isAllowFeeLessRequired())
+				{
+					n = JOptionPane.showConfirmDialog(
+						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
+									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
+									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
+		                "Confirmation",
+		                JOptionPane.YES_NO_CANCEL_OPTION);
+				}
+				else
+				{
+					n = JOptionPane.showConfirmDialog(
+							new JFrame(), "Fee less required!\n"
+										+ "Press OK to turn on required "+recommendedFee.toPlainString() + ".",
+			                "Confirmation",
+			                JOptionPane.OK_CANCEL_OPTION);
+				}
+				if (n == JOptionPane.YES_OPTION || n == JOptionPane.OK_OPTION) {
+					
+					if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+					{
+						this.txtFee.setText("1"); // Return to the default fee for the next name.
+					}
+					
+					fee = recommendedFee; // Set recommended fee for this name.
+					
+				}
+				else if (n == JOptionPane.NO_OPTION) {
+					
+				}	
+				else {
+					
+					//ENABLE
+					this.issueButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
+			//CREATE ASSET
 			PrivateKeyAccount creator = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
 			Pair<Transaction, Integer> result = Controller.getInstance().issueAsset(creator, this.txtName.getText(), this.txtareaDescription.getText(), quantity, this.chkDivisible.isSelected(), fee);
 			
@@ -248,9 +329,7 @@ public class IssueAssetFrame extends JFrame
 				
 			case Transaction.NOT_YET_RELEASED:
 				
-				Date release = new Date(Transaction.ASSETS_RELEASE);	
-				DateFormat format = DateFormat.getDateTimeInstance();
-				JOptionPane.showMessageDialog(new JFrame(), "Assets will be enabled at " + format.format(release) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Assets will be enabled at " + DateTimeFormat.timestamptoString(Transaction.ASSETS_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.INVALID_QUANTITY:
@@ -262,6 +341,11 @@ public class IssueAssetFrame extends JFrame
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;
 				
 			case Transaction.NO_BALANCE:
 			

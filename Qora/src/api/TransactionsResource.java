@@ -129,7 +129,7 @@ public class TransactionsResource {
 	
 	@GET
 	@Path("signature/{signature}")
-	public String getTransactionsBySignature(@PathParam("signature") String signature) throws Exception
+	public static String getTransactionsBySignature(@PathParam("signature") String signature) throws Exception
 	{
 		//DECODE SIGNATURE
 		byte[] signatureBytes;

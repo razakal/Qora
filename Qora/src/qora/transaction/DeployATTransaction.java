@@ -13,20 +13,21 @@ import java.util.List;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import at.AT;
-import at.AT_Constants;
-import at.AT_Controller;
-import at.AT_Exception;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import utils.Converter;
+import at.AT;
+import at.AT_Constants;
+import at.AT_Controller;
+import at.AT_Exception;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
 import database.DBSet;
 
 public class DeployATTransaction extends Transaction
@@ -494,6 +495,24 @@ public class DeployATTransaction extends Transaction
 		bf.put( this.creationBytes );
 		bf.putInt( db.getBlockMap().getLastBlock().getHeight(db) + 1 );
 		return bf.array().clone();
+	}
+	
+	public Account getATaccount()
+	{
+		byte[] name = StringUtil.getUtf8Bytes(this.name );
+		byte[] desc = StringUtil.getUtf8Bytes(this.description.replaceAll("\\s", "") );
+		ByteBuffer bf = ByteBuffer.allocate( name.length + desc.length + this.creator.getPublicKey().length + this.creationBytes.length + 4 );
+		bf.order( ByteOrder.LITTLE_ENDIAN );
+
+		bf.put( name );
+		bf.put( desc );
+		bf.put( this.creator.getPublicKey() );
+		bf.put( this.creationBytes );
+		bf.putInt( getParent().getHeight() );
+
+		String atId = Crypto.getInstance().getATAddress( bf.array().clone() );
+
+		return new Account(atId);
 	}
 
 	@Override

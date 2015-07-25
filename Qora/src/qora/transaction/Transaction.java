@@ -5,16 +5,14 @@ import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import org.json.simple.JSONObject;
 
-import database.DBSet;
 import qora.account.Account;
 import qora.account.PublicKeyAccount;
 import qora.block.Block;
 import qora.crypto.Base58;
 import settings.Settings;
+import database.DBSet;
 
 public abstract class Transaction {
 	
@@ -63,6 +61,8 @@ public abstract class Transaction {
 	public static final int AT_ERROR = 10000;
 	public static final int INVALID_TAGS_LENGTH = 37;
 	public static final int INVALID_TYPE_LENGTH = 38;
+	
+	public static final int FEE_LESS_REQUIRED = 40;
 	
 	public static final int NOT_YET_RELEASED = 1000;
 	
@@ -172,6 +172,29 @@ public abstract class Transaction {
 		return this.feePerByte().compareTo(minFeePerByte) >= 0;
 	}
 	
+	public BigDecimal calcRecommendedFee()
+	{
+		BigDecimal recommendedFee = BigDecimal.valueOf(this.getDataLength()).divide(BigDecimal.valueOf(Settings.getInstance().getMaxBytePerFee()), MathContext.DECIMAL32).setScale(8);
+
+		//security margin
+		recommendedFee = recommendedFee.add(new BigDecimal("0.0000001"));
+		if(recommendedFee.compareTo(MINIMUM_FEE) <= 0)
+		{
+			recommendedFee = MINIMUM_FEE;
+		}
+		else
+		{
+			
+			if(recommendedFee.compareTo(MINIMUM_FEE) > 0 )
+			{
+				recommendedFee = recommendedFee.setScale(0, BigDecimal.ROUND_UP); 
+			}
+			
+		}
+		
+		return recommendedFee.setScale(8);
+	}
+	
 	public Block getParent() {
 		
 		return DBSet.getInstance().getTransactionParentMap().getParent(this.signature);
@@ -257,7 +280,7 @@ public abstract class Transaction {
 	
 	public boolean isConfirmed(DBSet db)
 	{
-		return DBSet.getInstance().getTransactionMap().contains(this);
+		return DBSet.getInstance().getTransactionParentMap().contains(this.getSignature());
 	}
 	
 	public int getConfirmations()

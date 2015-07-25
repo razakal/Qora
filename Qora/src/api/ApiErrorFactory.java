@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import at.AT_Constants;
 import at.AT_Error;
 import qora.transaction.Transaction;
+import utils.Qorakeys;
 import utils.NameUtils.NameResult;
 
 public class ApiErrorFactory 
@@ -38,12 +39,19 @@ public class ApiErrorFactory
 	public static final int ERROR_INVALID_OPTION_LENGTH = 114;
 	public static final int ERROR_INVALID_DATA = 115;
 	public static final int ERROR_INVALID_DATA_LENGTH = 116;
+	public static final int ERROR_INVALID_UPDATE_VALUE = 117;
+	public static final int ERROR_KEY_ALREADY_EXISTS = 118;
+	public static final int ERROR_KEY_NOT_EXISTS = 119;
+	public static final int ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR = 120;
+	public static final int ERROR_FEE_LESS_REQUIRED = 121;
+	public static final int ERROR_WALLET_NOT_IN_SYNC = 122;
 	
 	//WALLET
 	public static final int ERROR_WALLET_NO_EXISTS = 201;
 	public static final int ERROR_WALLET_ADDRESS_NO_EXISTS = 202;
 	public static final int ERROR_WALLET_LOCKED = 203;
 	public static final int ERROR_WALLET_ALREADY_EXISTS = 204;
+	public static final int ERROR_WALLET_API_CALL_FORBIDDEN_BY_USER = 205;
 	
 	//BLOCKS
 	public static final int ERROR_BLOCK_NO_EXISTS = 301;
@@ -83,6 +91,11 @@ public class ApiErrorFactory
 	public static final int ERROR_INVALID_TYPE_LENGTH = 805;
 	public static final int ERROR_INVALID_TAGS_LENGTH = 806;
 	public static final int ERROR_INVALID_CREATION_BYTES = 809;
+	
+	//BLOG
+	public static final int ERROR_BODY_EMPTY = 901;
+	public static final int ERROR_BLOG_DISABLED = 902;
+	public static final int ERROR_NAME_NOT_OWNER = 903;
 	
 	private static ApiErrorFactory  instance;
 	
@@ -125,12 +138,19 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_INVALID_OPTION_LENGTH, "invalid option length");
 		this.errorMessages.put(ERROR_INVALID_DATA, "invalid data");
 		this.errorMessages.put(ERROR_INVALID_DATA_LENGTH, "invalid data length");
+		this.errorMessages.put(ERROR_INVALID_UPDATE_VALUE, "invalid update value");
+		this.errorMessages.put(ERROR_KEY_ALREADY_EXISTS, "key already exists, edit is false");
+		this.errorMessages.put(ERROR_KEY_NOT_EXISTS, "the key does not exist");
+		this.errorMessages.put(ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR, "you can't delete the key \""+Qorakeys.DEFAULT.toString() +"\" if it is the only key");
+		this.errorMessages.put(ERROR_FEE_LESS_REQUIRED, "fee less required");
+		this.errorMessages.put(ERROR_WALLET_NOT_IN_SYNC, "wallet needs to be synchronized");
 		
 		//WALLET
 		this.errorMessages.put(ERROR_WALLET_NO_EXISTS, "wallet does not exist");
 		this.errorMessages.put(ERROR_WALLET_ADDRESS_NO_EXISTS, "address does not exist in wallet");
 		this.errorMessages.put(ERROR_WALLET_LOCKED, "wallet is locked");
 		this.errorMessages.put(ERROR_WALLET_ALREADY_EXISTS, "wallet already exists");
+		this.errorMessages.put(ERROR_WALLET_API_CALL_FORBIDDEN_BY_USER, "user denied api call");
 		
 		//BLOCK
 		this.errorMessages.put(ERROR_BLOCK_NO_EXISTS, "block does not exist");
@@ -170,6 +190,12 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_INVALID_TYPE_LENGTH,"invalid type length");
 		this.errorMessages.put(ERROR_INVALID_TAGS_LENGTH,"invalid tags length");
 		this.errorMessages.put(ERROR_NULL_PAGES,"invalid pages");
+		
+		
+		//BLOG
+		this.errorMessages.put(ERROR_BODY_EMPTY,"invalid body it must not be empty");
+		this.errorMessages.put(ERROR_BLOG_DISABLED,"this blog is disabled");
+		this.errorMessages.put(ERROR_NAME_NOT_OWNER,"the creator address does not own the author name");
 		
 
 	}

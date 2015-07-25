@@ -7,6 +7,10 @@ import java.util.Observer;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
+import qora.web.NameStorageMap;
+import qora.web.OrphanNameStorageHelperMap;
+import qora.web.OrphanNameStorageMap;
+import qora.web.SharedPostsMap;
 import controller.Controller;
 import settings.Settings;
 import utils.ObserverMessage;
@@ -25,6 +29,12 @@ public class DBSet implements Observer, IDB {
 	private PeerMap peerMap;
 	private TransactionMap transactionMap;
 	private NameMap nameMap;
+	private NameStorageMap nameStorageMap;
+	private OrphanNameStorageMap orphanNameStorageMap;
+	private OrphanNameStorageHelperMap orphanNameStorageHelperMap;
+	private SharedPostsMap sharedPostsMap;
+	private LocalDataMap localDataMap;
+	private BlogPostMap blogPostMap;
 	private TransactionParentMap transactionParentMap;
 	private NameExchangeMap nameExchangeMap;
 	private UpdateNameMap updateNameMap;
@@ -39,6 +49,9 @@ public class DBSet implements Observer, IDB {
 	private ATMap atMap;
 	private ATStateMap atStateMap;
 	private ATTransactionMap atTransactionMap;
+	private TransactionsOfAddressMap transactionOfAddressMap;
+	private BlocksOfAddressMap blocksOfAddressMap;
+	private TransactionsOfNameMap transactionOfNameMap;
 	
 	private DB database;
 	private int actions;
@@ -68,6 +81,8 @@ public class DBSet implements Observer, IDB {
 		
 		//CREATE INSTANCE
 		instance = new DBSet(database);
+		
+		
 	}	
 	
 	public static DBSet createEmptyDatabaseSet()
@@ -91,6 +106,12 @@ public class DBSet implements Observer, IDB {
 		this.peerMap = new PeerMap(this, database);
 		this.transactionMap = new TransactionMap(this, database);
 		this.nameMap = new NameMap(this, database);
+		this.nameStorageMap = new NameStorageMap(this, database);
+		this.orphanNameStorageMap = new OrphanNameStorageMap(this, database);
+		this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(this, database);
+		this.sharedPostsMap = new SharedPostsMap(this, database);
+		this.localDataMap = new LocalDataMap(this, database);
+		this.blogPostMap = new BlogPostMap(this, database);
 		this.transactionParentMap = new TransactionParentMap(this, database);
 		this.nameExchangeMap = new NameExchangeMap(this, database);
 		this.updateNameMap = new UpdateNameMap(this, database);
@@ -105,6 +126,9 @@ public class DBSet implements Observer, IDB {
 		this.atMap = new ATMap(this,database);
 		this.atStateMap = new ATStateMap(this,database);
 		this.atTransactionMap = new ATTransactionMap(this,database);
+		this.transactionOfAddressMap = new TransactionsOfAddressMap(this, database);
+		this.blocksOfAddressMap = new BlocksOfAddressMap(this, database);
+		this.transactionOfNameMap = new TransactionsOfNameMap(this, database);
 	}
 	
 	protected DBSet(DBSet parent)
@@ -117,6 +141,12 @@ public class DBSet implements Observer, IDB {
 		this.peerMap = new PeerMap(parent.peerMap);
 		this.transactionMap = new TransactionMap(parent.transactionMap);		
 		this.nameMap = new NameMap(parent.nameMap);
+		this.nameStorageMap = new NameStorageMap(parent.nameStorageMap);
+		this.orphanNameStorageMap = new OrphanNameStorageMap(parent.orphanNameStorageMap);
+		this.sharedPostsMap = new SharedPostsMap(parent.sharedPostsMap);
+		this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(parent.orphanNameStorageHelperMap);
+		this.localDataMap = new LocalDataMap(parent.localDataMap);
+		this.blogPostMap = new BlogPostMap(parent.blogPostMap);
 		this.transactionParentMap = new TransactionParentMap(this.blockMap, parent.transactionParentMap);
 		this.nameExchangeMap = new NameExchangeMap(parent.nameExchangeMap);
 		this.updateNameMap = new UpdateNameMap(parent.updateNameMap);
@@ -131,6 +161,9 @@ public class DBSet implements Observer, IDB {
 		this.atMap = new ATMap(parent.atMap);
 		this.atStateMap = new ATStateMap(parent.atStateMap);
 		this.atTransactionMap = new ATTransactionMap(parent.atTransactionMap);
+		this.transactionOfAddressMap = new TransactionsOfAddressMap(parent.transactionOfAddressMap);
+		this.blocksOfAddressMap = new BlocksOfAddressMap(parent.blocksOfAddressMap);
+		this.transactionOfNameMap = new TransactionsOfNameMap(parent.transactionOfNameMap);
 	}
 	
 	public void reset() {
@@ -141,6 +174,12 @@ public class DBSet implements Observer, IDB {
 		this.peerMap.reset();
 		this.transactionMap.reset();
 		this.nameMap.reset();
+		this.nameStorageMap.reset();
+		this.orphanNameStorageMap.reset();
+		this.orphanNameStorageHelperMap.reset();
+		this.sharedPostsMap.reset();
+		this.localDataMap.reset();
+		this.blogPostMap.reset();
 		this.transactionParentMap.reset();
 		this.nameExchangeMap.reset();
 		this.updateNameMap.reset();
@@ -155,6 +194,8 @@ public class DBSet implements Observer, IDB {
 		this.atMap.reset();
 		this.atStateMap.reset();
 		this.atTransactionMap.reset();
+		this.transactionOfAddressMap.reset(); 
+		this.blocksOfAddressMap.reset(); 
 	}
 	
 	public BalanceMap getBalanceMap() 
@@ -195,6 +236,34 @@ public class DBSet implements Observer, IDB {
 	public NameMap getNameMap()
 	{
 		return this.nameMap;
+	}
+	
+	public NameStorageMap getNameStorageMap()
+	{
+		return this.nameStorageMap;
+	}
+	public OrphanNameStorageMap getOrphanNameStorageMap()
+	{
+		return this.orphanNameStorageMap;
+	}
+	public SharedPostsMap getSharedPostsMap()
+	{
+		return this.sharedPostsMap;
+	}
+	
+	public OrphanNameStorageHelperMap getOrphanNameStorageHelperMap()
+	{
+		return this.orphanNameStorageHelperMap;
+	}
+	
+	public LocalDataMap getLocalDataMap()
+	{
+		return this.localDataMap;
+	}
+	
+	public BlogPostMap getBlogPostMap()
+	{
+		return this.blogPostMap;
 	}
 	
 	public TransactionParentMap getTransactionParentMap()
@@ -265,6 +334,21 @@ public class DBSet implements Observer, IDB {
 	public ATTransactionMap getATTransactionMap()
 	{
 		return this.atTransactionMap;
+	}
+	
+	public TransactionsOfAddressMap getTransactionOfAddressMap() 
+	{
+		return this.transactionOfAddressMap;
+	}
+	
+	public BlocksOfAddressMap getBlocksOfAddressMap() 
+	{
+		return this.blocksOfAddressMap;
+	}
+	
+	public TransactionsOfNameMap getTransactionOfNameMap() 
+	{
+		return this.transactionOfNameMap;
 	}
 	
 	public DBSet fork()

@@ -36,7 +36,7 @@ public class JSonWriter extends StringWriter {
 
     private void writeIndentation() {
 		for (int i = 0; i < indent; i++) {
-		    super.write("   ");
+		    super.write("\t");
 		}
     }
 }

@@ -6,6 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 import qora.account.Account;
 import qora.voting.PollOption;
+import utils.NumberAsString;
 import utils.Pair;
 
 @SuppressWarnings("serial")
@@ -63,7 +64,7 @@ public class VotesTableModel extends AbstractTableModel
 			
 		case COLUMN_VOTES:
 			
-			return vote.getA().getConfirmedBalance().toPlainString();
+			return NumberAsString.getInstance().numberAsString(vote.getA().getConfirmedBalance());
 			
 		}
 		

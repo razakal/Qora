@@ -1,16 +1,15 @@
 package gui.models;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 import java.util.Observable;
 import java.util.Observer;
 
+import qora.transaction.Transaction;
+import utils.DateTimeFormat;
+import utils.NumberAsString;
+import utils.ObserverMessage;
 import controller.Controller;
 import database.SortableList;
 import database.TransactionMap;
-import qora.transaction.Transaction;
-import utils.ObserverMessage;
 
 @SuppressWarnings("serial")
 public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> implements Observer {
@@ -77,9 +76,7 @@ public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> 
 		{
 		case COLUMN_TIMESTAMP:
 			
-			Date date = new Date(transaction.getTimestamp());
-			DateFormat format = DateFormat.getDateTimeInstance();
-			return format.format(date);
+			return DateTimeFormat.timestamptoString(transaction.getTimestamp());
 			
 		case COLUMN_TYPE:
 			
@@ -87,7 +84,7 @@ public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> 
 			
 		case COLUMN_FEE:
 			
-			return transaction.getFee().toPlainString();		
+			return NumberAsString.getInstance().numberAsString(transaction.getFee());		
 		}
 		
 		return null;

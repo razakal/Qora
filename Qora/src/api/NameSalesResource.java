@@ -3,6 +3,7 @@ package api;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -10,6 +11,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONArray;
@@ -22,6 +24,7 @@ import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.transaction.Transaction;
+import utils.APIUtils;
 import utils.Pair;
 import controller.Controller;
 
@@ -29,6 +32,9 @@ import controller.Controller;
 @Produces(MediaType.APPLICATION_JSON)
 public class NameSalesResource 
 {
+	@Context
+	HttpServletRequest request;
+	
 	@SuppressWarnings("unchecked")
 	@GET
 	public String getNameSales()
@@ -85,7 +91,7 @@ public class NameSalesResource
 	
 	@GET
 	@Path("/{name}")	
-	public String getNameSale(@PathParam("name") String nameName)
+	public static String getNameSale(@PathParam("name") String nameName)
 	{	
 		NameSale nameSale = Controller.getInstance().getNameSale(nameName);
 				
@@ -162,6 +168,8 @@ public class NameSalesResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			APIUtils.askAPICallAllowed("POST namesales/" + nameName + "\n"+x, request);
 				
 			//GET NAME
 			Name name = Controller.getInstance().getName(nameName);
@@ -213,6 +221,10 @@ public class NameSalesResource
 			case Transaction.NEGATIVE_FEE:
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
 					
 			case Transaction.NO_BALANCE:	
 					
@@ -268,6 +280,8 @@ public class NameSalesResource
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
 			
+			APIUtils.askAPICallAllowed("DELETE namesales/"+nameName+"/"+ fee, request );
+			
 			//CHECK IF NAME SALE EXISTS
 			if(nameSale == null)
 			{
@@ -313,6 +327,10 @@ public class NameSalesResource
 			case Transaction.NEGATIVE_FEE:
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
 					
 			case Transaction.NO_BALANCE:	
 					
@@ -370,6 +388,8 @@ public class NameSalesResource
 			{
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
+			
+			APIUtils.askAPICallAllowed("POST namesales/buy/" + nameName + "\n" + x, request);
 			
 			NameSale nameSale = Controller.getInstance().getNameSale(nameName);
 			
@@ -429,6 +449,10 @@ public class NameSalesResource
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
 					
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
+
 			case Transaction.NO_BALANCE:	
 					
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NO_BALANCE);

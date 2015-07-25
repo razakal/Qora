@@ -12,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Date;
-import java.text.DateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -26,12 +24,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
 import qora.transaction.Transaction;
+import settings.Settings;
+import utils.DateTimeFormat;
 import utils.Pair;
+import controller.Controller;
 
 @SuppressWarnings("serial")
 public class OrderPanel extends JPanel
@@ -281,6 +281,27 @@ public class OrderPanel extends JPanel
 				return;
 			}
 		
+			//CHECK BIG FEE
+			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), Settings.getInstance().getBigFeeMessage(),
+		                "Confirmation",
+		                JOptionPane.YES_NO_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+				}
+				if (n == JOptionPane.NO_OPTION) {
+					
+					txtFee.setText("1");
+					
+					//ENABLE
+					this.sellButton.setEnabled(true);
+					
+					return;
+				}
+			}
+
 			//CREATE POLL
 			PrivateKeyAccount creator = Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress());
 			Pair<Transaction, Integer> result = Controller.getInstance().createOrder(creator, this.have, this.want, amount, price, fee);
@@ -295,9 +316,7 @@ public class OrderPanel extends JPanel
 				
 			case Transaction.NOT_YET_RELEASED:
 				
-				Date release = new Date(Transaction.ASSETS_RELEASE);	
-				DateFormat format = DateFormat.getDateTimeInstance();
-				JOptionPane.showMessageDialog(new JFrame(), "Assets will be enabled at " + format.format(release) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Assets will be enabled at " + DateTimeFormat.timestamptoString(Transaction.ASSETS_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.HAVE_EQUALS_WANT:
@@ -334,6 +353,11 @@ public class OrderPanel extends JPanel
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;
 				
 			case Transaction.NO_BALANCE:
 			

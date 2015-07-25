@@ -13,8 +13,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -23,15 +39,14 @@ import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
 import qora.crypto.AEScrypto;
-
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
-
+import settings.Settings;
 import utils.Converter;
 import utils.MenuPopupUtil;
 import utils.NameUtils;
-import utils.Pair;
 import utils.NameUtils.NameResult;
+import utils.Pair;
 import controller.Controller;
 
 @SuppressWarnings("serial")
@@ -45,13 +60,14 @@ public class SendMessagePanel extends JPanel
 	private JTextField txtTo;
 	private JTextField txtAmount;
 	private JTextField txtFee;
-	private JTextArea txtMessage;
+	public JTextArea txtMessage;
 	private JCheckBox encrypted;
 	private JCheckBox isText;
 	private JButton sendButton;
 	private AccountsComboBoxModel accountsModel;
 	private JComboBox<Asset> cbxFavorites;
 	private JTextField txtRecDetails;
+	private JLabel messageLabel;
 	
 	public SendMessagePanel()
 	{
@@ -79,27 +95,6 @@ public class SendMessagePanel extends JPanel
 		this.add(cbxFavorites, favoritesGBC);
 		this.accountsModel = new AccountsComboBoxModel();
         
-		//ON FAVORITES CHANGE
-		cbxFavorites.addActionListener (new ActionListener () {
-		    public void actionPerformed(ActionEvent e) {
-		    	
-		    	Asset asset = ((Asset) cbxFavorites.getSelectedItem());
-		    	if(asset != null)
-		    	{
-		    		//REMOVE ITEMS
-			    	cbxFrom.removeAllItems();
-			    	
-			    	//SET RENDERER
-			    	cbxFrom.setRenderer(new AccountRenderer(asset.getKey()));
-			    	
-			    	//UPDATE MODEL
-			    	accountsModel.removeObservers();
-			    	accountsModel = new AccountsComboBoxModel();
-			    	cbxFrom.setModel(accountsModel);
-		    	}
-		    }
-		});
-        
 		//LABEL FROM
 		GridBagConstraints labelFromGBC = new GridBagConstraints();
 		labelFromGBC.insets = new Insets(5, 5, 5, 5);
@@ -123,7 +118,25 @@ public class SendMessagePanel extends JPanel
 		cbxFromGBC.gridy = 1;
 		
 		this.cbxFrom = new JComboBox<Account>(accountsModel);
+		this.cbxFrom.setRenderer(new AccountRenderer(0));
 		this.add(this.cbxFrom, cbxFromGBC);
+		
+		//ON FAVORITES CHANGE
+
+		cbxFavorites.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+
+		    	Asset asset = ((Asset) cbxFavorites.getSelectedItem());
+
+		    	if(asset != null)
+		    	{
+		    		((AccountRenderer)cbxFrom.getRenderer()).setAsset(asset.getKey());
+		    		cbxFrom.repaint();
+		    		refreshReceiverDetails();
+		    	}
+
+		    }
+		});
 		
 		//LABEL TO
 		GridBagConstraints labelToGBC = new GridBagConstraints();
@@ -133,7 +146,7 @@ public class SendMessagePanel extends JPanel
 		labelToGBC.anchor = GridBagConstraints.NORTHWEST;
 		labelToGBC.weightx = 0;	
 		labelToGBC.gridx = 0;
-		JLabel toLabel = new JLabel("To:");
+		JLabel toLabel = new JLabel("To: (address or name)");
 		this.add(toLabel, labelToGBC);
       	
       	//TXT TO
@@ -149,23 +162,20 @@ public class SendMessagePanel extends JPanel
 		txtTo = new JTextField();
 		this.add(txtTo, txtToGBC);
 		
-		        txtTo.getDocument().addDocumentListener(new DocumentListener() {
-		            
-					@Override
-					public void changedUpdate(DocumentEvent arg0) {
-						// TODO Auto-generated method stub
-					}
-					@Override
-					public void insertUpdate(DocumentEvent arg0) {
-						// TODO Auto-generated method stub
-						refreshReceiverDetails();
-					}
-					@Override
-					public void removeUpdate(DocumentEvent arg0) {
-						// TODO Auto-generated method stub
-						refreshReceiverDetails();
-					}
-		        });
+        txtTo.getDocument().addDocumentListener(new DocumentListener() {
+            
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+			}
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				refreshReceiverDetails();
+			}
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				refreshReceiverDetails();
+			}
+        });
 		        
       	
 		//LABEL RECEIVER
@@ -202,10 +212,9 @@ public class SendMessagePanel extends JPanel
       	labelMessageGBC.gridx = 0;
       	labelMessageGBC.gridy = 4;
       	
-      	JLabel messageLabel = new JLabel("Message:");
-      	this.add(messageLabel, labelMessageGBC);
+      	messageLabel = new JLabel("Message:");
       	
-        //TXT MESSAGE
+		//TXT MESSAGE
 		GridBagConstraints txtMessageGBC = new GridBagConstraints();
 		txtMessageGBC.gridwidth = 4;
 		txtMessageGBC.insets = new Insets(5, 5, 5, 0);
@@ -217,9 +226,17 @@ public class SendMessagePanel extends JPanel
         
         this.txtMessage = new JTextArea();
         this.txtMessage.setRows(4);
-      	this.txtMessage.setBorder(this.txtTo.getBorder());
-        this.add(txtMessage, txtMessageGBC);
+        this.txtMessage.setColumns(25);
 
+        this.txtMessage.setBorder(this.txtTo.getBorder());
+
+      	JScrollPane messageScroll = new JScrollPane(this.txtMessage);
+      	messageScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      	messageScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.add(messageScroll, txtMessageGBC);
+      	
+      	this.add(messageLabel, labelMessageGBC);
+      	
 		//LABEL ISTEXT
 		GridBagConstraints labelIsTextGBC = new GridBagConstraints();
 		labelIsTextGBC.gridy = 5;
@@ -395,13 +412,22 @@ public class SendMessagePanel extends JPanel
 		MenuPopupUtil.installContextMenu(txtTo);
 		MenuPopupUtil.installContextMenu(txtFee);
 		MenuPopupUtil.installContextMenu(txtAmount);
-        MenuPopupUtil.installContextMenu(txtMessage);
-      	MenuPopupUtil.installContextMenu(txtRecDetails);
+		MenuPopupUtil.installContextMenu(txtMessage);
+		MenuPopupUtil.installContextMenu(txtRecDetails);
+		
+		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleWithFixedDelay(	new Runnable() { 
+			public void run() {
+				
+				messageLabel.setText("<html>Message:<br>("+ txtMessage.getText().length()+"/4000)</html>");
+				
+			}}, 0, 500, TimeUnit.MILLISECONDS);
 	}
 
 	private void refreshReceiverDetails()
 	{
 		String toValue = txtTo.getText();
+		Asset asset = ((Asset) cbxFavorites.getSelectedItem());
 		
 		if(toValue.isEmpty())
 		{
@@ -425,7 +451,7 @@ public class SendMessagePanel extends JPanel
 			if(nameToAdress.getB() == NameResult.OK)
 			{
 				account = nameToAdress.getA();
-				txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+				txtRecDetails.setText(account.toString(asset.getKey()));
 			}
 			else
 			{
@@ -435,9 +461,9 @@ public class SendMessagePanel extends JPanel
 		{
 			account = new Account(toValue);
 			
-			txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+			txtRecDetails.setText(account.toString(asset.getKey()));
 			
-			if(account.getBalance(1).toPlainString().equals("0.00000000"))
+			if(account.toString(asset.getKey()).equals("0.00000000"))
 			{
 				txtRecDetails.setText(txtRecDetails.getText()+ " - Warning!");
 			}
@@ -550,6 +576,26 @@ public class SendMessagePanel extends JPanel
 				return;
 			}
 			
+			//CHECK BIG FEE
+			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), Settings.getInstance().getBigFeeMessage(),
+		                "Confirmation",
+		                JOptionPane.YES_NO_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+				} else {
+					
+					txtFee.setText("1.00000000");
+					
+					//ENABLE
+					this.sendButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
 			String message = txtMessage.getText();
 			
 			boolean isTextB = isText.isSelected();
@@ -585,7 +631,7 @@ public class SendMessagePanel extends JPanel
 				
 				return;
 			}
-			
+
 			boolean encryptMessage = encrypted.isSelected();
 		
 			byte[] encrypted = (encryptMessage)?new byte[]{1}:new byte[]{0};
@@ -604,7 +650,7 @@ public class SendMessagePanel extends JPanel
 					byte[] privateKey = account.getPrivateKey();		
 
 					//recipient
-					byte[] publicKey = Controller.getInstance().getPublicKeyFromAddress(recipient.getAddress());
+					byte[] publicKey = Controller.getInstance().getPublicKeyByAddress(recipient.getAddress());
 					if(publicKey == null)
 					{
 						JOptionPane.showMessageDialog(new JFrame(), "The recipient has not yet performed any action in the blockchain.\nYou can't send an encrypted message to him.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -616,6 +662,49 @@ public class SendMessagePanel extends JPanel
 					}
 					
 					messageBytes = AEScrypto.dataEncrypt(messageBytes, privateKey, publicKey);
+				}
+
+				BigDecimal recommendedFee = Controller.getInstance().calcRecommendedFeeForMessage(messageBytes).getA();
+				if(fee.compareTo(recommendedFee) < 0)
+				{
+					int n = -1;
+					if(Settings.getInstance().isAllowFeeLessRequired())
+					{
+						n = JOptionPane.showConfirmDialog(
+							new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
+										+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
+										+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
+			                "Confirmation",
+			                JOptionPane.YES_NO_CANCEL_OPTION);
+					}
+					else
+					{
+						n = JOptionPane.showConfirmDialog(
+								new JFrame(), "Fee less required!\n"
+											+ "Press OK to turn on required "+recommendedFee.toPlainString() + ".",
+				                "Confirmation",
+				                JOptionPane.OK_CANCEL_OPTION);
+					}
+					if (n == JOptionPane.YES_OPTION || n == JOptionPane.OK_OPTION) {
+						
+						if(fee.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+						{
+							this.txtFee.setText("1.00000000"); // Return to the default fee for the next message.
+						}
+						
+						fee = recommendedFee; // Set recommended fee for this message.
+						
+					}
+					else if (n == JOptionPane.NO_OPTION) {
+						
+					}	
+					else {
+						
+						//ENABLE
+						this.sendButton.setEnabled(true);
+						
+						return;
+					}
 				}
 				
 				//CREATE PAYMENT
@@ -639,7 +728,7 @@ public class SendMessagePanel extends JPanel
 				
 				if(amount.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
 				{
-					this.txtAmount.setText("0.00000000");
+					this.txtAmount.setText("1.00000000");
 				}
 				
 				if(this.txtTo.getText().startsWith("A"))
@@ -669,6 +758,11 @@ public class SendMessagePanel extends JPanel
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;
 				
 			case Transaction.NO_BALANCE:
 			

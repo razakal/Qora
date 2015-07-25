@@ -1,22 +1,28 @@
 package api;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import qora.crypto.Base58;
+import utils.APIUtils;
 import controller.Controller;
 
 @Path("wallet")
 @Produces(MediaType.APPLICATION_JSON)
 public class WalletResource {
 
+	@Context
+	HttpServletRequest request;
+	
 	@SuppressWarnings("unchecked")
 	@GET
 	public String getWallet()
@@ -33,6 +39,7 @@ public class WalletResource {
 	@Path("/seed")
 	public String getSeed()
 	{
+		
 		//CHECK IF WALLET EXISTS
 		if(!Controller.getInstance().doesWalletExists())
 		{
@@ -44,6 +51,8 @@ public class WalletResource {
 		{
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 		}
+		
+		APIUtils.askAPICallAllowed("GET wallet/seed", request);
 				
 		byte[] seed = Controller.getInstance().exportSeed();
 		return Base58.encode(seed);

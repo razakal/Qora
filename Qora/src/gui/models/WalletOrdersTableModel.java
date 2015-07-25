@@ -1,14 +1,13 @@
 package gui.models;
 
 import java.math.BigInteger;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.mapdb.Fun.Tuple2;
 
 import qora.assets.Order;
+import utils.DateTimeFormat;
 import utils.ObserverMessage;
 import controller.Controller;
 import database.SortableList;
@@ -76,9 +75,7 @@ public class WalletOrdersTableModel extends QoraTableModel<Tuple2<String, BigInt
 		{
 		case COLUMN_TIMESTAMP:
 			
-			Date date = new Date(order.getTimestamp());
-			DateFormat format = DateFormat.getDateTimeInstance();
-			return format.format(date);
+			return DateTimeFormat.timestamptoString(order.getTimestamp());
 		
 		case COLUMN_HAVE:
 			

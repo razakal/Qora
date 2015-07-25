@@ -24,6 +24,7 @@ import controller.Controller;
 import qora.account.PrivateKeyAccount;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import settings.Settings;
 import utils.Pair;
 
 @SuppressWarnings("serial")
@@ -231,6 +232,27 @@ public class SellNameFrame extends JFrame
 				return;
 			}
 		
+			//CHECK BIG FEE
+			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), Settings.getInstance().getBigFeeMessage(),
+		                "Confirmation",
+		                JOptionPane.YES_NO_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+				}
+				if (n == JOptionPane.NO_OPTION) {
+					
+					txtFee.setText("1");
+					
+					//ENABLE
+					this.sellButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
 			//CREATE NAME UPDATE
 			PrivateKeyAccount owner = Controller.getInstance().getPrivateKeyAccountByAddress(name.getOwner().getAddress());
 			Pair<Transaction, Integer> result = Controller.getInstance().sellName(owner, name.getName(), price, fee);
@@ -277,7 +299,12 @@ public class SellNameFrame extends JFrame
 			case Transaction.NEGATIVE_FEE:
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
-				break;	
+				break;
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;				
 				
 			case Transaction.NO_BALANCE:
 			

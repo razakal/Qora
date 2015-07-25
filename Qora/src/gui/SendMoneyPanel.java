@@ -20,6 +20,7 @@ import qora.account.Account;
 import qora.assets.Asset;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
+import settings.Settings;
 import utils.NameUtils;
 import utils.NameUtils.NameResult;
 import utils.Pair;
@@ -101,7 +102,8 @@ public class SendMoneyPanel extends JPanel
 		txtGBC.gridy = 2;
 		this.accountsModel = new AccountsComboBoxModel();
 		this.cbxFrom = new JComboBox<Account>(accountsModel);
-        this.add(this.cbxFrom, txtGBC);
+		cbxFrom.setRenderer(new AccountRenderer(0));
+		this.add(this.cbxFrom, txtGBC);
         
 		//ON FAVORITES CHANGE
 		cbxFavorites.addActionListener (new ActionListener () {
@@ -110,16 +112,9 @@ public class SendMoneyPanel extends JPanel
 		    	Asset asset = ((Asset) cbxFavorites.getSelectedItem());
 		    	if(asset != null)
 		    	{
-		    		//REMOVE ITEMS
-			    	cbxFrom.removeAllItems();
-			    	
-			    	//SET RENDERER
-			    	cbxFrom.setRenderer(new AccountRenderer(asset.getKey()));
-			    	
-			    	//UPDATE MODEL
-			    	accountsModel.removeObservers();
-			    	accountsModel = new AccountsComboBoxModel();
-			    	cbxFrom.setModel(accountsModel);
+		    		((AccountRenderer)cbxFrom.getRenderer()).setAsset(asset.getKey());
+		    		cbxFrom.repaint();
+		    		refreshReceiverDetails();
 		    	}
 		    }
 		});
@@ -138,16 +133,13 @@ public class SendMoneyPanel extends JPanel
             
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
 			}
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
 				refreshReceiverDetails();
 			}
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
 				refreshReceiverDetails();
 			}
         });
@@ -213,6 +205,7 @@ public class SendMoneyPanel extends JPanel
 	private void refreshReceiverDetails()
 	{
 		String toValue = txtTo.getText();
+		Asset asset = ((Asset) cbxFavorites.getSelectedItem());
 		
 		if(toValue.isEmpty())
 		{
@@ -234,7 +227,7 @@ public class SendMoneyPanel extends JPanel
 			if(nameToAdress.getB() == NameResult.OK)
 			{
 				Account account = nameToAdress.getA();
-				txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+				txtRecDetails.setText(account.toString(asset.getKey()));
 			}
 			else
 			{
@@ -243,7 +236,7 @@ public class SendMoneyPanel extends JPanel
 		}else
 		{
 			Account account = new Account(toValue);
-			txtRecDetails.setText(account.getBalance(1).toPlainString() + " - " + account.getAddress());
+			txtRecDetails.setText(account.toString(asset.getKey()));
 		}	
 	}
 	
@@ -335,7 +328,28 @@ public class SendMoneyPanel extends JPanel
 				
 				return;
 			}
-		
+
+			//CHECK BIG FEE
+			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
+			{
+				int n = JOptionPane.showConfirmDialog(
+						new JFrame(), Settings.getInstance().getBigFeeMessage(),
+		                "Confirmation",
+		                JOptionPane.YES_NO_OPTION);
+				if (n == JOptionPane.YES_OPTION) {
+					
+				}
+				if (n == JOptionPane.NO_OPTION) {
+					
+					txtFee.setText("1");
+					
+					//ENABLE
+					this.sendButton.setEnabled(true);
+					
+					return;
+				}
+			}
+			
 			//CHECK IF PAYMENT OR ASSET TRANSFER
 			Asset asset = (Asset) this.cbxFavorites.getSelectedItem();
 			Pair<Transaction, Integer> result;
@@ -376,6 +390,11 @@ public class SendMoneyPanel extends JPanel
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
 				break;	
+				
+			case Transaction.FEE_LESS_REQUIRED:
+				
+				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				break;
 				
 			case Transaction.NO_BALANCE:
 			

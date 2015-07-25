@@ -1,5 +1,7 @@
 package utils;
 
+import gui.models.KeyValueTableModel;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,40 +14,46 @@ import qora.crypto.Base64;
 
 public class GZIP {
 	private static byte[] GZIPcompress(String str) throws Exception {
-		ByteArrayOutputStream obj= new ByteArrayOutputStream();
-		GZIPOutputStream gzip = new GZIPOutputStream(obj);
-		gzip.write(str.getBytes("UTF-8"));
-		gzip.close();
-		return obj.toByteArray();
+		try( ByteArrayOutputStream obj= new ByteArrayOutputStream(); GZIPOutputStream gzip = new GZIPOutputStream(obj);)
+		{
+			gzip.write(str.getBytes("UTF-8"));
+			gzip.close();
+			return obj.toByteArray();
+		}
+		
 	}
 
 	private static String GZIPdecompress(byte[] bytes) throws Exception {
-		GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(bytes));
-		BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
 		String outStr = "";
-		String line;
-		while ((line=bf.readLine())!=null) {
-			outStr += line + "\r\n";
+		try( GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(bytes));BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));)
+		{
+			String line;
+			while ((line=bf.readLine())!=null) {
+				outStr += line + "\r\n";
+			}
 		}
 		return outStr;
 	}
+	
+	public static String getZippedCharacterCount(KeyValueTableModel namesModel) {
+		return "Compressed Character Count:" + GZIP.compress(namesModel.getCurrentValueAsJsonStringOpt()).length() + "/4000";
+	}
       
-	public static String webDecompress(String Value) 
+	public static String webDecompress(String value) 
 	{
-		if(Value.startsWith("?gz!"))
+		if(value.startsWith("?gz!"))
 		{
-			Value = Value.substring(4, Value.length());
+			value = value.substring(4, value.length());
 	      	
-			byte[] compressed = Base64.decode(Value);
+			byte[] compressed = Base64.decode(value);
 	          
 			try {
-				Value = GZIPdecompress(compressed);
+				value = GZIPdecompress(compressed);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		return Value;
+		return value;
 	}
 	
 	public static String autoDecompress(String text) 
@@ -58,21 +66,23 @@ public class GZIP {
         	try {
             	text = GZIPdecompress(compressed);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
             return text;
         }
 		else
 		{
-			byte[] compressed = null;
-			try {
-				compressed = GZIPcompress(text);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return "?gz!"+Base64.encode(compressed); 
+			return compress(text); 
 		}	
+	}
+
+	public static String compress(String text) {
+		byte[] compressed = null;
+		try {
+			compressed = GZIPcompress(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "?gz!"+Base64.encode(compressed);
 	}
 }

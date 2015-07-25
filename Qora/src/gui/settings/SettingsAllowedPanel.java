@@ -108,7 +108,7 @@ public class SettingsAllowedPanel extends JPanel
         gbc_webAllowedScrollPane.gridy = 1;
         
         JScrollPane webAllowedScrollPane = new JScrollPane(webAllowedTable);
-        webAllowedScrollPane.setPreferredSize(new Dimension( 490, 160 ));
+        webAllowedScrollPane.setPreferredSize(new Dimension( 490, 180 ));
         this.add(webAllowedScrollPane, gbc_webAllowedScrollPane);
          
 	     JLabel lblAddNewAddress = new JLabel("Add new address:");
@@ -207,7 +207,7 @@ public class SettingsAllowedPanel extends JPanel
 		
 		JScrollPane rpcScrollPane = new JScrollPane(rpcAllowedTable);
 		
-		rpcScrollPane.setPreferredSize(new Dimension( 490, 160 ));
+		rpcScrollPane.setPreferredSize(new Dimension( 490, 180 ));
         this.add(rpcScrollPane, gbc_rpcAllowedTable);
 		
 		JLabel labelRpcAddNewAddress = new JLabel("Add new address:");
