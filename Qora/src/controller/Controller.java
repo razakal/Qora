@@ -73,7 +73,7 @@ import database.SortableList;
 
 public class Controller extends Observable {
 
-	private String version = "0.22.0 beta";
+	private String version = "0.22.0";
 	public static final String releaseVersion = "0.22.0";
 
 	public static final int STATUS_NO_CONNECTIONS = 0;
