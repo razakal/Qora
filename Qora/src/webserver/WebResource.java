@@ -1473,11 +1473,10 @@ public class WebResource {
 
 			Profile activeProfileOpt = ProfileHelper.getInstance()
 					.getActiveProfileOpt(request);
-			List<Profile> enabledProfiles = Profile.getEnabledProfiles();
 			for (BlogEntry blogEntry : blogPosts) {
 				String signature = blogEntry.getSignature();
 
-				addSharingAndLiking(enabledProfiles, blogEntry, signature);
+				addSharingAndLiking(blogEntry, signature);
 				if (activeProfileOpt != null) {
 					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
 							.contains(signature));
@@ -1496,8 +1495,8 @@ public class WebResource {
 
 	}
 
-	public void addSharingAndLiking(List<Profile> enabledProfiles,
-			BlogEntry blogEntry, String signature) {
+	public void addSharingAndLiking(BlogEntry blogEntry,
+			String signature) {
 		List<String> list = DBSet.getInstance().getSharedPostsMap()
 				.get(Base58.decode(blogEntry.getSignature()));
 		if (list != null) {
@@ -1506,11 +1505,18 @@ public class WebResource {
 			}
 		}
 
-		for (Profile enabledProfile : enabledProfiles) {
-			if (enabledProfile.getLikedPosts().contains(signature)) {
-				blogEntry.addLikingUser(enabledProfile.getName().getName());
-			}
-
+		NameStorageMap nameStorageMap = DBSet.getInstance().getNameStorageMap();
+		Set<String> keys = nameStorageMap.getKeys();
+		
+		for (String name : keys) {
+			 Profile profileOpt = Profile.getProfileOpt(name);
+			 if(profileOpt != null)
+			 {
+				 if (profileOpt.getLikedPosts().contains(signature)) {
+					 blogEntry.addLikingUser(profileOpt.getName().getName());
+				 }
+				 
+			 }
 		}
 	}
 
@@ -1597,12 +1603,11 @@ public class WebResource {
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
 
-			List<Profile> enabledProfiles = Profile.getEnabledProfiles();
 
 			for (BlogEntry blogEntry : blogPosts) {
 				String signature = blogEntry.getSignature();
 
-				addSharingAndLiking(enabledProfiles, blogEntry, signature);
+				addSharingAndLiking(blogEntry, signature);
 				if (activeProfileOpt != null) {
 					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
 							.contains(signature));
