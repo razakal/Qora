@@ -50,10 +50,6 @@ public class NameStorageMap extends DBMap<String, Map<String, String>> {
 	protected void createIndexes(DB database) {
 	}
 
-	public boolean contains(String name) {
-		return this.contains(name);
-	}
-
 	public void add(String name, String key, String value) {
 		Map<String, String> keyValueMap = this.get(name);
 		if (keyValueMap == null) {

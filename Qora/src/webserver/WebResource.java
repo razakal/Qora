@@ -66,7 +66,6 @@ import qora.web.blog.BlogEntry;
 import settings.Settings;
 import utils.AccountBalanceComparator;
 import utils.BlogUtils;
-import utils.GZIP;
 import utils.JSonWriter;
 import utils.NameUtils;
 import utils.NameUtils.NameResult;
@@ -1934,13 +1933,15 @@ public class WebResource {
 			}
 
 		}
+		
+		website = injectValues(website);
 
 		// SHOW WEB-PAGE
 		return Response.status(200)
 				.header("Content-Type", "text/html; charset=utf-8")
 				.entity(website).build();
 	}
-
+	
 	public static String injectValues(String value) {
 		// PROCESSING TAG INJ
 		Pattern pattern = Pattern.compile("(?i)(<inj.*>(.*?)</inj>)");
@@ -1950,33 +1951,19 @@ public class WebResource {
 			Elements inj = doc.select("inj");
 			Element element = inj.get(0);
 
-			NameMap nameMap = DBSet.getInstance().getNameMap();
+			NameStorageMap nameMap = DBSet.getInstance().getNameStorageMap();
 			String name = matcher.group(2);
+			String result = "";
 			if (nameMap.contains(name)) {
 
-				Name nameinj = nameMap.get(name);
-				String result = GZIP.webDecompress(nameinj.getValue()
-						.toString());
 				if (element.hasAttr("key")) {
 					String key = element.attr("key");
-					try {
+						String opt = nameMap.getOpt(name, key);
+						result = opt != null ? opt : "";
 
-						JSONObject jsonObject = (JSONObject) JSONValue
-								.parse(result);
-						if (jsonObject != null) {
-							// Looks like valid jSon
-							if (jsonObject.containsKey(key)) {
-								result = (String) jsonObject.get(key);
-							}
-
-						}
-
-					} catch (Exception e) {
-						// no json probably
-					}
 				}
-				value = value.replace(matcher.group(), result);
 			}
+			value = value.replace(matcher.group(), result);
 
 		}
 		return value;
