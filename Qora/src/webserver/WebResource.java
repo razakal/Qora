@@ -229,6 +229,10 @@ public class WebResource {
 			Name nameobj = null;
 			if (name != null) {
 				nameobj = Controller.getInstance().getName(name);
+				if(nameobj == null)
+				{
+					return error404(request, "You don't own this name or it is not confirmed by now!");
+				}
 			}
 
 			if (namesAsList.size() > 0) {
