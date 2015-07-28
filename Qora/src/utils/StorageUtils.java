@@ -16,6 +16,7 @@ import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.NameStorageMap;
+import qora.web.OrphanNameStorageHelperMap;
 import qora.web.OrphanNameStorageMap;
 import controller.Controller;
 import database.DBSet;
@@ -90,39 +91,45 @@ public class StorageUtils {
 
 				String name = (String) jsonObject.get("name");
 
-				if (name != null) {
-
-					Name nameObj = db.getNameMap().get(name);
-
-					if (nameObj == null) {
-						return;
+				OrphanNameStorageHelperMap orphanNameStorageHelperMap = db.getOrphanNameStorageHelperMap();
+				List<byte[]> list = orphanNameStorageHelperMap.get(name);
+				if(list == null || !ByteArrayUtils.contains(list, signature))
+				{
+					if (name != null) {
+						
+						Name nameObj = db.getNameMap().get(name);
+						
+						if (nameObj == null) {
+							return;
+						}
+						
+						if (!nameObj.getOwner().getAddress()
+								.equals(creator.getAddress())) {
+							// creator is not the owner of the name
+							return;
+						}
+						
+						NameStorageMap nameStorageMap = db
+								.getNameStorageMap();
+						OrphanNameStorageMap orphanNameStorageMap = db.getOrphanNameStorageMap();
+						
+						Set<String> allKeysForOrphanSaving = getAllKeysForOrphanSaving(jsonObject);
+						
+						// SAVE OLD VALUES FOR ORPHANING
+						for (String keyForOrphaning : allKeysForOrphanSaving) {
+							orphanNameStorageMap.add(signature, keyForOrphaning,
+									nameStorageMap.getOpt(name, keyForOrphaning));
+						}
+						
+						db.getOrphanNameStorageHelperMap()
+						.add(name, signature);
+						
+						addTxChangesToStorage(jsonObject, name, nameStorageMap,
+								null);
+						
 					}
-
-					if (!nameObj.getOwner().getAddress()
-							.equals(creator.getAddress())) {
-						// creator is not the owner of the name
-						return;
-					}
-
-					NameStorageMap nameStorageMap = db
-							.getNameStorageMap();
-					OrphanNameStorageMap orphanNameStorageMap = db.getOrphanNameStorageMap();
-
-					Set<String> allKeysForOrphanSaving = getAllKeysForOrphanSaving(jsonObject);
-
-					// SAVE OLD VALUES FOR ORPHANING
-					for (String keyForOrphaning : allKeysForOrphanSaving) {
-						orphanNameStorageMap.add(signature, keyForOrphaning,
-								nameStorageMap.getOpt(name, keyForOrphaning));
-					}
-
-					db.getOrphanNameStorageHelperMap()
-							.add(name, signature);
-
-					addTxChangesToStorage(jsonObject, name, nameStorageMap,
-							null);
-
 				}
+				
 
 			}
 
