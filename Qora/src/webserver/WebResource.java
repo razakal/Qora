@@ -40,6 +40,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONArray;
@@ -1916,30 +1917,41 @@ public class WebResource {
 	public Response getNames(@PathParam("name") String nameName) {
 		Name name = Controller.getInstance().getName(nameName);
 
-		// CHECK IF NAME EXISTS
-		if (name == null) {
-			return error404(request, null);
-		}
-
-		String website = DBSet.getInstance().getNameStorageMap()
-				.getOpt(nameName, Qorakeys.WEBSITE.toString());
-
-		if (website == null) {
-			try {
-				return error404(request, "This name has currently no <a href=\"/index/websitecreation.html\">website<a/>!");
-			} catch (Throwable e) {
-				e.printStackTrace();
+		try {
+			
+			// CHECK IF NAME EXISTS
+			if (name == null) {
 				return error404(request, null);
 			}
-
+			
+			String website = DBSet.getInstance().getNameStorageMap()
+					.getOpt(nameName, Qorakeys.WEBSITE.toString());
+			
+			if (website == null) {
+				try {
+					return error404(request, "This name has currently no <a href=\"/index/websitecreation.html\">website<a/>!");
+				} catch (Throwable e) {
+					e.printStackTrace();
+					return error404(request, null);
+				}
+				
+			}
+			
+			website = injectValues(website);
+			
+			File tmpFile = File.createTempFile("web", ".site");
+			FileUtils.writeStringToFile(tmpFile, website);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(tmpFile.getAbsolutePath(), request);
+			pebbleHelper.getContextMap().put("namestoragemap", DBSet.getInstance().getNameStorageMap());
+			tmpFile.delete();
+			
+			// SHOW WEB-PAGE
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
 		}
-		
-		website = injectValues(website);
-
-		// SHOW WEB-PAGE
-		return Response.status(200)
-				.header("Content-Type", "text/html; charset=utf-8")
-				.entity(website).build();
 	}
 	
 	public static String injectValues(String value) {
