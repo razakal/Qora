@@ -17,7 +17,6 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
-import utils.ByteArrayUtils;
 import utils.StorageUtils;
 import api.BlogPostResource;
 
@@ -258,10 +257,6 @@ public class ArbitraryTransaction extends Transaction {
 	}
 
 	
-	public DBSet getNameStorageDB()
-	{
-		return DBSet.getInstance();
-	}
 	
 
 	// PROCESS/ORPHAN
@@ -270,10 +265,10 @@ public class ArbitraryTransaction extends Transaction {
 
 		// NAME STORAGE UPDATE
 		if (service == 10) {
-			StorageUtils.processUpdate(getData(), signature, creator,getNameStorageDB() );
+			StorageUtils.processUpdate(getData(), signature, creator,db );
 			// BLOGPOST?
 		} else if (service == 777) {
-			addToBlogMapOnDemand(getNameStorageDB());
+			addToBlogMapOnDemand(db);
 		}
 
 		// UPDATE CREATOR
@@ -289,10 +284,10 @@ public class ArbitraryTransaction extends Transaction {
 
 		// NAME STORAGE UPDATE ORPHAN
 		if (service == 10) {
-			StorageUtils.processOrphan(getData(), signature, getNameStorageDB());
+			StorageUtils.processOrphan(getData(), signature, db);
 			// BLOGPOST?
 		} else {
-			removeFromBlogMapOnDemand(getNameStorageDB());
+			removeFromBlogMapOnDemand(db);
 		}
 
 		// UPDATE CREATOR
@@ -383,8 +378,6 @@ public class ArbitraryTransaction extends Transaction {
 	private void addToBlogMapOnDemand(DBSet db) {
 		
 		if (getService() == 777) {
-		if (!ByteArrayUtils.contains(StorageUtils.getProcessed(), signature)) {
-			StorageUtils.addProcessed(signature);
 				byte[] data = getData();
 				String string = new String(data);
 				
@@ -418,7 +411,6 @@ public class ArbitraryTransaction extends Transaction {
 					}
 					
 				}
-			}
 		}
 	}
 

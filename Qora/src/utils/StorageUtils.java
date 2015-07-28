@@ -11,13 +11,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import controller.Controller;
 import qora.account.PublicKeyAccount;
 import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.NameStorageMap;
 import qora.web.OrphanNameStorageMap;
+import controller.Controller;
 import database.DBSet;
 
 public class StorageUtils {
@@ -33,7 +33,6 @@ public class StorageUtils {
 	// ADD TO CURRENT VALUE WITHOUT SEPERATOR
 	public static final String ADD_KEY = "add";
 
-	private static final List<byte[]> processed = new ArrayList<byte[]>();
 
 	@SuppressWarnings("unchecked")
 	public static JSONObject getStorageJsonObject(
@@ -83,9 +82,6 @@ public class StorageUtils {
 	public static void processUpdate(byte[] data, byte[] signature,
 			PublicKeyAccount creator, DBSet db) {
 
-		if (!ByteArrayUtils.contains(StorageUtils.getProcessed(), signature)) {
-
-			StorageUtils.addProcessed(signature);
 			String string = new String(data);
 
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
@@ -130,7 +126,6 @@ public class StorageUtils {
 
 			}
 
-		}
 
 	}
 
@@ -339,14 +334,6 @@ public class StorageUtils {
 	}
 
 
-	public static List<byte[]> getProcessed() {
-		return processed;
-	}
-
-	public static void addProcessed(byte[] signature) {
-		if (!ByteArrayUtils.contains(processed, signature)) {
-			processed.add(signature);
-		}
-	}
+	
 
 }

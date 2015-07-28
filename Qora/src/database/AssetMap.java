@@ -101,6 +101,6 @@ public class AssetMap extends DBMap<Long, Asset>
 		}
 		
 		//DECREMENT KEY
-		this.key--;
+		 this.key = key - 1;
 	}
 }
