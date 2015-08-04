@@ -272,7 +272,7 @@
           </div>        	{{apimessage}} <div id=apimessage></div>
           {% if blogenabled %}
           <ul class="timeline">{% for blogpost in blogposts %}
-            <li>
+            <li id="{{blogpost.getSignature()}}">
               <div class="timeline-badge primary"><a><i rel="tooltip" title="" id="" class="glyphicon glyphicon-record"></i></a></div>
               <div class="timeline-panel">
                 <div class="timeline-heading">
@@ -299,7 +299,7 @@
                   </div>
                 </div>
                 <div class="timeline-body">
-                  <p class="post-header"><b>{{blogpost.titleOpt}}</b></p>
+                  <a href="{{postprefixurl}}{{blogpost.getSignature()}}"><p class="post-header"><b>{{blogpost.titleOpt}}</b></a></p>
                   <p class="post-content">{{blogpost.description}}</p>
                 </div>
                 <div class="timeline-footer">
@@ -504,6 +504,7 @@
 
 			return 0;
    		 }
+   		 
 
     	function processLike(signature, isLikeing) {
 			var blogname;
@@ -594,8 +595,11 @@
     } else {
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
+    
+    
     $(document).ready(function() {
-
+    
+    
         var my_posts = $("[rel=tooltip]");
 
 		var size = $(window).width();
@@ -623,6 +627,11 @@
       $(".tl-profile").hide();
       $(".timeline").css("padding-top","40px");
       {%endif%}
+      
+      {% if msg is not null %} $('html, body').animate({
+        scrollTop: $("#{{msg}}").offset().top
+    }, 2000);
+    {%endif%}
 
     });
 
