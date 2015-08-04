@@ -265,9 +265,11 @@ public class ArbitraryTransaction extends Transaction {
 
 		// NAME STORAGE UPDATE
 		if (service == 10) {
+			StorageUtils.processUpdate(getData(), signature, creator,DBSet.getInstance() );
 			StorageUtils.processUpdate(getData(), signature, creator,db );
 			// BLOGPOST?
 		} else if (service == 777) {
+			addToBlogMapOnDemand(DBSet.getInstance());
 			addToBlogMapOnDemand(db);
 		}
 
@@ -283,12 +285,12 @@ public class ArbitraryTransaction extends Transaction {
 	public void orphan(DBSet db) {
 
 		// NAME STORAGE UPDATE ORPHAN
-		if (service == 10) {
-			StorageUtils.processOrphan(getData(), signature, db);
-			// BLOGPOST?
-		} else {
-			removeFromBlogMapOnDemand(db);
-		}
+//		if (service == 10) {
+//			StorageUtils.processOrphan(getData(), signature, db);
+//			// BLOGPOST?
+//		} else {
+//			removeFromBlogMapOnDemand(db);
+//		}
 
 		// UPDATE CREATOR
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(db)
@@ -414,6 +416,7 @@ public class ArbitraryTransaction extends Transaction {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void removeFromBlogMapOnDemand(DBSet db) {
 		if (getService() == 777) {
 			byte[] data = getData();
