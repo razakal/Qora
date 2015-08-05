@@ -163,6 +163,7 @@
         <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
                 <button type="reset" id="btncancel" onclick="javascript:reload()" class="btn btn-default">Cancel</button>
+            	 <button type="preview" id="btnpreview" onclick="javascript:previewValue()" class="btn btn-primary pull-default">Preview</button>
             	 <button type="submit" id="btnsubmit" onclick="javascript:updateValue()" class="btn btn-primary pull-right">Submit</button>
               </div>
             </div>
@@ -239,6 +240,31 @@
 				document.getElementById('result').innerHTML = '<div class=\"alert alert-danger\" role=\"alert\">ERROR<br>'+xhr.responseText+'<br></div>';
 			});
     };
+    
+     var previewValue;
+    previewValue = function() {
+		var website;
+    	website = document.getElementById('website').value;
+		open('POST', '/index/websitepreview.html', {website:website}, '_blank');
+    };
+    
+    open = function(verb, url, data, target) {
+  var form = document.createElement("form");
+  form.action = url;
+  form.method = verb;
+  form.target = target || "_self";
+  if (data) {
+    for (var key in data) {
+      var input = document.createElement("textarea");
+      input.name = key;
+      input.value = typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key];
+      form.appendChild(input);
+    }
+  }
+  form.style.display = 'none';
+  document.body.appendChild(form);
+  form.submit();
+};
 
       var updateValue;
     reload = function() {

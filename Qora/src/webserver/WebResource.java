@@ -266,6 +266,26 @@ public class WebResource {
 		}
 
 	}
+	
+	
+	@POST
+	@Path("index/websitepreview.html")
+	@Consumes("application/x-www-form-urlencoded")
+	public Response previewWebsite(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+		
+		try {
+			String website = form.getFirst("website");
+			
+			website = website == null ?  "" : website;
+			
+			return enhanceAndShowWebsite(website);
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
+		}
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	@POST
@@ -1682,23 +1702,27 @@ public class WebResource {
 
 			}
 
-			website = injectValues(website);
-
-			File tmpFile = File.createTempFile("web", ".site");
-			FileUtils.writeStringToFile(tmpFile, website);
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(tmpFile.getAbsolutePath(), request);
-			pebbleHelper.getContextMap().put("namestoragemap", DBSet.getInstance().getNameStorageMap());
-			//pebbleHelper.getContextMap().put("atmap",DBSet.getInstance().getATMap());
-			//pebbleHelper.getContextMap().put("attxsmap",DBSet.getInstance().getATTransactionMap());
-			pebbleHelper.getContextMap().put("ats", ATWebResource.getInstance());
-			tmpFile.delete();
-
-			// SHOW WEB-PAGE
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return enhanceAndShowWebsite(website);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);
 		}
+	}
+
+	private Response enhanceAndShowWebsite(String website) throws IOException, PebbleException {
+		website = injectValues(website);
+
+		File tmpFile = File.createTempFile("web", ".site");
+		FileUtils.writeStringToFile(tmpFile, website);
+		PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(tmpFile.getAbsolutePath(), request);
+		pebbleHelper.getContextMap().put("namestoragemap", DBSet.getInstance().getNameStorageMap());
+		//pebbleHelper.getContextMap().put("atmap",DBSet.getInstance().getATMap());
+		//pebbleHelper.getContextMap().put("attxsmap",DBSet.getInstance().getATTransactionMap());
+		pebbleHelper.getContextMap().put("ats", ATWebResource.getInstance());
+		tmpFile.delete();
+
+		// SHOW WEB-PAGE
+		return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
 	}
 
 	public static String injectValues(String value) {
