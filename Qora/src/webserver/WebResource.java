@@ -1943,6 +1943,9 @@ public class WebResource {
 			FileUtils.writeStringToFile(tmpFile, website);
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(tmpFile.getAbsolutePath(), request);
 			pebbleHelper.getContextMap().put("namestoragemap", DBSet.getInstance().getNameStorageMap());
+			//pebbleHelper.getContextMap().put("atmap",DBSet.getInstance().getATMap());
+			//pebbleHelper.getContextMap().put("attxsmap",DBSet.getInstance().getATTransactionMap());
+			pebbleHelper.getContextMap().put("ats", ATWebResource.getInstance());
 			tmpFile.delete();
 			
 			// SHOW WEB-PAGE

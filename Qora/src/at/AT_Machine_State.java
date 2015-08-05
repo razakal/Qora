@@ -514,22 +514,22 @@ public class AT_Machine_State
 		this.dsize = dsize;
 	}
 
-	public void setG_balance(Long g_balance) 
+	protected void setG_balance(Long g_balance) 
 	{
 		this.g_balance = g_balance;
 	}
 
-	public void setP_balance(Long p_balance) 
+	protected void setP_balance(Long p_balance) 
 	{
 		this.p_balance = p_balance;
 	}
 
-	public void setMachineState(Machine_State machineState) 
+	protected void setMachineState(Machine_State machineState) 
 	{
 		this.machineState = machineState;
 	}
 
-	public void setWaitForNumberOfBlocks(int waitForNumberOfBlocks) 
+	protected void setWaitForNumberOfBlocks(int waitForNumberOfBlocks) 
 	{
 		this.waitForNumberOfBlocks = waitForNumberOfBlocks;
 	}
@@ -559,7 +559,7 @@ public class AT_Machine_State
 		return this.minActivationAmount;
 	}
 	
-	public void setMinActivationAmount(long minActivationAmount)
+	protected void setMinActivationAmount(long minActivationAmount)
 	{
 		this.minActivationAmount = minActivationAmount;
 	}
@@ -569,7 +569,7 @@ public class AT_Machine_State
 		return version;
 	}
 
-	public int getSleepBetween()
+	protected int getSleepBetween()
 	{
 		return sleepBetween;
 	}
@@ -579,7 +579,7 @@ public class AT_Machine_State
 		return height;
 	}
 	
-	public void setHeight(int height)
+	protected void setHeight(int height)
 	{
 		this.height = height;
 	}
@@ -663,7 +663,7 @@ public class AT_Machine_State
 		return getStateSize() + atID.length + creator.length + 2 + 4 + 4 + 4 + 4 + 8 + 4 + 4 + ap_code.capacity();
 	}
 	
-	public void setFreeze( boolean freeze )
+	protected void setFreeze( boolean freeze )
 	{
 		this.freezeWhenSameBalance = freeze;
 	}
