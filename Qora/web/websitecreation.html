@@ -152,6 +152,11 @@
 					{% endfor %}
                 </select>
               </div>
+            <label for="title" class="col-lg-2 control-label">Key</label>
+            <div class="col-lg-10">
+              <input id="key" type="text" placeholder="Key (optional)" class="form-control">
+            </div>
+          </div>              
             <div class="form-group">
             <label for="website" class="col-lg-2 control-label"><br>Website (Html)</label>
             <div class="col-lg-10"><br>
@@ -209,7 +214,8 @@
 			"/index/websitesave.html",
 			{
 				name: document.getElementById('select-name').value,
-				website: document.getElementById('website').value
+				website: document.getElementById('website').value,
+				key: document.getElementById('key').value
 			})
 			.done( function(data) {
 				if (data.type == 'settingsSuccessfullySaved')
@@ -219,6 +225,10 @@
 				else if(data.type == 'parametersMissing')
 				{
 					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Some parameters are missing.<br></div>";
+				}
+				else if(data.type == 'badKey')
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">This key is an internal qora key and can't be edited this way!<br></div>";
 				}
 				else if (data.type == 'error')
 				{
@@ -283,10 +293,22 @@
           return false;
       });
     });
+    
+      $(function(){
+      // bind change event to select
+      $('#key').on('change', function () {
+          var url = $(this).val(); // get selected value
+          if (url) { // require a URL
+              window.location = '/index/websitecreation.html?name=' + $('#select-name').val() + "&key="+ url; // redirect
+          }
+          return false;
+      });
+    });
 
     $(document).ready(function() {
         var searchval;
 		$("#select-name").val('{{name}}');
+		$("#key").val('{{key}}');
  	{% autoescape true %}
 		var searchval
 		$('#name').change(function() {

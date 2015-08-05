@@ -93,7 +93,8 @@ public class WebResource {
 	public Response Default() {
 
 		// REDIRECT
-		return Response.status(302).header("Location", "index/main.html").build();
+		return Response.status(302).header("Location", "index/main.html")
+				.build();
 	}
 
 	public Response handleDefault() {
@@ -101,12 +102,15 @@ public class WebResource {
 
 			String searchValue = request.getParameter("search");
 
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/main.mini.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/main.mini.html", request);
 
 			if (searchValue == null) {
 
-				return Response.ok(PebbleHelper.getPebbleHelper("web/main.html", request).evaluate(),
-						"text/html; charset=utf-8").build();
+				return Response.ok(
+						PebbleHelper.getPebbleHelper("web/main.html", request)
+								.evaluate(), "text/html; charset=utf-8")
+						.build();
 			}
 
 			if (StringUtils.isBlank(searchValue)) {
@@ -122,15 +126,17 @@ public class WebResource {
 
 			pebbleHelper.getContextMap().put("searchresults", results);
 
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);
 		}
 	}
 
-	public List<HTMLSearchResult> generateHTMLSearchresults(List<Pair<String, String>> searchResults)
-			throws IOException, PebbleException {
+	public List<HTMLSearchResult> generateHTMLSearchresults(
+			List<Pair<String, String>> searchResults) throws IOException,
+			PebbleException {
 		List<HTMLSearchResult> results = new ArrayList<>();
 		for (Pair<String, String> result : searchResults) {
 			String name = result.getA();
@@ -141,8 +147,8 @@ public class WebResource {
 			String description = selectDescriptionOpt(htmlDoc);
 			description = description == null ? "" : description;
 			description = StringUtils.abbreviate(description, 150);
-			results.add(new HTMLSearchResult(title, description, name, "/" + name, "/" + name, "/namestorage:" + name,
-					null));
+			results.add(new HTMLSearchResult(title, description, name, "/"
+					+ name, "/" + name, "/namestorage:" + name, null));
 
 		}
 		return results;
@@ -154,8 +160,10 @@ public class WebResource {
 	public Response jsonQueryMain(@Context UriInfo info) {
 		Map output = BlockExplorer.getInstance().jsonQueryMain(info);
 
-		return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
-				.entity(StrJSonFine.convert(JSONValue.toJSONString(output))).build();
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.entity(StrJSonFine.convert(JSONValue.toJSONString(output)))
+				.build();
 	}
 
 	@Path("index/blockexplorer")
@@ -168,7 +176,8 @@ public class WebResource {
 	@GET
 	public Response blockexplorerhtml() {
 		try {
-			String content = readFile("web/blockexplorer.html", StandardCharsets.UTF_8);
+			String content = readFile("web/blockexplorer.html",
+					StandardCharsets.UTF_8);
 
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
@@ -183,15 +192,18 @@ public class WebResource {
 
 		String searchValue = request.getParameter("search");
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/main.mini.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/main.mini.html", request);
 			if (StringUtil.isBlank(searchValue)) {
 
-				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+				return Response.ok(pebbleHelper.evaluate(),
+						"text/html; charset=utf-8").build();
 			}
 
 			List<HTMLSearchResult> results = handleBlogSearch(searchValue);
 			pebbleHelper.getContextMap().put("searchresults", results);
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -205,10 +217,13 @@ public class WebResource {
 	public Response doWebsiteCreation() {
 
 		String name = request.getParameter("name");
+		String key = request.getParameter("key");
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/websitecreation.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/websitecreation.html", request);
 
-			List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller.getInstance().getNamesAsList());
+			List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller
+					.getInstance().getNamesAsList());
 
 			pebbleHelper.getContextMap().put("names", namesAsList);
 
@@ -216,14 +231,16 @@ public class WebResource {
 			if (name != null) {
 				nameobj = Controller.getInstance().getName(name);
 				if (nameobj == null) {
-					return error404(request, "You don't own this name or it is not confirmed by now!");
+					return error404(request,
+							"You don't own this name or it is not confirmed by now!");
 				}
 			}
 
 			if (namesAsList.size() > 0) {
 
 				if (name == null) {
-					Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+					Profile activeProfileOpt = ProfileHelper.getInstance()
+							.getActiveProfileOpt(request);
 					if (activeProfileOpt != null) {
 						nameobj = activeProfileOpt.getName();
 					} else {
@@ -231,17 +248,30 @@ public class WebResource {
 					}
 				}
 
-				String websiteOpt = DBSet.getInstance().getNameStorageMap().getOpt(nameobj.getName(),
-						Qorakeys.WEBSITE.toString());
+				String websiteOpt;
+				if (key != null) {
+					websiteOpt = DBSet.getInstance().getNameStorageMap()
+							.getOpt(nameobj.getName(), key);
+					pebbleHelper.getContextMap().put("key", key);
+				} else {
+					websiteOpt = DBSet
+							.getInstance()
+							.getNameStorageMap()
+							.getOpt(nameobj.getName(),
+									Qorakeys.WEBSITE.toString());
+				}
 
 				pebbleHelper.getContextMap().put("name", nameobj.getName());
 				pebbleHelper.getContextMap().put("website", websiteOpt);
 
 			} else {
-				pebbleHelper.getContextMap().put("result",
-						"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a website.<br></div>");
+				pebbleHelper
+						.getContextMap()
+						.put("result",
+								"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a website.<br></div>");
 			}
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -255,71 +285,105 @@ public class WebResource {
 	public Response doBlogdirectory() {
 
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/main.mini.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/main.mini.html", request);
 
 			List<HTMLSearchResult> results = handleBlogSearch(null);
 			pebbleHelper.getContextMap().put("searchresults", results);
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);
 		}
 
 	}
-	
-	
+
 	@POST
 	@Path("index/websitepreview.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response previewWebsite(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
-		
+	public Response previewWebsite(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
+
 		try {
 			String website = form.getFirst("website");
-			
-			website = website == null ?  "" : website;
-			
+
+			website = website == null ? "" : website;
+
 			return enhanceAndShowWebsite(website);
-			
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);
 		}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("index/websitesave.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response saveWebsite(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+	public Response saveWebsite(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 
-		String name = form.getFirst("name");
-		String website = form.getFirst("website");
-
-		JSONObject json = new JSONObject();
-
-		if (StringUtils.isBlank(name)) {
-			json.put("type", "parametersMissing");
-
-			return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+		
+			String name = form.getFirst("name");
+			String website = form.getFirst("website");
+			String key = form.getFirst("key");
+			
+			JSONObject json = new JSONObject();
+			
+			if(key != null && !key.equalsIgnoreCase(Qorakeys.WEBSITE.toString()))
+			{
+				if( Qorakeys.isPartOf(key))
+				{
+					json.put("type", "badKey");
+					
+					return Response.status(200)
+							.header("Content-Type", "application/json; charset=utf-8")
+							.entity(json.toJSONString()).build();
+				}
+			}
+			
+			if (StringUtils.isBlank(name)) {
+				json.put("type", "parametersMissing");
+				
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(json.toJSONString()).build();
+			}
+			
+			Pair<String, String> websitepair;
+			if(StringUtils.isNotBlank(key))
+			{
+				websitepair = new Pair<String, String>(
+						key, website);
+			}else
+			{
+				websitepair = new Pair<String, String>(
+						Qorakeys.WEBSITE.toString(), website);
+			}
+			
+			JSONObject storageJsonObject;
+			if (website == null || website.isEmpty()) {
+				
+				storageJsonObject = StorageUtils.getStorageJsonObject(null,
+						Collections.singletonList(StringUtils.isBlank(key) ? Qorakeys.WEBSITE.toString() : key),
+						null, null, null);
+			} else {
+				storageJsonObject = StorageUtils.getStorageJsonObject(
+						Collections.singletonList(websitepair), null, null, null,
+						null);
+			}
+			
+			new NameStorageResource().updateEntry(storageJsonObject.toString(),
+					name);
+			
+			json.put("type", "settingsSuccessfullySaved");
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
-		}
-		Pair<String, String> websitepair = new Pair<String, String>(Qorakeys.WEBSITE.toString(), website);
-
-		JSONObject storageJsonObject;
-		if (website == null || website.isEmpty()) {
-			storageJsonObject = StorageUtils.getStorageJsonObject(null,
-					Collections.singletonList(Qorakeys.WEBSITE.toString()), null, null, null);
-		} else {
-			storageJsonObject = StorageUtils.getStorageJsonObject(Collections.singletonList(websitepair), null, null,
-					null, null);
-		}
-
-		new NameStorageResource().updateEntry(storageJsonObject.toString(), name);
-
-		json.put("type", "settingsSuccessfullySaved");
-		return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
-				.entity(json.toJSONString()).build();
+			
 
 	}
 
@@ -327,7 +391,8 @@ public class WebResource {
 	@POST
 	@Path("index/settingssave.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response saveProfileSettings(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+	public Response saveProfileSettings(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 
 		JSONObject json = new JSONObject();
 
@@ -338,7 +403,10 @@ public class WebResource {
 			if (StringUtils.isBlank(profileName)) {
 				json.put("type", "parametersMissing");
 
-				return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 			}
 
@@ -348,18 +416,26 @@ public class WebResource {
 			if (name == null || !Profile.isAllowedProfileName(profileName)) {
 
 				json.put("type", "profileNameisnotAllowed");
-				return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 			}
 
-			boolean blogenable = Boolean.valueOf(form.getFirst(Qorakeys.BLOGENABLE.toString()));
-			boolean profileenable = Boolean.valueOf(form.getFirst(Qorakeys.PROFILEENABLE.toString()));
+			boolean blogenable = Boolean.valueOf(form
+					.getFirst(Qorakeys.BLOGENABLE.toString()));
+			boolean profileenable = Boolean.valueOf(form
+					.getFirst(Qorakeys.PROFILEENABLE.toString()));
 			String titleOpt = form.getFirst(Qorakeys.BLOGTITLE.toString());
 			titleOpt = decodeIfNotNull(titleOpt);
-			String blogDescrOpt = form.getFirst(Qorakeys.BLOGDESCRIPTION.toString());
+			String blogDescrOpt = form.getFirst(Qorakeys.BLOGDESCRIPTION
+					.toString());
 			blogDescrOpt = decodeIfNotNull(blogDescrOpt);
-			String profileAvatarOpt = form.getFirst(Qorakeys.PROFILEAVATAR.toString());
-			String profileBannerOpt = form.getFirst(Qorakeys.PROFILEMAINGRAPHIC.toString());
+			String profileAvatarOpt = form.getFirst(Qorakeys.PROFILEAVATAR
+					.toString());
+			String profileBannerOpt = form.getFirst(Qorakeys.PROFILEMAINGRAPHIC
+					.toString());
 
 			String bwlistkind = form.getFirst("bwlistkind");
 			String blackwhitelist = form.getFirst("blackwhitelist");
@@ -377,7 +453,8 @@ public class WebResource {
 			profile.setProfileEnabled(profileenable);
 
 			profile.getBlogBlackWhiteList().clearList();
-			profile.getBlogBlackWhiteList().setWhitelist(!bwlistkind.equals("black"));
+			profile.getBlogBlackWhiteList().setWhitelist(
+					!bwlistkind.equals("black"));
 			String[] bwList = StringUtils.split(blackwhitelist, ";");
 			for (String listentry : bwList) {
 				profile.getBlogBlackWhiteList().addAddressOrName(listentry);
@@ -388,7 +465,10 @@ public class WebResource {
 				profile.saveProfile();
 
 				json.put("type", "settingsSuccessfullySaved");
-				return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 
 			} catch (WebApplicationException e) {
@@ -397,7 +477,10 @@ public class WebResource {
 				json.put("type", "error");
 				json.put("error", e.getResponse().getEntity());
 
-				return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 			}
 
@@ -407,7 +490,8 @@ public class WebResource {
 			json.put("type", "error");
 			json.put("error", e.getMessage());
 
-			return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
 		}
 
@@ -419,15 +503,18 @@ public class WebResource {
 
 		try {
 
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/settings.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/settings.html", request);
 
 			if (ServletUtils.isRemoteRequest(request)) {
-				return error404(request, "This page is disabled for remote usage");
+				return error404(request,
+						"This page is disabled for remote usage");
 			}
 
 			String profileName = request.getParameter("profilename");
 
-			List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller.getInstance().getNamesAsList());
+			List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller
+					.getInstance().getNamesAsList());
 
 			for (Name name : namesAsList) {
 				if (!Profile.isAllowedProfileName(name.getName())) {
@@ -439,7 +526,8 @@ public class WebResource {
 
 			handleSelectNameAndProfile(pebbleHelper, profileName, namesAsList);
 
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);
@@ -447,7 +535,8 @@ public class WebResource {
 
 	}
 
-	public void handleSelectNameAndProfile(PebbleHelper pebbleHelper, String profileName, List<Name> namesAsList) {
+	public void handleSelectNameAndProfile(PebbleHelper pebbleHelper,
+			String profileName, List<Name> namesAsList) {
 		Name name = null;
 		if (profileName != null) {
 			name = Controller.getInstance().getName(profileName);
@@ -456,7 +545,8 @@ public class WebResource {
 		if (namesAsList.size() > 0) {
 
 			if (name == null) {
-				Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+				Profile activeProfileOpt = ProfileHelper.getInstance()
+						.getActiveProfileOpt(request);
 				if (activeProfileOpt != null) {
 					name = activeProfileOpt.getName();
 				} else {
@@ -471,12 +561,15 @@ public class WebResource {
 			pebbleHelper.getContextMap().put("name", name);
 
 		} else {
-			pebbleHelper.getContextMap().put("result",
-					"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a profile.<br></div>");
+			pebbleHelper
+					.getContextMap()
+					.put("result",
+							"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a profile.<br></div>");
 		}
 	}
 
-	public String decodeIfNotNull(String parameter) throws UnsupportedEncodingException {
+	public String decodeIfNotNull(String parameter)
+			throws UnsupportedEncodingException {
 		return parameter != null ? URLDecoder.decode(parameter, "UTF-8") : null;
 	}
 
@@ -485,14 +578,17 @@ public class WebResource {
 	public Response doWebdirectory() {
 
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/main.mini.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/main.mini.html", request);
 
-			List<Pair<String, String>> websitesByValue = NameUtils.getWebsitesByValue(null);
+			List<Pair<String, String>> websitesByValue = NameUtils
+					.getWebsitesByValue(null);
 			List<HTMLSearchResult> results = generateHTMLSearchresults(websitesByValue);
 
 			pebbleHelper.getContextMap().put("searchresults", results);
 
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -503,14 +599,18 @@ public class WebResource {
 
 	private List<HTMLSearchResult> handleBlogSearch(String blogSearchOpt) {
 		List<HTMLSearchResult> results = new ArrayList<>();
-		List<BlogProfile> allEnabledBlogs = BlogUtils.getEnabledBlogs(blogSearchOpt);
+		List<BlogProfile> allEnabledBlogs = BlogUtils
+				.getEnabledBlogs(blogSearchOpt);
 		for (BlogProfile blogProfile : allEnabledBlogs) {
 			String name = blogProfile.getProfile().getName().getName();
 			String title = blogProfile.getProfile().getBlogTitleOpt();
-			String description = blogProfile.getProfile().getBlogDescriptionOpt();
+			String description = blogProfile.getProfile()
+					.getBlogDescriptionOpt();
 
-			results.add(new HTMLSearchResult(title, description, name, "/index/blog.html?blogname=" + name,
-					"/index/blog.html?blogname=" + name, "/namestorage:" + name, blogProfile.getFollower()));
+			results.add(new HTMLSearchResult(title, description, name,
+					"/index/blog.html?blogname=" + name,
+					"/index/blog.html?blogname=" + name,
+					"/namestorage:" + name, blogProfile.getFollower()));
 		}
 
 		return results;
@@ -574,15 +674,22 @@ public class WebResource {
 		}
 	}
 
-	String[] imgsArray = { "qora.png", "logo_header.png", "qora-user.png", "logo_bottom.png", "banner_01.png",
-			"loading.gif", "00_generating.png", "01_genesis.jpg", "02_payment_in.png", "02_payment_out.png",
-			"03_name_registration.png", "04_name_update.png", "05_name_sale.png", "06_cancel_name_sale.png",
-			"07_name_purchase_in.png", "07_name_purchase_out.png", "08_poll_creation.jpg", "09_poll_vote.jpg",
-			"10_arbitrary_transaction.png", "11_asset_issue.png", "12_asset_transfer_in.png",
-			"12_asset_transfer_out.png", "13_order_creation.png", "14_cancel_order.png", "15_multi_payment_in.png",
-			"15_multi_payment_out.png", "16_deploy_at.png", "17_message_in.png", "17_message_out.png",
-			"asset_trade.png", "at_tx_in.png", "at_tx_out.png", "grleft.png", "grright.png", "redleft.png",
-			"redright.png", "bar.gif", "bar_left.gif", "bar_right.gif" };
+	String[] imgsArray = { "qora.png", "logo_header.png", "qora-user.png",
+			"logo_bottom.png", "banner_01.png", "loading.gif",
+			"00_generating.png", "01_genesis.jpg", "02_payment_in.png",
+			"02_payment_out.png", "03_name_registration.png",
+			"04_name_update.png", "05_name_sale.png",
+			"06_cancel_name_sale.png", "07_name_purchase_in.png",
+			"07_name_purchase_out.png", "08_poll_creation.jpg",
+			"09_poll_vote.jpg", "10_arbitrary_transaction.png",
+			"11_asset_issue.png", "12_asset_transfer_in.png",
+			"12_asset_transfer_out.png", "13_order_creation.png",
+			"14_cancel_order.png", "15_multi_payment_in.png",
+			"15_multi_payment_out.png", "16_deploy_at.png",
+			"17_message_in.png", "17_message_out.png", "asset_trade.png",
+			"at_tx_in.png", "at_tx_out.png", "grleft.png", "grright.png",
+			"redleft.png", "redright.png", "bar.gif", "bar_left.gif",
+			"bar_right.gif" };
 
 	@Path("index/img/{filename}")
 	@GET
@@ -630,7 +737,8 @@ public class WebResource {
 	public Response handleAPICall() {
 
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/apianswer.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/apianswer.html", request);
 			// EXAMPLE POST/GET/DELETE
 			String type = request.getParameter("type");
 			// EXAMPLE /names/key/MyName
@@ -638,23 +746,34 @@ public class WebResource {
 			String okmsg = request.getParameter("okmsg");
 			String errormsg = request.getParameter("errormsg");
 
-			if (StringUtils.isBlank(type) || (!type.equalsIgnoreCase("get") && !type.equalsIgnoreCase("post")
-					&& !type.equalsIgnoreCase("delete"))) {
+			if (StringUtils.isBlank(type)
+					|| (!type.equalsIgnoreCase("get")
+							&& !type.equalsIgnoreCase("post") && !type
+								.equalsIgnoreCase("delete"))) {
 
-				pebbleHelper.getContextMap().put("title", "An Api error occured");
-				pebbleHelper.getContextMap().put("apicall", "You need a type parameter with value GET/POST or DELETE ");
+				pebbleHelper.getContextMap().put("title",
+						"An Api error occured");
+				pebbleHelper
+						.getContextMap()
+						.put("apicall",
+								"You need a type parameter with value GET/POST or DELETE ");
 
-				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+				return Response.ok(pebbleHelper.evaluate(),
+						"text/html; charset=utf-8").build();
 			}
 
 			if (StringUtils.isBlank(url)) {
-				pebbleHelper.getContextMap().put("title", "An Api error occured");
-				pebbleHelper.getContextMap().put("apicall", "You need to provide an apiurl parameter");
-				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+				pebbleHelper.getContextMap().put("title",
+						"An Api error occured");
+				pebbleHelper.getContextMap().put("apicall",
+						"You need to provide an apiurl parameter");
+				return Response.ok(pebbleHelper.evaluate(),
+						"text/html; charset=utf-8").build();
 			}
 			url = url.startsWith("/") ? url.substring(1) : url;
 
-			Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
+			Map<String, String[]> parameterMap = new HashMap<String, String[]>(
+					request.getParameterMap());
 
 			parameterMap.remove("type");
 			parameterMap.remove("apiurl");
@@ -672,15 +791,18 @@ public class WebResource {
 
 			try {
 				// CREATE CONNECTION
-				URL urlToCall = new URL("http://127.0.0.1:" + Settings.getInstance().getRpcPort() + "/" + url);
-				HttpURLConnection connection = (HttpURLConnection) urlToCall.openConnection();
+				URL urlToCall = new URL("http://127.0.0.1:"
+						+ Settings.getInstance().getRpcPort() + "/" + url);
+				HttpURLConnection connection = (HttpURLConnection) urlToCall
+						.openConnection();
 
 				// EXECUTE
 				connection.setRequestMethod(type.toUpperCase());
 
 				if (type.equalsIgnoreCase("POST")) {
 					connection.setDoOutput(true);
-					connection.getOutputStream().write(json.toJSONString().getBytes("UTF-8"));
+					connection.getOutputStream().write(
+							json.toJSONString().getBytes("UTF-8"));
 					connection.getOutputStream().flush();
 					connection.getOutputStream().close();
 				}
@@ -693,29 +815,50 @@ public class WebResource {
 					stream = connection.getInputStream();
 				}
 
-				InputStreamReader isReader = new InputStreamReader(stream, "UTF-8");
+				InputStreamReader isReader = new InputStreamReader(stream,
+						"UTF-8");
 				BufferedReader br = new BufferedReader(isReader);
 				String result = br.readLine();
 
 				if (result.contains("message") && result.contains("error")) {
 					if (StringUtils.isNotBlank(errormsg)) {
 
-						pebbleHelper.getContextMap().put("customtext", "<font color=red>" + errormsg + "</font>");
+						pebbleHelper.getContextMap().put("customtext",
+								"<font color=red>" + errormsg + "</font>");
 					}
-					pebbleHelper.getContextMap().put("title", "An Api error occured");
-					pebbleHelper.getContextMap().put("apicall", "apicall: " + type.toUpperCase() + " " + url
-							+ (json.size() > 0 ? json.toJSONString() : ""));
-					pebbleHelper.getContextMap().put("errormessage", "Result:" + result);
-					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+					pebbleHelper.getContextMap().put("title",
+							"An Api error occured");
+					pebbleHelper.getContextMap().put(
+							"apicall",
+							"apicall: "
+									+ type.toUpperCase()
+									+ " "
+									+ url
+									+ (json.size() > 0 ? json.toJSONString()
+											: ""));
+					pebbleHelper.getContextMap().put("errormessage",
+							"Result:" + result);
+					return Response.ok(pebbleHelper.evaluate(),
+							"text/html; charset=utf-8").build();
 				} else {
 					if (StringUtils.isNotBlank(okmsg)) {
-						pebbleHelper.getContextMap().put("customtext", "<font color=green>" + okmsg + "</font>");
+						pebbleHelper.getContextMap().put("customtext",
+								"<font color=green>" + okmsg + "</font>");
 					}
-					pebbleHelper.getContextMap().put("title", "The API Call was successful");
-					pebbleHelper.getContextMap().put("apicall", "Submitted Api call: " + type.toUpperCase() + " " + url
-							+ (json.size() > 0 ? json.toJSONString() : ""));
-					pebbleHelper.getContextMap().put("errormessage", "Result:" + result);
-					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+					pebbleHelper.getContextMap().put("title",
+							"The API Call was successful");
+					pebbleHelper.getContextMap().put(
+							"apicall",
+							"Submitted Api call: "
+									+ type.toUpperCase()
+									+ " "
+									+ url
+									+ (json.size() > 0 ? json.toJSONString()
+											: ""));
+					pebbleHelper.getContextMap().put("errormessage",
+							"Result:" + result);
+					return Response.ok(pebbleHelper.evaluate(),
+							"text/html; charset=utf-8").build();
 				}
 
 			} catch (IOException e) {
@@ -724,11 +867,17 @@ public class WebResource {
 				if (e instanceof FileNotFoundException) {
 					additionalHelp = "The apicall with the following apiurl is not existing: ";
 				}
-				pebbleHelper.getContextMap().put("title", "An Api error occured");
-				pebbleHelper.getContextMap().put("apicall", "You tried to submit the following apicall: "
-						+ type.toUpperCase() + " " + url + (json.size() > 0 ? json.toJSONString() : ""));
-				pebbleHelper.getContextMap().put("errormessage", additionalHelp + e.getMessage());
-				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+				pebbleHelper.getContextMap().put("title",
+						"An Api error occured");
+				pebbleHelper.getContextMap().put(
+						"apicall",
+						"You tried to submit the following apicall: "
+								+ type.toUpperCase() + " " + url
+								+ (json.size() > 0 ? json.toJSONString() : ""));
+				pebbleHelper.getContextMap().put("errormessage",
+						additionalHelp + e.getMessage());
+				return Response.ok(pebbleHelper.evaluate(),
+						"text/html; charset=utf-8").build();
 			}
 
 		} catch (Throwable e) {
@@ -791,7 +940,8 @@ public class WebResource {
 	@POST
 	@Path("index/postblogprocessing.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response postBlogProcessing(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+	public Response postBlogProcessing(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 		JSONObject json = new JSONObject();
 
 		String title = form.getFirst(BlogPostResource.TITLE_KEY);
@@ -800,11 +950,13 @@ public class WebResource {
 		String preview = form.getFirst("preview");
 		String blogname = form.getFirst(BlogPostResource.BLOGNAME_KEY);
 
-		if (StringUtil.isNotBlank(creator) && StringUtil.isNotBlank(contentparam)) {
+		if (StringUtil.isNotBlank(creator)
+				&& StringUtil.isNotBlank(contentparam)) {
 
 			JSONObject jsonBlogPost = new JSONObject();
 
-			Pair<Account, NameResult> nameToAdress = NameUtils.nameToAdress(creator);
+			Pair<Account, NameResult> nameToAdress = NameUtils
+					.nameToAdress(creator);
 
 			String authorOpt = null;
 			if (nameToAdress.getB() == NameResult.OK) {
@@ -821,28 +973,38 @@ public class WebResource {
 			if (StringUtils.isNotBlank(preview) && preview.equals("true")) {
 				json.put("type", "preview");
 
-				BlogEntry entry = new BlogEntry(title, contentparam, authorOpt, new Date().getTime(), creator, "",
-						blogname);
+				BlogEntry entry = new BlogEntry(title, contentparam, authorOpt,
+						new Date().getTime(), creator, "", blogname);
 
 				json.put("previewBlogpost", entry.toJson());
 
-				return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 			}
 
 			try {
 
-				jsonBlogPost.put("fee",
-						Controller.getInstance()
-								.calcRecommendedFeeForArbitraryTransaction(jsonBlogPost.toJSONString().getBytes())
+				jsonBlogPost.put(
+						"fee",
+						Controller
+								.getInstance()
+								.calcRecommendedFeeForArbitraryTransaction(
+										jsonBlogPost.toJSONString().getBytes())
 								.getA().toPlainString());
 
-				String result = new BlogPostResource().addBlogEntry(jsonBlogPost.toJSONString(), blogname);
+				String result = new BlogPostResource().addBlogEntry(
+						jsonBlogPost.toJSONString(), blogname);
 
 				json.put("type", "postSuccessful");
 				json.put("result", result);
 
-				return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 
 			} catch (WebApplicationException e) {
@@ -851,12 +1013,16 @@ public class WebResource {
 				json.put("type", "error");
 				json.put("error", e.getResponse().getEntity());
 
-				return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 			}
 		}
 
-		return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
 				.entity(json.toJSONString()).build();
 	}
 
@@ -866,7 +1032,8 @@ public class WebResource {
 
 		try {
 
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/postblog.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/postblog.html", request);
 
 			pebbleHelper.getContextMap().put("errormessage", "");
 			pebbleHelper.getContextMap().put("font", "");
@@ -878,13 +1045,17 @@ public class WebResource {
 			pebbleHelper.getContextMap().put("oldfee", "");
 			pebbleHelper.getContextMap().put("preview", "");
 
-			String blogname = request.getParameter(BlogPostResource.BLOGNAME_KEY);
+			String blogname = request
+					.getParameter(BlogPostResource.BLOGNAME_KEY);
 
-			BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList.getBlogBlackWhiteList(blogname);
+			BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList
+					.getBlogBlackWhiteList(blogname);
 
-			Pair<List<Account>, List<Name>> ownAllowedElements = blogBlackWhiteList.getOwnAllowedElements(true);
+			Pair<List<Account>, List<Name>> ownAllowedElements = blogBlackWhiteList
+					.getOwnAllowedElements(true);
 
-			List<Account> resultingAccounts = new ArrayList<Account>(ownAllowedElements.getA());
+			List<Account> resultingAccounts = new ArrayList<Account>(
+					ownAllowedElements.getA());
 			List<Name> resultingNames = ownAllowedElements.getB();
 
 			Collections.sort(resultingAccounts, new AccountBalanceComparator());
@@ -893,30 +1064,38 @@ public class WebResource {
 			String accountStrings = "";
 
 			for (Name name : resultingNames) {
-				accountStrings += "<option value=" + name.getName() + ">" + name.getNameBalanceString() + "</option>";
+				accountStrings += "<option value=" + name.getName() + ">"
+						+ name.getNameBalanceString() + "</option>";
 			}
 
 			for (Account account : resultingAccounts) {
-				accountStrings += "<option value=" + account.getAddress() + ">" + account + "</option>";
+				accountStrings += "<option value=" + account.getAddress() + ">"
+						+ account + "</option>";
 			}
 
 			// are we allowed to post
 			if (resultingNames.size() == 0 && resultingAccounts.size() == 0) {
 
-				pebbleHelper.getContextMap().put("errormessage",
-						"<div id=\"result\"><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button>You can't post to this blog! None of your accounts has balance or the blog owner did not allow your accounts to post!<br></div></div>");
+				pebbleHelper
+						.getContextMap()
+						.put("errormessage",
+								"<div id=\"result\"><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button>You can't post to this blog! None of your accounts has balance or the blog owner did not allow your accounts to post!<br></div></div>");
 
 			}
 
-			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
 
-			if (activeProfileOpt != null && resultingNames.contains(activeProfileOpt.getName())) {
-				pebbleHelper.getContextMap().put("primaryname", activeProfileOpt.getName().getName());
+			if (activeProfileOpt != null
+					&& resultingNames.contains(activeProfileOpt.getName())) {
+				pebbleHelper.getContextMap().put("primaryname",
+						activeProfileOpt.getName().getName());
 			}
 
 			pebbleHelper.getContextMap().put("option", accountStrings);
 
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);
@@ -927,7 +1106,8 @@ public class WebResource {
 	@POST
 	@Path("index/followblog.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response followBlog(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+	public Response followBlog(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 		try {
 
 			JSONObject json = new JSONObject();
@@ -935,46 +1115,65 @@ public class WebResource {
 			String blogname = form.getFirst(BlogPostResource.BLOGNAME_KEY);
 			String followString = form.getFirst("follow");
 			NameMap nameMap = DBSet.getInstance().getNameMap();
-			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
 
-			if (followString != null && activeProfileOpt != null && blogname != null && nameMap.contains(blogname)) {
+			if (followString != null && activeProfileOpt != null
+					&& blogname != null && nameMap.contains(blogname)) {
 				boolean follow = Boolean.valueOf(followString);
 				Name name = nameMap.get(blogname);
 				Profile profile = Profile.getProfileOpt(name);
 				if (activeProfileOpt.isProfileEnabled()) {
 
 					if (follow) {
-						if (profile != null && profile.isProfileEnabled() && profile.isBlogEnabled()) {
+						if (profile != null && profile.isProfileEnabled()
+								&& profile.isBlogEnabled()) {
 							String result;
 
-							if (activeProfileOpt.getFollowedBlogs().contains(blogname)) {
+							if (activeProfileOpt.getFollowedBlogs().contains(
+									blogname)) {
 								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
-										+ "You already follow this blog" + "</div></center>";
+										+ "You already follow this blog"
+										+ "</div></center>";
 
 								json.put("type", "youAlreadyFollowThisBlog");
-								json.put("follower", profile.getFollower().size());
+								json.put("follower", profile.getFollower()
+										.size());
 
-								json.put("isFollowing", activeProfileOpt.getFollowedBlogs().contains(blogname));
+								json.put("isFollowing", activeProfileOpt
+										.getFollowedBlogs().contains(blogname));
 
-								return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+								return Response
+										.status(200)
+										.header("Content-Type",
+												"application/json; charset=utf-8")
 										.entity(json.toJSONString()).build();
 							}
 
 							// Prevent following of own profiles
-							if (Controller.getInstance().getNamesAsListAsString().contains(blogname)) {
+							if (Controller.getInstance()
+									.getNamesAsListAsString()
+									.contains(blogname)) {
 								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
-										+ "You can't follow your own profiles" + "</div></center>";
+										+ "You can't follow your own profiles"
+										+ "</div></center>";
 
 								json.put("type", "youCantFollowYourOwnProfiles");
-								json.put("follower", profile.getFollower().size());
+								json.put("follower", profile.getFollower()
+										.size());
 
-								json.put("isFollowing", activeProfileOpt.getFollowedBlogs().contains(blogname));
+								json.put("isFollowing", activeProfileOpt
+										.getFollowedBlogs().contains(blogname));
 
-								return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+								return Response
+										.status(200)
+										.header("Content-Type",
+												"application/json; charset=utf-8")
 										.entity(json.toJSONString()).build();
 							}
 
-							boolean isFollowing = activeProfileOpt.getFollowedBlogs().contains(blogname);
+							boolean isFollowing = activeProfileOpt
+									.getFollowedBlogs().contains(blogname);
 
 							try {
 
@@ -985,29 +1184,38 @@ public class WebResource {
 
 								json.put("type", "YouFollowThisBlogNow");
 								json.put("result", result);
-								json.put("follower", profile.getFollower().size());
-								json.put("isFollowing", activeProfileOpt.getFollowedBlogs().contains(blogname));
+								json.put("follower", profile.getFollower()
+										.size());
+								json.put("isFollowing", activeProfileOpt
+										.getFollowedBlogs().contains(blogname));
 
 							} catch (WebApplicationException e) {
 								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog follow not successful<br>"
-										+ e.getResponse().getEntity() + "</div></center>";
+										+ e.getResponse().getEntity()
+										+ "</div></center>";
 
 								json.put("type", "BlogFollowNotSuccessful");
 								json.put("result", e.getResponse().getEntity());
-								json.put("follower", profile.getFollower().size());
+								json.put("follower", profile.getFollower()
+										.size());
 								json.put("isFollowing", isFollowing);
 
 							}
 
-							return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
 									.entity(json.toJSONString()).build();
 						}
 
 					} else {
 
-						boolean isFollowing = activeProfileOpt.getFollowedBlogs().contains(blogname);
+						boolean isFollowing = activeProfileOpt
+								.getFollowedBlogs().contains(blogname);
 
-						if (activeProfileOpt.getFollowedBlogs().contains(blogname)) {
+						if (activeProfileOpt.getFollowedBlogs().contains(
+								blogname)) {
 							activeProfileOpt.removeFollowedBlog(blogname);
 							String result;
 							try {
@@ -1017,19 +1225,26 @@ public class WebResource {
 
 								json.put("type", "unfollowSuccessful");
 								json.put("result", result);
-								json.put("follower", profile.getFollower().size());
-								json.put("isFollowing", activeProfileOpt.getFollowedBlogs().contains(blogname));
+								json.put("follower", profile.getFollower()
+										.size());
+								json.put("isFollowing", activeProfileOpt
+										.getFollowedBlogs().contains(blogname));
 							} catch (WebApplicationException e) {
 								result = "<center><div class=\"alert alert-danger\" role=\"alert\">Blog unfollow not successful<br>"
-										+ e.getResponse().getEntity() + "</div></center>";
+										+ e.getResponse().getEntity()
+										+ "</div></center>";
 
 								json.put("type", "blogUnfollowNotSuccessful");
 								json.put("result", e.getResponse().getEntity());
-								json.put("follower", profile.getFollower().size());
+								json.put("follower", profile.getFollower()
+										.size());
 								json.put("isFollowing", isFollowing);
 							}
 
-							return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
 									.entity(json.toJSONString()).build();
 
 						}
@@ -1041,7 +1256,9 @@ public class WebResource {
 			return getBlog(null);
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return Response.status(200).header("Content-Type", "application/json; charset=utf-8").entity("{}").build();
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity("{}").build();
 		}
 
 	}
@@ -1050,7 +1267,8 @@ public class WebResource {
 	@POST
 	@Path("index/sharepost.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response sharePost(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+	public Response sharePost(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 
 		JSONObject json = new JSONObject();
 
@@ -1059,46 +1277,63 @@ public class WebResource {
 			String signature = form.getFirst("signature");
 			String sourceBlog = form.getFirst("blogname");
 
-			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
 
-			if (activeProfileOpt != null && signature != null && sourceBlog != null) {
+			if (activeProfileOpt != null && signature != null
+					&& sourceBlog != null) {
 				if (activeProfileOpt.isProfileEnabled()) {
 
 					if (!activeProfileOpt.isBlogEnabled()) {
 						json.put("type", "BlogIsDisabled");
-						return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+						return Response
+								.status(200)
+								.header("Content-Type",
+										"application/json; charset=utf-8")
 								.entity(json.toJSONString()).build();
 					}
 
-					List<String> list = DBSet.getInstance().getSharedPostsMap().get(Base58.decode(signature));
-					if (list != null && list.contains(activeProfileOpt.getName().getName())) {
+					List<String> list = DBSet.getInstance().getSharedPostsMap()
+							.get(Base58.decode(signature));
+					if (list != null
+							&& list.contains(activeProfileOpt.getName()
+									.getName())) {
 						json.put("type", "YouAlreadySharedThisPost");
 
-						return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+						return Response
+								.status(200)
+								.header("Content-Type",
+										"application/json; charset=utf-8")
 								.entity(json.toJSONString()).build();
 					}
 
 					if (activeProfileOpt.getName().getName().equals(sourceBlog)) {
 						json.put("type", "YouCantShareYourOwnPosts");
 
-						return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+						return Response
+								.status(200)
+								.header("Content-Type",
+										"application/json; charset=utf-8")
 								.entity(json.toJSONString()).build();
 					}
 
 					JSONObject jsonBlogPost = new JSONObject();
 					String profileName = activeProfileOpt.getName().getName();
 					jsonBlogPost.put(BlogPostResource.AUTHOR, profileName);
-					jsonBlogPost.put("creator", activeProfileOpt.getName().getOwner().getAddress());
+					jsonBlogPost.put("creator", activeProfileOpt.getName()
+							.getOwner().getAddress());
 					jsonBlogPost.put(BlogPostResource.SHARE_KEY, signature);
 					jsonBlogPost.put("body", "share");
 
 					Pair<BigDecimal, Integer> fee = Controller.getInstance()
-							.calcRecommendedFeeForArbitraryTransaction(jsonBlogPost.toJSONString().getBytes());
+							.calcRecommendedFeeForArbitraryTransaction(
+									jsonBlogPost.toJSONString().getBytes());
 					jsonBlogPost.put("fee", fee.getA().toPlainString());
 
 					try {
 
-						String result = new BlogPostResource().addBlogEntry(jsonBlogPost.toJSONString(), profileName);
+						String result = new BlogPostResource().addBlogEntry(
+								jsonBlogPost.toJSONString(), profileName);
 
 						json.put("type", "ShareSuccessful");
 						json.put("result", result);
@@ -1109,7 +1344,10 @@ public class WebResource {
 						json.put("result", e.getResponse().getEntity());
 					}
 
-					return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
 							.entity(json.toJSONString()).build();
 
 				}
@@ -1121,18 +1359,22 @@ public class WebResource {
 			json.put("type", "error");
 			json.put("error", e.getMessage());
 
-			return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
 		}
 
-		return Response.status(200).header("Content-Type", "application/json; charset=utf-8").entity("{}").build();
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.entity("{}").build();
 	}
 
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("index/likepost.html")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response likePost(@Context HttpServletRequest request, MultivaluedMap<String, String> form) {
+	public Response likePost(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
 
 		JSONObject json = new JSONObject();
 
@@ -1141,7 +1383,8 @@ public class WebResource {
 			String signature = form.getFirst("signature");
 			String likeString = form.getFirst("like");
 
-			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
 
 			if (likeString != null && activeProfileOpt != null) {
 				boolean like = Boolean.valueOf(likeString);
@@ -1150,20 +1393,27 @@ public class WebResource {
 					if (like) {
 						String result;
 
-						if (activeProfileOpt.getLikedPosts().contains(signature)) {
+						if (activeProfileOpt.getLikedPosts()
+								.contains(signature)) {
 
 							json.put("type", "YouAlreadyLikeThisPost");
 
-							return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
 									.entity(json.toJSONString()).build();
 						}
 
-						BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt((ArbitraryTransaction) Controller
-								.getInstance().getTransaction(Base58.decode(signature)));
+						BlogEntry blogEntryOpt = BlogUtils
+								.getBlogEntryOpt((ArbitraryTransaction) Controller
+										.getInstance().getTransaction(
+												Base58.decode(signature)));
 
 						boolean ownPost = false;
 						if (blogEntryOpt != null) {
-							if (Controller.getInstance().getAccountByAddress(blogEntryOpt.getCreator()) != null) {
+							if (Controller.getInstance().getAccountByAddress(
+									blogEntryOpt.getCreator()) != null) {
 								ownPost = true;
 							}
 						}
@@ -1172,7 +1422,10 @@ public class WebResource {
 
 							json.put("type", "YouCantLikeYourOwnPosts");
 
-							return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
 									.entity(json.toJSONString()).build();
 
 						}
@@ -1191,10 +1444,14 @@ public class WebResource {
 							json.put("result", e.getResponse().getEntity());
 						}
 
-						return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+						return Response
+								.status(200)
+								.header("Content-Type",
+										"application/json; charset=utf-8")
 								.entity(json.toJSONString()).build();
 					} else {
-						if (activeProfileOpt.getLikedPosts().contains(signature)) {
+						if (activeProfileOpt.getLikedPosts()
+								.contains(signature)) {
 
 							activeProfileOpt.removeLikeProfile(signature);
 							String result;
@@ -1211,7 +1468,10 @@ public class WebResource {
 
 							}
 
-							return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+							return Response
+									.status(200)
+									.header("Content-Type",
+											"application/json; charset=utf-8")
 									.entity(json.toJSONString()).build();
 						}
 					}
@@ -1225,11 +1485,14 @@ public class WebResource {
 			json.put("type", "error");
 			json.put("error", e.getMessage());
 
-			return Response.status(200).header("Content-Type", "application/json; charset=utf-8")
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
 		}
 
-		return Response.status(200).header("Content-Type", "application/json; charset=utf-8").entity("{}").build();
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.entity("{}").build();
 	}
 
 	@Path("index/mergedblog.html")
@@ -1237,9 +1500,11 @@ public class WebResource {
 	public Response mergedBlog() {
 
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/blog.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/blog.html", request);
 
-			String blogname = request.getParameter(BlogPostResource.BLOGNAME_KEY);
+			String blogname = request
+					.getParameter(BlogPostResource.BLOGNAME_KEY);
 
 			String msg = request.getParameter("msg");
 
@@ -1249,7 +1514,8 @@ public class WebResource {
 
 			Profile profile = null;
 			if (blogname == null) {
-				Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+				Profile activeProfileOpt = ProfileHelper.getInstance()
+						.getActiveProfileOpt(request);
 
 				profile = activeProfileOpt;
 			} else {
@@ -1258,35 +1524,43 @@ public class WebResource {
 
 			if (profile == null || !profile.isProfileEnabled()) {
 
-				pebbleHelper = PebbleHelper.getPebbleHelper("web/profiledisabled.html", request);
-				return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+				pebbleHelper = PebbleHelper.getPebbleHelper(
+						"web/profiledisabled.html", request);
+				return Response.ok(pebbleHelper.evaluate(),
+						"text/html; charset=utf-8").build();
 			}
 
-			pebbleHelper.getContextMap().put("postblogurl", "postblog.html?blogname=" + blogname);
+			pebbleHelper.getContextMap().put("postblogurl",
+					"postblog.html?blogname=" + blogname);
 
 			pebbleHelper.getContextMap().put("blogprofile", profile);
 			pebbleHelper.getContextMap().put("blogenabled", true);
 			pebbleHelper.getContextMap().put("hideprofile", true);
 
-			List<String> followedBlogs = new ArrayList<String>(profile.getFollowedBlogs());
+			List<String> followedBlogs = new ArrayList<String>(
+					profile.getFollowedBlogs());
 			followedBlogs.add(profile.getName().getName());
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(followedBlogs);
 
-			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
 			for (BlogEntry blogEntry : blogPosts) {
 				String signature = blogEntry.getSignature();
 
 				addSharingAndLiking(blogEntry, signature);
 				if (activeProfileOpt != null) {
-					blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(signature));
+					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
+							.contains(signature));
 				}
 			}
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
-			pebbleHelper.getContextMap().put("postprefixurl", "/index/mergedblog.html?blogname=" + blogname + "&msg=");
+			pebbleHelper.getContextMap().put("postprefixurl",
+					"/index/mergedblog.html?blogname=" + blogname + "&msg=");
 
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -1296,7 +1570,8 @@ public class WebResource {
 	}
 
 	public void addSharingAndLiking(BlogEntry blogEntry, String signature) {
-		List<String> list = DBSet.getInstance().getSharedPostsMap().get(Base58.decode(blogEntry.getSignature()));
+		List<String> list = DBSet.getInstance().getSharedPostsMap()
+				.get(Base58.decode(blogEntry.getSignature()));
 		if (list != null) {
 			for (String name : list) {
 				blogEntry.addSharedUser(name);
@@ -1322,7 +1597,8 @@ public class WebResource {
 	public Response getBlog(@PathParam("messageOpt") String messageOpt) {
 
 		try {
-			String blogname = request.getParameter(BlogPostResource.BLOGNAME_KEY);
+			String blogname = request
+					.getParameter(BlogPostResource.BLOGNAME_KEY);
 			String switchprofile = request.getParameter("switchprofile");
 			String disconnect = request.getParameter("disconnect");
 			String msg = request.getParameter("msg");
@@ -1333,7 +1609,8 @@ public class WebResource {
 				ProfileHelper.getInstance().switchProfileOpt(switchprofile);
 			}
 
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/blog.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/blog.html", request);
 			pebbleHelper.getContextMap().put("postblogurl", "postblog.html");
 			pebbleHelper.getContextMap().put("apimessage", messageOpt);
 
@@ -1344,46 +1621,67 @@ public class WebResource {
 			NameMap nameMap = DBSet.getInstance().getNameMap();
 			if (blogname != null) {
 				if (!nameMap.contains(blogname)) {
-					return Response.ok(PebbleHelper.getPebbleHelper("web/profiledisabled.html", request).evaluate(),
-							"text/html; charset=utf-8").build();
+					return Response.ok(
+							PebbleHelper.getPebbleHelper(
+									"web/profiledisabled.html", request)
+									.evaluate(), "text/html; charset=utf-8")
+							.build();
 				}
 
 				Name name = nameMap.get(blogname);
 				Profile profile = Profile.getProfileOpt(name);
 
 				if (profile == null || !profile.isProfileEnabled()) {
-					pebbleHelper = PebbleHelper.getPebbleHelper("web/profiledisabled.html", request);
-					if (Controller.getInstance().getAccountByAddress(name.getOwner().getAddress()) != null) {
-						pebbleHelper.getContextMap().put("ownProfileName", blogname);
+					pebbleHelper = PebbleHelper.getPebbleHelper(
+							"web/profiledisabled.html", request);
+					if (Controller.getInstance().getAccountByAddress(
+							name.getOwner().getAddress()) != null) {
+						pebbleHelper.getContextMap().put("ownProfileName",
+								blogname);
 					}
-					return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+					return Response.ok(pebbleHelper.evaluate(),
+							"text/html; charset=utf-8").build();
 				}
 
-				pebbleHelper.getContextMap().put("postblogurl", "postblog.html?blogname=" + blogname);
+				pebbleHelper.getContextMap().put("postblogurl",
+						"postblog.html?blogname=" + blogname);
 
 				pebbleHelper.getContextMap().put("blogprofile", profile);
-				pebbleHelper.getContextMap().put("blogenabled", profile.isBlogEnabled());
+				pebbleHelper.getContextMap().put("blogenabled",
+						profile.isBlogEnabled());
 				if (Controller.getInstance().doesWalletDatabaseExists()) {
-					if (Controller.getInstance().getAccountByAddress(name.getOwner().getAddress()) != null) {
-						pebbleHelper.getContextMap().put("ownProfileName", blogname);
+					if (Controller.getInstance().getAccountByAddress(
+							name.getOwner().getAddress()) != null) {
+						pebbleHelper.getContextMap().put("ownProfileName",
+								blogname);
 					}
 				}
-				pebbleHelper.getContextMap().put("follower", profile.getFollower());
+				pebbleHelper.getContextMap().put("follower",
+						profile.getFollower());
 
-				pebbleHelper.getContextMap().put("postprefixurl", "/index/blog.html?blogname=" + blogname + "&msg=");
+				pebbleHelper.getContextMap().put("postprefixurl",
+						"/index/blog.html?blogname=" + blogname + "&msg=");
 
 			} else {
-				pebbleHelper.getContextMap().put("postprefixurl", "/index/blog.html?msg=");
+				pebbleHelper.getContextMap().put("postprefixurl",
+						"/index/blog.html?msg=");
 				pebbleHelper.getContextMap().put("hideprofile", true);
 				pebbleHelper.getContextMap().put("blogenabled", true);
 			}
 
-			Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
-			pebbleHelper.getContextMap().put("isFollowing",
-					activeProfileOpt != null && activeProfileOpt.getFollowedBlogs().contains(blogname));
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
+			pebbleHelper.getContextMap().put(
+					"isFollowing",
+					activeProfileOpt != null
+							&& activeProfileOpt.getFollowedBlogs().contains(
+									blogname));
 
-			pebbleHelper.getContextMap().put("isLikeing",
-					activeProfileOpt != null && activeProfileOpt.getLikedPosts().contains(blogname));
+			pebbleHelper.getContextMap().put(
+					"isLikeing",
+					activeProfileOpt != null
+							&& activeProfileOpt.getLikedPosts().contains(
+									blogname));
 
 			List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname);
 
@@ -1392,13 +1690,15 @@ public class WebResource {
 
 				addSharingAndLiking(blogEntry, signature);
 				if (activeProfileOpt != null) {
-					blogEntry.setLiking(activeProfileOpt.getLikedPosts().contains(signature));
+					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
+							.contains(signature));
 				}
 			}
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
 
-			return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return error404(request, null);
@@ -1469,7 +1769,8 @@ public class WebResource {
 
 	@Path("index/libs/bootstrap/{version}/{folder}/{filename}")
 	@GET
-	public Response bootstrap(@PathParam("version") String version, @PathParam("folder") String folder,
+	public Response bootstrap(@PathParam("version") String version,
+			@PathParam("folder") String folder,
 			@PathParam("filename") String filename) {
 		String fullname = "web/libs/bootstrap-3.3.4-dist/";
 		String type = "text/html; charset=utf-8";
@@ -1587,11 +1888,16 @@ public class WebResource {
 	public Response error404(HttpServletRequest request, String titleOpt) {
 
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/404.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/404.html", request);
 
-			pebbleHelper.getContextMap().put("title", titleOpt == null ? "Sorry, that page does not exist!" : titleOpt);
+			pebbleHelper.getContextMap().put(
+					"title",
+					titleOpt == null ? "Sorry, that page does not exist!"
+							: titleOpt);
 
-			return Response.status(404).header("Content-Type", "text/html; charset=utf-8")
+			return Response.status(404)
+					.header("Content-Type", "text/html; charset=utf-8")
 					.entity(pebbleHelper.evaluate()).build();
 		} catch (PebbleException e) {
 			e.printStackTrace();
@@ -1599,7 +1905,8 @@ public class WebResource {
 		}
 	}
 
-	public static String readFile(String path, Charset encoding) throws IOException {
+	public static String readFile(String path, Charset encoding)
+			throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
 	}
@@ -1610,9 +1917,11 @@ public class WebResource {
 	public Response showNamestorage(@PathParam("name") String name) {
 
 		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper("web/main.mini.html", request);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/main.mini.html", request);
 
-			NameStorageMap nameStorageMap = DBSet.getInstance().getNameStorageMap();
+			NameStorageMap nameStorageMap = DBSet.getInstance()
+					.getNameStorageMap();
 			Map<String, String> map = nameStorageMap.get(name);
 
 			if (map != null) {
@@ -1626,11 +1935,13 @@ public class WebResource {
 				pebbleHelper.getContextMap().put("keyvaluepairs", resultJson);
 				pebbleHelper.getContextMap().put("dataname", name);
 
-				return Response.status(200).header("Content-Type", "text/html; charset=utf-8")
+				return Response.status(200)
+						.header("Content-Type", "text/html; charset=utf-8")
 						.entity(pebbleHelper.evaluate()).build();
 
 			} else {
-				return error404(request, "This namestorage does not contain any entries");
+				return error404(request,
+						"This namestorage does not contain any entries");
 			}
 
 		} catch (Throwable e) {
@@ -1676,10 +1987,11 @@ public class WebResource {
 	public Response getHtml(@PathParam("html") String html) {
 		return error404(request, null);
 	}
-	
+
 	@Path("{name}/{key}")
 	@GET
-	public Response getKeyAsWebsite(@PathParam("name") String nameName, @PathParam("key") String key) {
+	public Response getKeyAsWebsite(@PathParam("name") String nameName,
+			@PathParam("key") String key) {
 		Name name = Controller.getInstance().getName(nameName);
 
 		try {
@@ -1689,12 +2001,12 @@ public class WebResource {
 				return error404(request, "This name does not exist!");
 			}
 
-			String website = DBSet.getInstance().getNameStorageMap().getOpt(nameName, key);
+			String website = DBSet.getInstance().getNameStorageMap()
+					.getOpt(nameName, key);
 
 			if (website == null) {
 				try {
-					return error404(request,
-							"This key is empty");
+					return error404(request, "This key is empty");
 				} catch (Throwable e) {
 					e.printStackTrace();
 					return error404(request, null);
@@ -1721,11 +2033,13 @@ public class WebResource {
 				return error404(request, null);
 			}
 
-			String website = DBSet.getInstance().getNameStorageMap().getOpt(nameName, Qorakeys.WEBSITE.toString());
+			String website = DBSet.getInstance().getNameStorageMap()
+					.getOpt(nameName, Qorakeys.WEBSITE.toString());
 
 			if (website == null) {
 				try {
-					return error404(request,
+					return error404(
+							request,
 							"This name has currently no <a href=\"/index/websitecreation.html\">website<a/>!");
 				} catch (Throwable e) {
 					e.printStackTrace();
@@ -1741,20 +2055,24 @@ public class WebResource {
 		}
 	}
 
-	private Response enhanceAndShowWebsite(String website) throws IOException, PebbleException {
+	private Response enhanceAndShowWebsite(String website) throws IOException,
+			PebbleException {
 		website = injectValues(website);
 
 		File tmpFile = File.createTempFile("web", ".site");
 		FileUtils.writeStringToFile(tmpFile, website);
-		PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(tmpFile.getAbsolutePath(), request);
-		pebbleHelper.getContextMap().put("namestoragemap", DBSet.getInstance().getNameStorageMap());
-		//pebbleHelper.getContextMap().put("atmap",DBSet.getInstance().getATMap());
-		//pebbleHelper.getContextMap().put("attxsmap",DBSet.getInstance().getATTransactionMap());
+		PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+				tmpFile.getAbsolutePath(), request);
+		pebbleHelper.getContextMap().put("namestoragemap",
+				DBSet.getInstance().getNameStorageMap());
+		// pebbleHelper.getContextMap().put("atmap",DBSet.getInstance().getATMap());
+		// pebbleHelper.getContextMap().put("attxsmap",DBSet.getInstance().getATTransactionMap());
 		pebbleHelper.getContextMap().put("ats", ATWebResource.getInstance());
 		tmpFile.delete();
 
 		// SHOW WEB-PAGE
-		return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").build();
+		return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8")
+				.build();
 	}
 
 	public static String injectValues(String value) {

@@ -26,6 +26,19 @@ public enum Qorakeys {
 		return variation;
 	}
 	
+	public static boolean isPartOf(String enumString)
+	{
+		Qorakeys[] values = Qorakeys.values();
+		for (Qorakeys qorakey : values) {
+			if(enumString.equals(qorakey.toString()))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	
 
 }
