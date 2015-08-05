@@ -1676,6 +1676,38 @@ public class WebResource {
 	public Response getHtml(@PathParam("html") String html) {
 		return error404(request, null);
 	}
+	
+	@Path("{name}/{key}")
+	@GET
+	public Response getKeyAsWebsite(@PathParam("name") String nameName, @PathParam("key") String key) {
+		Name name = Controller.getInstance().getName(nameName);
+
+		try {
+
+			// CHECK IF NAME EXISTS
+			if (name == null) {
+				return error404(request, "This name does not exist!");
+			}
+
+			String website = DBSet.getInstance().getNameStorageMap().getOpt(nameName, key);
+
+			if (website == null) {
+				try {
+					return error404(request,
+							"This key is empty");
+				} catch (Throwable e) {
+					e.printStackTrace();
+					return error404(request, null);
+				}
+
+			}
+
+			return enhanceAndShowWebsite(website);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
+		}
+	}
 
 	@Path("{name}")
 	@GET
