@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableSet;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.mapdb.BTreeMap;
 import org.mapdb.Bind;
 import org.mapdb.DB;
@@ -222,6 +223,12 @@ public class ATMap extends DBMap<String, AT>
 	public Iterable<String> getTypeATs(String type)
 	{
 		return Fun.filter(this.typeATs, type);
+	}
+	
+	public Collection<String> getTypeATsList(String type)
+	{
+		Collection<String> keys = Lists.newArrayList(Fun.filter(this.typeATs, type) );
+		return keys;
 	}
 
 	@Override
