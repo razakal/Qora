@@ -284,3 +284,19 @@ margin-bottom: 30px;
 left: 28px;
 }
 }
+.timeline-panel.highlighted {
+box-shadow: 0 1px 6px 0px #6467ff !important;
+border: 1px solid #6467ff !important;
+-webkit-box-shadow: 0 1px 6px #6467ff !important;
+}
+.timeline-panel.highlighted:before {
+position: absolute !important;
+top: 26px !important;
+right: -15px !important;
+display: inline-block !important;
+border-top: 15px solid transparent !important;
+border-left: 15px solid #6467ff !important;
+border-right: 0 solid #6467ff !important;
+border-bottom: 15px solid transparent !important;
+content: " " !important;
+  }

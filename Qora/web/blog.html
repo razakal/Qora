@@ -600,7 +600,8 @@
 
 			return 0;
    		 }
-
+</script>
+<script type="text/javascript">
     $('ul.nav-tabs > li').removeClass('active');
     if (window.location.pathname === '/index/blogsearch.html') {
         $('ul.nav-tabs > li:nth-child(2)').addClass('active');
@@ -608,9 +609,7 @@
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
 
-
     $(document).ready(function() {
-
 
         var my_posts = $("[rel=tooltip]");
 
@@ -652,7 +651,16 @@
     })
 
     </script>
-    <script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+    {% for blogpost in blogposts %}
+    if (window.location.search === '?msg={{blogpost.getSignature()}}') {
+      $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
+    };{% endfor %}
+  });
+
+    </script>
+<script type="text/javascript">
 {% for blogpost in blogposts %}
     function changeTextarea{{blogpost.getSignature()}}( str ) {
         var textarea = document.getElementById('clipboard_textarea')
@@ -671,7 +679,7 @@
         });
 {% endfor %}
     </script>
-    <script>
+<script type="text/javascript">
     // main.js
     {% for blogpost in blogposts %}
     var client = new ZeroClipboard( document.getElementById("copybutton{{blogpost.getSignature()}}") );
@@ -686,6 +694,9 @@
         alert("Copied text to clipboard: " + event.data["text/plain"] );
       } );
     } );
+
+</script>
+<script>
 
 </script>
   </body>
