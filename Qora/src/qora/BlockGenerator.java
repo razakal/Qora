@@ -164,10 +164,12 @@ public class BlockGenerator extends Thread implements Observer
 	
 	public void run()
 	{
-
-		if (!Controller.getInstance().isNSUpToDate())
+		//CHECK IF NAME STORAGE NEEDS UPDATE
+		if (DBSet.getInstance().getLocalDataMap().get("nsupdate") == null )
 		{
+			//FIRST NAME STORAGE UPDATE
 			UpdateUtil.repopulateNameStorage( 100000 );
+			DBSet.getInstance().getLocalDataMap().set("nsupdate", "1");
 		}
 		while(true)
 		{
