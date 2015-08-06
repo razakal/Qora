@@ -84,6 +84,8 @@ public class StorageUtils {
 			PublicKeyAccount creator, DBSet db) {
 
 			String string = new String(data);
+			
+			string = GZIP.webDecompress(string);
 
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 
@@ -256,6 +258,8 @@ public class StorageUtils {
 	public static void processOrphan(byte[] data, byte[] signature, DBSet db) {
 
 		String string = new String(data);
+		
+		string = GZIP.webDecompress(string);
 
 		JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 

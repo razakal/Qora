@@ -21,6 +21,7 @@ import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
 import utils.APIUtils;
+import utils.GZIP;
 import utils.Pair;
 import controller.Controller;
 import database.DBSet;
@@ -142,6 +143,14 @@ public class NameStorageResource {
 
 			jsonObject.put("name", name);
 			String jsonString = jsonObject.toJSONString();
+			
+			String compressedJsonString = GZIP.compress(jsonString);
+			
+			if(compressedJsonString.length() < jsonString.length())
+			{
+				jsonString = compressedJsonString;
+			}
+			
 			byte[] bytes = jsonString.getBytes();
 			BigDecimal fee = Controller.getInstance()
 					.calcRecommendedFeeForArbitraryTransaction(bytes).getA();
