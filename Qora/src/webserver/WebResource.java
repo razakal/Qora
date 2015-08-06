@@ -298,6 +298,7 @@ public class WebResource {
 		}
 
 	}
+	
 
 	@POST
 	@Path("index/websitepreview.html")
@@ -2092,6 +2093,7 @@ public class WebResource {
 		// pebbleHelper.getContextMap().put("atmap",DBSet.getInstance().getATMap());
 		// pebbleHelper.getContextMap().put("attxsmap",DBSet.getInstance().getATTransactionMap());
 		pebbleHelper.getContextMap().put("ats", ATWebResource.getInstance());
+		pebbleHelper.getContextMap().put("controller", ControllerWebResource.getInstance());
 		tmpFile.delete();
 
 		// SHOW WEB-PAGE

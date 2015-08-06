@@ -1,7 +1,5 @@
 package controller;
 
-import gui.Gui;
-
 import java.awt.Dimension;
 import java.awt.TrayIcon.MessageType;
 import java.io.File;
@@ -24,6 +22,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.apache.commons.io.FileUtils;
+import org.mapdb.Fun.Tuple2;
+
+import api.ApiClient;
+import api.ApiService;
+import at.AT;
+import database.DBSet;
+import database.LocalDataMap;
+import database.SortableList;
+import gui.Gui;
 import network.Network;
 import network.Peer;
 import network.message.BlockMessage;
@@ -33,10 +41,6 @@ import network.message.Message;
 import network.message.MessageFactory;
 import network.message.TransactionMessage;
 import network.message.VersionMessage;
-
-import org.apache.commons.io.FileUtils;
-import org.mapdb.Fun.Tuple2;
-
 import qora.BlockChain;
 import qora.BlockGenerator;
 import qora.BlockGenerator.ForgingStatus;
@@ -63,14 +67,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import utils.SysTray;
-import utils.UpdateUtil;
 import webserver.WebService;
-import api.ApiClient;
-import api.ApiService;
-import at.AT;
-import database.DBSet;
-import database.LocalDataMap;
-import database.SortableList;
 
 public class Controller extends Observable {
 

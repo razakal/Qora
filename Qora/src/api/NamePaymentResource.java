@@ -39,8 +39,7 @@ public class NamePaymentResource {
 				return APIUtils.processPayment(amount, fee, sender, recipient);
 			}else
 			{
-				NameResult nameResult = nameToAdress.getB();
-				throw ApiErrorFactory.getInstance().createError(nameResult.getErrorCode());
+				return APIUtils.processPayment(amount, fee, sender, nameName);
 			}
 		}
 		catch(NullPointerException e)
