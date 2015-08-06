@@ -288,6 +288,7 @@ left: 28px;
 box-shadow: 0 1px 6px 0px #6467ff !important;
 border: 1px solid #6467ff !important;
 -webkit-box-shadow: 0 1px 6px #6467ff !important;
+margin-top: 80px;
 }
 .timeline-panel.highlighted:before {
 position: absolute !important;
