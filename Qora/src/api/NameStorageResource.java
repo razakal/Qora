@@ -155,7 +155,7 @@ public class NameStorageResource {
 			BigDecimal fee = Controller.getInstance()
 					.calcRecommendedFeeForArbitraryTransaction(bytes).getA();
 			APIUtils.askAPICallAllowed("POST namestorage/update/" + name + "\n"
-					+ jsonString + "\nfee: " + fee.toPlainString(), request);
+					+ GZIP.webDecompress(jsonString) + "\nfee: " + fee.toPlainString(), request);
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()

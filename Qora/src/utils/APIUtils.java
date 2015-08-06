@@ -16,7 +16,7 @@ import controller.Controller;
 public class APIUtils {
 
 	public static String processPayment(String amount, String fee,
-			String sender, String recipient) {
+			String sender, String recipient, String x, HttpServletRequest request) {
 		// PARSE AMOUNT
 		BigDecimal bdAmount;
 		try {
@@ -62,6 +62,8 @@ public class APIUtils {
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_INVALID_SENDER);
 		}
+		
+		APIUtils.askAPICallAllowed("POST payment\n" + x, request );
 
 		// SEND PAYMENT
 		Pair<Transaction, Integer> result = Controller.getInstance()

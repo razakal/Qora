@@ -1,9 +1,11 @@
 package api;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
@@ -19,6 +21,10 @@ import utils.Pair;
 @Produces(MediaType.APPLICATION_JSON)
 public class NamePaymentResource {
 
+	
+	@Context
+	HttpServletRequest request;
+	
 	@POST
 	@Consumes(MediaType.WILDCARD)
 	public String namePayment(String x)
@@ -36,10 +42,10 @@ public class NamePaymentResource {
 			if(nameToAdress.getB() == NameResult.OK)
 			{
 				String recipient = nameToAdress.getA().getAddress();
-				return APIUtils.processPayment(amount, fee, sender, recipient);
+				return APIUtils.processPayment(amount, fee, sender, recipient, x, request);
 			}else
 			{
-				return APIUtils.processPayment(amount, fee, sender, nameName);
+				return APIUtils.processPayment(amount, fee, sender, nameName, x, request);
 			}
 		}
 		catch(NullPointerException e)

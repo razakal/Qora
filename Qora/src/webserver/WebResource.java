@@ -319,6 +319,97 @@ public class WebResource {
 		}
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@POST
+	@Path("index/api.html")
+	@Consumes("application/x-www-form-urlencoded")
+	public Response createApiCall(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) throws IOException {
+		
+			String type = form.getFirst("type");
+			String apiurl = form.getFirst("apiurl");
+			
+			String jsonContent = form.getFirst("json");
+			JSONObject json = new JSONObject();
+			JSONObject jsonanswer = new JSONObject();
+			if(StringUtils.isNotBlank(jsonContent))
+			{
+				json = (JSONObject) JSONValue.parse(jsonContent);
+			}
+				
+			if (StringUtils.isBlank(type)
+					|| (!type.equalsIgnoreCase("get")
+							&& !type.equalsIgnoreCase("post") && !type
+								.equalsIgnoreCase("delete"))) {
+				
+				jsonanswer.put("type", "apicallerror");
+				jsonanswer.put("errordetail", "type parameter must be post, get or delete");
+				
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(jsonanswer.toJSONString()).build();
+			}
+			
+			if (StringUtils.isBlank(apiurl)) {
+				jsonanswer.put("type", "apicallerror");
+				jsonanswer.put("errordetail", "apiurl parameter must be correct set");
+				
+				return Response.status(200)
+						.header("Content-Type", "application/json; charset=utf-8")
+						.entity(jsonanswer.toJSONString()).build();
+			}
+			
+				
+				// CREATE CONNECTION
+			
+			apiurl = apiurl.startsWith("/") ? apiurl.substring(1) : apiurl;
+			
+				URL urlToCall = new URL("http://127.0.0.1:"
+						+ Settings.getInstance().getRpcPort() + "/" + apiurl);
+				HttpURLConnection connection = (HttpURLConnection) urlToCall
+						.openConnection();
+
+				// EXECUTE
+				connection.setRequestMethod(type.toUpperCase());
+
+				if (type.equalsIgnoreCase("POST")) {
+					connection.setDoOutput(true);
+					connection.getOutputStream().write(
+							json.toJSONString().getBytes("UTF-8"));
+					connection.getOutputStream().flush();
+					connection.getOutputStream().close();
+				}
+
+				// READ RESULT
+				InputStream stream;
+				if (connection.getResponseCode() == 400) {
+					stream = connection.getErrorStream();
+				} else {
+					stream = connection.getInputStream();
+				}
+
+				InputStreamReader isReader = new InputStreamReader(stream,
+						"UTF-8");
+				BufferedReader br = new BufferedReader(isReader);
+				String result = br.readLine();
+
+				if (result.contains("message") && result.contains("error")) {
+					jsonanswer.put("type", "apicallerror");
+					jsonanswer.put("errordetail", result);
+					return Response.status(200)
+							.header("Content-Type", "application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				} else {
+					jsonanswer.put("type", "success");
+					
+					return Response.status(200)
+							.header("Content-Type", "application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				}
+			
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	@POST
