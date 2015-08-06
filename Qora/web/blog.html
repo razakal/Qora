@@ -273,7 +273,7 @@
           {% if blogenabled %}
           <ul class="timeline">{% for blogpost in blogposts %}
             <li id="{{blogpost.getSignature()}}">
-              <div class="timeline-badge primary"><a><i rel="tooltip" title="" id="" class="glyphicon glyphicon-record"></i></a></div>
+              <div class="timeline-badge primary"><a><i rel="tooltip" title="{{blogpost.creationTime}}" id="" class="glyphicon glyphicon-record"></i></a></div>
               <div class="timeline-panel">
                 <div class="timeline-heading">
                   <div class="media">
@@ -296,8 +296,19 @@
                       <h6 class="media-heading"><b>{{blogpost.nameOrCreator}}</b></h6>{{blogpost.creationTime}}
                     	{%endif%}
                     </div>
+                    <div class="media-right">
+                      <a>
+                        <button class="btn btn-default" onmouseover="changeTextarea{{blogpost.getSignature()}}(location.protocol + '//' + window.location.host + '{{postprefixurl}}{{blogpost.getSignature()}}')" id="copybutton{{blogpost.getSignature()}}" data-toggle="tooltip" data-placement="bottom" title="Copy to clipboard" data-clipboard-target="clipboard_textarea">
+                          <i class="glyphicon glyphicon-link"></i>
+                        </button>
+                      </a>
+                      <div style="display:none;">
+                        <textarea id="clipboard_textarea" name="clipboard_textarea">hello</textarea>
+                      </div>
                   </div>
-                </div>
+
+                    </div>
+                  </div>
                 <div class="timeline-body">
                   <a href="{{postprefixurl}}{{blogpost.getSignature()}}"><p class="post-header"><b>{{blogpost.titleOpt}}</b></a></p>
                   <p class="post-content">{{blogpost.description}}</p>
@@ -323,6 +334,7 @@
   </div>
     <script src="/index/libs/jquery/jquery.2.js"></script>
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
+    <script src="/index/libs/js/third-party/ZeroClipboard.min.js"></script>
     <script type="text/javascript">
 
 		var profileisFollowing;
@@ -504,7 +516,7 @@
 
 			return 0;
    		 }
-   		 
+
 
     	function processLike(signature, isLikeing) {
 			var blogname;
@@ -595,11 +607,11 @@
     } else {
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
-    
-    
+
+
     $(document).ready(function() {
-    
-    
+
+
         var my_posts = $("[rel=tooltip]");
 
 		var size = $(window).width();
@@ -627,7 +639,7 @@
       $(".tl-profile").hide();
       $(".timeline").css("padding-top","40px");
       {%endif%}
-      
+
       {% if msg is not null %} $('html, body').animate({
         scrollTop: $("#{{msg}}").offset().top
     }, 2000);
@@ -635,6 +647,46 @@
 
     });
 
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
     </script>
+    <script>
+{% for blogpost in blogposts %}
+    function changeTextarea{{blogpost.getSignature()}}( str ) {
+        var textarea = document.getElementById('clipboard_textarea')
+
+        textarea.value = str;
+    }
+
+    $('a').mouseout(function(){
+       $('#clipboard_textarea').hide();
+    });
+    $('a').mouseover(function(){
+    $('#clipboard_textarea').show();
+    });
+        $('#clipboard_textarea').mouseover(function(){
+        $(this).show();
+        });
+{% endfor %}
+    </script>
+    <script>
+    // main.js
+    {% for blogpost in blogposts %}
+    var client = new ZeroClipboard( document.getElementById("copybutton{{blogpost.getSignature()}}") );
+    {% endfor %}
+    client.on( "ready", function( readyEvent ) {
+      // alert( "ZeroClipboard SWF is ready!" );
+
+      client.on( "aftercopy", function( event ) {
+        // `this` === `client`
+        // `event.target` === the element that was clicked
+        event.target.style.display = "none";
+        alert("Copied text to clipboard: " + event.data["text/plain"] );
+      } );
+    } );
+
+</script>
   </body>
 </html>

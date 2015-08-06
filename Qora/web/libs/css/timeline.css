@@ -134,6 +134,12 @@ border-top: 1px solid #ddd;
 cursor: pointer;
 text-decoration: none;
 }
+i.glyphicon.glyphicon-link:hover {
+color: #6474ff;
+}
+i.glyphicon.glyphicon-link {
+color: #888;
+}
 i.glyphicon.glyphicon-heart:hover {
 color: #6474ff;
 }
@@ -205,7 +211,7 @@ border-right:5px solid transparent;
 border-top:0 solid #000;
 }
 .tooltip-inner{
-width:200px;
+width: auto;
 padding:3px 8px;
 color:#fff;
 text-align:center;

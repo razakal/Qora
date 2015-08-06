@@ -326,33 +326,33 @@ public class WebResource {
 	public Response saveWebsite(@Context HttpServletRequest request,
 			MultivaluedMap<String, String> form) {
 
-		
+
 			String name = form.getFirst("name");
 			String website = form.getFirst("website");
 			String key = form.getFirst("key");
-			
+
 			JSONObject json = new JSONObject();
-			
+
 			if(key != null && !key.equalsIgnoreCase(Qorakeys.WEBSITE.toString()))
 			{
 				if( Qorakeys.isPartOf(key))
 				{
 					json.put("type", "badKey");
-					
+
 					return Response.status(200)
 							.header("Content-Type", "application/json; charset=utf-8")
 							.entity(json.toJSONString()).build();
 				}
 			}
-			
+
 			if (StringUtils.isBlank(name)) {
 				json.put("type", "parametersMissing");
-				
+
 				return Response.status(200)
 						.header("Content-Type", "application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 			}
-			
+
 			Pair<String, String> websitepair;
 			if(StringUtils.isNotBlank(key))
 			{
@@ -363,10 +363,10 @@ public class WebResource {
 				websitepair = new Pair<String, String>(
 						Qorakeys.WEBSITE.toString(), website);
 			}
-			
+
 			JSONObject storageJsonObject;
 			if (website == null || website.isEmpty()) {
-				
+
 				storageJsonObject = StorageUtils.getStorageJsonObject(null,
 						Collections.singletonList(StringUtils.isBlank(key) ? Qorakeys.WEBSITE.toString() : key),
 						null, null, null);
@@ -375,15 +375,15 @@ public class WebResource {
 						Collections.singletonList(websitepair), null, null, null,
 						null);
 			}
-			
+
 			new NameStorageResource().updateEntry(storageJsonObject.toString(),
 					name);
-			
+
 			json.put("type", "settingsSuccessfullySaved");
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
-			
+
 
 	}
 
@@ -928,6 +928,30 @@ public class WebResource {
 	@GET
 	public Response sidebarjs() {
 		File file = new File("web/libs/js/sidebar.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+
+	@Path("index/libs/js/third-party/ZeroClipboard.min.js")
+	@GET
+	public Response ZeroClipboardmin() {
+		File file = new File("web/libs/js/third-party/ZeroClipboard.min.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+
+	@Path("index/libs/js/third-party/ZeroClipboard.swf")
+	@GET
+	public Response ZeroClipboard() {
+		File file = new File("web/libs/js/third-party/ZeroClipboard.swf");
 
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
