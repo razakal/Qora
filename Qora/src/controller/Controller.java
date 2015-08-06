@@ -63,6 +63,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import utils.SysTray;
+import utils.UpdateUtil;
 import webserver.WebService;
 import api.ApiClient;
 import api.ApiService;
@@ -651,6 +652,10 @@ public class Controller extends Observable {
 		int chainHeight = this.blockChain.getHeight();
 		return maxPeerHeight <= chainHeight;
 	}
+	
+	public boolean isNSUpToDate() {
+		return !Settings.getInstance().updateNameStorage();
+	}
 
 	public void update() {
 		// UPDATE STATUS
@@ -660,7 +665,7 @@ public class Controller extends Observable {
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(
 				ObserverMessage.NETWORK_STATUS, this.status));
-
+		
 		Peer peer = null;
 		try {
 			// WHILE NOT UPTODATE

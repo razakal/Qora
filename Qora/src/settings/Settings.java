@@ -64,6 +64,8 @@ public class Settings {
 	private static final String DEFAULT_TIME_ZONE = "";
 	private static final String DEFAULT_TIME_FORMAT = "";
 	
+	private static final boolean DEFAULT_NS_UPDATE = false;
+	
 	private static Settings instance;
 	
 	private JSONObject settingsJSON;
@@ -329,6 +331,16 @@ public class Settings {
 		}
 		
 		return DEFAULT_WEB_ENABLED;
+	}
+	
+	public boolean updateNameStorage() 
+	{
+		if(this.settingsJSON.containsKey("nsupdate"))
+		{
+			return ((Boolean) this.settingsJSON.get("nsupdate")).booleanValue();
+		}
+		
+		return DEFAULT_NS_UPDATE;
 	}
 	
 	public String getWalletDir()
