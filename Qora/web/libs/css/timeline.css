@@ -293,7 +293,7 @@ margin-top: 80px;
 .timeline-panel.highlighted:before {
 position: absolute !important;
 top: 26px !important;
-right: -15px !important;
+right: -15px;
 display: inline-block !important;
 border-top: 15px solid transparent !important;
 border-left: 15px solid #6467ff !important;
@@ -301,3 +301,17 @@ border-right: 0 solid #6467ff !important;
 border-bottom: 15px solid transparent !important;
 content: " " !important;
   }
+.timeline-inverted > .timeline-panel.highlighted:before {
+  position: absolute !important;
+  top: 26px !important;
+  left: -15px;
+  display: inline-block !important;
+  border-top: 15px solid transparent !important;
+  border-right: 15px solid #6467ff !important;
+  border-left: 0 solid #6467ff !important;
+  border-bottom: 15px solid transparent !important;
+  content: " " !important;
+    }
+.timeline-badge.primary.highlighted {
+  margin-top: 80px;
+}

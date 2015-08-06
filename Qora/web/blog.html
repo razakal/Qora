@@ -656,9 +656,11 @@
     {% for blogpost in blogposts %}
     if (window.location.search === '?msg={{blogpost.getSignature()}}') {
       $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
+      $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
     };
     if (window.location.search === '?blogname={{blogpost.getBlognameOpt()}}&msg={{blogpost.getSignature()}}') {
-     $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
+      $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
+      $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
    };
     {% endfor %}
   });
