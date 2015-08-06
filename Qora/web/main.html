@@ -179,7 +179,7 @@
                 <div class="input-group">
                   <label for="searchkey" class="sr-only">Search</label>
                   <input id="searchkey" autofocus="autofocus" size="75" type="text" value="" class="form-control"><span class="input-group-btn">
-                    <button id="button" type="button" value="Search" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
+                    <button id="searchbutton" type="button" value="Search" class="btn btn-link"><span class="glyphicon glyphicon-search"></span><span class="sr-only">Search</span></button></span>
                 </div>
               </div>
             </div>
@@ -217,7 +217,8 @@
         }
     };
     $(document).ready(function() {
-        $("#button").click(function() {
+      $('.navbar-header').empty();
+        $("#searchbutton").click(function() {
             var searchval, url, value;
             value = $("#kind")[0].selectedIndex;
             if (value == 1) {
@@ -232,7 +233,7 @@
         });
         $("#searchkey").keypress(function(e) {
             if (e.which == 13) {
-                $("#button").trigger("click");
+                $("#searchbutton").trigger("click");
             }
         });
         $("#searchkey").val(getSearchParameters().search);
