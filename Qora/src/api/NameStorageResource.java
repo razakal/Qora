@@ -1,6 +1,9 @@
 package api;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -23,6 +27,11 @@ import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.GZIP;
 import utils.Pair;
+import utils.StorageUtils;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+
 import controller.Controller;
 import database.DBSet;
 
@@ -45,14 +54,13 @@ public class NameStorageResource {
 					ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
 		}
 
+		Map<String, String> map = DBSet.getInstance().getNameStorageMap()
+				.get(name);
 
-		Map<String, String> map = DBSet.getInstance().getNameStorageMap().get(name);
-		
 		JSONObject json = new JSONObject();
-		if(map != null)
-		{
+		if (map != null) {
 			Set<String> keySet = map.keySet();
-			
+
 			for (String key : keySet) {
 				json.put(key, map.get(key));
 			}
@@ -60,12 +68,12 @@ public class NameStorageResource {
 
 		return json.toJSONString();
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/{name}/key/{key}")
-	public String getNameStorageValue(@PathParam("name") String name,@PathParam("key") String key) {
+	public String getNameStorageValue(@PathParam("name") String name,
+			@PathParam("key") String key) {
 		Name nameObj = DBSet.getInstance().getNameMap().get(name);
 
 		if (nameObj == null) {
@@ -73,18 +81,16 @@ public class NameStorageResource {
 					ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
 		}
 
+		Map<String, String> map = DBSet.getInstance().getNameStorageMap()
+				.get(name);
 
-		Map<String, String> map = DBSet.getInstance().getNameStorageMap().get(name);
-		
 		JSONObject json = new JSONObject();
-		if(map != null && map.containsKey(key))
-		{
+		if (map != null && map.containsKey(key)) {
 			json.put(key, map.get(key));
 		}
 
 		return json.toJSONString();
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@POST
@@ -143,19 +149,121 @@ public class NameStorageResource {
 
 			jsonObject.put("name", name);
 			String jsonString = jsonObject.toJSONString();
-			
+
 			String compressedJsonString = GZIP.compress(jsonString);
-			
-			if(compressedJsonString.length() < jsonString.length())
-			{
+
+			if (compressedJsonString.length() < jsonString.length()) {
 				jsonString = compressedJsonString;
 			}
-			
+
 			byte[] bytes = jsonString.getBytes();
+			List<String> askApicalls = new ArrayList<String>();
+
+			
+			JSONObject jsonObjectForCheck = (JSONObject) JSONValue.parse(x);
+			// IF VALUE TOO LARGE FOR ONE ARB TX AND WE ONLY HAVE ADDCOMPLETE
+			// WITH ONE KEY
+			if (bytes.length > 4000
+					&& jsonObjectForCheck.containsKey(StorageUtils.ADD_COMPLETE_KEY)
+					&& jsonObjectForCheck.keySet().size() == 1) {
+				JSONObject innerJsonObject = (JSONObject) JSONValue.parse((String) jsonObjectForCheck.get(StorageUtils.ADD_COMPLETE_KEY));
+				if (innerJsonObject.keySet().size() == 1) {
+					// Starting Multi TX
+
+					String key = (String) innerJsonObject.keySet().iterator()
+							.next();
+					String value = (String) innerJsonObject.get(key);
+
+					Iterable<String> chunks = Splitter.fixedLength(3000).split(
+							value);
+					List<String> arbTxs = Lists.newArrayList(chunks);
+
+					BigDecimal completeFee = BigDecimal.ZERO;
+					List<Pair<byte[], BigDecimal>> allTxPairs = new ArrayList<>();
+
+					boolean isFirst = true;
+					for (String valueString : arbTxs) {
+						Pair<String, String> keypair = new Pair<String, String>(
+								key, valueString);
+						JSONObject storageJsonObject;
+						if (isFirst) {
+							storageJsonObject = StorageUtils
+									.getStorageJsonObject(
+											Collections.singletonList(keypair),
+											null, null, null, null);
+							isFirst = false;
+						} else {
+							storageJsonObject = StorageUtils
+									.getStorageJsonObject(null, null, null,
+											null,
+											Collections.singletonList(keypair));
+						}
+						storageJsonObject.put("name", name);
+
+						String jsonStringForMultipleTx = storageJsonObject
+								.toJSONString();
+
+						String compressedjsonStringForMultipleTx = GZIP
+								.compress(jsonStringForMultipleTx);
+
+						if (compressedjsonStringForMultipleTx.length() < jsonStringForMultipleTx
+								.length()) {
+							jsonStringForMultipleTx = compressedjsonStringForMultipleTx;
+						}
+
+						byte[] resultbyteArray = jsonStringForMultipleTx
+								.getBytes();
+						BigDecimal currentFee = Controller
+								.getInstance()
+								.calcRecommendedFeeForArbitraryTransaction(
+										resultbyteArray).getA();
+
+						completeFee = completeFee.add(currentFee);
+
+						allTxPairs.add(new Pair<>(resultbyteArray, currentFee));
+
+						askApicalls.add("POST namestorage/update/" + name
+								+ "\n"
+								+ GZIP.webDecompress(jsonStringForMultipleTx)
+								+ "\nfee: " + currentFee.toPlainString());
+					}
+
+					if (account.getBalance(1, DBSet.getInstance()).compareTo(
+							completeFee) == -1) {
+						throw ApiErrorFactory.getInstance().createError(
+								ApiErrorFactory.ERROR_NO_BALANCE);
+					}
+
+					String basicInfo = "Because of the size of the data this call will create "
+							+ allTxPairs.size()
+							+ " transactions.\nAll Arbitrary Transactions will cost: "
+							+ completeFee.toPlainString() + " Qora.\nDetails:\n\n";
+
+					basicInfo += StringUtils.join(askApicalls, "\n");
+
+					APIUtils.askAPICallAllowed(basicInfo, request);
+
+					Pair<Transaction, Integer> result;
+					String results = "";
+					for (Pair<byte[], BigDecimal> pair : allTxPairs) {
+						result = Controller.getInstance()
+								.createArbitraryTransaction(account, 10,
+										pair.getA(), pair.getB());
+
+						results += ArbitraryTransactionsResource
+								.checkArbitraryTransaction(result) + "\n";
+					}
+
+					return results;
+
+				}
+			}
 			BigDecimal fee = Controller.getInstance()
 					.calcRecommendedFeeForArbitraryTransaction(bytes).getA();
-			APIUtils.askAPICallAllowed("POST namestorage/update/" + name + "\n"
-					+ GZIP.webDecompress(jsonString) + "\nfee: " + fee.toPlainString(), request);
+			APIUtils.askAPICallAllowed(
+					"POST namestorage/update/" + name + "\n"
+							+ GZIP.webDecompress(jsonString) + "\nfee: "
+							+ fee.toPlainString(), request);
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
