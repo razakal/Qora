@@ -180,7 +180,7 @@ public class BlogBlackWhiteList {
 						}
 					}
 
-				} else if (!Crypto.getInstance().isValidAddress(accountOrName)) {
+				} else if (Crypto.getInstance().isValidAddress(accountOrName)) {
 					Account accountByAddress = Controller.getInstance()
 							.getAccountByAddress(accountOrName);
 
