@@ -88,7 +88,7 @@ public class NameStorageTest {
 		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
 				Collections.singletonList(new Pair<String, String>(
 						Qorakeys.PROFILEENABLE.toString(), "yes")), null, null,
-				null, null);
+				null, null, null);
 		storageJsonObject.put("name", "drizzt");
 		byte[] data = storageJsonObject.toString().getBytes();
 
@@ -115,7 +115,7 @@ public class NameStorageTest {
 		  storageJsonObject = StorageUtils.getStorageJsonObject(
 					null, Arrays.asList(
 							Qorakeys.PROFILEENABLE.toString()),null,
-					null, null);
+					null, null, null);
 			storageJsonObject.put("name", "drizzt");
 			 data = storageJsonObject.toString().getBytes();
 
@@ -152,7 +152,7 @@ public class NameStorageTest {
 		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(
 				Collections.singletonList(new Pair<String, String>(
 						Qorakeys.PROFILEENABLE.toString(), "yes")), null, null,
-				null, null);
+				null, null, null);
 		storageJsonObject.put("name", "drizzt");
 		byte[] data = storageJsonObject.toString().getBytes();
 
@@ -174,7 +174,7 @@ public class NameStorageTest {
 
 		storageJsonObject = StorageUtils.getStorageJsonObject(Collections
 				.singletonList(new Pair<String, String>(Qorakeys.PROFILEENABLE
-						.toString(), "anothervalue")), null, null, null, null);
+						.toString(), "anothervalue")), null, null, null, null, null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -195,7 +195,7 @@ public class NameStorageTest {
 
 		storageJsonObject = StorageUtils.getStorageJsonObject(null,
 				Arrays.asList(Qorakeys.PROFILEENABLE.toString()), null, null,
-				null);
+				null, null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -224,7 +224,7 @@ public class NameStorageTest {
 		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(null,
 				null, Collections.singletonList(new Pair<String, String>(
 						Qorakeys.PROFILELIKEPOSTS.toString(), "skerberus")),
-				null, null);
+				null, null, null);
 		storageJsonObject.put("name", "drizzt");
 		byte[] data = storageJsonObject.toString().getBytes();
 
@@ -244,7 +244,7 @@ public class NameStorageTest {
 		storageJsonObject = StorageUtils.getStorageJsonObject(null, null,
 				Collections.singletonList(new Pair<String, String>(
 						Qorakeys.PROFILELIKEPOSTS.toString(), "vrontis")),
-				null, null);
+				null, null, null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -265,7 +265,7 @@ public class NameStorageTest {
 		storageJsonObject = StorageUtils.getStorageJsonObject(null, null, null,
 				Collections.singletonList(new Pair<String, String>(
 						Qorakeys.PROFILELIKEPOSTS.toString(), "skerberus")),
-				null);
+				null, null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -291,7 +291,7 @@ public class NameStorageTest {
 						null,
 						Collections.singletonList(new Pair<String, String>(
 								Qorakeys.PROFILELIKEPOSTS.toString(), "haloman")),
-						null);
+						null, null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -317,7 +317,7 @@ public class NameStorageTest {
 						null,
 						Collections.singletonList(new Pair<String, String>(
 								Qorakeys.PROFILELIKEPOSTS.toString(), "vrontis")),
-						null);
+						null, null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -338,7 +338,7 @@ public class NameStorageTest {
 		storageJsonObject = StorageUtils.getStorageJsonObject(null, null,
 				Collections.singletonList(new Pair<String, String>(
 						Qorakeys.PROFILELIKEPOSTS.toString(), "a;b;c")), null,
-				null);
+				null, null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -359,7 +359,7 @@ public class NameStorageTest {
 		storageJsonObject = StorageUtils.getStorageJsonObject(null, null, null,
 				Collections.singletonList(new Pair<String, String>(
 						Qorakeys.PROFILELIKEPOSTS.toString(), "a;c;nothing")),
-				null);
+				null, null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -386,7 +386,7 @@ public class NameStorageTest {
 		JSONObject storageJsonObject = StorageUtils.getStorageJsonObject(null,
 				null, null, null, Collections
 						.singletonList(new Pair<String, String>(
-								Qorakeys.WEBSITE.toString(), "first")));
+								Qorakeys.WEBSITE.toString(), "first")), null);
 		storageJsonObject.put("name", "drizzt");
 		byte[] data = storageJsonObject.toString().getBytes();
 
@@ -406,7 +406,7 @@ public class NameStorageTest {
 
 		storageJsonObject = StorageUtils.getStorageJsonObject(null, null, null,
 				null, Collections.singletonList(new Pair<String, String>(
-						Qorakeys.WEBSITE.toString(), " second")));
+						Qorakeys.WEBSITE.toString(), " second")), null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -450,7 +450,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>(
 						random_linking_example, "skerberus")), null,
 				Collections.singletonList(new Pair<String, String>(
-						Qorakeys.WEBSITE.toString(), "first")));
+						Qorakeys.WEBSITE.toString(), "first")), null);
 		storageJsonObject.put("name", "drizzt");
 		byte[] data = storageJsonObject.toString().getBytes();
 
@@ -472,7 +472,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>(
 						random_linking_example, "vrontis")), null, Collections
 						.singletonList(new Pair<String, String>(
-								Qorakeys.WEBSITE.toString(), "second")));
+								Qorakeys.WEBSITE.toString(), "second")), null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -494,7 +494,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>("asdf",
 						"asdf")), null, Collections
 						.singletonList(new Pair<String, String>(
-								Qorakeys.WEBSITE.toString(), "third")));
+								Qorakeys.WEBSITE.toString(), "third")), null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -559,7 +559,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>(
 						random_linking_example, "skerberus")), null,
 				Collections.singletonList(new Pair<String, String>(
-						Qorakeys.WEBSITE.toString(), "first")));
+						Qorakeys.WEBSITE.toString(), "first")), null);
 		storageJsonObject.put("name", "drizzt");
 		byte[] data = storageJsonObject.toString().getBytes();
 
@@ -581,7 +581,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>(
 						random_linking_example, "vrontis")), null, Collections
 						.singletonList(new Pair<String, String>(
-								Qorakeys.WEBSITE.toString(), "second")));
+								Qorakeys.WEBSITE.toString(), "second")), null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -603,7 +603,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>("asdf",
 						"asdf")), null, Collections
 						.singletonList(new Pair<String, String>(
-								Qorakeys.WEBSITE.toString(), "third")));
+								Qorakeys.WEBSITE.toString(), "third")), null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -685,7 +685,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>(
 						random_linking_example, "skerberus")), null,
 				Collections.singletonList(new Pair<String, String>(
-						Qorakeys.WEBSITE.toString(), "first")));
+						Qorakeys.WEBSITE.toString(), "first")), null);
 		storageJsonObject.put("name", "drizzt");
 		byte[] data = storageJsonObject.toString().getBytes();
 
@@ -707,7 +707,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>(
 						random_linking_example, "vrontis")), null, Collections
 						.singletonList(new Pair<String, String>(
-								Qorakeys.WEBSITE.toString(), "second")));
+								Qorakeys.WEBSITE.toString(), "second")), null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 
@@ -729,7 +729,7 @@ public class NameStorageTest {
 				Collections.singletonList(new Pair<String, String>("asdf",
 						"asdf")), null, Collections
 						.singletonList(new Pair<String, String>(
-								Qorakeys.WEBSITE.toString(), "third")));
+								Qorakeys.WEBSITE.toString(), "third")), null);
 		storageJsonObject.put("name", "drizzt");
 		data = storageJsonObject.toString().getBytes();
 

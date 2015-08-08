@@ -190,13 +190,13 @@ public class NameStorageResource {
 							storageJsonObject = StorageUtils
 									.getStorageJsonObject(
 											Collections.singletonList(keypair),
-											null, null, null, null);
+											null, null, null, null, null);
 							isFirst = false;
 						} else {
 							storageJsonObject = StorageUtils
 									.getStorageJsonObject(null, null, null,
 											null,
-											Collections.singletonList(keypair));
+											Collections.singletonList(keypair), null);
 						}
 						storageJsonObject.put("name", name);
 

@@ -40,6 +40,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import kryo.DiffHelper;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
@@ -298,7 +300,6 @@ public class WebResource {
 		}
 
 	}
-	
 
 	@POST
 	@Path("index/websitepreview.html")
@@ -319,96 +320,94 @@ public class WebResource {
 		}
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("index/api.html")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response createApiCall(@Context HttpServletRequest request,
 			MultivaluedMap<String, String> form) throws IOException {
-		
-			String type = form.getFirst("type");
-			String apiurl = form.getFirst("apiurl");
-			
-			String jsonContent = form.getFirst("json");
-			JSONObject json = new JSONObject();
-			JSONObject jsonanswer = new JSONObject();
-			if(StringUtils.isNotBlank(jsonContent))
-			{
-				json = (JSONObject) JSONValue.parse(jsonContent);
-			}
-				
-			if (StringUtils.isBlank(type)
-					|| (!type.equalsIgnoreCase("get")
-							&& !type.equalsIgnoreCase("post") && !type
-								.equalsIgnoreCase("delete"))) {
-				
-				jsonanswer.put("type", "apicallerror");
-				jsonanswer.put("errordetail", "type parameter must be post, get or delete");
-				
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(jsonanswer.toJSONString()).build();
-			}
-			
-			if (StringUtils.isBlank(apiurl)) {
-				jsonanswer.put("type", "apicallerror");
-				jsonanswer.put("errordetail", "apiurl parameter must be correct set");
-				
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
-						.entity(jsonanswer.toJSONString()).build();
-			}
-			
-				
-				// CREATE CONNECTION
-			
-			apiurl = apiurl.startsWith("/") ? apiurl.substring(1) : apiurl;
-			
-				URL urlToCall = new URL("http://127.0.0.1:"
-						+ Settings.getInstance().getRpcPort() + "/" + apiurl);
-				HttpURLConnection connection = (HttpURLConnection) urlToCall
-						.openConnection();
 
-				// EXECUTE
-				connection.setRequestMethod(type.toUpperCase());
+		String type = form.getFirst("type");
+		String apiurl = form.getFirst("apiurl");
 
-				if (type.equalsIgnoreCase("POST")) {
-					connection.setDoOutput(true);
-					connection.getOutputStream().write(
-							json.toJSONString().getBytes("UTF-8"));
-					connection.getOutputStream().flush();
-					connection.getOutputStream().close();
-				}
+		String jsonContent = form.getFirst("json");
+		JSONObject json = new JSONObject();
+		JSONObject jsonanswer = new JSONObject();
+		if (StringUtils.isNotBlank(jsonContent)) {
+			json = (JSONObject) JSONValue.parse(jsonContent);
+		}
 
-				// READ RESULT
-				InputStream stream;
-				if (connection.getResponseCode() == 400) {
-					stream = connection.getErrorStream();
-				} else {
-					stream = connection.getInputStream();
-				}
+		if (StringUtils.isBlank(type)
+				|| (!type.equalsIgnoreCase("get")
+						&& !type.equalsIgnoreCase("post") && !type
+							.equalsIgnoreCase("delete"))) {
 
-				InputStreamReader isReader = new InputStreamReader(stream,
-						"UTF-8");
-				BufferedReader br = new BufferedReader(isReader);
-				String result = br.readLine();
+			jsonanswer.put("type", "apicallerror");
+			jsonanswer.put("errordetail",
+					"type parameter must be post, get or delete");
 
-				if (result.contains("message") && result.contains("error")) {
-					jsonanswer.put("type", "apicallerror");
-					jsonanswer.put("errordetail", result);
-					return Response.status(200)
-							.header("Content-Type", "application/json; charset=utf-8")
-							.entity(jsonanswer.toJSONString()).build();
-				} else {
-					jsonanswer.put("type", "success");
-					
-					return Response.status(200)
-							.header("Content-Type", "application/json; charset=utf-8")
-							.entity(jsonanswer.toJSONString()).build();
-				}
-			
-		
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(jsonanswer.toJSONString()).build();
+		}
+
+		if (StringUtils.isBlank(apiurl)) {
+			jsonanswer.put("type", "apicallerror");
+			jsonanswer.put("errordetail",
+					"apiurl parameter must be correct set");
+
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(jsonanswer.toJSONString()).build();
+		}
+
+		// CREATE CONNECTION
+
+		apiurl = apiurl.startsWith("/") ? apiurl.substring(1) : apiurl;
+
+		URL urlToCall = new URL("http://127.0.0.1:"
+				+ Settings.getInstance().getRpcPort() + "/" + apiurl);
+		HttpURLConnection connection = (HttpURLConnection) urlToCall
+				.openConnection();
+
+		// EXECUTE
+		connection.setRequestMethod(type.toUpperCase());
+
+		if (type.equalsIgnoreCase("POST")) {
+			connection.setDoOutput(true);
+			connection.getOutputStream().write(
+					json.toJSONString().getBytes("UTF-8"));
+			connection.getOutputStream().flush();
+			connection.getOutputStream().close();
+		}
+
+		// READ RESULT
+		InputStream stream;
+		if (connection.getResponseCode() == 400) {
+			stream = connection.getErrorStream();
+		} else {
+			stream = connection.getInputStream();
+		}
+
+		InputStreamReader isReader = new InputStreamReader(stream, "UTF-8");
+		BufferedReader br = new BufferedReader(isReader);
+		String result = br.readLine();
+
+		if (result.contains("message") && result.contains("error")) {
+			jsonanswer.put("type", "apicallerror");
+			jsonanswer.put("errordetail", result);
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(jsonanswer.toJSONString()).build();
+		} else {
+			jsonanswer.put("type", "success");
+
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(jsonanswer.toJSONString()).build();
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -418,64 +417,87 @@ public class WebResource {
 	public Response saveWebsite(@Context HttpServletRequest request,
 			MultivaluedMap<String, String> form) {
 
+		String name = form.getFirst("name");
+		String website = form.getFirst("website");
+		String key = form.getFirst("key");
 
-			String name = form.getFirst("name");
-			String website = form.getFirst("website");
-			String key = form.getFirst("key");
+		JSONObject json = new JSONObject();
 
-			JSONObject json = new JSONObject();
+		if (key != null && !key.equalsIgnoreCase(Qorakeys.WEBSITE.toString())) {
+			if (Qorakeys.isPartOf(key)) {
+				json.put("type", "badKey");
 
-			if(key != null && !key.equalsIgnoreCase(Qorakeys.WEBSITE.toString()))
-			{
-				if( Qorakeys.isPartOf(key))
-				{
-					json.put("type", "badKey");
-
-					return Response.status(200)
-							.header("Content-Type", "application/json; charset=utf-8")
-							.entity(json.toJSONString()).build();
-				}
-			}
-
-			if (StringUtils.isBlank(name)) {
-				json.put("type", "parametersMissing");
-
-				return Response.status(200)
-						.header("Content-Type", "application/json; charset=utf-8")
+				return Response
+						.status(200)
+						.header("Content-Type",
+								"application/json; charset=utf-8")
 						.entity(json.toJSONString()).build();
 			}
+		}
 
-			Pair<String, String> websitepair;
-			if(StringUtils.isNotBlank(key))
-			{
-				websitepair = new Pair<String, String>(
-						key, website);
-			}else
-			{
-				websitepair = new Pair<String, String>(
-						Qorakeys.WEBSITE.toString(), website);
-			}
+		if (StringUtils.isBlank(name)) {
+			json.put("type", "parametersMissing");
 
-			JSONObject storageJsonObject;
-			if (website == null || website.isEmpty()) {
-
-				storageJsonObject = StorageUtils.getStorageJsonObject(null,
-						Collections.singletonList(StringUtils.isBlank(key) ? Qorakeys.WEBSITE.toString() : key),
-						null, null, null);
-			} else {
-				storageJsonObject = StorageUtils.getStorageJsonObject(
-						Collections.singletonList(websitepair), null, null, null,
-						null);
-			}
-
-			new NameStorageResource().updateEntry(storageJsonObject.toString(),
-					name);
-
-			json.put("type", "settingsSuccessfullySaved");
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
+		}
 
+		// TODO
+		Pair<String, String> websitepair;
+		if (StringUtils.isNotBlank(key)) {
+			websitepair = new Pair<String, String>(key, website);
+		} else {
+			websitepair = new Pair<String, String>(Qorakeys.WEBSITE.toString(),
+					website);
+		}
+
+		JSONObject storageJsonObject = null;
+		if (website == null || website.isEmpty()) {
+
+			storageJsonObject = StorageUtils
+					.getStorageJsonObject(
+							null,
+							Collections.singletonList(StringUtils.isBlank(key) ? Qorakeys.WEBSITE
+									.toString() : key), null, null, null, null);
+		} else {
+
+			try {
+				String source = DBSet.getInstance()
+						.getNameStorageMap().getOpt(name, websitepair.getA());
+				
+				if(StringUtils.isNotBlank(source))
+				{
+					String diff = DiffHelper.getDiff(source,
+							website);
+					
+					if (website.length() > diff.length() && diff.length() < 3000) {
+						websitepair.setB(diff);
+						storageJsonObject = StorageUtils.getStorageJsonObject(null,
+								null, null, null, null,
+								Collections.singletonList(websitepair));
+					}
+				}
+				
+
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+
+			if (storageJsonObject == null) {
+				storageJsonObject = StorageUtils.getStorageJsonObject(
+						Collections.singletonList(websitepair), null, null,
+						null, null, null);
+			}
+		}
+
+		new NameStorageResource().updateEntry(storageJsonObject.toString(),
+				name);
+
+		json.put("type", "settingsSuccessfullySaved");
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.entity(json.toJSONString()).build();
 
 	}
 
@@ -2184,7 +2206,8 @@ public class WebResource {
 		// pebbleHelper.getContextMap().put("atmap",DBSet.getInstance().getATMap());
 		// pebbleHelper.getContextMap().put("attxsmap",DBSet.getInstance().getATTransactionMap());
 		pebbleHelper.getContextMap().put("ats", ATWebResource.getInstance());
-		pebbleHelper.getContextMap().put("controller", ControllerWebResource.getInstance());
+		pebbleHelper.getContextMap().put("controller",
+				ControllerWebResource.getInstance());
 		tmpFile.delete();
 
 		// SHOW WEB-PAGE

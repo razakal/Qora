@@ -85,4 +85,23 @@ public class GZIP {
 		}
 		return "?gz!"+Base64.encode(compressed);
 	}
+	
+	public static String compressOnDemand(String text)
+	{
+		byte[] compressed = null;
+		try {
+			compressed = GZIPcompress(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String compressedVariant = "?gz!"+Base64.encode(compressed);
+		
+		if(compressedVariant.length()>= text.length())
+		{
+			compressedVariant = text;
+		}
+		
+		return compressedVariant;
+	}
+	
 }

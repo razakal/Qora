@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import kryo.DiffHelper;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -20,6 +22,7 @@ import qora.web.OrphanNameStorageHelperMap;
 import qora.web.OrphanNameStorageMap;
 import controller.Controller;
 import database.DBSet;
+import difflib.PatchFailedException;
 
 public class StorageUtils {
 
@@ -33,6 +36,8 @@ public class StorageUtils {
 	public static final String REMOVE_LIST_KEY = "removelist";
 	// ADD TO CURRENT VALUE WITHOUT SEPERATOR
 	public static final String ADD_KEY = "add";
+	// ADD PATCH TO CURRENT VALUE
+	public static final String PATCH_KEY = "patch";
 
 
 	@SuppressWarnings("unchecked")
@@ -41,7 +46,7 @@ public class StorageUtils {
 			List<String> removeCompleteKeys,
 			List<Pair<String, String>> addListKeys,
 			List<Pair<String, String>> removeListKeys,
-			List<Pair<String, String>> addWithoutSeperator) {
+			List<Pair<String, String>> addWithoutSeperator, List<Pair<String, String>> addPatch) {
 		JSONObject json = new JSONObject();
 
 		addListPairtoJson(addCompleteKeys, json, ADD_COMPLETE_KEY);
@@ -61,6 +66,8 @@ public class StorageUtils {
 		addListPairtoJson(removeListKeys, json, REMOVE_LIST_KEY);
 
 		addListPairtoJson(addWithoutSeperator, json, ADD_KEY);
+		
+		addListPairtoJson(addPatch, json, PATCH_KEY);
 
 		return json;
 
@@ -227,6 +234,29 @@ public class StorageUtils {
 				}
 			}
 		}
+		
+		String patchJson = (String) jsonObject.get(PATCH_KEY);
+		if (patchJson != null) {
+			
+			JSONObject patchJsonKey = (JSONObject) JSONValue.parse(patchJson);
+			
+			Set<String> keys = patchJsonKey.keySet();
+			
+			for (String key : keys) {
+				
+				if (onlyTheseKeysOpt == null || onlyTheseKeysOpt.contains(key)) {
+					String oldValueOpt = nameStorageMap.getOpt(name, key);
+					
+					oldValueOpt = oldValueOpt == null ? "" : oldValueOpt;
+					try {
+						nameStorageMap.add(name, key,
+								DiffHelper.patch(oldValueOpt, (String) patchJsonKey.get(key)));
+					} catch (PatchFailedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 
 	private static Set<String> getAllKeysForOrphanSaving(JSONObject jsonObject) {
@@ -236,6 +266,7 @@ public class StorageUtils {
 		getKeys(jsonObject, results, REMOVE_COMPLETE_KEY);
 		getKeys(jsonObject, results, REMOVE_LIST_KEY);
 		getKeys(jsonObject, results, ADD_KEY);
+		getKeys(jsonObject, results, PATCH_KEY);
 
 		return results;
 	}
