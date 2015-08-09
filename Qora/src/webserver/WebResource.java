@@ -300,11 +300,11 @@ public class WebResource {
 		}
 
 	}
-	
+
 	@Path("index/namestorage.html")
 	@GET
 	public Response getNameStorage() {
-		
+
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/namestorage.html", request);
@@ -314,7 +314,23 @@ public class WebResource {
 			e.printStackTrace();
 			return error404(request, null);
 		}
-		
+
+	}
+
+	@Path("index/messaging.html")
+	@GET
+	public Response getMessaging() {
+
+		try {
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/messaging.html", request);
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
+		}
+
 	}
 
 	@POST
@@ -481,12 +497,12 @@ public class WebResource {
 			try {
 				String source = DBSet.getInstance()
 						.getNameStorageMap().getOpt(name, websitepair.getA());
-				
+
 				if(StringUtils.isNotBlank(source))
 				{
 					String diff = DiffHelper.getDiff(source,
 							website);
-					
+
 					if (website.length() > diff.length() && diff.length() < 3000) {
 						websitepair.setB(diff);
 						storageJsonObject = StorageUtils.getStorageJsonObject(null,
@@ -494,7 +510,7 @@ public class WebResource {
 								Collections.singletonList(websitepair));
 					}
 				}
-				
+
 
 			} catch (Throwable e) {
 				e.printStackTrace();
