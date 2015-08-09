@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Qora Web Server">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>Qora Blog</title>
+    <link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
+    <link href="/index/libs/css/style.css" rel="stylesheet">
+    <link href="/index/libs/css/sidebar.css" rel="stylesheet">
+    <link href="/index/libs/css/timeline.css" rel="stylesheet">
+    <style type="text/css">
+      .media:first-child {
+      margin-top: 0;
+      padding-left: 20px;
+      padding-top: 20px;
+      padding-right: 20px;
+      }
+      .media-object {
+      height: 74px;
+      }
+      .media-heading {
+      margin-top: 20px;
+      margin-bottom: 5px;
+      }
+      p.post-header {
+      padding-bottom: 0px !important;
+      font-size: 15px;
+      }
+      p.post-content {
+      padding-top: 0px !important;
+      }
+      body {
+      padding-top: 50px;
+      }
+      .sub-header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      }
+      .navbar-fixed-top {
+      border: 0;
+      z-index: 9999;
+      }
+      .sidebar {
+      display: none;
+      }
+      @media (min-width: 768px) {
+      .sidebar {
+      position: fixed;
+      top: 51px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee;
+      }
+      }
+      .nav-sidebar {
+      margin-right: -21px;
+      margin-bottom: 20px;
+      margin-left: -20px;
+      }
+      .nav-sidebar > li > a {
+      padding-right: 20px;
+      padding-left: 20px;
+      }
+      .nav-sidebar > .active > a,
+      .nav-sidebar > .active > a:hover,
+      .nav-sidebar > .active > a:focus {
+      color: #fff;
+      background-color: #428bca;
+      }
+      .main {
+      padding-top: 0px;
+      }
+      .main-tabs {
+      width: 100%;
+      padding-top: 15px;
+      padding-left: 0px;
+      padding-right: 0px;
+      background-color: lightgray;
+      display: none;
+      }
+      img.logo-header {
+      background-color: transparent;
+      height: 100%;
+      }
+      .col-lg-8 {
+      padding-left: 0px;
+      }
+      @media (min-width: 768px) {
+      .main {
+      padding-right: 40px;
+      }
+      }
+      .main .page-header {
+      margin-top: 0;
+      }
+      .placeholders {
+      margin-bottom: 30px;
+      text-align: center;
+      }
+      .placeholders h4 {
+      margin-bottom: 0;
+      }
+      .placeholder {
+      margin-bottom: 20px;
+      }
+      .placeholder img {
+      display: inline-block;
+      border-radius: 50%;
+      }
+      .r-t {
+      margin: 0px;
+      }
+      .r-l {
+      margin: 0px;
+      }
+      span.label.label-default {
+      background-color: #fff;
+      color: lightgray;
+      font-size: 90%;
+      line-height: 1;
+      }
+      span.label.label-default a {
+      color: #ddd;
+      text-decoration: none;
+      }
+      a.r-l:hover,
+      a.r-l:focus {
+      color: #6467FF;
+      text-decoration: none;
+      }
+      .navbar-header {
+      width: 110px;
+      }
+      .modal-dialog.modal-lg {
+      padding-top: 100px;
+      }
+      .modal-content {
+      height: 620px;
+      /*width: 700px;*/
+      }
+      .tl-profile {
+      border: 1px solid #ddd;
+      -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+      margin-top: 40px;
+      }
+      .tl-profile img.tl-image-lg{
+      z-index: 0;
+      width: 100%;
+      margin-bottom: 10px;
+      }
+      .tl-image-profile
+      {
+      margin: -90px 10px 0px 50px;
+      z-index: 9;
+      width: 21%;
+      margin-bottom: 20px;
+      }
+      @media (max-width:768px)
+      {
+      .tl-profile-text>h1{
+      font-weight: 700;
+      font-size:16px;
+      }
+      .tl-image-profile
+      {
+      margin: -45px 10px 0px 25px;
+      z-index: 9;
+      width: 20%;
+      }
+      }
+      .profile-options
+      {
+      width:100%;
+      font-size: 20px;
+      }
+      .co-tabs {
+      border-bottom: 3px solid #6467ff;
+      margin-right: 10px;
+      }
+      ul.co-lists.list-unstyled {
+      text-align: center;
+      }
+      li.co-top {
+      font-size: 10px;
+      }
+      li.co-bottom {
+      font-size: 15px;
+      }
+      .po-tabs
+      {
+      border: 1px solid #ddd;
+      }
+      li.po-tabs a
+      {
+      color: #ddd;
+      }
+      li.po-tabs a:hover
+      {
+      color: #6467ff;
+      text-decoration: none;
+      }
+      #apimessage {
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      z-index: 9999;
+      }
+      span.glyphicon.glyphicon-edit {
+      font-size: 17px;
+      top: -2px;
+      left: -6px;
+      }
+      button.btn.btn-lg.btn-primary {
+      height: 37px;
+      width: 37px;
+      }
+      .modal-dialog.modal-lg {
+      top: -50px;
+      }
+      .menu-grid span.glyphicon.glyphicon-edit {
+      left: 2px;
+      }
+      .panel.panel {
+      margin-top: 40px;
+      }
+      body{ margin-top:50px;}
+.nav-tabs .glyphicon:not(.no-margin) { margin-right:10px; }
+.tab-pane .list-group-item:first-child {border-top-right-radius: 0px;border-top-left-radius: 0px;}
+.tab-pane .list-group-item:last-child {border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;}
+.tab-pane .list-group .checkbox { display: inline-block;margin: 0px; }
+.tab-pane .list-group input[type="checkbox"]{ margin-top: 2px; }
+.tab-pane .list-group .glyphicon { margin-right:5px; }
+.tab-pane .list-group .glyphicon:hover { color:#FFBC00; }
+a.list-group-item.read { color: #222;background-color: #F3F3F3; }
+hr { margin-top: 5px;margin-bottom: 10px; }
+.nav-pills>li>a {padding: 5px 10px;}
+
+.ad { padding: 5px;background: #F5F5F5;color: #222;font-size: 80%;border: 1px solid #E5E5E5; }
+.ad a.title {color: #15C;text-decoration: none;font-weight: bold;font-size: 110%;}
+.ad a.url {color: #093;text-decoration: none;}
+    </style>
+  </head>
+  <body>
+    <div id="PostModal" class="modal fade">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <iframe width="100%" height="100%" frameborder="0" src="{{postblogurl}}"></iframe>
+        </div>
+      </div>
+    </div>
+    {{navbar}}
+    <div class="container">
+      <div class="row">
+        <!-- <div class="main"> -->
+          {{apimessage}}<div id=apimessage></div>
+
+
+
+
+
+  <!-- Third Style -->
+  <div class="row">
+      <div class="col-sm-3 col-md-2">
+          <div class="btn-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                  Mail <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">Mail</a></li>
+                  <li><a href="#">Contacts</a></li>
+                  <li><a href="#">Tasks</a></li>
+              </ul>
+          </div>
+      </div>
+      <div class="col-sm-9 col-md-10">
+          <!-- Split button -->
+          <div class="btn-group">
+              <button type="button" class="btn btn-default">
+                  <div class="checkbox" style="margin: 0;">
+                      <label>
+                          <input type="checkbox">
+                      </label>
+                  </div>
+              </button>
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">All</a></li>
+                  <li><a href="#">None</a></li>
+                  <li><a href="#">Read</a></li>
+                  <li><a href="#">Unread</a></li>
+                  <li><a href="#">Starred</a></li>
+                  <li><a href="#">Unstarred</a></li>
+              </ul>
+          </div>
+          <button type="button" class="btn btn-default" data-toggle="tooltip" title="Refresh">
+                 <span class="glyphicon glyphicon-refresh"></span>   </button>
+          <!-- Single button -->
+          <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  More <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">Mark all as read</a></li>
+                  <li class="divider"></li>
+                  <li class="text-center"><small class="text-muted">Select messages to see more actions</small></li>
+              </ul>
+          </div>
+          <div class="pull-right">
+              <span class="text-muted"><b>1</b>–<b>50</b> of <b>277</b></span>
+              <div class="btn-group btn-group-sm">
+                  <button type="button" class="btn btn-default">
+                      <span class="glyphicon glyphicon-chevron-left"></span>
+                  </button>
+                  <button type="button" class="btn btn-default">
+                      <span class="glyphicon glyphicon-chevron-right"></span>
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <hr />
+  <div class="row">
+      <div class="col-sm-3 col-md-2">
+          <a href="#" class="btn btn-danger btn-sm btn-block" role="button">COMPOSE</a>
+          <hr />
+          <ul class="nav nav-pills nav-stacked">
+              <li class="active"><a href="#"><span class="badge pull-right">42</span> Inbox </a>
+              </li>
+              <li><a href="http://www.jquery2dotnet.com">Starred</a></li>
+              <li><a href="http://www.jquery2dotnet.com">Important</a></li>
+              <li><a href="http://www.jquery2dotnet.com">Sent Mail</a></li>
+              <li><a href="http://www.jquery2dotnet.com"><span class="badge pull-right">3</span>Drafts</a></li>
+          </ul>
+      </div>
+      <div class="col-sm-9 col-md-10">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+              <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-inbox">
+              </span>Primary</a></li>
+              <li><a href="#profile" data-toggle="tab"><span class="glyphicon glyphicon-user"></span>
+                  Social</a></li>
+              <li><a href="#messages" data-toggle="tab"><span class="glyphicon glyphicon-tags"></span>
+                  Promotions</a></li>
+              <li><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-plus no-margin">
+              </span></a></li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+              <div class="tab-pane fade in active" id="home">
+                  <div class="list-group">
+                      <a href="#" class="list-group-item">
+                          <div class="checkbox">
+                              <label>
+                                  <input type="checkbox">
+                              </label>
+                          </div>
+                          <span class="glyphicon glyphicon-star-empty"></span><span class="name" style="min-width: 120px;
+                              display: inline-block;">Bhaumik Patel</span> <span class="">This is big title</span>
+                          <span class="text-muted" style="font-size: 11px;">- Hi hello how r u ?</span> <span
+                              class="badge">12:10 AM</span> <span class="pull-right"><span class="glyphicon glyphicon-paperclip">
+                              </span></span></a><a href="#" class="list-group-item">
+                                  <div class="checkbox">
+                                      <label>
+                                          <input type="checkbox">
+                                      </label>
+                                  </div>
+                                  <span class="glyphicon glyphicon-star-empty"></span><span class="name" style="min-width: 120px;
+                                      display: inline-block;">Bhaumik Patel</span> <span class="">This is big title</span>
+                                  <span class="text-muted" style="font-size: 11px;">- Hi hello how r u ?</span> <span
+                                      class="badge">12:10 AM</span> <span class="pull-right"><span class="glyphicon glyphicon-paperclip">
+                                      </span></span></a><a href="#" class="list-group-item read">
+                                          <div class="checkbox">
+                                              <label>
+                                                  <input type="checkbox">
+                                              </label>
+                                          </div>
+                                          <span class="glyphicon glyphicon-star"></span><span class="name" style="min-width: 120px;
+                                              display: inline-block;">Bhaumik Patel</span> <span class="">This is big title</span>
+                                          <span class="text-muted" style="font-size: 11px;">- Hi hello how r u ?</span> <span
+                                              class="badge">12:10 AM</span> <span class="pull-right"><span class="glyphicon glyphicon-paperclip">
+                                              </span></span></a>
+                  </div>
+              </div>
+              <div class="tab-pane fade in" id="profile">
+                  <div class="list-group">
+                      <div class="list-group-item">
+                          <span class="text-center">This tab is empty.</span>
+                      </div>
+                  </div>
+              </div>
+              <div class="tab-pane fade in" id="messages">
+                  ...</div>
+              <div class="tab-pane fade in" id="settings">
+                  This tab is empty.</div>
+          </div>
+          <!-- Ad -->
+          <div class="row-md-12">
+              <div class="ad">
+                  <a href="http://www.jquery2dotnet.com" class="title">jQuery2DotNet</a>
+                  <div>
+                      Cool jQuery, CSS3, HTML5, Bootstrap, and MVC tutorial</div>
+                  <a href="http://www.jquery2dotnet.com" class="url">www.jquery2dotnet.com</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+        <!-- </div> -->
+      </div>
+    </div>
+  </div>
+    <script src="/index/libs/jquery/jquery.2.js"></script>
+    <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
+    <script src="/index/libs/js/third-party/ZeroClipboard.min.js"></script>
+       <script type="text/javascript">
+//
+// 		var profileisFollowing;
+// 		{% if isFollowing %}
+// 		profileisFollowing = true;
+// 		{% else %}
+// 		profileisFollowing = false;
+// 		{%  endif %}
+//
+//        function getParameter(name) {
+//         if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
+//             return decodeURIComponent(name[1]);
+//     	}
+//
+//     	function processfollow() {
+// 			var  blogname;
+// 			var follow = !profileisFollowing;
+// 			blogname = getParameter('blogname');
+//
+//       // $("#apimessage").fadeTo(2500, 500).slideUp(1000, function(){
+//       //     $("#apimessage").alert('close');
+//       // });
+// 			if (!blogname) {
+// 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
+// 								+ "You can't follow the Mainblog<br>"
+// 								+ "</div></center>");
+// 				return 0;
+// 			}
+//
+// 			{% if activeProfile is null %}
+// 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
+// 								+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+// 								+ "</div></center>");
+// 				return 0;
+// 			{%  endif %}
+//
+// 			$.post(
+// 			"/index/followblog.html",
+// 			{
+// 				blogname: blogname,
+// 				follow: follow
+// 			}).done( function(data) {
+// 				if(data.type == 'youAlreadyFollowThisBlog'){
+// 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
+// 										+ "You already follow this blog"
+// 										+ "</div></center>");
+// 				} else if (data.type == 'youCantFollowYourOwnProfiles'){
+// 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
+// 										+ "You can't follow your own profiles"
+// 										+ "</div></center>");
+// 				} else if (data.type == 'YouFollowThisBlogNow'){
+// 					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You follow this blog now<br>"
+// 										+ "</div>");
+// 				} else if (data.type == 'BlogFollowNotSuccessful'){
+// 					try {
+// 						var error = JSON.parse(data.result);
+// 						message = error.message;
+// 					} catch (e) {
+// 						message = data.result;
+// 					}
+//
+// 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
+// 										+ message
+// 										+ "</div></center>");
+// 				} else if (data.type == 'unfollowSuccessful'){
+// 					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Unfollow successful<br>"
+// 										+ "</div>");
+// 				} else if (data.type == 'blogUnfollowNotSuccessful'){
+// 					try {
+// 						var error = JSON.parse(data.result);
+// 						message = error.message;
+// 					} catch (e) {
+// 						message = data.result;
+// 					}
+// 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog unfollow not successful<br>"
+// 										+ message
+// 										+ "</div></center>");
+// 				}
+//
+// 				if(data.hasOwnProperty('follower'))
+// 				{
+// 						$("#profFollower").html('');
+// 				}
+//
+// 				if(data.hasOwnProperty('isFollowing'))
+// 				{
+// 					profileisFollowing = data.isFollowing;
+//
+// 					if(data.isFollowing)
+// 					{
+// 						$("#divFollow").css("color", "#6467FF");
+// 					}
+// 					else
+// 					{
+// 						$("#divFollow").css("color", "");
+// 					}
+// 				}
+//
+// 			}).fail( function(xhr, textStatus, errorThrown) {
+// 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Follow Error<br>'
+// 										+ 'Connection Error<br>'
+// 										+ xhr.responseText + '</div></center>');
+// 			});
+//
+//    		 }
+//
+// 		   		 (function() {
+// 		    var v = document.getElementsByClassName("youtube-player");
+// 		    for (var n = 0; n < v.length; n++) {
+// 		        var p = document.createElement("div");
+// 		        p.innerHTML = labnolThumb(v[n].dataset.id);
+// 		        p.onclick = labnolIframe;
+// 		        v[n].appendChild(p);
+// 		    }
+// 		})();
+//
+// 		function labnolThumb(id) {
+// 		    return '<img class="youtube-thumb" src="//i.ytimg.com/vi/' + id + '/hqdefault.jpg"><div class="play-button"></div>';
+// 		}
+//
+// 		function labnolIframe() {
+// 		    var iframe = document.createElement("iframe");
+// 		    iframe.setAttribute("src", "//www.youtube.com/embed/" + this.parentNode.dataset.id + "?autoplay=1&autohide=2&border=0&wmode=opaque&enablejsapi=1&controls=0&showinfo=0");
+// 		    iframe.setAttribute("frameborder", "0");
+// 		    iframe.setAttribute("id", "youtube-iframe");
+// 		    this.parentNode.replaceChild(iframe, this);
+// 		}
+//
+// 		function processShare(signature, blogname) {
+//
+// 			{% if activeProfile is null %}
+// 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
+// 									+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+// 									+ "</div></center>");
+// 				return 0;
+// 			{%  endif %}
+//
+// 			$.post(
+// 			"/index/sharepost.html",
+// 			{
+// 				signature: signature,
+// 				blogname: blogname,
+// 			}).done( function(data) {
+// 				if(data.type == 'YouAlreadySharedThisPost'){
+// 					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You already shared this post'
+// 										+ '<br></div></center>');
+// 				} else if (data.type == 'YouCantShareYourOwnPosts'){
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
+// 										+ 'This Blogentry is already in your blog.'
+// 										+ '</div></center>');
+// 				} else if (data.type == 'ShareSuccessful'){
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share successful<br>'
+// 										+ '</div></center>');
+// 				} else if (data.type == 'ShareNotSuccessful'){
+// 					try {
+// 						var error = JSON.parse(data.result);
+// 						message = error.message;
+// 					} catch (e) {
+// 						message = data.result;
+// 					}
+//
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
+// 										+ message + '</div></center>');
+// 				} else if (data.type == 'error'){
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share Error<br>'
+// 										+ data.error + '</div></center>');
+// 				}else if (data.type == 'BlogIsDisabled'){
+// 					("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
+// 										+ 'The Blog of your active profile is disabled!'
+// 										+ '</div></center>');
+// 				}
+//
+//
+// 			}).fail( function(xhr, textStatus, errorThrown) {
+// 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share Error<br>'
+// 										+ 'Connection Error<br>'
+// 										+ xhr.responseText + '</div></center>');
+// 			});
+//
+// 			return 0;
+//    		 }
+//
+//
+//     	function processLike(signature, isLikeing) {
+// 			var blogname;
+// 			var like = !isLikeing;
+//
+//
+//
+// 			{% if activeProfile is null %}
+// 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
+// 									+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+// 									+ "</div></center>");
+// 				return 0;
+// 			{%  endif %}
+//
+// 			$.post(
+// 			"/index/likepost.html",
+// 			{
+// 				signature: signature,
+// 				like: like
+// 			}).done( function(data) {
+// 				if(data.type == 'YouAlreadyLikeThisPost'){
+// 					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You already like this post'
+// 										+ '<br></div></center>');
+// 				} else if (data.type == 'YouCantLikeYourOwnPosts'){
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like not successful<br>'
+// 										+ 'You can\'t like your own posts'
+// 										+ '</div></center>');
+// 				} else if (data.type == 'LikeSuccessful'){
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like successful<br>'
+// 										+ '</div></center>');
+// 				} else if (data.type == 'LikeNotSuccessful'){
+// 					try {
+// 						var error = JSON.parse(data.result);
+// 						message = error.message;
+// 					} catch (e) {
+// 						message = data.result;
+// 					}
+//
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like not successful<br>'
+// 										+ message + '</div></center>');
+// 				} else if (data.type == 'LikeRemovedSuccessful'){
+//
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like removed successful<br>'
+// 										+ '</div></center>');
+// 				} else if (data.type == 'LikeRemovedNotSuccessful'){
+// 					try {
+// 						var error = JSON.parse(data.result);
+// 						message = error.message;
+// 					} catch (e) {
+// 						message = data.result;
+// 					}
+//
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
+// 										+ 'Like remove not successful<br>'
+// 										+ message
+// 										+ '</div></center>');
+// 					$("#profLikes").html(data.newlikes);
+// 				} else if (data.type == 'error'){
+// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like Error<br>'
+// 										+ data.error + '</div></center>');
+// 				}
+//
+// 				if(data.hasOwnProperty('likes'))
+// 				{
+// 					if(data.likes == 0)
+// 					{
+// 						$("#profLikes").html('');
+// 					}
+// 					else
+// 					{
+// 						$("#profLikes").html(data.likes);
+// 					}
+// 				}
+//
+//
+// 			}).fail( function(xhr, textStatus, errorThrown) {
+// 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like Error<br>'
+// 										+ 'Connection Error<br>'
+// 										+ xhr.responseText + '</div></center>');
+// 			});
+//
+// 			return 0;
+//    		 }
+// </script>
+   <script type="text/javascript">
+//     $('ul.nav-tabs > li').removeClass('active');
+//     if (window.location.pathname === '/index/blogsearch.html') {
+//         $('ul.nav-tabs > li:nth-child(2)').addClass('active');
+//     } else {
+//         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
+//     }
+//
+//     $(document).ready(function() {
+//
+//         var my_posts = $("[rel=tooltip]");
+//
+// 		var size = $(window).width();
+//
+// 		if(my_posts.length > 1)
+// 		{
+// 			$("ul.timeline li:odd").addClass("timeline-inverted");
+// 		}
+//
+// 		for (i = 0; i < my_posts.length; i++) {
+//             the_post = $(my_posts[i]);
+//             if (the_post.hasClass('invert') && size >= 767) {
+//                 the_post.tooltip({
+//                     placement: 'left'
+//                 });
+//                 the_post.css("cursor", "pointer");
+//             } else {
+//                 the_post.tooltip({
+//                     placement: 'rigth'
+//                 });
+//                 the_post.css("cursor", "pointer");
+//             }
+//         }
+//         {% if hideprofile is not empty%}
+//       $(".tl-profile").hide();
+//       $(".timeline").css("padding-top","40px");
+//       {%endif%}
+//
+//       {% if msg is not null %} $('html, body').animate({
+//         scrollTop: $("#{{msg}}").offset().top
+//     }, 2000);
+//     {%endif%}
+//
+//     });
+//
+//     $(function () {
+//       $('[data-toggle="tooltip"]').tooltip()
+//     })
+//
+//     </script>
+       <script type="text/javascript">
+//     $(document).ready(function(){
+//     {% for blogpost in blogposts %}
+//     if (window.location.search === '?msg={{blogpost.getSignature()}}') {
+//       $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
+//       $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
+//     };
+//     if (window.location.search === '?blogname={{blogpost.getBlognameOpt()}}&msg={{blogpost.getSignature()}}') {
+//       $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
+//       $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
+//    };
+//     {% endfor %}
+//   });
+//
+//     </script>
+   <script type="text/javascript">
+// {% for blogpost in blogposts %}
+//     function changeTextarea{{blogpost.getSignature()}}( str ) {
+//         var textarea = document.getElementById('clipboard_textarea')
+//
+//         textarea.value = str;
+//     }
+//
+//     $('a').mouseout(function(){
+//        $('#clipboard_textarea').hide();
+//     });
+//     $('a').mouseover(function(){
+//     $('#clipboard_textarea').show();
+//     });
+//         $('#clipboard_textarea').mouseover(function(){
+//         $(this).show();
+//         });
+// {% endfor %}
+//     </script>
+   <script type="text/javascript">
+//     // main.js
+//     {% for blogpost in blogposts %}
+//     var client = new ZeroClipboard( document.getElementById("copybutton{{blogpost.getSignature()}}") );
+//     {% endfor %}
+//     client.on( "ready", function( readyEvent ) {
+//       // alert( "ZeroClipboard SWF is ready!" );
+//
+//       client.on( "aftercopy", function( event ) {
+//         // `this` === `client`
+//         // `event.target` === the element that was clicked
+//         event.target.style.display = "none";
+//         alert("Copied text to clipboard: " + event.data["text/plain"] );
+//       } );
+//     } );
+//
+// </script>
+
+  </body>
+</html>
