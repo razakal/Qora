@@ -300,6 +300,22 @@ public class WebResource {
 		}
 
 	}
+	
+	@Path("index/namestorage.html")
+	@GET
+	public Response getNameStorage() {
+		
+		try {
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/namestorage.html", request);
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
+		}
+		
+	}
 
 	@POST
 	@Path("index/websitepreview.html")
