@@ -136,14 +136,11 @@
 			{% endfor %}
 
 				{% if keyvaluepairs is not empty %}
-              	<br><div ng-app="myApp" ng-controller="AppController"><div class="panel panel-default"><div class="panel-heading">Results on :{{ dataname }}</div>
-				<table class="table">
 	              {% for keyvalue in keyvaluepairs %}
 	              {% autoescape true %}
 	              <tr><td>{{ keyvalue.key }}</td><td><code>{{ keyvalue.value }}</code></td></tr></div></div>
 	             {% endautoescape %}
 	              {% endfor %}
-	              </table>
 				{% endif %}
             </ul>
           </div>
