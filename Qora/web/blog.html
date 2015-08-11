@@ -660,7 +660,7 @@
       $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
       $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
     };
-    if (window.location.search === '?blogname={{blogpost.getBlognameOpt()}}&msg={{blogpost.getSignature()}}') {
+    if (window.location.search === '?blogname={{blogpost.nameOrCreator}}&msg={{blogpost.getSignature()}}') {
       $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
       $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
    };
@@ -688,20 +688,20 @@
 {% endfor %}
     </script>
 <script type="text/javascript">
-    // main.js
     {% for blogpost in blogposts %}
     var client = new ZeroClipboard( document.getElementById("copybutton{{blogpost.getSignature()}}") );
     {% endfor %}
-    client.on( "ready", function( readyEvent ) {
+
+    // client.on( "ready", function( readyEvent ) {
       // alert( "ZeroClipboard SWF is ready!" );
 
-      client.on( "aftercopy", function( event ) {
+      // client.on( "aftercopy", function( event ) {
         // `this` === `client`
         // `event.target` === the element that was clicked
-        event.target.style.display = "none";
-        alert("Copied text to clipboard: " + event.data["text/plain"] );
-      } );
-    } );
+    //     event.target.style.display = "none";
+    //     alert("Copied text to clipboard: " + event.data["text/plain"] );
+    //   } );
+    // } );
 
 </script>
 <script>
