@@ -62,9 +62,11 @@ import qora.web.BlogBlackWhiteList;
 import qora.web.BlogProfile;
 import qora.web.HTMLSearchResult;
 import qora.web.NameStorageMap;
+import qora.web.NamestorageKeyValueHistory;
 import qora.web.Profile;
 import qora.web.ProfileHelper;
 import qora.web.ServletUtils;
+import qora.web.WebNameStorageHistoryHelper;
 import qora.web.blog.BlogEntry;
 import settings.Settings;
 import utils.AccountBalanceComparator;
@@ -305,9 +307,28 @@ public class WebResource {
 	@GET
 	public Response getNameStorage() {
 
+		
+		
 		try {
+			String amount = request.getParameter("amount");
+			String name = request.getParameter("name");
+			
+			if(StringUtils.isBlank(name))
+			{
+//				TODO this needs to be a better error message inframe
+				return error404(request, "Name has to be set!");
+			}
+			
+//				TODO this needs to be a better error message inframe
+			Integer valueOf = Integer.valueOf(amount);
+			
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/namestorage.html", request);
+			
+			List<List<NamestorageKeyValueHistory>> history = WebNameStorageHistoryHelper.getHistory(name, valueOf);
+			
+			pebbleHelper.getContextMap().put("history", history);
+			
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {

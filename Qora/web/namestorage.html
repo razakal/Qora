@@ -256,34 +256,35 @@
 
   <!-- Third Style -->
     <div class="panel-group" id="accordion">
+    	{% for commits in history %}
+    	{% set counter = loop.index  %}
         <div class="panel panel">
             <div class="panel-heading">
               <ul class="list-inline">
                   <li><h4 class="panel-title pull left">User Name</h4></li>
                     <li><p class="panel-title pull left">Details</p></li>
                   <li class="pull-right"><h4 class="panel-title pull-right">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse-1"><i class="glyphicon glyphicon-fullscreen"></i></a>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{counter}}"><i class="glyphicon glyphicon-fullscreen"></i></a>
                 </h4></li>
               </ul>
             </div>
-            <div id="collapse-1" class="panel-collapse collapse">
+            <div id="collapse-{{ counter }}" class="panel-collapse collapse">
+              {% autoescape true%}
+            {% for ke in commits %}
                 <div class="panel-body">
-                  <pre>Code</pre>
+                  <b>{{ke.getKey()}}</b><br>
+                  BEFORE:
+                  <pre>{{ke.getBefore()}}</pre>
+                  CHANGE ({{ke.getChangekey()}}):
+                  <pre>{{ke.getChange()}}</pre>
+                  After:
+                  <pre>{{ke.getAfter()}}</pre>
                 </div>
+	        {% endfor %}
+              {% endautoescape%}
             </div>
         </div>
-        <div class="panel panel">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse-2">Second Commit</a>
-                </h4>
-            </div>
-            <div id="collapse-2" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <pre>Code</pre>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 
         <!-- </div> -->
