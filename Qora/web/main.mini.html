@@ -10,6 +10,9 @@
     <link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
     <link href="/index/libs/css/style.css" rel="stylesheet">
     <link href="/index/libs/css/sidebar.css" rel="stylesheet">
+    <link rel="stylesheet" href="/index/libs/js/third-party/github.css">
+    <script src="/index/libs/js/third-party/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <style type="text/css">
       body {
       padding-top: 50px;
@@ -118,6 +121,10 @@
       .navbar-header {
       width: 110px;
       }
+      h4.keys.panel-title.pull.left {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      }
     </style>
   </head>
   <body>
@@ -132,22 +139,40 @@
             	 {% for searchresult in searchresults %}
              <li class="q"><a href="{{searchresult.titlelink}}">
  			<h5 class="r-t">{% autoescape true %}{{searchresult.title | abbreviate(64)}}{% endautoescape %}</h5><a><a href="{{searchresult.namelink}}" class="r-l">{{searchresult.name}} {%if searchresult.getFollowerOpt() is not null %} ({{searchresult.getFollowerOpt().size()}}) {%endif%}</a><span class="label label-default"><a href="{{searchresult.keyslink}}"/>rawdata</a></span>
-			<p>{% autoescape true %}{{searchresult.description | abbreviate(150)}}{% endautoescape %}</p></a></a></li>
+			<p class="text-muted">{% autoescape true %}{{searchresult.description | abbreviate(150)}}{% endautoescape %}</p></a></a></li>
 			{% endfor %}
 
 				{% if keyvaluepairs is not empty %}
+        <div class="panel-group" id="accordion">
 	              {% for keyvalue in keyvaluepairs %}
 	              {% autoescape true %}
-	              <tr><td>{{ keyvalue.key }}</td><td><code>{{ keyvalue.value }}</code></td></tr></div></div>
-	             {% endautoescape %}
-	              {% endfor %}
-				{% endif %}
-            </ul>
-          </div>
-          <div class="col-lg-4"></div>
+                <div class="panel panel">
+                  <div class="panel-heading">
+                    <ul class="list-inline">
+                      <li><h4 class="keys panel-title pull left">{{ keyvalue.key }}</h4></li>
+                      <li class="pull-right"><h4 class="panel-title pull-right">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ keyvalue.key }}"><div class="btn-group "><button class="btn btn-default" type="button"><i class="glyphicon glyphicon-fullscreen"></i></button></div></a>
+                      </h4></li>
+                    </ul>
+                  </div>
+                  <div id="collapse-{{ keyvalue.key }}" class="panel-collapse collapse">
+                  <div class="panel-body">
+                  <pre class="code-highlight"><code class="html">{{ keyvalue.value }}</code></pre>
+                  </div>
+                  </div>
+                </div>
+                {% endautoescape %}
+                {% endfor %}
+                {% endif %}
+      </div>
         </div>
+         </ul>
+
+          <div class="col-lg-4"></div>
+
       </div>
     </div>
+  </div>
     <script src="/index/libs/jquery/jquery.2.js"></script>
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
     <script src="/index/libs/angular/angular.1.4.js"></script>
@@ -200,7 +225,7 @@
         searchval = $('#name').val();
         $('#name').val(searchval);
         $('#button').click(function() {
-        	
+
             var url;
             url = void 0;
             searchval = $('#name').val();

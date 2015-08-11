@@ -508,3 +508,6 @@ background-color: #2D2594;
 img.youtube-thumb { bottom: 0; display: block; left: 0; margin: auto; max-width: 100%; width: 100%; position: absolute; right: 0; top: 0; height: auto }
 div.play-button { height: 72px; width: 72px; left: 50%; top: 50%; margin-left: -36px; margin-top: -36px; position: absolute; background: url("http://i.imgur.com/TxzC70f.png") no-repeat; }
 #youtube-iframe { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+pre.code-highlight {
+background-color: #f8f8f8;
+}
