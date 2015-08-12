@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Qora Web Server">
     <link rel="shortcut icon" href="favicon.ico">
-    <title>Qora Blog</title>
+    <title>Qora Namestorage</title>
     <link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
     <link href="/index/libs/css/style.css" rel="stylesheet">
     <link href="/index/libs/css/sidebar.css" rel="stylesheet">
-    <link href="/index/libs/css/timeline.css" rel="stylesheet">
+    <!-- <link href="/index/libs/css/timeline.css" rel="stylesheet"> -->
     <style type="text/css">
       .media:first-child {
       margin-top: 0;
@@ -234,45 +234,63 @@
       .panel.panel {
       margin-top: 40px;
       }
+      h4.comdetails.pull.left.text-muted {
+      font-size: 14px;
+      }
+      .comptions.btn-group {
+      margin: 12.5px;
+      }
+      textarea#clipboard_before {
+      display: none;
+      }
+      textarea#clipboard_change {
+      display: none;
+      }
+      textarea#clipboard_after {
+      display: none;
+      }
+      ul.list-inline.panitems {
+      margin-bottom: 0px;
+      }
     </style>
   </head>
   <body>
-    <div id="PostModal" class="modal fade">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <iframe width="100%" height="100%" frameborder="0" src="{{postblogurl}}"></iframe>
-        </div>
-      </div>
-    </div>
     {{navbar}}
     <div class="container">
       <div class="row">
-        <!-- <div class="main"> -->
           {{apimessage}}<div id=apimessage></div>
-
-
-
-
-
-  <!-- Third Style -->
-    <div class="panel-group" id="accordion">
+      <div class="panel-group" id="accordion">
     	{% for commits in history %}
     	{% set counter = loop.index  %}
         <div class="panel panel">
             <div class="panel-heading">
-              <ul class="list-inline">
-                  <li><h4 class="panel-title pull left">User Name</h4></li>
-                    <li><p class="panel-title pull left">Details</p></li>
+              <ul class="list-inline panitems">
+                <li><ul class="list-unstyled">
+                    <li><p class="panel-title pull left">{% autoescape true%}{% for ke in commits %}{{ke.getKey()}}, {% endfor %}{% endautoescape%}</p></li>
+                  <li><h4 class="comdetails  pull left text-muted">updated on DATETIME </h4></li></ul>
+                </li>
                   <li class="pull-right"><h4 class="panel-title pull-right">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{counter}}"><i class="glyphicon glyphicon-fullscreen"></i></a>
+
+                    <div class="comptions btn-group ">
+                      <button id="copybefore"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy before" data-clipboard-target="clipboard_before"><i class="glyphicon glyphicon-indent-right"></i></button>
+                      <button id="copychange"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy change" data-clipboard-target="clipboard_change"><i class="glyphicon glyphicon-flash"></i></button>
+                      <button id="copyafter"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy after" data-clipboard-target="clipboard_after"><i class="glyphicon glyphicon-indent-left"></i></button>
+                      {% autoescape true%}{% for ke in commits %}
+                      <textarea id="clipboard_before" name="clipboard_before" readonly>{{ke.getBefore()}}</textarea>
+                      <textarea id="clipboard_change" name="clipboard_change" readonly>{{ke.getChange()}}</textarea>
+                      <textarea id="clipboard_after" name="clipboard_after" readonly>{{ke.getAfter()}}</textarea>
+                      {% endfor %}{% endautoescape%}
+                      </div>
+                      <div class="comptions btn-group "><a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{counter}}">
+                        <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-fullscreen"></i></button>
+                    </a></div>
                 </h4></li>
               </ul>
             </div>
-            <div id="collapse-{{ counter }}" class="panel-collapse collapse">
+            <div id="collapse-{{ counter }}" class="panel-collapse collapse" name="collapse-{{ counter }}">
               {% autoescape true%}
             {% for ke in commits %}
                 <div class="panel-body">
-                  <b>{{ke.getKey()}}</b><br>
                   BEFORE:
                   <pre>{{ke.getBefore()}}</pre>
                   CHANGE ({{ke.getChangekey()}}):
@@ -286,381 +304,30 @@
         </div>
         {% endfor %}
     </div>
-
-        <!-- </div> -->
       </div>
     </div>
   </div>
     <script src="/index/libs/jquery/jquery.2.js"></script>
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
     <script src="/index/libs/js/third-party/ZeroClipboard.min.js"></script>
-       <script type="text/javascript">
-//
-// 		var profileisFollowing;
-// 		{% if isFollowing %}
-// 		profileisFollowing = true;
-// 		{% else %}
-// 		profileisFollowing = false;
-// 		{%  endif %}
-//
-//        function getParameter(name) {
-//         if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
-//             return decodeURIComponent(name[1]);
-//     	}
-//
-//     	function processfollow() {
-// 			var  blogname;
-// 			var follow = !profileisFollowing;
-// 			blogname = getParameter('blogname');
-//
-//       // $("#apimessage").fadeTo(2500, 500).slideUp(1000, function(){
-//       //     $("#apimessage").alert('close');
-//       // });
-// 			if (!blogname) {
-// 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
-// 								+ "You can't follow the Mainblog<br>"
-// 								+ "</div></center>");
-// 				return 0;
-// 			}
-//
-// 			{% if activeProfile is null %}
-// 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
-// 								+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
-// 								+ "</div></center>");
-// 				return 0;
-// 			{%  endif %}
-//
-// 			$.post(
-// 			"/index/followblog.html",
-// 			{
-// 				blogname: blogname,
-// 				follow: follow
-// 			}).done( function(data) {
-// 				if(data.type == 'youAlreadyFollowThisBlog'){
-// 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
-// 										+ "You already follow this blog"
-// 										+ "</div></center>");
-// 				} else if (data.type == 'youCantFollowYourOwnProfiles'){
-// 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
-// 										+ "You can't follow your own profiles"
-// 										+ "</div></center>");
-// 				} else if (data.type == 'YouFollowThisBlogNow'){
-// 					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You follow this blog now<br>"
-// 										+ "</div>");
-// 				} else if (data.type == 'BlogFollowNotSuccessful'){
-// 					try {
-// 						var error = JSON.parse(data.result);
-// 						message = error.message;
-// 					} catch (e) {
-// 						message = data.result;
-// 					}
-//
-// 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
-// 										+ message
-// 										+ "</div></center>");
-// 				} else if (data.type == 'unfollowSuccessful'){
-// 					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Unfollow successful<br>"
-// 										+ "</div>");
-// 				} else if (data.type == 'blogUnfollowNotSuccessful'){
-// 					try {
-// 						var error = JSON.parse(data.result);
-// 						message = error.message;
-// 					} catch (e) {
-// 						message = data.result;
-// 					}
-// 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog unfollow not successful<br>"
-// 										+ message
-// 										+ "</div></center>");
-// 				}
-//
-// 				if(data.hasOwnProperty('follower'))
-// 				{
-// 						$("#profFollower").html('');
-// 				}
-//
-// 				if(data.hasOwnProperty('isFollowing'))
-// 				{
-// 					profileisFollowing = data.isFollowing;
-//
-// 					if(data.isFollowing)
-// 					{
-// 						$("#divFollow").css("color", "#6467FF");
-// 					}
-// 					else
-// 					{
-// 						$("#divFollow").css("color", "");
-// 					}
-// 				}
-//
-// 			}).fail( function(xhr, textStatus, errorThrown) {
-// 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Follow Error<br>'
-// 										+ 'Connection Error<br>'
-// 										+ xhr.responseText + '</div></center>');
-// 			});
-//
-//    		 }
-//
-// 		   		 (function() {
-// 		    var v = document.getElementsByClassName("youtube-player");
-// 		    for (var n = 0; n < v.length; n++) {
-// 		        var p = document.createElement("div");
-// 		        p.innerHTML = labnolThumb(v[n].dataset.id);
-// 		        p.onclick = labnolIframe;
-// 		        v[n].appendChild(p);
-// 		    }
-// 		})();
-//
-// 		function labnolThumb(id) {
-// 		    return '<img class="youtube-thumb" src="//i.ytimg.com/vi/' + id + '/hqdefault.jpg"><div class="play-button"></div>';
-// 		}
-//
-// 		function labnolIframe() {
-// 		    var iframe = document.createElement("iframe");
-// 		    iframe.setAttribute("src", "//www.youtube.com/embed/" + this.parentNode.dataset.id + "?autoplay=1&autohide=2&border=0&wmode=opaque&enablejsapi=1&controls=0&showinfo=0");
-// 		    iframe.setAttribute("frameborder", "0");
-// 		    iframe.setAttribute("id", "youtube-iframe");
-// 		    this.parentNode.replaceChild(iframe, this);
-// 		}
-//
-// 		function processShare(signature, blogname) {
-//
-// 			{% if activeProfile is null %}
-// 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
-// 									+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
-// 									+ "</div></center>");
-// 				return 0;
-// 			{%  endif %}
-//
-// 			$.post(
-// 			"/index/sharepost.html",
-// 			{
-// 				signature: signature,
-// 				blogname: blogname,
-// 			}).done( function(data) {
-// 				if(data.type == 'YouAlreadySharedThisPost'){
-// 					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You already shared this post'
-// 										+ '<br></div></center>');
-// 				} else if (data.type == 'YouCantShareYourOwnPosts'){
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
-// 										+ 'This Blogentry is already in your blog.'
-// 										+ '</div></center>');
-// 				} else if (data.type == 'ShareSuccessful'){
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share successful<br>'
-// 										+ '</div></center>');
-// 				} else if (data.type == 'ShareNotSuccessful'){
-// 					try {
-// 						var error = JSON.parse(data.result);
-// 						message = error.message;
-// 					} catch (e) {
-// 						message = data.result;
-// 					}
-//
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
-// 										+ message + '</div></center>');
-// 				} else if (data.type == 'error'){
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share Error<br>'
-// 										+ data.error + '</div></center>');
-// 				}else if (data.type == 'BlogIsDisabled'){
-// 					("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
-// 										+ 'The Blog of your active profile is disabled!'
-// 										+ '</div></center>');
-// 				}
-//
-//
-// 			}).fail( function(xhr, textStatus, errorThrown) {
-// 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share Error<br>'
-// 										+ 'Connection Error<br>'
-// 										+ xhr.responseText + '</div></center>');
-// 			});
-//
-// 			return 0;
-//    		 }
-//
-//
-//     	function processLike(signature, isLikeing) {
-// 			var blogname;
-// 			var like = !isLikeing;
-//
-//
-//
-// 			{% if activeProfile is null %}
-// 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
-// 									+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
-// 									+ "</div></center>");
-// 				return 0;
-// 			{%  endif %}
-//
-// 			$.post(
-// 			"/index/likepost.html",
-// 			{
-// 				signature: signature,
-// 				like: like
-// 			}).done( function(data) {
-// 				if(data.type == 'YouAlreadyLikeThisPost'){
-// 					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You already like this post'
-// 										+ '<br></div></center>');
-// 				} else if (data.type == 'YouCantLikeYourOwnPosts'){
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like not successful<br>'
-// 										+ 'You can\'t like your own posts'
-// 										+ '</div></center>');
-// 				} else if (data.type == 'LikeSuccessful'){
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like successful<br>'
-// 										+ '</div></center>');
-// 				} else if (data.type == 'LikeNotSuccessful'){
-// 					try {
-// 						var error = JSON.parse(data.result);
-// 						message = error.message;
-// 					} catch (e) {
-// 						message = data.result;
-// 					}
-//
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like not successful<br>'
-// 										+ message + '</div></center>');
-// 				} else if (data.type == 'LikeRemovedSuccessful'){
-//
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like removed successful<br>'
-// 										+ '</div></center>');
-// 				} else if (data.type == 'LikeRemovedNotSuccessful'){
-// 					try {
-// 						var error = JSON.parse(data.result);
-// 						message = error.message;
-// 					} catch (e) {
-// 						message = data.result;
-// 					}
-//
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
-// 										+ 'Like remove not successful<br>'
-// 										+ message
-// 										+ '</div></center>');
-// 					$("#profLikes").html(data.newlikes);
-// 				} else if (data.type == 'error'){
-// 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like Error<br>'
-// 										+ data.error + '</div></center>');
-// 				}
-//
-// 				if(data.hasOwnProperty('likes'))
-// 				{
-// 					if(data.likes == 0)
-// 					{
-// 						$("#profLikes").html('');
-// 					}
-// 					else
-// 					{
-// 						$("#profLikes").html(data.likes);
-// 					}
-// 				}
-//
-//
-// 			}).fail( function(xhr, textStatus, errorThrown) {
-// 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like Error<br>'
-// 										+ 'Connection Error<br>'
-// 										+ xhr.responseText + '</div></center>');
-// 			});
-//
-// 			return 0;
-//    		 }
-// </script>
-   <script type="text/javascript">
-//     $('ul.nav-tabs > li').removeClass('active');
-//     if (window.location.pathname === '/index/blogsearch.html') {
-//         $('ul.nav-tabs > li:nth-child(2)').addClass('active');
-//     } else {
-//         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
-//     }
-//
-//     $(document).ready(function() {
-//
-//         var my_posts = $("[rel=tooltip]");
-//
-// 		var size = $(window).width();
-//
-// 		if(my_posts.length > 1)
-// 		{
-// 			$("ul.timeline li:odd").addClass("timeline-inverted");
-// 		}
-//
-// 		for (i = 0; i < my_posts.length; i++) {
-//             the_post = $(my_posts[i]);
-//             if (the_post.hasClass('invert') && size >= 767) {
-//                 the_post.tooltip({
-//                     placement: 'left'
-//                 });
-//                 the_post.css("cursor", "pointer");
-//             } else {
-//                 the_post.tooltip({
-//                     placement: 'rigth'
-//                 });
-//                 the_post.css("cursor", "pointer");
-//             }
-//         }
-//         {% if hideprofile is not empty%}
-//       $(".tl-profile").hide();
-//       $(".timeline").css("padding-top","40px");
-//       {%endif%}
-//
-//       {% if msg is not null %} $('html, body').animate({
-//         scrollTop: $("#{{msg}}").offset().top
-//     }, 2000);
-//     {%endif%}
-//
-//     });
-//
-//     $(function () {
-//       $('[data-toggle="tooltip"]').tooltip()
-//     })
-//
-//     </script>
-       <script type="text/javascript">
-//     $(document).ready(function(){
-//     {% for blogpost in blogposts %}
-//     if (window.location.search === '?msg={{blogpost.getSignature()}}') {
-//       $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
-//       $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
-//     };
-//     if (window.location.search === '?blogname={{blogpost.getBlognameOpt()}}&msg={{blogpost.getSignature()}}') {
-//       $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
-//       $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
-//    };
-//     {% endfor %}
-//   });
-//
-//     </script>
-   <script type="text/javascript">
-// {% for blogpost in blogposts %}
-//     function changeTextarea{{blogpost.getSignature()}}( str ) {
-//         var textarea = document.getElementById('clipboard_textarea')
-//
-//         textarea.value = str;
-//     }
-//
-//     $('a').mouseout(function(){
-//        $('#clipboard_textarea').hide();
-//     });
-//     $('a').mouseover(function(){
-//     $('#clipboard_textarea').show();
-//     });
-//         $('#clipboard_textarea').mouseover(function(){
-//         $(this).show();
-//         });
-// {% endfor %}
-//     </script>
-   <script type="text/javascript">
-//     // main.js
-//     {% for blogpost in blogposts %}
-//     var client = new ZeroClipboard( document.getElementById("copybutton{{blogpost.getSignature()}}") );
-//     {% endfor %}
-//     client.on( "ready", function( readyEvent ) {
-//       // alert( "ZeroClipboard SWF is ready!" );
-//
-//       client.on( "aftercopy", function( event ) {
-//         // `this` === `client`
-//         // `event.target` === the element that was clicked
-//         event.target.style.display = "none";
-//         alert("Copied text to clipboard: " + event.data["text/plain"] );
-//       } );
-//     } );
-//
-// </script>
+    <script type="text/javascript">
+        {% for ke in commits %}
+        var client = new ZeroClipboard( document.getElementById("copybefore") );
+        var client = new ZeroClipboard( document.getElementById("copychange") );
+        var client = new ZeroClipboard( document.getElementById("copyafter") );
+        {% endfor %}
 
+        // client.on( "ready", function( readyEvent ) {
+          // alert( "ZeroClipboard SWF is ready!" );
+
+          // client.on( "aftercopy", function( event ) {
+            // `this` === `client`
+            // `event.target` === the element that was clicked
+        //     event.target.style.display = "none";
+        //     alert("Copied text to clipboard: " + event.data["text/plain"] );
+        //   } );
+        // } );
+
+    </script>
   </body>
 </html>

@@ -453,6 +453,16 @@ border-radius: 50%;
 .menu-grid span.glyphicon.glyphicon-file {
   font-size: 40px;
 }
+.menu-grid span.glyphicon.glyphicon-floppy-disk {
+  font-size: 40px;
+}
+.menu-grid span.glyphicon.glyphicon-envelope {
+  font-size: 40px;
+}
+.menu-grid .glyphicon.glyphicon-envelope:hover,
+.menu-grid .glyphicon.glyphicon-envelope:focus,
+.menu-grid .glyphicon.glyphicon-floppy-disk:hover,
+.menu-grid .glyphicon.glyphicon-floppy-disk:focus,
 .menu-grid .glyphicon.glyphicon-file:hover,
 .menu-grid .glyphicon.glyphicon-file:focus,
 .menu-grid .glyphicon.glyphicon-globe:hover,

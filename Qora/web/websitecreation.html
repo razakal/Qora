@@ -10,6 +10,9 @@
     <link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
     <link href="/index/libs/css/style.css" rel="stylesheet">
     <link href="/index/libs/css/sidebar.css" rel="stylesheet">
+    <!-- External Lib -->
+    <link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css">
+    <!-- External Lib -->
     <style type="text/css">
       body {
       padding-top: 50px;
@@ -136,7 +139,7 @@
     <div class="container">
       <div class="row">
         <div class="main">
-          <div class="col-lg-8 col-centered">
+          <div class="col-sm-20 col-centered">
         <div class="form-horizontal">
           <!-- <fieldset> -->
             <legend>Create or update a website</legend>
@@ -358,5 +361,28 @@
         $scope.steps = {};
     });
     </script>
+    <!-- External Libs -->
+    <script src="http://codemirror.net/lib/codemirror.js"></script>
+    <script src="http://codemirror.net/addon/selection/selection-pointer.js"></script>
+    <script src="http://codemirror.net/mode/xml/xml.js"></script>
+    <script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+    <script src="http://codemirror.net/mode/css/css.js"></script>
+    <script src="http://codemirror.net/mode/vbscript/vbscript.js"></script>
+    <script src="http://codemirror.net/mode/htmlmixed/htmlmixed.js"></script>
+    <script>
+    var mixedMode = {
+      name: "htmlmixed",
+      scriptTypes: [{matches: /\/x-handlebars-template|\/x-mustache/i,
+                   mode: null},
+                  {matches: /(text|application)\/(x-)?vb(a|script)/i,
+                   mode: "vbscript"}]
+                 };
+    var editor = CodeMirror.fromTextArea(document.getElementById("website"), {
+      mode: mixedMode,
+      lineNumbers: true,
+      selectionPointer: true
+    });
+    </script>
+    <!-- External Libs -->
   </body>
 </html>
