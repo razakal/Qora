@@ -270,7 +270,6 @@
                   <li><h4 class="comdetails  pull left text-muted">updated on {{txhistory.getCreationTime()}} Signatur: {{txhistory.getSignature()}} </h4></li></ul>
                 </li>
                   <li class="pull-right"><h4 class="panel-title pull-right">
-
                     <div class="comptions btn-group ">
                       <button id="copybefore"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy before" data-clipboard-target="clipboard_before"><i class="glyphicon glyphicon-indent-right"></i></button>
                       <button id="copychange"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy change" data-clipboard-target="clipboard_change"><i class="glyphicon glyphicon-flash"></i></button>
@@ -295,6 +294,8 @@
                   <pre>{{ke.getBefore()}}</pre>
                   CHANGE ({{ke.getChangekey()}}):
                   <pre>{{ke.getChange()}}</pre>
+                  Unified Diff:
+                  <pre>{{ke.getDiff()}}</pre>
                   After:
                   <pre>{{ke.getAfter()}}</pre>
                 </div>

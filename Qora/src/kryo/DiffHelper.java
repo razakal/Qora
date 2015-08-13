@@ -23,10 +23,8 @@ public class DiffHelper {
 
 	public static String getDiff(String source, String destination)
 			throws IOException {
-		String[] src = StringUtils.split(source, "\n");
-		String[] dest = StringUtils.split(destination, "\n");
-		Patch<String> diff = DiffUtils.diff(Arrays.asList(src),
-				Arrays.asList(dest));
+		
+		Patch<String> diff = getPatch(source, destination);
 
 		Kryo kryo = getkryo();
 
@@ -38,6 +36,24 @@ public class DiffHelper {
 			return new String(byteArray);
 		}
 
+	}
+
+	public static Patch<String> getPatch(String source, String destination) {
+		if(source == null)
+		{
+			source = "";
+		}
+		
+		if(destination == null)
+		{
+			destination = "";
+		}
+		
+		String[] src = StringUtils.split(source, "\n");
+		String[] dest = StringUtils.split(destination, "\n");
+		Patch<String> diff = DiffUtils.diff(Arrays.asList(src),
+				Arrays.asList(dest));
+		return diff;
 	}
 
 	public static Kryo getkryo() {
