@@ -259,6 +259,22 @@
     <div class="container">
       <div class="row">
           {{apimessage}}<div id=apimessage></div>
+          <br>
+         <div class="form-horizontal">
+          <!-- <fieldset> -->
+			<div id=result></div>
+            	{{result}}
+            <div class="form-group">
+            <label for="title" class="col-lg-2 control-label">Name</label>
+            <div class="col-lg-10">
+              <input id="name-select" type="text" placeholder="Name" class="form-control">
+            </div>
+            <label for="title" class="col-lg-2 control-label">Max Amount</label>
+            <div class="col-lg-10">
+              <input id="amount" type="text" placeholder="Amount (Optional/Default 20)" class="form-control">
+            </div>
+          </div>
+          </div>
       <div class="panel-group" id="accordion">
     	{% for txhistory in history %}
     	{% set counter = loop.index  %}
@@ -266,8 +282,8 @@
             <div class="panel-heading">
               <ul class="list-inline panitems">
                 <li><ul class="list-unstyled">
-                    <li><p class="panel-title pull left">{% autoescape true%}{% for ke in txhistory.getKeyValueHistoryList() %}{{ke.getKey()}}, {% endfor %}{% endautoescape%}</p></li>
-                  <li><h4 class="comdetails  pull left text-muted">updated on {{txhistory.getCreationTime()}} Signatur: {{txhistory.getSignature()}} </h4></li></ul>
+                    <li><p class="panel-title pull left">{% autoescape true%}{{txhistory.getAllKeys()}}{% endautoescape%}</p></li>
+                  <li><h4 class="comdetails  pull left text-muted">updated on {{txhistory.getCreationTime()}}<br>signature: {{txhistory.getSignature()}}  </h4></li></ul>
                 </li>
                   <li class="pull-right"><h4 class="panel-title pull-right">
                     <div class="comptions btn-group ">
@@ -328,6 +344,28 @@
         //     alert("Copied text to clipboard: " + event.data["text/plain"] );
         //   } );
         // } );
+        
+       
+      $(function(){
+      // bind change event to select
+      $('#name-select').on('change', function () {
+              window.location = '/index/namestoragehistory.html?name=' + $('#name-select').val() + "&amount=" + $('#amount').val(); // redirect
+          return false;
+      });
+    });
+      $(function(){
+      // bind change event to select
+      $('#amount').on('change', function () {
+              window.location = '/index/namestoragehistory.html?name=' + $('#name-select').val() + "&amount=" + $('#amount').val(); // redirect
+          return false;
+      });
+    });
+    
+    	$(document).ready(function() {
+       	 var searchval;
+			$("#name-select").val('{{name}}');
+			$("#amount").val('{{amount}}');
+		  });
 
     </script>
   </body>

@@ -25,7 +25,11 @@ public class WebNameStorageHistoryHelper {
 		
 		OrphanNameStorageHelperMap orphanNameStorageHelperMap = DBSet.getInstance().getOrphanNameStorageHelperMap();
 		
-		List<byte[]> list = new ArrayList<>( orphanNameStorageHelperMap.get(name));
+		List<byte[]> orphanMap = orphanNameStorageHelperMap.get(name);
+		
+		orphanMap = orphanMap == null ? new ArrayList<byte[]>() : orphanMap;
+		
+		List<byte[]> list = new ArrayList<>( orphanMap);
 		Collections.reverse(list);
 		
 		for (int i = 0; i < list.size() && i < maxStorageTx; i++) {

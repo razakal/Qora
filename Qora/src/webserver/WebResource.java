@@ -301,7 +301,7 @@ public class WebResource {
 
 	}
 
-	@Path("index/namestorage.html")
+	@Path("index/namestoragehistory.html")
 	@GET
 	public Response getNameStorage() {
 
@@ -311,21 +311,43 @@ public class WebResource {
 			String amount = request.getParameter("amount");
 			String name = request.getParameter("name");
 
+			Integer maxAmount = 20;
+			try {
+				maxAmount = Integer.valueOf(amount);
+			} catch (Throwable e) {
+				//then we use default!
+			}
+			
 			if(StringUtils.isBlank(name))
 			{
-//				TODO this needs to be a better error message inframe
-				return error404(request, "Name has to be set!");
+				Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
+				
+				if(activeProfileOpt != null)
+				{
+					name = activeProfileOpt.getName().getName();
+				}else
+				{
+					List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller
+							.getInstance().getNamesAsList());
+					
+					if(namesAsList.size() > 0)
+					{
+						name = namesAsList.get(0).getName();
+					}
+				}
+				
 			}
-
-//				TODO this needs to be a better error message inframe
-			Integer valueOf = Integer.valueOf(amount);
+			
+			name = name == null? "" : name;
 
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-					"web/namestorage.html", request);
+					"web/namestoragehistory.html", request);
 
-			List<NameStorageTransactionHistory> history = WebNameStorageHistoryHelper.getHistory(name, valueOf);
+			List<NameStorageTransactionHistory> history = WebNameStorageHistoryHelper.getHistory(name, maxAmount);
 
 			pebbleHelper.getContextMap().put("history", history);
+			pebbleHelper.getContextMap().put("name", name);
+			pebbleHelper.getContextMap().put("amount", maxAmount);
 
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
