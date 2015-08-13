@@ -19,9 +19,9 @@ import utils.StorageUtils;
 public class WebNameStorageHistoryHelper {
 	
 	
-	public static List<List<NamestorageKeyValueHistory>> getHistory(String name, int maxStorageTx)
+	public static List<NameStorageTransactionHistory> getHistory(String name, int maxStorageTx)
 	{
-		List<List<NamestorageKeyValueHistory>> results= new ArrayList<>();
+		List<NameStorageTransactionHistory> results= new ArrayList<>();
 		
 		OrphanNameStorageHelperMap orphanNameStorageHelperMap = DBSet.getInstance().getOrphanNameStorageHelperMap();
 		
@@ -48,7 +48,7 @@ public class WebNameStorageHistoryHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<NamestorageKeyValueHistory> getKeyHistory(ArbitraryTransaction tx) {
+	public static NameStorageTransactionHistory getKeyHistory(ArbitraryTransaction tx) {
 
 		
 //		MAKE SURE OTHER VALUE IN INNER JSON DON'T MAKE PROBLEMS!
@@ -58,7 +58,7 @@ public class WebNameStorageHistoryHelper {
 
 		JSONObject jsonObject = (JSONObject) JSONValue.parse(jsonString);
 
-		List<NamestorageKeyValueHistory> results = new ArrayList<>();
+		NameStorageTransactionHistory result = new NameStorageTransactionHistory(tx);
 		Set<String> keySet = jsonObject.keySet();
 
 		OrphanNameStorageMap orphanNameStorageMap = DBSet.getInstance()
@@ -90,16 +90,16 @@ public class WebNameStorageHistoryHelper {
 				Set<String> innerKeyset = innerJsonObject.keySet();
 				
 				for (String innerkey : innerKeyset) {
-					results.add(new NamestorageKeyValueHistory(map.get(innerkey),
+					result.addEntry(new NamestorageKeyValueHistory(map.get(innerkey),
 							(String) innerJsonObject.get(innerkey),
 							tempNameStorageMap.getOpt(name, innerkey), mainkey,
-							innerkey, name));
+							innerkey, name ));
 				}
 			}
 
 		}
 		
-		return results;
+		return result;
 
 	}
 

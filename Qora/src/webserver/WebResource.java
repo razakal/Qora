@@ -40,8 +40,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import kryo.DiffHelper;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
@@ -53,6 +51,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.mitchellbosecke.pebble.error.PebbleException;
+
+import api.BlogPostResource;
+import api.NameStorageResource;
+import controller.Controller;
+import database.DBSet;
+import database.NameMap;
+import kryo.DiffHelper;
 import qora.account.Account;
 import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Base58;
@@ -62,7 +68,7 @@ import qora.web.BlogBlackWhiteList;
 import qora.web.BlogProfile;
 import qora.web.HTMLSearchResult;
 import qora.web.NameStorageMap;
-import qora.web.NamestorageKeyValueHistory;
+import qora.web.NameStorageTransactionHistory;
 import qora.web.Profile;
 import qora.web.ProfileHelper;
 import qora.web.ServletUtils;
@@ -79,14 +85,6 @@ import utils.PebbleHelper;
 import utils.Qorakeys;
 import utils.StorageUtils;
 import utils.StrJSonFine;
-import api.BlogPostResource;
-import api.NameStorageResource;
-
-import com.mitchellbosecke.pebble.error.PebbleException;
-
-import controller.Controller;
-import database.DBSet;
-import database.NameMap;
 
 @Path("/")
 public class WebResource {
@@ -325,7 +323,7 @@ public class WebResource {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/namestorage.html", request);
 
-			List<List<NamestorageKeyValueHistory>> history = WebNameStorageHistoryHelper.getHistory(name, valueOf);
+			List<NameStorageTransactionHistory> history = WebNameStorageHistoryHelper.getHistory(name, valueOf);
 
 			pebbleHelper.getContextMap().put("history", history);
 

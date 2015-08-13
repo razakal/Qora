@@ -260,14 +260,14 @@
       <div class="row">
           {{apimessage}}<div id=apimessage></div>
       <div class="panel-group" id="accordion">
-    	{% for commits in history %}
+    	{% for txhistory in history %}
     	{% set counter = loop.index  %}
         <div class="panel panel">
             <div class="panel-heading">
               <ul class="list-inline panitems">
                 <li><ul class="list-unstyled">
-                    <li><p class="panel-title pull left">{% autoescape true%}{% for ke in commits %}{{ke.getKey()}}, {% endfor %}{% endautoescape%}</p></li>
-                  <li><h4 class="comdetails  pull left text-muted">updated on DATETIME </h4></li></ul>
+                    <li><p class="panel-title pull left">{% autoescape true%}{% for ke in txhistory.getKeyValueHistoryList() %}{{ke.getKey()}}, {% endfor %}{% endautoescape%}</p></li>
+                  <li><h4 class="comdetails  pull left text-muted">updated on {{txhistory.getCreationTime()}} Signatur: {{txhistory.getSignature()}} </h4></li></ul>
                 </li>
                   <li class="pull-right"><h4 class="panel-title pull-right">
 
@@ -289,7 +289,7 @@
             </div>
             <div id="collapse-{{ counter }}" class="panel-collapse collapse" name="collapse-{{ counter }}">
               {% autoescape true%}
-            {% for ke in commits %}
+            {% for ke in txhistory.getKeyValueHistoryList() %}
                 <div class="panel-body">
                   BEFORE:
                   <pre>{{ke.getBefore()}}</pre>
