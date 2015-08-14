@@ -2308,8 +2308,9 @@ public class WebResource {
 		tmpFile.delete();
 
 		// SHOW WEB-PAGE
-		return Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8")
+		Response build = Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").header("X-XSS-Protection", "0")
 				.build();
+		return build;
 	}
 
 	public static String injectValues(String value) {
