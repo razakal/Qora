@@ -28,6 +28,7 @@ import qora.transaction.CancelSellNameTransaction;
 import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.IssueAssetTransaction;
+import qora.transaction.PaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
 import qora.transaction.Transaction;
@@ -1235,50 +1236,56 @@ public class Wallet extends Observable implements Observer
 			{
 				this.processTransaction(transaction);
 				
+				//SKIP PAYMENT TRANSACTIONS
+				if (transaction instanceof PaymentTransaction)
+				{
+					continue;
+				}
+				
 				//CHECK IF NAME REGISTRATION
-				if(transaction instanceof RegisterNameTransaction)
+				else if(transaction instanceof RegisterNameTransaction)
 				{
 					this.processNameRegistration((RegisterNameTransaction) transaction);
 				}
 				
 				//CHECK IF NAME UPDATE
-				if(transaction instanceof UpdateNameTransaction)
+				else if(transaction instanceof UpdateNameTransaction)
 				{
 					this.processNameUpdate((UpdateNameTransaction) transaction);
 				}
 				
 				//CHECK IF NAME SALE
-				if(transaction instanceof SellNameTransaction)
+				else if(transaction instanceof SellNameTransaction)
 				{
 					this.processNameSale((SellNameTransaction) transaction);
 				}
 				
 				//CHECK IF NAME SALE
-				if(transaction instanceof CancelSellNameTransaction)
+				else if(transaction instanceof CancelSellNameTransaction)
 				{
 					this.processCancelNameSale((CancelSellNameTransaction) transaction);
 				}
 				
 				//CHECK IF NAME PURCHASE
-				if(transaction instanceof BuyNameTransaction)
+				else if(transaction instanceof BuyNameTransaction)
 				{
 					this.processNamePurchase((BuyNameTransaction) transaction);
 				}
 				
 				//CHECK IF POLL CREATION
-				if(transaction instanceof CreatePollTransaction)
+				else if(transaction instanceof CreatePollTransaction)
 				{
 					this.processPollCreation((CreatePollTransaction) transaction);
 				}
 				
 				//CHECK IF POLL VOTE
-				if(transaction instanceof VoteOnPollTransaction)
+				else if(transaction instanceof VoteOnPollTransaction)
 				{
 					this.processPollVote((VoteOnPollTransaction) transaction);
 				}
 				
 				//CHECK IF ASSET ISSUE
-				if(transaction instanceof IssueAssetTransaction)
+				else if(transaction instanceof IssueAssetTransaction)
 				{
 					this.processAssetIssue((IssueAssetTransaction) transaction);
 				}
@@ -1290,45 +1297,51 @@ public class Wallet extends Observable implements Observer
 				}*/
 				
 				//CHECK IF ORDER CANCEL
-				if(transaction instanceof CancelOrderTransaction)
+				else if(transaction instanceof CancelOrderTransaction)
 				{
 					this.processOrderCancel((CancelOrderTransaction) transaction);
 				}
 			}
 		}
 		
-		if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
+		else if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
 		{	
 			Transaction transaction = (Transaction) message.getValue();
 				
 			this.processTransaction(transaction);
 			
+			//CHECK IF PAYMENT
+			if (transaction instanceof PaymentTransaction)
+			{
+				
+			}
+			
 			//CHECK IF NAME REGISTRATION
-			if(transaction instanceof RegisterNameTransaction)
+			else if(transaction instanceof RegisterNameTransaction)
 			{
 				this.processNameRegistration((RegisterNameTransaction) transaction);
 			}
 			
 			//CHECK IF POLL CREATION
-			if(transaction instanceof CreatePollTransaction)
+			else if(transaction instanceof CreatePollTransaction)
 			{
 				this.processPollCreation((CreatePollTransaction) transaction);
 			}
 			
 			//CHECK IF ASSET ISSUE
-			if(transaction instanceof IssueAssetTransaction)
+			else if(transaction instanceof IssueAssetTransaction)
 			{
 				this.processAssetIssue((IssueAssetTransaction) transaction);
 			}
 			
 			//CHECK IF ORDER CREATION
-			if(transaction instanceof CreateOrderTransaction)
+			else if(transaction instanceof CreateOrderTransaction)
 			{
 				this.processOrderCreation((CreateOrderTransaction) transaction);
 			}
 		}
 		
-		if(message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE)
+		else if(message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE)
 		{
 			Block block = (Block) message.getValue();
 				
@@ -1347,104 +1360,109 @@ public class Wallet extends Observable implements Observer
 				}
 				
 				//CHECK IF NAME UPDATE
-				if(transaction instanceof UpdateNameTransaction)
+				else if(transaction instanceof UpdateNameTransaction)
 				{
 					this.orphanNameUpdate((UpdateNameTransaction) transaction);
 				}
 				
 				//CHECK IF NAME SALE
-				if(transaction instanceof SellNameTransaction)
+				else if(transaction instanceof SellNameTransaction)
 				{
 					this.orphanNameSale((SellNameTransaction) transaction);
 				}
 				
 				//CHECK IF CANCEL NAME SALE
-				if(transaction instanceof CancelSellNameTransaction)
+				else if(transaction instanceof CancelSellNameTransaction)
 				{
 					this.orphanCancelNameSale((CancelSellNameTransaction) transaction);
 				}
 				
 				//CHECK IF CANCEL NAME SALE
-				if(transaction instanceof BuyNameTransaction)
+				else if(transaction instanceof BuyNameTransaction)
 				{
 					this.orphanNamePurchase((BuyNameTransaction) transaction);
 				}
 				
 				//CHECK IF POLL CREATION
-				if(transaction instanceof CreatePollTransaction)
+				else if(transaction instanceof CreatePollTransaction)
 				{
 					this.orphanPollCreation((CreatePollTransaction) transaction);
 				}
 				
 				//CHECK IF POLL VOTE
-				if(transaction instanceof VoteOnPollTransaction)
+				else if(transaction instanceof VoteOnPollTransaction)
 				{
 					this.orphanPollVote((VoteOnPollTransaction) transaction);
 				}
 				
 				//CHECK IF ASSET ISSUE
-				if(transaction instanceof IssueAssetTransaction)
+				else if(transaction instanceof IssueAssetTransaction)
 				{
 					this.orphanAssetIssue((IssueAssetTransaction) transaction);
 				}
 				
 				//CHECK IF ORDER CREATION
-				if(transaction instanceof CreateOrderTransaction)
+				else if(transaction instanceof CreateOrderTransaction)
 				{
 					this.orphanOrderCreation((CreateOrderTransaction) transaction);
 				}
 				
 				//CHECK IF ORDER CANCEL
-				if(transaction instanceof CancelOrderTransaction)
+				else if(transaction instanceof CancelOrderTransaction)
 				{
 					this.orphanOrderCancel((CancelOrderTransaction) transaction);
 				}
 			}
 		}
 		
-		if(message.getType() == ObserverMessage.REMOVE_TRANSACTION_TYPE)
+		else if(message.getType() == ObserverMessage.REMOVE_TRANSACTION_TYPE)
 		{	
 			Transaction transaction = (Transaction) message.getValue();
 				
 			this.orphanTransaction(transaction);
-					
+				
+			//CHECK IF PAYMENT
+			if (transaction instanceof PaymentTransaction)
+			{
+				
+			}
 			//CHECK IF NAME REGISTRATION
-			if(transaction instanceof RegisterNameTransaction)
+			else if(transaction instanceof RegisterNameTransaction)
 			{
 				this.orphanNameRegistration((RegisterNameTransaction) transaction);
 			}
 			
 			//CHECK IF POLL CREATION
-			if(transaction instanceof CreatePollTransaction)
+			else if(transaction instanceof CreatePollTransaction)
 			{
 				this.orphanPollCreation((CreatePollTransaction) transaction);
 			}
 			
 			//CHECK IF ASSET ISSUE
-			if(transaction instanceof IssueAssetTransaction)
+			else if(transaction instanceof IssueAssetTransaction)
 			{
 				this.orphanAssetIssue((IssueAssetTransaction) transaction);
 			}
 			
 			//CHECK IF ORDER CREATION
-			if(transaction instanceof CreateOrderTransaction)
+			else if(transaction instanceof CreateOrderTransaction)
 			{
 				this.orphanOrderCreation((CreateOrderTransaction) transaction);
 			}
 		}
 		
-		if (message.getType() == ObserverMessage.ADD_AT_TX_TYPE)
+		else if (message.getType() == ObserverMessage.ADD_AT_TX_TYPE)
 		{
 			this.processATTransaction( (Tuple2<Tuple2<Integer, Integer>, AT_Transaction>) message.getValue() );
 		}
 		
-		if (message.getType() == ObserverMessage.REMOVE_AT_TX)
+		else if (message.getType() == ObserverMessage.REMOVE_AT_TX)
 		{
 			this.orphanATTransaction( (Tuple2<Tuple2<Integer, Integer>, AT_Transaction>) message.getValue() );
 		}
 		
 		//ADD ORDER
-		if(message.getType() == ObserverMessage.ADD_ORDER_TYPE || message.getType() == ObserverMessage.REMOVE_ORDER_TYPE)
+		else if(message.getType() == ObserverMessage.ADD_ORDER_TYPE || message.getType() == ObserverMessage.REMOVE_ORDER_TYPE)
 		{
 			this.addOrder((Order) message.getValue());
 		}
