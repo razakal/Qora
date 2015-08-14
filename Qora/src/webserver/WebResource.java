@@ -1170,6 +1170,66 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
+	
+	@Path("index/libs/js/biginteger.js")
+	@GET
+	public Response biginteger() {
+		File file = new File("web/libs/js/biginteger.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+	
+	@Path("index/libs/js/converters.js")
+	@GET
+	public Response converters() {
+		File file = new File("web/libs/js/converters.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+	
+	@Path("index/libs/js/crypto/curve25519.js")
+	@GET
+	public Response curve25519() {
+		File file = new File("web/libs/js/crypto/curve25519.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+	
+	@Path("index/libs/js/crypto/curve25519_.js")
+	@GET
+	public Response curve25519_() {
+		File file = new File("web/libs/js/crypto/curve25519_.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+	
+	@Path("index/libs/js/crypto/3rdparty/cryptojs/sha256.js")
+	@GET
+	public Response sha256() {
+		File file = new File("web/libs/js/crypto/3rdparty/cryptojs/sha256.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@POST
