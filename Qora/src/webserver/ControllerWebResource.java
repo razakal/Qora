@@ -51,7 +51,7 @@ private static ControllerWebResource instance = new ControllerWebResource();
 	}
 	
 	
-	public List<WebAccount> getAccounts(boolean removeZeroBalance)
+	public List<WebAccount> getAccounts(String removeZeroBalance)
 	{
 		List<WebAccount> results = new ArrayList<>();
 		
@@ -60,7 +60,7 @@ private static ControllerWebResource instance = new ControllerWebResource();
 					.getAccounts());
 			
 			for (Account account : realAccs) {
-				if(removeZeroBalance)
+				if(Boolean.valueOf(removeZeroBalance))
 				{
 					if (account.getBalance(0).compareTo(BigDecimal.ZERO) > 0) {
 						results.add(new WebAccount(account));
