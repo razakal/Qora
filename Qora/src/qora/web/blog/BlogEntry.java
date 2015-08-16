@@ -39,6 +39,7 @@ public class BlogEntry {
 
 	private List<String> imagelinks = new ArrayList<String>();
 	private String signature;
+	private String shareSignatureOpt;
 	private boolean isLiking = false;
 	private List<String> likingUser = new ArrayList<>();
 	private List<String> sharingUser = new ArrayList<>();
@@ -228,13 +229,21 @@ public class BlogEntry {
 	public void setShareAuthor(String shareAuthor) {
 		this.shareAuthorOpt = shareAuthor;
 	}
-
+	
 	public String getBlognameOpt() {
 		return blogname;
 	}
 
 	public void setBlogname(String blogname) {
 		this.blogname = blogname;
+	}
+
+	public String getShareSignatureOpt() {
+		return shareSignatureOpt;
+	}
+
+	public void setShareSignatureOpt(String shareSignatureOpt) {
+		this.shareSignatureOpt = shareSignatureOpt;
 	}
 	
 

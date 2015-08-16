@@ -2,7 +2,6 @@ package webserver;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +38,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import kryo.DiffHelper;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
@@ -51,14 +51,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.mitchellbosecke.pebble.error.PebbleException;
-
-import api.BlogPostResource;
-import api.NameStorageResource;
-import controller.Controller;
-import database.DBSet;
-import database.NameMap;
-import kryo.DiffHelper;
 import qora.account.Account;
 import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Base58;
@@ -85,6 +77,14 @@ import utils.PebbleHelper;
 import utils.Qorakeys;
 import utils.StorageUtils;
 import utils.StrJSonFine;
+import api.BlogPostResource;
+import api.NameStorageResource;
+
+import com.mitchellbosecke.pebble.error.PebbleException;
+
+import controller.Controller;
+import database.DBSet;
+import database.NameMap;
 
 @Path("/")
 public class WebResource {
@@ -305,8 +305,6 @@ public class WebResource {
 	@GET
 	public Response getNameStorage() {
 
-
-
 		try {
 			String amount = request.getParameter("amount");
 			String name = request.getParameter("name");
@@ -315,35 +313,33 @@ public class WebResource {
 			try {
 				maxAmount = Integer.valueOf(amount);
 			} catch (Throwable e) {
-				//then we use default!
+				// then we use default!
 			}
-			
-			if(StringUtils.isBlank(name))
-			{
-				Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(request);
-				
-				if(activeProfileOpt != null)
-				{
+
+			if (StringUtils.isBlank(name)) {
+				Profile activeProfileOpt = ProfileHelper.getInstance()
+						.getActiveProfileOpt(request);
+
+				if (activeProfileOpt != null) {
 					name = activeProfileOpt.getName().getName();
-				}else
-				{
-					List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller
-							.getInstance().getNamesAsList());
-					
-					if(namesAsList.size() > 0)
-					{
+				} else {
+					List<Name> namesAsList = new CopyOnWriteArrayList<Name>(
+							Controller.getInstance().getNamesAsList());
+
+					if (namesAsList.size() > 0) {
 						name = namesAsList.get(0).getName();
 					}
 				}
-				
+
 			}
-			
-			name = name == null? "" : name;
+
+			name = name == null ? "" : name;
 
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/namestoragehistory.html", request);
 
-			List<NameStorageTransactionHistory> history = WebNameStorageHistoryHelper.getHistory(name, maxAmount);
+			List<NameStorageTransactionHistory> history = WebNameStorageHistoryHelper
+					.getHistory(name, maxAmount);
 
 			pebbleHelper.getContextMap().put("history", history);
 			pebbleHelper.getContextMap().put("name", name);
@@ -536,22 +532,20 @@ public class WebResource {
 		} else {
 
 			try {
-				String source = DBSet.getInstance()
-						.getNameStorageMap().getOpt(name, websitepair.getA());
+				String source = DBSet.getInstance().getNameStorageMap()
+						.getOpt(name, websitepair.getA());
 
-				if(StringUtils.isNotBlank(source))
-				{
-					String diff = DiffHelper.getDiff(source,
-							website);
+				if (StringUtils.isNotBlank(source)) {
+					String diff = DiffHelper.getDiff(source, website);
 
-					if (website.length() > diff.length() && diff.length() < 3000) {
+					if (website.length() > diff.length()
+							&& diff.length() < 3000) {
 						websitepair.setB(diff);
-						storageJsonObject = StorageUtils.getStorageJsonObject(null,
-								null, null, null, null,
+						storageJsonObject = StorageUtils.getStorageJsonObject(
+								null, null, null, null, null,
 								Collections.singletonList(websitepair));
 					}
 				}
-
 
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -918,162 +912,6 @@ public class WebResource {
 		return filename.substring(dotPos);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Path("index/API.html")
-	@GET
-	public Response handleAPICall() {
-
-		try {
-			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-					"web/apianswer.html", request);
-			// EXAMPLE POST/GET/DELETE
-			String type = request.getParameter("type");
-			// EXAMPLE /names/key/MyName
-			String url = request.getParameter("apiurl");
-			String okmsg = request.getParameter("okmsg");
-			String errormsg = request.getParameter("errormsg");
-
-			if (StringUtils.isBlank(type)
-					|| (!type.equalsIgnoreCase("get")
-							&& !type.equalsIgnoreCase("post") && !type
-								.equalsIgnoreCase("delete"))) {
-
-				pebbleHelper.getContextMap().put("title",
-						"An Api error occured");
-				pebbleHelper
-						.getContextMap()
-						.put("apicall",
-								"You need a type parameter with value GET/POST or DELETE ");
-
-				return Response.ok(pebbleHelper.evaluate(),
-						"text/html; charset=utf-8").build();
-			}
-
-			if (StringUtils.isBlank(url)) {
-				pebbleHelper.getContextMap().put("title",
-						"An Api error occured");
-				pebbleHelper.getContextMap().put("apicall",
-						"You need to provide an apiurl parameter");
-				return Response.ok(pebbleHelper.evaluate(),
-						"text/html; charset=utf-8").build();
-			}
-			url = url.startsWith("/") ? url.substring(1) : url;
-
-			Map<String, String[]> parameterMap = new HashMap<String, String[]>(
-					request.getParameterMap());
-
-			parameterMap.remove("type");
-			parameterMap.remove("apiurl");
-			parameterMap.remove("okmsg");
-			parameterMap.remove("errormsg");
-
-			Set<String> keySet = parameterMap.keySet();
-
-			JSONObject json = new JSONObject();
-
-			for (String key : keySet) {
-				String[] value = parameterMap.get(key);
-				json.put(key, value[0]);
-			}
-
-			try {
-				// CREATE CONNECTION
-				URL urlToCall = new URL("http://127.0.0.1:"
-						+ Settings.getInstance().getRpcPort() + "/" + url);
-				HttpURLConnection connection = (HttpURLConnection) urlToCall
-						.openConnection();
-
-				// EXECUTE
-				connection.setRequestMethod(type.toUpperCase());
-
-				if (type.equalsIgnoreCase("POST")) {
-					connection.setDoOutput(true);
-					connection.getOutputStream().write(
-							json.toJSONString().getBytes("UTF-8"));
-					connection.getOutputStream().flush();
-					connection.getOutputStream().close();
-				}
-
-				// READ RESULT
-				InputStream stream;
-				if (connection.getResponseCode() == 400) {
-					stream = connection.getErrorStream();
-				} else {
-					stream = connection.getInputStream();
-				}
-
-				InputStreamReader isReader = new InputStreamReader(stream,
-						"UTF-8");
-				BufferedReader br = new BufferedReader(isReader);
-				String result = br.readLine();
-
-				if (result.contains("message") && result.contains("error")) {
-					if (StringUtils.isNotBlank(errormsg)) {
-
-						pebbleHelper.getContextMap().put("customtext",
-								"<font color=red>" + errormsg + "</font>");
-					}
-					pebbleHelper.getContextMap().put("title",
-							"An Api error occured");
-					pebbleHelper.getContextMap().put(
-							"apicall",
-							"apicall: "
-									+ type.toUpperCase()
-									+ " "
-									+ url
-									+ (json.size() > 0 ? json.toJSONString()
-											: ""));
-					pebbleHelper.getContextMap().put("errormessage",
-							"Result:" + result);
-					return Response.ok(pebbleHelper.evaluate(),
-							"text/html; charset=utf-8").build();
-				} else {
-					if (StringUtils.isNotBlank(okmsg)) {
-						pebbleHelper.getContextMap().put("customtext",
-								"<font color=green>" + okmsg + "</font>");
-					}
-					pebbleHelper.getContextMap().put("title",
-							"The API Call was successful");
-					pebbleHelper.getContextMap().put(
-							"apicall",
-							"Submitted Api call: "
-									+ type.toUpperCase()
-									+ " "
-									+ url
-									+ (json.size() > 0 ? json.toJSONString()
-											: ""));
-					pebbleHelper.getContextMap().put("errormessage",
-							"Result:" + result);
-					return Response.ok(pebbleHelper.evaluate(),
-							"text/html; charset=utf-8").build();
-				}
-
-			} catch (IOException e) {
-				e.printStackTrace();
-				String additionalHelp = "";
-				if (e instanceof FileNotFoundException) {
-					additionalHelp = "The apicall with the following apiurl is not existing: ";
-				}
-				pebbleHelper.getContextMap().put("title",
-						"An Api error occured");
-				pebbleHelper.getContextMap().put(
-						"apicall",
-						"You tried to submit the following apicall: "
-								+ type.toUpperCase() + " " + url
-								+ (json.size() > 0 ? json.toJSONString() : ""));
-				pebbleHelper.getContextMap().put("errormessage",
-						additionalHelp + e.getMessage());
-				return Response.ok(pebbleHelper.evaluate(),
-						"text/html; charset=utf-8").build();
-			}
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-
-		return error404(request, null);
-
-	}
 
 	@Path("index/libs/css/style.css")
 	@GET
@@ -1170,7 +1008,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-	
+
 	@Path("index/libs/js/biginteger.js")
 	@GET
 	public Response biginteger() {
@@ -1182,7 +1020,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-	
+
 	@Path("index/libs/js/converters.js")
 	@GET
 	public Response converters() {
@@ -1194,7 +1032,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-	
+
 	@Path("index/libs/js/crypto/curve25519.js")
 	@GET
 	public Response curve25519() {
@@ -1206,7 +1044,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-	
+
 	@Path("index/libs/js/crypto/curve25519_.js")
 	@GET
 	public Response curve25519_() {
@@ -1218,7 +1056,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-	
+
 	@Path("index/libs/js/crypto/3rdparty/cryptojs/sha256.js")
 	@GET
 	public Response sha256() {
@@ -1560,6 +1398,128 @@ public class WebResource {
 
 	@SuppressWarnings("unchecked")
 	@POST
+	@Path("index/deletepost.html")
+	@Consumes("application/x-www-form-urlencoded")
+	public Response deletePost(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
+
+		JSONObject jsonanswer = new JSONObject();
+		try {
+
+			String signature = form.getFirst("signature");
+
+			if (signature != null) {
+				
+				BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(signature);
+				
+				if(blogEntryOpt == null)
+				{
+					//TODO put this snippet in method
+					jsonanswer.put("type", "deleteError");
+					jsonanswer.put("errordetail",
+							"The blog entry you are trying to delete does not exist!");
+					
+					return Response.status(200)
+							.header("Content-Type", "application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				}
+				
+				if(!Controller.getInstance().doesWalletDatabaseExists()) {
+					jsonanswer.put("type", "deleteError");
+					jsonanswer.put("errordetail",
+							"You don't have a wallet!");
+					
+					return Response.status(200)
+							.header("Content-Type", "application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				}
+				
+				
+				String creator = blogEntryOpt.getCreator();
+				
+				Account accountByAddress = Controller.getInstance().getAccountByAddress(creator);
+				String blognameOpt = blogEntryOpt.getBlognameOpt();
+				//Did I create that blogpost?
+				JSONObject jsonBlogPost = new JSONObject();
+				jsonBlogPost.put(BlogPostResource.DELETE_KEY, signature);
+				jsonBlogPost.put("body", "delete");
+				if(accountByAddress != null)
+				{
+					// TODO create blogpost json in method --> move to BlogUtils (for every kind delete/share and so on)
+					jsonBlogPost.put("creator", creator);
+					Pair<BigDecimal, Integer> fee = Controller.getInstance()
+							.calcRecommendedFeeForArbitraryTransaction(
+									jsonBlogPost.toJSONString().getBytes());
+					jsonBlogPost.put("fee", fee.getA().toPlainString());
+				//I am not author, but am I the owner of the blog?	
+				}else if(blognameOpt != null && Controller.getInstance().getNamesAsListAsString().contains(blognameOpt))
+				{
+					Name name = DBSet.getInstance().getNameMap().get(blognameOpt);
+					jsonBlogPost.put("creator", name.getOwner().getAddress());
+					jsonBlogPost.put(BlogPostResource.AUTHOR, blognameOpt);
+				}else
+				{
+					jsonanswer.put("type", "deleteError");
+					jsonanswer.put("errordetail",
+							"You are not allowed to delete this post!You need to be owner of the blog or author of the blogpost!");
+					
+					return Response.status(200)
+							.header("Content-Type", "application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				}
+				
+				try {
+
+					String result = new BlogPostResource().addBlogEntry(
+							jsonBlogPost.toJSONString(), null);
+
+					jsonanswer.put("type", "deleteSuccessful");
+					jsonanswer.put("result", result);
+
+					return Response.status(200)
+							.header("Content-Type", "application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				} catch (WebApplicationException e) {
+
+					
+					jsonanswer.put("type", "deleteError");
+					jsonanswer.put("errordetail",
+							e.getResponse().getEntity());
+					
+					return Response.status(200)
+							.header("Content-Type", "application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+					
+				}
+
+
+			}
+			
+			jsonanswer.put("type", "deleteError");
+			jsonanswer.put("errordetail",
+					"the signature parameter must be set!");
+
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(jsonanswer.toJSONString()).build();
+				
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+
+			jsonanswer.put("type", "deleteError");
+			jsonanswer.put("errordetail",
+					e.getMessage());
+
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(jsonanswer.toJSONString()).build();
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@POST
 	@Path("index/sharepost.html")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response sharePost(@Context HttpServletRequest request,
@@ -1567,6 +1527,7 @@ public class WebResource {
 
 		JSONObject json = new JSONObject();
 
+//		TODO CHANGE ERROR RETURNING --> less html code! see delete post and also processlike!
 		try {
 
 			String signature = form.getFirst("signature");
@@ -2368,8 +2329,9 @@ public class WebResource {
 		tmpFile.delete();
 
 		// SHOW WEB-PAGE
-		Response build = Response.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8").header("X-XSS-Protection", "0")
-				.build();
+		Response build = Response
+				.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8")
+				.header("X-XSS-Protection", "0").build();
 		return build;
 	}
 

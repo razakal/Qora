@@ -77,6 +77,7 @@ public class BlogPostMap extends DBMap<String, List<byte[]>> {
 		if (contains(blogname)) {
 			List<byte[]> list = get(blogname);
 			ByteArrayUtils.remove(list, signature);
+			set(blogname, list);
 		}
 
 	}

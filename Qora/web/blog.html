@@ -316,6 +316,11 @@
                   <p class="post-content">{{blogpost.description}}</p>
                 </div>
                 <div class="timeline-footer">
+                {% if blogpost.getShareSignatureOpt() is not null%}
+                  <a class ="pull-right"><span onclick="javascript:processDelete('{{blogpost.getShareSignatureOpt()}}')" ><i class="glyphicon glyphicon-trash" style=""></i></a><br>
+                {% else%}
+                  <a class ="pull-right"><span onclick="javascript:processDelete('{{blogpost.getSignature()}}')" ><i class="glyphicon glyphicon-trash" style=""></i></a><br>
+                {% endif%}
                   <a><span onclick="javascript:processLike('{{blogpost.getSignature()}}', {{blogpost.isLiking()}})" ><i class="glyphicon glyphicon-heart" style=""><font color=white>.</font>{{blogpost.getLikes()}}</i></a>
                   <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}' , '{{blogpost.getBlognameOpt()}}')" ><i class="glyphicon glyphicon-share"><font color=white>.</font>{{blogpost.getShares()}}</i></a>
                 </div>
@@ -464,6 +469,33 @@
 		    iframe.setAttribute("id", "youtube-iframe");
 		    this.parentNode.replaceChild(iframe, this);
 		}
+		
+		
+		function processDelete(signature) {
+
+			$.post(
+			"/index/deletepost.html",
+			{
+				signature: signature,
+			}).done( function(data) {
+				if(data.type == 'deleteError'){
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete Error<br>'
+										+ data.errordetail + '</div></center>');
+				} else if (data.type == 'deleteSuccessful'){
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete successful<br>'
+										+ '</div></center>');
+				} 
+
+
+			}).fail( function(xhr, textStatus, errorThrown) {
+				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete Error<br>'
+										+ 'Connection Error<br>'
+										+ xhr.responseText + '</div></center>');
+			});
+
+			return 0;
+   		 }
+		
 
 		function processShare(signature, blogname) {
 

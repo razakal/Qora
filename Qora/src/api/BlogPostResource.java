@@ -33,6 +33,7 @@ public class BlogPostResource {
 	public static final String BLOGNAME_KEY = "blogname";
 	public static final String TITLE_KEY = "title";
 	public static final String SHARE_KEY = "share";
+	public static final String DELETE_KEY = "delete";
 	public static final String POST_KEY = "post";
 
 	@Context
@@ -52,6 +53,7 @@ public class BlogPostResource {
 			String title = (String) jsonObject.get("title");
 			String body = (String) jsonObject.get("body");
 			String share = (String) jsonObject.get(BlogPostResource.SHARE_KEY);
+			String delete = (String) jsonObject.get(BlogPostResource.DELETE_KEY);
 
 			if (StringUtil.isBlank(body)) {
 				throw ApiErrorFactory.getInstance().createError(
@@ -126,6 +128,12 @@ public class BlogPostResource {
 			if(StringUtils.isNotBlank(share))
 			{
 				dataStructure.put(BlogPostResource.SHARE_KEY, share);
+			}
+			
+			//TODO add delete logic including errors here!
+			if(StringUtils.isNotBlank(delete))
+			{
+				dataStructure.put(BlogPostResource.DELETE_KEY, delete);
 			}
 
 			if (blogname != null) {

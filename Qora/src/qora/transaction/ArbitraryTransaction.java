@@ -17,6 +17,9 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import qora.naming.Name;
+import qora.web.blog.BlogEntry;
+import utils.BlogUtils;
 import utils.StorageUtils;
 import api.BlogPostResource;
 
@@ -394,11 +397,16 @@ public class ArbitraryTransaction extends Transaction {
 					String share = (String) jsonObject
 							.get(BlogPostResource.SHARE_KEY);
 					
+					String delete = (String) jsonObject
+							.get(BlogPostResource.DELETE_KEY);
+					
 					String author = (String) jsonObject
 							.get(BlogPostResource.AUTHOR);
 					
+					boolean isShare= false;
 					if(StringUtils.isNotEmpty(share))
 					{
+						isShare = true;
 						byte[] sharedSignature = Base58.decode(share);
 						if(sharedSignature != null)
 						{
@@ -406,16 +414,62 @@ public class ArbitraryTransaction extends Transaction {
 						}
 					}
 					
-					// DOES POST MET MINIMUM CRITERIUM?
-					if (StringUtils.isNotBlank(post)) {
-						db.getBlogPostMap()
-						.add(blognameOpt, getSignature());
+					
+					if(StringUtils.isNotEmpty(delete))
+					{
+						BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(delete);
+						
+						String creatorOfDeleteTX = getCreator().getAddress();
+						String creatorOfEntryToDelete = blogEntryOpt.getCreator();
+						if(blogEntryOpt != null)
+						{
+							
+							//OWNER IS DELETING OWN POST?
+							if(creatorOfDeleteTX.equals(creatorOfEntryToDelete))
+							{
+								deleteInternal(db, isShare, blogEntryOpt);
+							//BLOGOWNER IS DELETING POST
+							}else if(author != null && blogEntryOpt.getBlognameOpt() != null)
+							{
+									Name name = db.getNameMap().get(blogEntryOpt.getBlognameOpt());
+									if(name!= null && name.getOwner().getAddress().equals(creatorOfDeleteTX))
+									{
+										deleteInternal(db, isShare, blogEntryOpt);
+									}
+							}
+							
+							
+						}
+						
+					}else
+					{
+						// DOES POST MET MINIMUM CRITERIUM?
+						if (StringUtils.isNotBlank(post)) {
+							db.getBlogPostMap()
+							.add(blognameOpt, getSignature());
+						}
 					}
+					
 					
 				}
 		}
 	}
 
+	
+	public void deleteInternal(DBSet db, boolean isShare, BlogEntry blogEntryOpt) {
+		if(isShare)
+		{
+			byte[] sharesignature = Base58.decode(blogEntryOpt.getShareSignatureOpt());
+			db.getBlogPostMap().remove(blogEntryOpt.getBlognameOpt(), sharesignature);
+			db.getSharedPostsMap().remove(sharesignature, blogEntryOpt.getNameOpt());
+		}else
+		{
+			db.getBlogPostMap().remove(blogEntryOpt.getBlognameOpt(), Base58.decode(blogEntryOpt.getSignature()));
+		}
+	}
+
+	
+	//TODO implement readd delete if orphaned!
 	@SuppressWarnings("unused")
 	private void removeFromBlogMapOnDemand(DBSet db) {
 		if (getService() == 777) {

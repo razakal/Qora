@@ -188,6 +188,7 @@ public class BlogUtils {
 									//share gets time of sharing!
 									blogEntryToShareOpt.setTime(transaction.getTimestamp());
 									blogEntryToShareOpt.setShareAuthor(nameOpt != null ? nameOpt : creator);
+									blogEntryToShareOpt.setShareSignatureOpt(Base58.encode(transaction.getSignature()));
 									results.add(blogEntryToShareOpt);
 								}
 							}else
@@ -212,11 +213,21 @@ public class BlogUtils {
 
 	}
 	
+	
+	public static BlogEntry getBlogEntryOpt(String signature)
+	{
+		return BlogUtils
+				.getBlogEntryOpt((ArbitraryTransaction) Controller
+						.getInstance().getTransaction(
+								Base58.decode(signature)));
+	}
+	
 	/**
 	 * returns blogentry without any restrictions
 	 * @param transaction
 	 * @return
 	 */
+	// TODO MAYBE JOIN WITH SHARE SO THAT THIS ALSO CONTAINS SHAREDPOSTS!
 	public static BlogEntry getBlogEntryOpt(ArbitraryTransaction transaction)
 	{
 		if(transaction.getService() != 777)
