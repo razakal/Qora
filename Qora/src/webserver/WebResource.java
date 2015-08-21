@@ -912,7 +912,6 @@ public class WebResource {
 		return filename.substring(dotPos);
 	}
 
-
 	@Path("index/libs/css/style.css")
 	@GET
 	public Response style() {
@@ -1409,65 +1408,72 @@ public class WebResource {
 			String signature = form.getFirst("signature");
 
 			if (signature != null) {
-				
+
 				BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(signature);
-				
-				if(blogEntryOpt == null)
-				{
-					//TODO put this snippet in method
+
+				if (blogEntryOpt == null) {
+					// TODO put this snippet in method
 					jsonanswer.put("type", "deleteError");
-					jsonanswer.put("errordetail",
-							"The blog entry you are trying to delete does not exist!");
-					
-					return Response.status(200)
-							.header("Content-Type", "application/json; charset=utf-8")
+					jsonanswer
+							.put("errordetail",
+									"The blog entry you are trying to delete does not exist!");
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
 							.entity(jsonanswer.toJSONString()).build();
 				}
-				
-				if(!Controller.getInstance().doesWalletDatabaseExists()) {
+
+				if (!Controller.getInstance().doesWalletDatabaseExists()) {
 					jsonanswer.put("type", "deleteError");
-					jsonanswer.put("errordetail",
-							"You don't have a wallet!");
-					
-					return Response.status(200)
-							.header("Content-Type", "application/json; charset=utf-8")
+					jsonanswer.put("errordetail", "You don't have a wallet!");
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
 							.entity(jsonanswer.toJSONString()).build();
 				}
-				
-				
+
 				String creator = blogEntryOpt.getCreator();
-				
-				Account accountByAddress = Controller.getInstance().getAccountByAddress(creator);
+
+				Account accountByAddress = Controller.getInstance()
+						.getAccountByAddress(creator);
 				String blognameOpt = blogEntryOpt.getBlognameOpt();
-				//Did I create that blogpost?
+				// Did I create that blogpost?
 				JSONObject jsonBlogPost = new JSONObject();
 				jsonBlogPost.put(BlogPostResource.DELETE_KEY, signature);
 				jsonBlogPost.put("body", "delete");
-				if(accountByAddress != null)
-				{
-					// TODO create blogpost json in method --> move to BlogUtils (for every kind delete/share and so on)
+				if (accountByAddress != null) {
+					// TODO create blogpost json in method --> move to BlogUtils
+					// (for every kind delete/share and so on)
 					jsonBlogPost.put("creator", creator);
 					Pair<BigDecimal, Integer> fee = Controller.getInstance()
 							.calcRecommendedFeeForArbitraryTransaction(
 									jsonBlogPost.toJSONString().getBytes());
 					jsonBlogPost.put("fee", fee.getA().toPlainString());
-				//I am not author, but am I the owner of the blog?	
-				}else if(blognameOpt != null && Controller.getInstance().getNamesAsListAsString().contains(blognameOpt))
-				{
-					Name name = DBSet.getInstance().getNameMap().get(blognameOpt);
+					// I am not author, but am I the owner of the blog?
+				} else if (blognameOpt != null
+						&& Controller.getInstance().getNamesAsListAsString()
+								.contains(blognameOpt)) {
+					Name name = DBSet.getInstance().getNameMap()
+							.get(blognameOpt);
 					jsonBlogPost.put("creator", name.getOwner().getAddress());
 					jsonBlogPost.put(BlogPostResource.AUTHOR, blognameOpt);
-				}else
-				{
+				} else {
 					jsonanswer.put("type", "deleteError");
-					jsonanswer.put("errordetail",
-							"You are not allowed to delete this post!You need to be owner of the blog or author of the blogpost!");
-					
-					return Response.status(200)
-							.header("Content-Type", "application/json; charset=utf-8")
+					jsonanswer
+							.put("errordetail",
+									"You are not allowed to delete this post!You need to be owner of the blog or author of the blogpost!");
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
 							.entity(jsonanswer.toJSONString()).build();
 				}
-				
+
 				try {
 
 					String result = new BlogPostResource().addBlogEntry(
@@ -1476,25 +1482,26 @@ public class WebResource {
 					jsonanswer.put("type", "deleteSuccessful");
 					jsonanswer.put("result", result);
 
-					return Response.status(200)
-							.header("Content-Type", "application/json; charset=utf-8")
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
 							.entity(jsonanswer.toJSONString()).build();
 				} catch (WebApplicationException e) {
 
-					
 					jsonanswer.put("type", "deleteError");
-					jsonanswer.put("errordetail",
-							e.getResponse().getEntity());
-					
-					return Response.status(200)
-							.header("Content-Type", "application/json; charset=utf-8")
+					jsonanswer.put("errordetail", e.getResponse().getEntity());
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
 							.entity(jsonanswer.toJSONString()).build();
-					
+
 				}
 
-
 			}
-			
+
 			jsonanswer.put("type", "deleteError");
 			jsonanswer.put("errordetail",
 					"the signature parameter must be set!");
@@ -1502,14 +1509,12 @@ public class WebResource {
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(jsonanswer.toJSONString()).build();
-				
 
 		} catch (Throwable e) {
 			e.printStackTrace();
 
 			jsonanswer.put("type", "deleteError");
-			jsonanswer.put("errordetail",
-					e.getMessage());
+			jsonanswer.put("errordetail", e.getMessage());
 
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
@@ -1527,7 +1532,8 @@ public class WebResource {
 
 		JSONObject json = new JSONObject();
 
-//		TODO CHANGE ERROR RETURNING --> less html code! see delete post and also processlike!
+		// TODO CHANGE ERROR RETURNING --> less html code! see delete post and
+		// also processlike!
 		try {
 
 			String signature = form.getFirst("signature");
@@ -1845,6 +1851,64 @@ public class WebResource {
 				}
 
 			}
+		}
+	}
+
+	@Path("index/hashtag.html")
+	@GET
+	public Response getHashTagPosts() {
+		try {
+			String hashtag = request.getParameter("hashtag");
+			String msg = request.getParameter("msg");
+
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/blog.html", request, false);
+			pebbleHelper.getContextMap().put("hideprofile", true);
+			pebbleHelper.getContextMap().put("blogenabled", true);
+			hashtag = hashtag == null ? "" : hashtag;
+			pebbleHelper.getContextMap().put("hashtag", hashtag);
+
+			if (StringUtils.isEmpty(hashtag)) {
+				return Response.ok(pebbleHelper.evaluate(),
+						"text/html; charset=utf-8").build();
+			}
+			hashtag = hashtag.toLowerCase();
+			
+			pebbleHelper.getContextMap().put("postprefixurl",
+					"/index/hashtag.html?hashtag=" + hashtag + "&msg=");
+			
+			
+			hashtag = "#" + hashtag;
+			
+
+			if (msg != null) {
+				pebbleHelper.getContextMap().put("msg", msg);
+			}
+			
+
+			List<BlogEntry> blogPosts = BlogUtils.getHashTagPosts(hashtag);
+
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
+
+			for (BlogEntry blogEntry : blogPosts) {
+				String signature = blogEntry.getSignature();
+
+				addSharingAndLiking(blogEntry, signature);
+				if (activeProfileOpt != null) {
+					blogEntry.setLiking(activeProfileOpt.getLikedPosts()
+							.contains(signature));
+				}
+			}
+
+			pebbleHelper.getContextMap().put("blogposts", blogPosts);
+
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
 		}
 	}
 

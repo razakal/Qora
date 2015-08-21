@@ -245,6 +245,17 @@
     </div>
     {{navbar}}
     <div class="container">
+    	{%if hashtag is not null %}
+      <div class="form-horizontal">
+          <!-- <fieldset> -->
+		<br>
+            <label for="title" class="col-lg-2 control-label">Hashtag</label>
+            <div class="col-lg-10">
+              <input id="hashtag" type="text" placeholder="Hashtag (without the leading #)" class="form-control">
+            </div>
+          </div>
+          </div>
+    	{%endif%}
       <div class="row">
         <div class="main">
         {% autoescape true%}
@@ -642,6 +653,14 @@
     } else {
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
+    
+    $(function(){
+      // bind change event to select
+      $('#hashtag').on('change', function () {
+              window.location = '/index/hashtag.html?hashtag=' + $('#hashtag').val(); // redirect
+          return false;
+      });
+    });
 
     $(document).ready(function() {
 
@@ -696,6 +715,10 @@
       $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
       $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
    };
+    if (window.location.search === '?hashtag={{hashtag}}&msg={{blogpost.getSignature()}}') {
+      $('#{{blogpost.getSignature()}} > .timeline-panel').toggleClass("highlighted");
+      $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
+   };
     {% endfor %}
   });
 
@@ -734,6 +757,10 @@
     //     alert("Copied text to clipboard: " + event.data["text/plain"] );
     //   } );
     // } );
+    
+    	{%if hashtag is not null%}
+    	$("#hashtag").val('{{hashtag}}');
+    	{%endif%}
 
 </script>
 <script>

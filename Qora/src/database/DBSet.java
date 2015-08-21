@@ -35,6 +35,7 @@ public class DBSet implements Observer, IDB {
 	private SharedPostsMap sharedPostsMap;
 	private LocalDataMap localDataMap;
 	private BlogPostMap blogPostMap;
+	private HashtagPostMap hashtagPostMap;
 	private TransactionParentMap transactionParentMap;
 	private NameExchangeMap nameExchangeMap;
 	private UpdateNameMap updateNameMap;
@@ -112,6 +113,7 @@ public class DBSet implements Observer, IDB {
 		this.sharedPostsMap = new SharedPostsMap(this, database);
 		this.localDataMap = new LocalDataMap(this, database);
 		this.blogPostMap = new BlogPostMap(this, database);
+		this.hashtagPostMap = new HashtagPostMap(this, database);
 		this.transactionParentMap = new TransactionParentMap(this, database);
 		this.nameExchangeMap = new NameExchangeMap(this, database);
 		this.updateNameMap = new UpdateNameMap(this, database);
@@ -147,6 +149,7 @@ public class DBSet implements Observer, IDB {
 		this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(parent.orphanNameStorageHelperMap);
 		this.localDataMap = new LocalDataMap(parent.localDataMap);
 		this.blogPostMap = new BlogPostMap(parent.blogPostMap);
+		this.hashtagPostMap = new HashtagPostMap(parent.hashtagPostMap);
 		this.transactionParentMap = new TransactionParentMap(this.blockMap, parent.transactionParentMap);
 		this.nameExchangeMap = new NameExchangeMap(parent.nameExchangeMap);
 		this.updateNameMap = new UpdateNameMap(parent.updateNameMap);
@@ -180,6 +183,7 @@ public class DBSet implements Observer, IDB {
 		this.sharedPostsMap.reset();
 		this.localDataMap.reset();
 		this.blogPostMap.reset();
+		this.hashtagPostMap.reset();
 		this.transactionParentMap.reset();
 		this.nameExchangeMap.reset();
 		this.updateNameMap.reset();
@@ -264,6 +268,10 @@ public class DBSet implements Observer, IDB {
 	public BlogPostMap getBlogPostMap()
 	{
 		return this.blogPostMap;
+	}
+	public HashtagPostMap getHashtagPostMap()
+	{
+		return this.hashtagPostMap;
 	}
 	
 	public TransactionParentMap getTransactionParentMap()

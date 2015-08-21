@@ -42,10 +42,10 @@ public class PebbleHelper {
 		PebbleHelper pebbleHelper = new PebbleHelper(compiledTemplate, new HashMap<String, Object>());
 		return pebbleHelper;
 	}
-
-	public static PebbleHelper getPebbleHelper(String htmlTemplate, HttpServletRequest requestOpt) throws PebbleException {
+	
+	public static PebbleHelper getPebbleHelper(String htmlTemplate, HttpServletRequest requestOpt, boolean leftnavbar) throws PebbleException {
 		PebbleHelper pebbleHelper = getRawPebbleHelper(htmlTemplate);
-
+		
 		List<Profile> enabledProfiles = Profile.getEnabledProfiles();
 		Profile activeProfileOpt = ProfileHelper.getInstance().getActiveProfileOpt(requestOpt);
 		List<String> followedBlogs;
@@ -56,11 +56,16 @@ public class PebbleHelper {
 		}
 		
 		addDataToPebbleHelper(pebbleHelper, enabledProfiles, activeProfileOpt, followedBlogs);
-		String navbar = generateNavbar( enabledProfiles, activeProfileOpt, followedBlogs, htmlTemplate);
+		String navbar = generateNavbar( enabledProfiles, activeProfileOpt, followedBlogs, htmlTemplate, leftnavbar);
 		pebbleHelper.getContextMap().put("navbar", navbar);
 		
-
+		
 		return pebbleHelper;
+	}
+
+	public static PebbleHelper getPebbleHelper(String htmlTemplate, HttpServletRequest requestOpt) throws PebbleException {
+
+		return getPebbleHelper(htmlTemplate, requestOpt, true);
 
 	}
 
@@ -71,16 +76,20 @@ public class PebbleHelper {
 		pebbleHelper.getContextMap().put("blogfollows", followedBlogs);
 	}
 
-	private static String generateNavbar(List<Profile> enabledProfiles, Profile activeProfileOpt, List<String> followedBlogs, String rootTemplate) throws PebbleException {
+	private static String generateNavbar(List<Profile> enabledProfiles, Profile activeProfileOpt, List<String> followedBlogs, String rootTemplate, boolean leftnavbar) throws PebbleException {
 		
 		PebbleHelper pebbleHelper = getRawPebbleHelper("web/navbar.html");
 		addDataToPebbleHelper(pebbleHelper, enabledProfiles, activeProfileOpt, followedBlogs);
-		if(rootTemplate.endsWith("blog.html"))
+		
+		if(leftnavbar)
 		{
-			pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/blogleftnavbar.html").evaluate());
-		}else
-		{
-			pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/searchnavbar.html").evaluate());
+			if(rootTemplate.endsWith("blog.html"))
+			{
+				pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/blogleftnavbar.html").evaluate());
+			}else
+			{
+				pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/searchnavbar.html").evaluate());
+			}
 		}
 		
 		

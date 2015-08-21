@@ -259,17 +259,15 @@ public class ArbitraryTransaction extends Transaction {
 		return VALIDATE_OKE;
 	}
 
-	
-	
-
 	// PROCESS/ORPHAN
 	@Override
 	public void process(DBSet db) {
 
 		// NAME STORAGE UPDATE
 		if (service == 10) {
-			StorageUtils.processUpdate(getData(), signature, creator,DBSet.getInstance() );
-			StorageUtils.processUpdate(getData(), signature, creator,db );
+			StorageUtils.processUpdate(getData(), signature, creator,
+					DBSet.getInstance());
+			StorageUtils.processUpdate(getData(), signature, creator, db);
 			// BLOGPOST?
 		} else if (service == 777) {
 			addToBlogMapOnDemand(DBSet.getInstance());
@@ -288,12 +286,12 @@ public class ArbitraryTransaction extends Transaction {
 	public void orphan(DBSet db) {
 
 		// NAME STORAGE UPDATE ORPHAN
-//		if (service == 10) {
-//			StorageUtils.processOrphan(getData(), signature, db);
-//			// BLOGPOST?
-//		} else {
-//			removeFromBlogMapOnDemand(db);
-//		}
+		// if (service == 10) {
+		// StorageUtils.processOrphan(getData(), signature, db);
+		// // BLOGPOST?
+		// } else {
+		// removeFromBlogMapOnDemand(db);
+		// }
 
 		// UPDATE CREATOR
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(db)
@@ -381,95 +379,108 @@ public class ArbitraryTransaction extends Transaction {
 	}
 
 	private void addToBlogMapOnDemand(DBSet db) {
-		
+
 		if (getService() == 777) {
-				byte[] data = getData();
-				String string = new String(data);
-				
-				JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
-				if (jsonObject != null) {
-					String post = (String) jsonObject
-							.get(BlogPostResource.POST_KEY);
-					
-					String blognameOpt = (String) jsonObject
-							.get(BlogPostResource.BLOGNAME_KEY);
-					
-					String share = (String) jsonObject
-							.get(BlogPostResource.SHARE_KEY);
-					
-					String delete = (String) jsonObject
-							.get(BlogPostResource.DELETE_KEY);
-					
-					String author = (String) jsonObject
-							.get(BlogPostResource.AUTHOR);
-					
-					boolean isShare= false;
-					if(StringUtils.isNotEmpty(share))
-					{
-						isShare = true;
-						byte[] sharedSignature = Base58.decode(share);
-						if(sharedSignature != null)
-						{
-							db.getSharedPostsMap().add(sharedSignature, author);
-						}
+			byte[] data = getData();
+			String string = new String(data);
+
+			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
+			if (jsonObject != null) {
+				String post = (String) jsonObject
+						.get(BlogPostResource.POST_KEY);
+
+				String blognameOpt = (String) jsonObject
+						.get(BlogPostResource.BLOGNAME_KEY);
+
+				String share = (String) jsonObject
+						.get(BlogPostResource.SHARE_KEY);
+
+				String delete = (String) jsonObject
+						.get(BlogPostResource.DELETE_KEY);
+
+				String author = (String) jsonObject
+						.get(BlogPostResource.AUTHOR);
+
+				boolean isShare = false;
+				if (StringUtils.isNotEmpty(share)) {
+					isShare = true;
+					byte[] sharedSignature = Base58.decode(share);
+					if (sharedSignature != null) {
+						db.getSharedPostsMap().add(sharedSignature, author);
 					}
+				}
+
+				if (StringUtils.isNotEmpty(delete)) {
+					BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(delete);
 					
-					
-					if(StringUtils.isNotEmpty(delete))
+					if(blogEntryOpt != null)
 					{
-						BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(delete);
-						
 						String creatorOfDeleteTX = getCreator().getAddress();
 						String creatorOfEntryToDelete = blogEntryOpt.getCreator();
-						if(blogEntryOpt != null)
-						{
+						if (blogEntryOpt != null) {
 							
-							//OWNER IS DELETING OWN POST?
-							if(creatorOfDeleteTX.equals(creatorOfEntryToDelete))
-							{
+							// OWNER IS DELETING OWN POST?
+							if (creatorOfDeleteTX.equals(creatorOfEntryToDelete)) {
 								deleteInternal(db, isShare, blogEntryOpt);
-							//BLOGOWNER IS DELETING POST
-							}else if(author != null && blogEntryOpt.getBlognameOpt() != null)
-							{
-									Name name = db.getNameMap().get(blogEntryOpt.getBlognameOpt());
-									if(name!= null && name.getOwner().getAddress().equals(creatorOfDeleteTX))
-									{
-										deleteInternal(db, isShare, blogEntryOpt);
-									}
+								// BLOGOWNER IS DELETING POST
+							} else if (author != null
+									&& blogEntryOpt.getBlognameOpt() != null) {
+								Name name = db.getNameMap().get(
+										blogEntryOpt.getBlognameOpt());
+								if (name != null
+										&& name.getOwner().getAddress()
+										.equals(creatorOfDeleteTX)) {
+									deleteInternal(db, isShare, blogEntryOpt);
+								}
 							}
 							
-							
-						}
-						
-					}else
-					{
-						// DOES POST MET MINIMUM CRITERIUM?
-						if (StringUtils.isNotBlank(post)) {
-							db.getBlogPostMap()
-							.add(blognameOpt, getSignature());
 						}
 					}
-					
-					
+
+
+				} else {
+
+					// DOES POST MET MINIMUM CRITERIUM?
+					if (StringUtils.isNotBlank(post)) {
+
+						// Shares won't be hashtagged!
+						if (!isShare) {
+							List<String> hashTags = BlogUtils.getHashTags(post);
+							for (String hashTag : hashTags) {
+								db.getHashtagPostMap().add(hashTag,
+										getSignature());
+							}
+						}
+
+						db.getBlogPostMap().add(blognameOpt, getSignature());
+					}
 				}
+
+			}
 		}
 	}
 
-	
 	public void deleteInternal(DBSet db, boolean isShare, BlogEntry blogEntryOpt) {
-		if(isShare)
-		{
-			byte[] sharesignature = Base58.decode(blogEntryOpt.getShareSignatureOpt());
-			db.getBlogPostMap().remove(blogEntryOpt.getBlognameOpt(), sharesignature);
-			db.getSharedPostsMap().remove(sharesignature, blogEntryOpt.getNameOpt());
-		}else
-		{
-			db.getBlogPostMap().remove(blogEntryOpt.getBlognameOpt(), Base58.decode(blogEntryOpt.getSignature()));
+		if (isShare) {
+			byte[] sharesignature = Base58.decode(blogEntryOpt
+					.getShareSignatureOpt());
+			db.getBlogPostMap().remove(blogEntryOpt.getBlognameOpt(),
+					sharesignature);
+			db.getSharedPostsMap().remove(sharesignature,
+					blogEntryOpt.getNameOpt());
+		} else {
+			//removing from hashtagmap
+			List<String> hashTags = BlogUtils.getHashTags(blogEntryOpt
+					.getDescription());
+			for (String hashTag : hashTags) {
+				db.getHashtagPostMap().remove(hashTag, Base58.decode(blogEntryOpt.getSignature()));
+			}
+			db.getBlogPostMap().remove(blogEntryOpt.getBlognameOpt(),
+					Base58.decode(blogEntryOpt.getSignature()));
 		}
 	}
 
-	
-	//TODO implement readd delete if orphaned!
+	// TODO implement readd delete if orphaned!
 	@SuppressWarnings("unused")
 	private void removeFromBlogMapOnDemand(DBSet db) {
 		if (getService() == 777) {
@@ -480,24 +491,21 @@ public class ArbitraryTransaction extends Transaction {
 			if (jsonObject != null) {
 				String blognameOpt = (String) jsonObject
 						.get(BlogPostResource.BLOGNAME_KEY);
-				
+
 				String share = (String) jsonObject
 						.get(BlogPostResource.SHARE_KEY);
-				
+
 				String author = (String) jsonObject
 						.get(BlogPostResource.AUTHOR);
-				
-				if(StringUtils.isNotEmpty(share))
-				{
+
+				if (StringUtils.isNotEmpty(share)) {
 					byte[] sharedSignature = Base58.decode(share);
-					if(sharedSignature != null)
-					{
+					if (sharedSignature != null) {
 						db.getSharedPostsMap().remove(sharedSignature, author);
 					}
 				}
 
-				db.getBlogPostMap()
-						.remove(blognameOpt, getSignature());
+				db.getBlogPostMap().remove(blognameOpt, getSignature());
 
 			}
 		}
