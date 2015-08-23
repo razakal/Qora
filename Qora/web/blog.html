@@ -233,6 +233,9 @@
       .menu-grid span.glyphicon.glyphicon-edit {
       left: 2px;
       }
+      .btn-group.post-actions {
+      display: flex;
+      }
     </style>
   </head>
   <body>
@@ -310,11 +313,20 @@
                     	{%endif%}
                     </div>
                     <div class="media-right">
-                      <a>
+                      <div class="btn-group post-actions">
                         <button class="btn btn-default" onmouseover="changeTextarea{{blogpost.getSignature()}}(location.protocol + '//' + window.location.host + '{{postprefixurl}}{{blogpost.getSignature()}}')" id="copybutton{{blogpost.getSignature()}}" data-toggle="tooltip" data-placement="bottom" title="Copy to clipboard" data-clipboard-target="clipboard_textarea">
                           <i class="glyphicon glyphicon-link"></i>
                         </button>
-                      </a>
+                        {% if blogpost.getShareSignatureOpt() is not null%}
+                          <button class ="btn btn-default" onclick="javascript:processDelete('{{blogpost.getShareSignatureOpt()}}')" >
+                            <i class="glyphicon glyphicon-trash" style=""></i>
+                          </button>
+                        {% else%}
+                          <button class ="btn btn-default" onclick="javascript:processDelete('{{blogpost.getSignature()}}')" >
+                            <i class="glyphicon glyphicon-trash" style=""></i>
+                          </button>
+                          {% endif%}
+                      </div>
                       <div style="display:none;">
                         <textarea id="clipboard_textarea" name="clipboard_textarea">hello</textarea>
                       </div>
@@ -327,11 +339,6 @@
                   <p class="post-content">{{blogpost.description}}</p>
                 </div>
                 <div class="timeline-footer">
-                {% if blogpost.getShareSignatureOpt() is not null%}
-                  <a class ="pull-right"><span onclick="javascript:processDelete('{{blogpost.getShareSignatureOpt()}}')" ><i class="glyphicon glyphicon-trash" style=""></i></a><br>
-                {% else%}
-                  <a class ="pull-right"><span onclick="javascript:processDelete('{{blogpost.getSignature()}}')" ><i class="glyphicon glyphicon-trash" style=""></i></a><br>
-                {% endif%}
                   <a><span onclick="javascript:processLike('{{blogpost.getSignature()}}', {{blogpost.isLiking()}})" ><i class="glyphicon glyphicon-heart" style=""><font color=white>.</font>{{blogpost.getLikes()}}</i></a>
                   <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}' , '{{blogpost.getBlognameOpt()}}')" ><i class="glyphicon glyphicon-share"><font color=white>.</font>{{blogpost.getShares()}}</i></a>
                 </div>
@@ -480,8 +487,8 @@
 		    iframe.setAttribute("id", "youtube-iframe");
 		    this.parentNode.replaceChild(iframe, this);
 		}
-		
-		
+
+
 		function processDelete(signature) {
 
 			$.post(
@@ -495,7 +502,7 @@
 				} else if (data.type == 'deleteSuccessful'){
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete successful<br>'
 										+ '</div></center>');
-				} 
+				}
 
 
 			}).fail( function(xhr, textStatus, errorThrown) {
@@ -506,7 +513,7 @@
 
 			return 0;
    		 }
-		
+
 
 		function processShare(signature, blogname) {
 
@@ -653,7 +660,7 @@
     } else {
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
-    
+
     $(function(){
       // bind change event to select
       $('#hashtag').on('change', function () {
@@ -757,7 +764,7 @@
     //     alert("Copied text to clipboard: " + event.data["text/plain"] );
     //   } );
     // } );
-    
+
     	{%if hashtag is not null%}
     	$("#hashtag").val('{{hashtag}}');
     	{%endif%}
