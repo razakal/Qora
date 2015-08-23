@@ -314,7 +314,7 @@
                     </div>
                     <div class="media-right">
                       <div class="btn-group post-actions">
-                        <button class="btn btn-default" onmouseover="changeTextarea{{blogpost.getSignature()}}(location.protocol + '//' + window.location.host + '{{postprefixurl}}{{blogpost.getSignature()}}')" id="copybutton{{blogpost.getSignature()}}" data-toggle="tooltip" data-placement="bottom" title="Copy to clipboard" data-clipboard-target="clipboard_textarea">
+                        <button class="btn btn-default" onmouseover="changeTextarea{% if blogpost.getShareSignatureOpt() is not null %}{{blogpost.getShareSignatureOpt()}}{%else%}{{blogpost.getSignature()}}{%endif%}(location.protocol + '//' + window.location.host + '{{postprefixurl}}{% if blogpost.getShareSignatureOpt() is not null %}{{blogpost.getShareSignatureOpt()}}{%else%}{{blogpost.getSignature()}}{%endif%}')" id="copybutton{% if blogpost.getShareSignatureOpt() is not null %}{{blogpost.getShareSignatureOpt()}}{%else%}{{blogpost.getSignature()}}{%endif%}" data-toggle="tooltip" data-placement="bottom" title="Copy to clipboard" data-clipboard-target="clipboard_textarea">
                           <i class="glyphicon glyphicon-link"></i>
                         </button>
                         {% if blogpost.getShareSignatureOpt() is not null%}
@@ -335,7 +335,11 @@
                     </div>
                   </div>
                 <div class="timeline-body">
+                {% if blogpost.getShareSignatureOpt() is not null %}
+                  <a href="{{postprefixurl}}{{blogpost.getShareSignatureOpt()}}"><p class="post-header"><b>{{blogpost.titleOpt}}</b></a></p>
+                {%else%}
                   <a href="{{postprefixurl}}{{blogpost.getSignature()}}"><p class="post-header"><b>{{blogpost.titleOpt}}</b></a></p>
+                {%endif%}
                   <p class="post-content">{{blogpost.description}}</p>
                 </div>
                 <div class="timeline-footer">
