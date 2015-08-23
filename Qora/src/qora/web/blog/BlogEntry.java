@@ -3,6 +3,7 @@ package qora.web.blog;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ import org.jsoup.safety.Whitelist;
 
 import qora.naming.Name;
 import qora.web.Profile;
+import utils.BlogUtils;
 import utils.DateTimeFormat;
 import utils.LinkUtils;
 import utils.Pair;
@@ -48,6 +50,7 @@ public class BlogEntry {
 	 * Only Set in case of a shared post (if I share your post I am the share author)
 	 */
 	private String shareAuthorOpt = null;
+	private List<String> hashTags;
 
 	public BlogEntry(String titleOpt, String description, String nameOpt,
 			long timeOpt, String creator, String signature, String blogname) {
@@ -58,11 +61,30 @@ public class BlogEntry {
 		this.description = Jsoup.clean(this.description, Whitelist.basic());
 		handleImages();
 		handleLinks();
+		handleHashTags();
 		this.nameOpt = nameOpt;
 		profileOpt = Profile.getProfileOpt(nameOpt);
 		addAvatar();
 		this.time = timeOpt;
 		this.creator = creator;
+		
+	}
+
+	private void handleHashTags() {
+		hashTags = BlogUtils.getHashTags(description);
+		List<String> processedHashtags = new ArrayList<>();
+		for (String hashtag : hashTags) {
+//			TODO PUT HASHTAG-linkprefix at a central place
+			//prevent double editing
+			if(!processedHashtags.contains(hashtag))
+			{
+				String hashtagLink =	"<a href='/index/hashtag.html?hashtag=" + hashtag.substring(1, hashtag.length()) + "'>" + hashtag + "</a>";
+				description = description.replaceAll(hashtag, hashtagLink);
+				processedHashtags.add(hashtag);
+			}
+		}
+		
+		
 		
 	}
 
@@ -245,6 +267,11 @@ public class BlogEntry {
 	public void setShareSignatureOpt(String shareSignatureOpt) {
 		this.shareSignatureOpt = shareSignatureOpt;
 	}
+
+	public List<String> getHashTags() {
+		return Collections.unmodifiableList(hashTags);
+	}
+
 	
 
 }
