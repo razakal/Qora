@@ -1922,7 +1922,6 @@ public class WebResource {
 			pebbleHelper.getContextMap().put("hideprofile", true);
 			pebbleHelper.getContextMap().put("blogenabled", true);
 			hashtag = hashtag == null ? "" : hashtag;
-			pebbleHelper.getContextMap().put("hashtag", hashtag);
 
 			if (StringUtils.isEmpty(hashtag)) {
 				return Response.ok(pebbleHelper.evaluate(),
