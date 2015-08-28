@@ -438,6 +438,9 @@ margin: 0 auto 10px;
 -o-border-radius: 50%;
 border-radius: 50%;
 }
+.menu-grid span.glyphicon.glyphicon-fire {
+  font-size: 40px;
+}
 .menu-grid span.glyphicon.glyphicon-random {
   font-size: 40px;
 }
@@ -459,6 +462,8 @@ border-radius: 50%;
 .menu-grid span.glyphicon.glyphicon-envelope {
   font-size: 40px;
 }
+.menu-grid .glyphicon.glyphicon-fire:hover,
+.menu-grid .glyphicon.glyphicon-fire:focus,
 .menu-grid .glyphicon.glyphicon-envelope:hover,
 .menu-grid .glyphicon.glyphicon-envelope:focus,
 .menu-grid .glyphicon.glyphicon-floppy-disk:hover,
