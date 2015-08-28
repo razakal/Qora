@@ -15,10 +15,13 @@ import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.escaper.EscaperExtension;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 
+import qora.web.NavbarElements;
 import qora.web.Profile;
 import qora.web.ProfileHelper;
 
 public class PebbleHelper {
+	
+	
 
 	private PebbleTemplate template;
 	private Map<String, Object> contextMap;
@@ -43,7 +46,11 @@ public class PebbleHelper {
 		return pebbleHelper;
 	}
 	
-	public static PebbleHelper getPebbleHelper(String htmlTemplate, HttpServletRequest requestOpt, boolean leftnavbar) throws PebbleException {
+	public static PebbleHelper getPebbleHelper(String htmlTemplate, HttpServletRequest requestOpt) throws PebbleException {
+		return getPebbleHelper(htmlTemplate, requestOpt, NavbarElements.Searchnavbar);
+	}
+	
+	public static PebbleHelper getPebbleHelper(String htmlTemplate, HttpServletRequest requestOpt, NavbarElements navbarElementOpt) throws PebbleException {
 		PebbleHelper pebbleHelper = getRawPebbleHelper(htmlTemplate);
 		
 		List<Profile> enabledProfiles = Profile.getEnabledProfiles();
@@ -56,18 +63,13 @@ public class PebbleHelper {
 		}
 		
 		addDataToPebbleHelper(pebbleHelper, enabledProfiles, activeProfileOpt, followedBlogs);
-		String navbar = generateNavbar( enabledProfiles, activeProfileOpt, followedBlogs, htmlTemplate, leftnavbar);
+		String navbar = generateNavbar( enabledProfiles, activeProfileOpt, followedBlogs, htmlTemplate, navbarElementOpt);
 		pebbleHelper.getContextMap().put("navbar", navbar);
 		
 		
 		return pebbleHelper;
 	}
 
-	public static PebbleHelper getPebbleHelper(String htmlTemplate, HttpServletRequest requestOpt) throws PebbleException {
-
-		return getPebbleHelper(htmlTemplate, requestOpt, true);
-
-	}
 
 	private static void addDataToPebbleHelper(PebbleHelper pebbleHelper, List<Profile> enabledProfiles,
 			Profile activeProfileOpt, List<String> followedBlogs) {
@@ -76,22 +78,21 @@ public class PebbleHelper {
 		pebbleHelper.getContextMap().put("blogfollows", followedBlogs);
 	}
 
-	private static String generateNavbar(List<Profile> enabledProfiles, Profile activeProfileOpt, List<String> followedBlogs, String rootTemplate, boolean leftnavbar) throws PebbleException {
+	private static String generateNavbar(List<Profile> enabledProfiles, Profile activeProfileOpt, List<String> followedBlogs, String rootTemplate, NavbarElements navbarElementOpt) throws PebbleException {
 		
 		PebbleHelper pebbleHelper = getRawPebbleHelper("web/navbar.html");
 		addDataToPebbleHelper(pebbleHelper, enabledProfiles, activeProfileOpt, followedBlogs);
 		
-		if(leftnavbar)
+		if(navbarElementOpt == null || navbarElementOpt == NavbarElements.Searchnavbar)
 		{
-			if(rootTemplate.endsWith("blog.html"))
-			{
-				pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/blogleftnavbar.html").evaluate());
-			}else
-			{
-				pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/searchnavbar.html").evaluate());
-			}
+			pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/searchnavbar.html").evaluate());
+		}else if(navbarElementOpt == NavbarElements.BlogNavbar)
+		{
+			pebbleHelper.getContextMap().put("leftnavbar", getRawPebbleHelper("web/blogleftnavbar.html").evaluate());
+		}else
+		{
+			//no navbar
 		}
-		
 		
 		return pebbleHelper.evaluate();
 		

@@ -248,17 +248,6 @@
     </div>
     {{navbar}}
     <div class="container">
-    	{%if hashtag is not null %}
-      <div class="form-horizontal">
-          <!-- <fieldset> -->
-		<br>
-            <label for="title" class="col-lg-2 control-label">Hashtag</label>
-            <div class="col-lg-10">
-              <input id="hashtag" type="text" placeholder="Hashtag (without the leading #)" class="form-control">
-            </div>
-          </div>
-          </div>
-    	{%endif%}
       <div class="row">
         <div class="main">
         {% autoescape true%}
@@ -661,15 +650,59 @@
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
 
-    $(function(){
-      // bind change event to select
-      $('#hashtag').on('change', function () {
-              window.location = '/index/hashtag.html?hashtag=' + $('#hashtag').val(); // redirect
-          return false;
-      });
-    });
+    
+    var transformToAssocArray;
+    transformToAssocArray = function(prmstr) {
+        var i, params, prmarr, tmparr;
+        params = {};
+        prmarr = prmstr.split('&');
+        i = 0;
+        while (i < prmarr.length) {
+            tmparr = prmarr[i].split('=');
+            params[tmparr[0]] = tmparr[1];
+            i++;
+        }
+        return params;
+    };
+    var getSearchParameters;
+    getSearchParameters = function() {
+        var prmstr;
+        prmstr = decodeURIComponent(window.location.search.substr(1));
+        if (prmstr != null && prmstr != '') {
+            return transformToAssocArray(prmstr);
+        } else {
+            return {};
+        }
+    };
 
     $(document).ready(function() {
+    
+   		  $('#name').change(function() {
+            $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/hashtag.html?hashtag=' + $('#name').val());
+            $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/hashtag.html?hashtag=' + $('#name').val());
+        });
+        $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/hashtag.html?hashtag=' + $('#name').val());
+        $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/hashtag.html?hashtag=' + $('#name').val());
+        
+        searchval = $('#name').val();
+        $('#name').val(searchval);
+        
+          $('#button').click(function() {
+
+            var url;
+            url = void 0;
+            searchval = $('#name').val();
+              if (window.location.pathname === '/index/hashtag.html') {
+       		 	document.location.href = '/index/hashtag.html?hashtag=' + searchval;
+       		 } else {
+       		 	document.location.href = '/index/hashtag.html?hashtag=' + searchval;
+        	}
+        });
+        $('#name').keypress(function(e) {
+            if (e.which === 13) {
+                $('#button').trigger('click');
+            }
+        });
 
         var my_posts = $("[rel=tooltip]");
 
@@ -703,6 +736,13 @@
         scrollTop: $("#{{msg}}").offset().top
     }, 2000);
     {%endif%}
+
+	  $('#name').val(getSearchParameters().hashtag);
+        if (getSearchParameters().hashtag === void 0) {
+            $('#name').val('');
+        }
+        
+       
 
     });
 
@@ -765,9 +805,6 @@
     //   } );
     // } );
 
-    	{%if hashtag is not null%}
-    	$("#hashtag").val('{{hashtag}}');
-    	{%endif%}
 
 </script>
 <script>

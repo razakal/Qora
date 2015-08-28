@@ -61,6 +61,7 @@ import qora.web.BlogProfile;
 import qora.web.HTMLSearchResult;
 import qora.web.NameStorageMap;
 import qora.web.NameStorageTransactionHistory;
+import qora.web.NavbarElements;
 import qora.web.Profile;
 import qora.web.ProfileHelper;
 import qora.web.ServletUtils;
@@ -1766,7 +1767,7 @@ public class WebResource {
 				String msg = request.getParameter("msg");
 
 				PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-						"web/blog.html", request, false);
+						"web/blog.html", request, NavbarElements.NoNavbar);
 				pebbleHelper.getContextMap().put("hideprofile", true);
 				pebbleHelper.getContextMap().put("blogenabled", true);
 
@@ -1820,7 +1821,7 @@ public class WebResource {
 
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-					"web/blog.html", request);
+					"web/blog.html", request, NavbarElements.BlogNavbar);
 
 			String blogname = request
 					.getParameter(BlogPostResource.BLOGNAME_KEY);
@@ -1917,7 +1918,7 @@ public class WebResource {
 			String msg = request.getParameter("msg");
 
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-					"web/blog.html", request, false);
+					"web/blog.html", request, NavbarElements.Searchnavbar);
 			pebbleHelper.getContextMap().put("hideprofile", true);
 			pebbleHelper.getContextMap().put("blogenabled", true);
 			hashtag = hashtag == null ? "" : hashtag;
@@ -1983,7 +1984,7 @@ public class WebResource {
 			}
 
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-					"web/blog.html", request);
+					"web/blog.html", request, NavbarElements.BlogNavbar);
 			pebbleHelper.getContextMap().put("postblogurl", "postblog.html");
 			pebbleHelper.getContextMap().put("apimessage", messageOpt);
 
