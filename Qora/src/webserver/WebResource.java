@@ -1756,6 +1756,63 @@ public class WebResource {
 				.header("Content-Type", "application/json; charset=utf-8")
 				.entity("{}").build();
 	}
+	
+	
+	@Path("index/showpost.html")
+	@GET
+	public Response showPost()
+	{
+			try {
+				String msg = request.getParameter("msg");
+
+				PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+						"web/blog.html", request, false);
+				pebbleHelper.getContextMap().put("hideprofile", true);
+				pebbleHelper.getContextMap().put("blogenabled", true);
+
+				if (StringUtils.isEmpty(msg)) {
+					return Response.ok(pebbleHelper.evaluate(),
+							"text/html; charset=utf-8").build();
+				}
+				
+				
+				
+				
+
+				if (msg != null) {
+					pebbleHelper.getContextMap().put("msg", msg);
+				}
+				
+
+				BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(Base58.decode(msg));
+
+				if(blogEntryOpt == null)
+				{
+					// TODO SHOW NOT FOUND MESSAGE
+					return Response.ok(pebbleHelper.evaluate(),
+							"text/html; charset=utf-8").build();
+				}
+				Profile activeProfileOpt = ProfileHelper.getInstance()
+						.getActiveProfileOpt(request);
+
+					String signature = blogEntryOpt.getSignature();
+
+					addSharingAndLiking(blogEntryOpt, signature);
+					if (activeProfileOpt != null) {
+						blogEntryOpt.setLiking(activeProfileOpt.getLikedPosts()
+								.contains(signature));
+				}
+					
+				pebbleHelper.getContextMap().put("blogposts", Arrays.asList(blogEntryOpt));
+
+				return Response.ok(pebbleHelper.evaluate(),
+						"text/html; charset=utf-8").build();
+
+			} catch (Throwable e) {
+				e.printStackTrace();
+				return error404(request, null);
+			}
+	}
 
 	@Path("index/mergedblog.html")
 	@GET
@@ -1818,8 +1875,6 @@ public class WebResource {
 			}
 
 			pebbleHelper.getContextMap().put("blogposts", blogPosts);
-			pebbleHelper.getContextMap().put("postprefixurl",
-					"/index/mergedblog.html?blogname=" + blogname + "&msg=");
 
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
@@ -1874,8 +1929,6 @@ public class WebResource {
 			}
 			hashtag = hashtag.toLowerCase();
 			
-			pebbleHelper.getContextMap().put("postprefixurl",
-					"/index/hashtag.html?hashtag=" + hashtag + "&msg=");
 			
 			
 			hashtag = "#" + hashtag;
@@ -1979,12 +2032,8 @@ public class WebResource {
 				pebbleHelper.getContextMap().put("follower",
 						profile.getFollower());
 
-				pebbleHelper.getContextMap().put("postprefixurl",
-						"/index/blog.html?blogname=" + blogname + "&msg=");
 
 			} else {
-				pebbleHelper.getContextMap().put("postprefixurl",
-						"/index/blog.html?msg=");
 				pebbleHelper.getContextMap().put("hideprofile", true);
 				pebbleHelper.getContextMap().put("blogenabled", true);
 			}
