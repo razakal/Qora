@@ -320,7 +320,11 @@
           var url = $(this).val(); // get selected value
           if (url) { // require a URL
               window.location = '/index/websitecreation.html?name=' + $('#select-name').val() + "&key="+ url; // redirect
+          }else
+          {
+          window.location = '/index/websitecreation.html?name=' + $('#select-name').val();
           }
+          
           return false;
       });
     });
