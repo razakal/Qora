@@ -2514,7 +2514,7 @@ public class WebResource {
 				String type = evaluate.replaceAll(pictureRegex, "$1");
 				byte[] dataOfImage = Base64.decode(evaluate.replaceAll(pictureRegex, "$2"));
 				Response build = Response
-						.ok(dataOfImage, "text/"+type +"; charset=utf-8")
+						.ok(dataOfImage, "image/"+type +"; charset=utf-8")
 						.header("X-XSS-Protection", "0").build();
 				return build;
 			}
