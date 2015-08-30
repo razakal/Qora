@@ -2505,16 +2505,17 @@ public class WebResource {
 		// SHOW WEB-PAGE
 		String evaluate = pebbleHelper.evaluate();
 		
-		String pictureRegex = "data.image.(.+);base64, (.+)";
+		String pictureRegex = "data.([a-zA-Z]+).([a-zA-Z]+);base64, (.+)";
 		if(!evaluate.isEmpty())
 		{
 			if(evaluate.matches(pictureRegex))
 			{
 				
 				String type = evaluate.replaceAll(pictureRegex, "$1");
-				byte[] dataOfImage = Base64.decode(evaluate.replaceAll(pictureRegex, "$2"));
+				String subtype = evaluate.replaceAll(pictureRegex, "$2");
+				byte[] dataOfImage = Base64.decode(evaluate.replaceAll(pictureRegex, "$3"));
 				Response build = Response
-						.ok(dataOfImage, "image/"+type +"; charset=utf-8")
+						.ok(dataOfImage, type +"/"+subtype +"; charset=utf-8")
 						.header("X-XSS-Protection", "0").build();
 				return build;
 			}
