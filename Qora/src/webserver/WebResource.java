@@ -34,6 +34,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -41,8 +42,11 @@ import javax.ws.rs.core.UriInfo;
 import kryo.DiffHelper;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -54,6 +58,7 @@ import org.jsoup.select.Elements;
 import qora.account.Account;
 import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Base58;
+import qora.crypto.Base64;
 import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
 import qora.web.BlogBlackWhiteList;
@@ -479,6 +484,46 @@ public class WebResource {
 		}
 
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@POST
+	@Path("index/encodefile.html")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadMultipart(@FormDataParam("file") FormDataBodyPart is) throws IOException{        
+		try {
+			InputStream valueAs = is.getValueAs(InputStream.class);
+			byte[] byteArray = IOUtils.toByteArray(valueAs);
+			String encode = Base64.encode(byteArray);
+			MediaType mediaType = is.getMediaType();
+			String result = "data:"+mediaType.getType()+"/"+mediaType.getSubtype()+";base64, ";
+			result += encode;
+			
+			
+			JSONObject json = new JSONObject();
+			if(StringUtils.isEmpty(encode))
+			{
+				json.put("type", "error");			
+				json.put("result", "You need to choose a file!");			
+			}else
+			{
+				json.put("type", "success");			
+				json.put("result", result);			
+			}
+			
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(json.toJSONString()).build();
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    
+	    return null;
+	    //prepare the response
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@POST
@@ -2091,6 +2136,18 @@ public class WebResource {
 	public Response commonjs() {
 		File file = new File("web/libs/js/common.js");
 
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+	
+	@Path("/index/libs/third-party/jquery.form.min.js")
+	@GET
+	public Response getFormMin() {
+		File file = new File("web/libs/js/third-party/jquery.form.min.js");
+		
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
 		} else {

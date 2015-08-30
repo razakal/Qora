@@ -166,6 +166,21 @@
               <pre><textarea id="website" rows="10" class="form-control">{{website}}</textarea></pre>
             </div>
           </div>
+           <!DOCTYPE html>
+<html>
+<body>
+
+<form action="/index/encodefile.html" method="post" enctype="multipart/form-data" id="form">
+       <input type="file" name="file" />
+   <input type="submit" />
+</form>
+
+
+
+
+</body>
+</html>
+
           <!-- </fieldset> -->
 
         <div class="form-group">
@@ -181,6 +196,7 @@
     </div>
     </div>
     <script src="/index/libs/jquery/jquery.2.js"></script>
+    <script src="/index/libs/third-party/jquery.form.min.js"></script>
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
     <script src="/index/libs/angular/angular.1.4.js"></script>
     <script src="/index/libs/js/sidebar.js"></script>
@@ -314,6 +330,32 @@
 		$("#select-name").val('{{name}}');
 		$("#key").val('{{key}}');
  	{% autoescape true %}
+ 	 $('#form').ajaxForm(
+    {
+       beforeSubmit: function() {
+         $('#results').html('Submitting...');
+       },
+       success: function(data) {
+       
+       			if (data.type == 'success')
+				{
+			       document.getElementById('website').innerHTML = data.result + "";
+			         document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">The file has been added to the key! You still need to submit the result to make it persistent!<br></div>";
+				}
+				else  if(data.type =='error')
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">"+data.result+"<br></div>";
+				}else
+				{
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Unknown response:<br>"+data+"<br></div>";
+				}
+     
+        },
+        error:function(){
+                document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occured:<br></div>";
+            }
+    });
+ 	
 		var searchval
 		$('#name').change(function() {
             $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
