@@ -2020,6 +2020,8 @@ public class WebResource {
 			String switchprofile = request.getParameter("switchprofile");
 			String disconnect = request.getParameter("disconnect");
 			String msg = request.getParameter("msg");
+			
+			
 
 			if (StringUtils.isNotBlank(disconnect)) {
 				ProfileHelper.getInstance().disconnect();
@@ -2029,6 +2031,8 @@ public class WebResource {
 
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 					"web/blog.html", request, NavbarElements.BlogNavbar);
+			pebbleHelper.getContextMap().put("namestoragemap",
+					NameStorageWebResource.getInstance());
 			pebbleHelper.getContextMap().put("postblogurl", "postblog.html");
 			pebbleHelper.getContextMap().put("apimessage", messageOpt);
 
@@ -2499,8 +2503,25 @@ public class WebResource {
 		tmpFile.delete();
 
 		// SHOW WEB-PAGE
+		String evaluate = pebbleHelper.evaluate();
+		
+		String pictureRegex = "data.image.(.+);base64, (.+)";
+		if(!evaluate.isEmpty())
+		{
+			if(evaluate.matches(pictureRegex))
+			{
+				
+				String type = evaluate.replaceAll(pictureRegex, "$1");
+				byte[] dataOfImage = Base64.decode(evaluate.replaceAll(pictureRegex, "$2"));
+				Response build = Response
+						.ok(dataOfImage, "text/"+type +"; charset=utf-8")
+						.header("X-XSS-Protection", "0").build();
+				return build;
+			}
+		}
+		
 		Response build = Response
-				.ok(pebbleHelper.evaluate(), "text/html; charset=utf-8")
+				.ok(evaluate, "text/html; charset=utf-8")
 				.header("X-XSS-Protection", "0").build();
 		return build;
 	}

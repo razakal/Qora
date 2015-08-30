@@ -147,8 +147,10 @@ public class Profile {
 	}
 
 	public String getProfileGraphicOpt() {
-		return (String) jsonRepresenation.get(Qorakeys.PROFILEMAINGRAPHIC
+		String graphiccontent = (String) jsonRepresenation.get(Qorakeys.PROFILEMAINGRAPHIC
 				.toString());
+		
+		return graphiccontent;
 	}
 
 	public List<String> getFollowedBlogs() {
