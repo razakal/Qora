@@ -484,46 +484,46 @@ public class WebResource {
 		}
 
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("index/encodefile.html")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response uploadMultipart(@FormDataParam("file") FormDataBodyPart is) throws IOException{        
+	public Response uploadMultipart(@FormDataParam("file") FormDataBodyPart is)
+			throws IOException {
 		try {
 			InputStream valueAs = is.getValueAs(InputStream.class);
 			byte[] byteArray = IOUtils.toByteArray(valueAs);
 			String encode = Base64.encode(byteArray);
 			MediaType mediaType = is.getMediaType();
-			String result = "data:"+mediaType.getType()+"/"+mediaType.getSubtype()+";base64, ";
+			String result = "data:" + mediaType.getType() + "/"
+					+ mediaType.getSubtype() + ";base64, ";
 			result += encode;
-			
-			
+
 			JSONObject json = new JSONObject();
-			if(StringUtils.isEmpty(encode))
-			{
-				json.put("type", "error");			
-				json.put("result", "You need to choose a file!");			
-			}else
-			{
-				json.put("type", "success");			
-				json.put("result", result);			
+			if ("text".equalsIgnoreCase(mediaType.getType())
+					&& "html".equalsIgnoreCase(mediaType.getSubtype())) {
+				json.put("type", "success");
+				json.put("result", new String(byteArray));
+			} else if (StringUtils.isEmpty(encode)) {
+				json.put("type", "error");
+				json.put("result", "You need to choose a file!");
+			} else {
+				json.put("type", "success");
+				json.put("result", result);
 			}
-			
+
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(json.toJSONString()).build();
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	    
-	    return null;
-	    //prepare the response
+
+		return null;
+		// prepare the response
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@POST
@@ -1802,62 +1802,56 @@ public class WebResource {
 				.header("Content-Type", "application/json; charset=utf-8")
 				.entity("{}").build();
 	}
-	
-	
+
 	@Path("index/showpost.html")
 	@GET
-	public Response showPost()
-	{
-			try {
-				String msg = request.getParameter("msg");
+	public Response showPost() {
+		try {
+			String msg = request.getParameter("msg");
 
-				PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-						"web/blog.html", request, NavbarElements.NoNavbar);
-				pebbleHelper.getContextMap().put("hideprofile", true);
-				pebbleHelper.getContextMap().put("blogenabled", true);
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/blog.html", request, NavbarElements.NoNavbar);
+			pebbleHelper.getContextMap().put("hideprofile", true);
+			pebbleHelper.getContextMap().put("blogenabled", true);
 
-				if (StringUtils.isEmpty(msg)) {
-					return Response.ok(pebbleHelper.evaluate(),
-							"text/html; charset=utf-8").build();
-				}
-				
-				
-				
-				
-
-				if (msg != null) {
-					pebbleHelper.getContextMap().put("msg", msg);
-				}
-				
-
-				BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(Base58.decode(msg));
-
-				if(blogEntryOpt == null)
-				{
-					// TODO SHOW NOT FOUND MESSAGE
-					return Response.ok(pebbleHelper.evaluate(),
-							"text/html; charset=utf-8").build();
-				}
-				Profile activeProfileOpt = ProfileHelper.getInstance()
-						.getActiveProfileOpt(request);
-
-					String signature = blogEntryOpt.getSignature();
-
-					addSharingAndLiking(blogEntryOpt, signature);
-					if (activeProfileOpt != null) {
-						blogEntryOpt.setLiking(activeProfileOpt.getLikedPosts()
-								.contains(signature));
-				}
-					
-				pebbleHelper.getContextMap().put("blogposts", Arrays.asList(blogEntryOpt));
-
+			if (StringUtils.isEmpty(msg)) {
 				return Response.ok(pebbleHelper.evaluate(),
 						"text/html; charset=utf-8").build();
-
-			} catch (Throwable e) {
-				e.printStackTrace();
-				return error404(request, null);
 			}
+
+			if (msg != null) {
+				pebbleHelper.getContextMap().put("msg", msg);
+			}
+
+			BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(Base58
+					.decode(msg));
+
+			if (blogEntryOpt == null) {
+				// TODO SHOW NOT FOUND MESSAGE
+				return Response.ok(pebbleHelper.evaluate(),
+						"text/html; charset=utf-8").build();
+			}
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
+
+			String signature = blogEntryOpt.getSignature();
+
+			addSharingAndLiking(blogEntryOpt, signature);
+			if (activeProfileOpt != null) {
+				blogEntryOpt.setLiking(activeProfileOpt.getLikedPosts()
+						.contains(signature));
+			}
+
+			pebbleHelper.getContextMap().put("blogposts",
+					Arrays.asList(blogEntryOpt));
+
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
+		}
 	}
 
 	@Path("index/mergedblog.html")
@@ -1973,16 +1967,12 @@ public class WebResource {
 						"text/html; charset=utf-8").build();
 			}
 			hashtag = hashtag.toLowerCase();
-			
-			
-			
+
 			hashtag = "#" + hashtag;
-			
 
 			if (msg != null) {
 				pebbleHelper.getContextMap().put("msg", msg);
 			}
-			
 
 			List<BlogEntry> blogPosts = BlogUtils.getHashTagPosts(hashtag);
 
@@ -2020,8 +2010,6 @@ public class WebResource {
 			String switchprofile = request.getParameter("switchprofile");
 			String disconnect = request.getParameter("disconnect");
 			String msg = request.getParameter("msg");
-			
-			
 
 			if (StringUtils.isNotBlank(disconnect)) {
 				ProfileHelper.getInstance().disconnect();
@@ -2080,7 +2068,6 @@ public class WebResource {
 				}
 				pebbleHelper.getContextMap().put("follower",
 						profile.getFollower());
-
 
 			} else {
 				pebbleHelper.getContextMap().put("hideprofile", true);
@@ -2146,12 +2133,12 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-	
+
 	@Path("/index/libs/third-party/jquery.form.min.js")
 	@GET
 	public Response getFormMin() {
 		File file = new File("web/libs/js/third-party/jquery.form.min.js");
-		
+
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
 		} else {
@@ -2504,25 +2491,24 @@ public class WebResource {
 
 		// SHOW WEB-PAGE
 		String evaluate = pebbleHelper.evaluate();
-		
+
 		String pictureRegex = "data.([a-zA-Z]+).([a-zA-Z]+);base64, (.+)";
-		if(!evaluate.isEmpty())
-		{
-			if(evaluate.matches(pictureRegex))
-			{
-				
+		if (!evaluate.isEmpty()) {
+			if (evaluate.matches(pictureRegex)) {
+
 				String type = evaluate.replaceAll(pictureRegex, "$1");
 				String subtype = evaluate.replaceAll(pictureRegex, "$2");
-				byte[] dataOfImage = Base64.decode(evaluate.replaceAll(pictureRegex, "$3"));
+				byte[] dataOfImage = Base64.decode(evaluate.replaceAll(
+						pictureRegex, "$3"));
 				Response build = Response
-						.ok(dataOfImage, type +"/"+subtype +"; charset=utf-8")
+						.ok(dataOfImage,
+								type + "/" + subtype + "; charset=utf-8")
 						.header("X-XSS-Protection", "0").build();
 				return build;
 			}
 		}
-		
-		Response build = Response
-				.ok(evaluate, "text/html; charset=utf-8")
+
+		Response build = Response.ok(evaluate, "text/html; charset=utf-8")
 				.header("X-XSS-Protection", "0").build();
 		return build;
 	}
