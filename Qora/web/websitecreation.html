@@ -352,7 +352,7 @@
 
        			if (data.type == 'success')
 				{
-			       document.getElementById('website').innerHTML = data.result + "";
+			       document.getElementById('website').value = data.result + "";
 			         document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">The file has been added to the key! You still need to submit the result to make it persistent!<br></div>";
 				}
 				else  if(data.type =='error')

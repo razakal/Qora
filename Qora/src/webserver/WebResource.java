@@ -501,12 +501,12 @@ public class WebResource {
 			result += encode;
 
 			JSONObject json = new JSONObject();
-			if (checkPlainTypes(mediaType)) {
+			if (StringUtils.isEmpty(encode)) {
+				json.put("type", "error");
+				json.put("result", "You did not choose a file or the file was empty!");
+			}else if (checkPlainTypes(mediaType)) {
 				json.put("type", "success");
 				json.put("result", new String(byteArray));
-			} else if (StringUtils.isEmpty(encode)) {
-				json.put("type", "error");
-				json.put("result", "You need to choose a file!");
 			} else {
 				json.put("type", "success");
 				json.put("result", result);
