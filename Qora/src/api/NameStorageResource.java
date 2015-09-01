@@ -157,9 +157,7 @@ public class NameStorageResource {
 			}
 
 			byte[] bytes = jsonString.getBytes();
-			List<String> askApicalls = new ArrayList<String>();
-
-			
+			List<String> askApicalls = new ArrayList<String>();		
 			JSONObject jsonObjectForCheck = (JSONObject) JSONValue.parse(x);
 			// IF VALUE TOO LARGE FOR ONE ARB TX AND WE ONLY HAVE ADDCOMPLETE
 			// WITH ONE KEY

@@ -501,8 +501,7 @@ public class WebResource {
 			result += encode;
 
 			JSONObject json = new JSONObject();
-			if ("text".equalsIgnoreCase(mediaType.getType())
-					&& "html".equalsIgnoreCase(mediaType.getSubtype())) {
+			if (checkPlainTypes(mediaType)) {
 				json.put("type", "success");
 				json.put("result", new String(byteArray));
 			} else if (StringUtils.isEmpty(encode)) {
@@ -525,6 +524,22 @@ public class WebResource {
 		// prepare the response
 	}
 
+	public boolean checkPlainTypes(MediaType mediaType) {
+		
+		List<Pair<String,String>> pairsToCheck = new ArrayList<Pair<String,String>>();
+		pairsToCheck.add(new Pair<String, String>("text", "html"));
+		pairsToCheck.add(new Pair<String, String>("text", "plain"));
+		
+		for (Pair<String, String> pair : pairsToCheck) {
+			if(pair.getA().equalsIgnoreCase(mediaType.getType()) && pair.getB().equalsIgnoreCase(mediaType.getSubtype()))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("index/websitesave.html")
@@ -535,6 +550,7 @@ public class WebResource {
 		String name = form.getFirst("name");
 		String website = form.getFirst("website");
 		String key = form.getFirst("key");
+		System.out.println(website.length());
 
 		JSONObject json = new JSONObject();
 
