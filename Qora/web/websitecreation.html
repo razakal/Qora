@@ -237,7 +237,7 @@
     var updateValue;
     updateValue = function() {
 
-		document.getElementById('result').innerHTML = '<div class=\"alert alert-info\" role=\"alert\">Saving...<br></div>';
+		document.getElementById('result').innerHTML = '<div class=\"alert alert-info\" role=\"alert\">Saving...please wait until you get a success message! Based on the size this may take some time<br></div>';
 
 		$.post(
 			"/index/websitesave.html",
@@ -249,7 +249,7 @@
 			.done( function(data) {
 				if (data.type == 'settingsSuccessfullySaved')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Settings successfully saved.<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Key successfully saved.<br></div>";
 				}
 				else if(data.type == 'parametersMissing')
 				{
