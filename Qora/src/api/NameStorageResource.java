@@ -172,7 +172,7 @@ public class NameStorageResource {
 							.next();
 					String value = (String) innerJsonObject.get(key);
 
-					Iterable<String> chunks = Splitter.fixedLength(3000).split(
+					Iterable<String> chunks = Splitter.fixedLength(3500).split(
 							value);
 					List<String> arbTxs = Lists.newArrayList(chunks);
 

@@ -550,7 +550,6 @@ public class WebResource {
 		String name = form.getFirst("name");
 		String website = form.getFirst("website");
 		String key = form.getFirst("key");
-		System.out.println(website.length());
 
 		JSONObject json = new JSONObject();
 
@@ -601,7 +600,7 @@ public class WebResource {
 					String diff = DiffHelper.getDiff(source, website);
 
 					if (website.length() > diff.length()
-							&& diff.length() < 3000) {
+							&& diff.length() < 3500) {
 						websitepair.setB(diff);
 						storageJsonObject = StorageUtils.getStorageJsonObject(
 								null, null, null, null, null,
