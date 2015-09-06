@@ -149,13 +149,13 @@
                 <div class="panel panel">
                   <div class="panel-heading">
                     <ul class="list-inline">
-                      <li><h4 class="keys panel-title pull left">{{ keyvalue.key }}</h4></li>
+                      <li><h4 class="keys panel-title pull left"><a href="/{{dataname}}/{{ keyvalue.key }}" target="_blank">{{ keyvalue.key }}</a></h4></li>
                       <li class="pull-right"><h4 class="panel-title pull-right">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ keyvalue.key }}"><div class="btn-group "><button class="btn btn-default" type="button"><i class="glyphicon glyphicon-fullscreen"></i></button></div></a>
                       </h4></li>
                     </ul>
                   </div>
-                  <div id="collapse-{{ keyvalue.key }}" class="panel-collapse collapse">
+                 <div id="collapse-{{ keyvalue.key }}" class="panel-collapse collapse">
                   <div class="panel-body">
                   <pre class="code-highlight"><code class="html">{{ keyvalue.value }}</code></pre>
                   </div>
