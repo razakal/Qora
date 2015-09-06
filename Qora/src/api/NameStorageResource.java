@@ -16,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -157,7 +156,8 @@ public class NameStorageResource {
 			}
 
 			byte[] bytes = jsonString.getBytes();
-			List<String> askApicalls = new ArrayList<String>();		
+			List<String> askApicalls = new ArrayList<String>();	
+			List<String> decompressedValue = new ArrayList<String>();
 			JSONObject jsonObjectForCheck = (JSONObject) JSONValue.parse(x);
 			// IF VALUE TOO LARGE FOR ONE ARB TX AND WE ONLY HAVE ADDCOMPLETE
 			// WITH ONE KEY
@@ -220,10 +220,12 @@ public class NameStorageResource {
 
 						allTxPairs.add(new Pair<>(resultbyteArray, currentFee));
 
+						String decompressed = GZIP.webDecompress(jsonStringForMultipleTx);
 						askApicalls.add("POST namestorage/update/" + name
 								+ "\n"
-								+ GZIP.webDecompress(jsonStringForMultipleTx)
+								+ decompressed
 								+ "\nfee: " + currentFee.toPlainString());
+						decompressedValue.add(decompressed);
 					}
 
 					if (account.getBalance(1, DBSet.getInstance()).compareTo(
@@ -237,19 +239,53 @@ public class NameStorageResource {
 						throw ApiErrorFactory.getInstance().createError(
 								ApiErrorFactory.ERROR_TX_AMOUNT);
 					}
+					
+					//recalculating qora amount
+					BigDecimal newCompleteFee = BigDecimal.ZERO;
+					BigDecimal oldAmount = BigDecimal.ZERO;
+					List<Pair<byte[], BigDecimal>> newPairs = new ArrayList<Pair<byte[],BigDecimal>>();
+					for (Pair<byte[], BigDecimal> pair : allTxPairs) {
+						if(oldAmount.equals(BigDecimal.ZERO))
+						{
+							oldAmount = pair.getB();
+							newCompleteFee = oldAmount;
+							newPairs.add(pair);
+							continue;
+						}
+						
+						BigDecimal newAmount = oldAmount.multiply(new BigDecimal(1.15));
+						newAmount = newAmount.setScale(0, BigDecimal.ROUND_UP); 
+						pair.setB(newAmount);
+						newPairs.add(pair);
+						
+						oldAmount = newAmount;
+						
+						newCompleteFee= newCompleteFee.add(newAmount);
+						
+						
+					}
+					
+					String apicalls = "";
+					for (int i = 0; i < newPairs.size(); i++) {
+						apicalls +=	"POST namestorage/update/" + name
+								+ "\n"
+								+ decompressedValue.get(i)
+								+ "\nfee: " + newPairs.get(i).getB().toPlainString()+"\n";
+					}
 
 					String basicInfo = "Because of the size of the data this call will create "
 							+ allTxPairs.size()
 							+ " transactions.\nAll Arbitrary Transactions will cost: "
-							+ completeFee.toPlainString() + " Qora.\nDetails:\n\n";
+							+ newCompleteFee.toPlainString() + " Qora.\nDetails:\n\n";
 
-					basicInfo += StringUtils.join(askApicalls, "\n");
+//					basicInfo += StringUtils.join(askApicalls, "\n");
+					basicInfo += apicalls;
 
 					APIUtils.askAPICallAllowed(basicInfo, request);
 
 					Pair<Transaction, Integer> result;
 					String results = "";
-					for (Pair<byte[], BigDecimal> pair : allTxPairs) {
+					for (Pair<byte[], BigDecimal> pair : newPairs) {
 						result = Controller.getInstance()
 								.createArbitraryTransaction(account, 10,
 										pair.getA(), pair.getB());
