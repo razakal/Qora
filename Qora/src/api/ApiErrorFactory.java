@@ -92,10 +92,14 @@ public class ApiErrorFactory
 	public static final int ERROR_INVALID_TAGS_LENGTH = 806;
 	public static final int ERROR_INVALID_CREATION_BYTES = 809;
 	
-	//BLOG
+	//BLOG/Namestorage
 	public static final int ERROR_BODY_EMPTY = 901;
 	public static final int ERROR_BLOG_DISABLED = 902;
 	public static final int ERROR_NAME_NOT_OWNER = 903;
+	public static final int ERROR_TX_AMOUNT = 904;
+	
+	public static int BATCH_TX_AMOUNT = 50;
+	
 	
 	private static ApiErrorFactory  instance;
 	
@@ -196,6 +200,7 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_BODY_EMPTY,"invalid body it must not be empty");
 		this.errorMessages.put(ERROR_BLOG_DISABLED,"this blog is disabled");
 		this.errorMessages.put(ERROR_NAME_NOT_OWNER,"the creator address does not own the author name");
+		this.errorMessages.put(ERROR_TX_AMOUNT,"the data size is too large - currently only "+BATCH_TX_AMOUNT+" arbitrary transactions are allowed at once!");
 		
 
 	}

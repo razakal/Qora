@@ -231,6 +231,12 @@ public class NameStorageResource {
 						throw ApiErrorFactory.getInstance().createError(
 								ApiErrorFactory.ERROR_NO_BALANCE);
 					}
+					
+					if(allTxPairs.size() > ApiErrorFactory.BATCH_TX_AMOUNT)
+					{
+						throw ApiErrorFactory.getInstance().createError(
+								ApiErrorFactory.ERROR_TX_AMOUNT);
+					}
 
 					String basicInfo = "Because of the size of the data this call will create "
 							+ allTxPairs.size()
