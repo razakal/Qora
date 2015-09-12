@@ -83,6 +83,7 @@ import utils.PebbleHelper;
 import utils.Qorakeys;
 import utils.StorageUtils;
 import utils.StrJSonFine;
+import utils.UpdateUtil;
 import api.BlogPostResource;
 import api.NameStorageResource;
 
@@ -218,6 +219,15 @@ public class WebResource {
 			return error404(request, null);
 		}
 
+	}
+	
+	@Path("index/nsrepopulate.html")
+	@GET
+	public Response doNsRepopulate() {
+		
+			UpdateUtil.repopulateNameStorage(70000);
+			return error404(request, "Namestorage repopulated!");
+		
 	}
 	
 
