@@ -219,16 +219,17 @@ public class WebResource {
 		}
 
 	}
+	
 
-	@Path("index/websitecreation.html")
+	@Path("index/namestorage.html")
 	@GET
-	public Response doWebsiteCreation() {
+	public Response doNameStorage() {
 
 		String name = request.getParameter("name");
 		String key = request.getParameter("key");
 		try {
 			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
-					"web/websitecreation.html", request);
+					"web/namestorage.html", request);
 
 			List<Name> namesAsList = new CopyOnWriteArrayList<Name>(Controller
 					.getInstance().getNamesAsList());
@@ -2472,7 +2473,7 @@ public class WebResource {
 				try {
 					return error404(
 							request,
-							"This name has currently no <a href=\"/index/websitecreation.html\">website<a/>!");
+							"This name has currently no <a href=\"/index/namestorage.html\">website<a/>!");
 				} catch (Throwable e) {
 					e.printStackTrace();
 					return error404(request, null);
