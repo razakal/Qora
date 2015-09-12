@@ -13,12 +13,13 @@ public class WebAccount {
 	
 	private final String address;
 	private final BigDecimal balance;
+	private String stringRepresentation;
 
 	public WebAccount(Account account) {
 		
 		address = account.getAddress();
 		balance = account.getBalance(0);
-		// TODO Auto-generated constructor stub
+		stringRepresentation = account.toString();
 	}
 
 	public BigDecimal getUnconfirmedBalance() {
@@ -27,6 +28,11 @@ public class WebAccount {
 
 	public String getAddress() {
 		return address;
+	}
+	
+	@Override
+	public String toString() {
+		return stringRepresentation;
 	}
 
 }
