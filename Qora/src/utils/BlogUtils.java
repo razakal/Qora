@@ -134,6 +134,10 @@ public class BlogUtils {
 				}
 			}
 		}
+		
+		Collections.sort(results, new BlogEntryTimestampComparator());
+
+		Collections.reverse(results);
 
 		return results;
 	}

@@ -168,7 +168,7 @@ public class BlockGenerator extends Thread implements Observer
 		if (DBSet.getInstance().getLocalDataMap().get("nsupdate") == null )
 		{
 			//FIRST NAME STORAGE UPDATE
-			UpdateUtil.repopulateNameStorage( 100000 );
+			UpdateUtil.repopulateNameStorage( 70000 );
 			DBSet.getInstance().getLocalDataMap().set("nsupdate", "1");
 		}
 		while(true)
