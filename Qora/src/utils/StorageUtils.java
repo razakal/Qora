@@ -22,7 +22,6 @@ import qora.web.OrphanNameStorageHelperMap;
 import qora.web.OrphanNameStorageMap;
 import controller.Controller;
 import database.DBSet;
-import difflib.PatchFailedException;
 
 public class StorageUtils {
 
@@ -251,7 +250,7 @@ public class StorageUtils {
 					try {
 						nameStorageMap.add(name, key,
 								DiffHelper.patch(oldValueOpt, (String) patchJsonKey.get(key)));
-					} catch (PatchFailedException e) {
+					} catch (Throwable e) {
 						e.printStackTrace();
 					}
 				}
