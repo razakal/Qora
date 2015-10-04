@@ -53,6 +53,7 @@ public class DBSet implements Observer, IDB {
 	private TransactionsOfAddressMap transactionOfAddressMap;
 	private BlocksOfAddressMap blocksOfAddressMap;
 	private TransactionsOfNameMap transactionOfNameMap;
+	private TransactionFinalMap transactionFinalMap;
 	
 	private DB database;
 	private int actions;
@@ -100,6 +101,7 @@ public class DBSet implements Observer, IDB {
 		this.actions = 0;
 		
 		this.balanceMap = new BalanceMap(this, database);
+		this.transactionFinalMap = new TransactionFinalMap(this, database);
 		this.blockMap = new BlockMap(this, database);
 		this.childMap = new ChildMap(this, database);
 		this.heightMap = new HeightMap(this, database);
@@ -136,6 +138,7 @@ public class DBSet implements Observer, IDB {
 	protected DBSet(DBSet parent)
 	{
 		this.balanceMap = new BalanceMap(parent.balanceMap);
+		this.transactionFinalMap = new TransactionFinalMap(parent.transactionFinalMap);
 		this.blockMap = new BlockMap(parent.blockMap);
 		this.childMap = new ChildMap(this.blockMap, parent.childMap);
 		this.heightMap = new HeightMap(parent.heightMap);
@@ -175,6 +178,7 @@ public class DBSet implements Observer, IDB {
 		this.heightMap.reset();
 		this.referenceMap.reset();
 		this.peerMap.reset();
+		this.transactionFinalMap.reset();
 		this.transactionMap.reset();
 		this.nameMap.reset();
 		this.nameStorageMap.reset();
@@ -235,6 +239,11 @@ public class DBSet implements Observer, IDB {
 	public TransactionMap getTransactionMap() 
 	{
 		return this.transactionMap;
+	}
+	
+	public TransactionFinalMap getTransactionFinalMap()
+	{
+		return this.transactionFinalMap;
 	}
 	
 	public NameMap getNameMap()

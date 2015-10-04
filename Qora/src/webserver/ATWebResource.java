@@ -1,16 +1,29 @@
 package webserver;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
+import org.apache.commons.lang3.CharSet;
 import org.bouncycastle.util.encoders.Hex;
+import org.mapdb.Fun;
 
 import com.google.common.collect.Lists;
 
+import qora.account.Account;
+import qora.block.Block;
+import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Base58;
+import qora.transaction.MessageTransaction;
 import qora.transaction.Transaction;
+import utils.Converter;
 import at.AT;
 import at.AT_API_Helper;
 import at.AT_Transaction;
@@ -39,16 +52,44 @@ public class ATWebResource {
 		return DBSet.getInstance().getATMap().getTypeATsList(type);
 	}
 	
-	public List<Transaction> getIncomingTransactions(String atId)
+	public Map<String, Collection<String>> getIdsByTypeAndTags(String type)
 	{
-		//TODO
-		return null; 
+		Map<String, Collection<String>> tagMap = new TreeMap<String, Collection<String>>();
+		Collection<String> ats = DBSet.getInstance().getATMap().getTypeATsList(type);
+		for (String at : ats)
+		{
+			String[] tags = DBSet.getInstance().getATMap().get(at).getTags().split(",");;
+			
+			for (String tag : tags)
+			{
+				if ( tagMap.get(tag) != null )
+				{
+					tagMap.get(tag).add(at);
+				}
+				else
+				{
+					Collection<String> col = new ArrayList<String>();
+					col.add(at);
+					tagMap.put(tag, col);
+				}
+			}
+		}
+		return tagMap;
 	}
 	
-	public List<Transaction> getIncomingTransactions(AT at)
+	public Collection<String> getCol(TreeMap map, String key)
 	{
-		//TODO
-		return null;
+		return (Collection<String>) map.get(key);
+	}
+	
+	public String getIncTxCount(String atId)
+	{
+		return String.valueOf(DBSet.getInstance().getTransactionFinalMap().getTransactionsByRecipient(atId).size());
+	}
+	
+	public List<Transaction> getIncomingTransactions(String atId)
+	{
+		return DBSet.getInstance().getTransactionFinalMap().getTransactionsByRecipient(atId);
 	}
 	
 	public List<AT_Transaction> getOutgoingTransactions(String atId)
@@ -149,6 +190,38 @@ public class ATWebResource {
 	{
 		AT at = getAT(atId);
 		return BigDecimal.valueOf(at.getG_balance(),8).toPlainString();
+	}
+	
+	public String getABalance(String atId)
+	{
+		Account acc = new Account(atId);
+		return acc.getConfirmedBalance().toPlainString();
+	}
+	
+	public String getMessage(MessageTransaction tx)
+	{
+		if ( tx instanceof MessageTransaction )
+		{
+			MessageTransaction message = (MessageTransaction)tx;
+			if ((!message.isEncrypted()) )
+			{
+				return (message.isText())? 
+						new String(message.getData(), Charset.forName("UTF-8")) :
+							Converter.toHex(message.getData());
+			}
+			else
+			{
+				return "encrypted";
+			}
+		}
+		return "";
+	}
+	
+	public List<Transaction> getMessageTransactions(String address)
+	{
+		List<Transaction> txs = DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, 17, 50);
+		return txs;
+		
 	}
 	
 	

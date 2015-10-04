@@ -488,7 +488,7 @@ public class WebResource {
 					.entity(jsonanswer.toJSONString()).build();
 		} else {
 			jsonanswer.put("type", "success");
-
+			jsonanswer.put("result", result);
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
 					.entity(jsonanswer.toJSONString()).build();
@@ -2513,6 +2513,7 @@ public class WebResource {
 		pebbleHelper.getContextMap().put("ats", ATWebResource.getInstance());
 		pebbleHelper.getContextMap().put("controller",
 				ControllerWebResource.getInstance());
+		pebbleHelper.getContextMap().put("request", this.request);
 		tmpFile.delete();
 
 		// SHOW WEB-PAGE

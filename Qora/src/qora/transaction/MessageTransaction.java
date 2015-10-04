@@ -2,6 +2,7 @@ package qora.transaction;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import utils.Converter;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -162,7 +164,12 @@ public class MessageTransaction extends Transaction {
 		transaction.put("creator", this.creator.getAddress());
 		transaction.put("recipient", this.recipient.getAddress());
 		transaction.put("amount", this.amount.toPlainString());
-		transaction.put("data", Base58.encode(this.data));
+		if ( this.isText() && !this.isEncrypted() )
+		{
+			transaction.put("data", new String(this.data, Charset.forName("UTF-8")));
+		}
+		else
+			transaction.put("data", Converter.toHex(this.data));
 		transaction.put("encrypted", this.isEncrypted());
 		transaction.put("isText", this.isText());
 		

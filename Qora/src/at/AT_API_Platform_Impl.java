@@ -1,5 +1,6 @@
 package at;
 
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 
 import com.google.common.primitives.Bytes;
@@ -24,13 +26,15 @@ import database.ATTransactionMap;
 import database.BlockMap;
 import database.DBSet;
 import database.SortableList;
+import database.TransactionFinalMap;
 
 
-//QORA API IMPLEMENTATION
-
+//QORA AT API IMPLEMENTATION
 public class AT_API_Platform_Impl extends AT_API_Impl {
 
 	private final static AT_API_Platform_Impl instance = new AT_API_Platform_Impl();
+
+	private final static int FIX_HEIGHT_0 = 140000;
 
 	private DBSet dbSet;
 
@@ -90,9 +94,19 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 		byte[] address = state.getId();
 		Account account = new Account(Base58.encode(address));
 
-		long transactionID = findTransactionAfterHeight(height , account , numOfTx, state, dbSet);
 		clear_A( state );
-		state.set_A1( AT_API_Helper.getByteArray( transactionID ) );	
+		try
+		{
+			long transactionIDNew = findTransactionAfterHeight(height , account , numOfTx, state, dbSet);
+			state.set_A1( AT_API_Helper.getByteArray( transactionIDNew ) );	
+		}
+		catch ( Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+		}
 	}
 
 	@Override
@@ -138,12 +152,7 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 			long txAmount = 0;
 			if ( !transaction.getClass().equals( AT_Transaction.class ))
 			{
-				byte[] amountB = ((Transaction)transaction).getAmount( ((Transaction)transaction).getCreator() ).unscaledValue().toByteArray();
-				byte[] fill = new byte[ 8 - amountB.length ];
-
-				amountB = Bytes.concat(fill, amountB);
-
-				txAmount = Longs.fromByteArray(amountB);
+				txAmount = getAmount((Transaction)transaction, new Account(Base58.encode(state.getId())), state.getHeight());
 			}
 			else
 			{
@@ -152,7 +161,7 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 			if ( state.minActivationAmount() <= txAmount )
 				amount = txAmount - state.minActivationAmount() ;
 		}
-		
+
 		return amount;
 	}
 
@@ -273,9 +282,9 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 	public void B_to_Address_of_Tx_in_A( AT_Machine_State state ) 
 	{
 		Object tx = findTransaction( state.get_A1(), dbSet );
-		
+
 		clear_B( state );
-		
+
 		if ( tx != null )
 		{
 			byte[] address;
@@ -303,7 +312,7 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 	{
 		byte[] address = state.getCreator(); //25 BYTES
 		address = Bytes.ensureCapacity(address, 32, 0); // 32 BYTES
-		
+
 		clear_B( state );
 
 		state.set_B1(Arrays.copyOfRange(address, 0, 8));
@@ -483,93 +492,82 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 			startHeight = state.getCreationBlockHeight();
 		}
 
-		//GET BLOCKS BY HEIGHT
-		TreeMap<Integer, Block> sortableList = getSortableBlockList(dbSet);
-		int totalBlocks = sortableList.size();
-		
-		//CHECK IF WE ARE ON A FORK
 		int forkHeight = getForkHeight(dbSet);
-		
-		//FIND TRANSACTION
-		for ( int i = startHeight; i <= totalBlocks; i++ )
+
+		Tuple2<Integer, Integer > atTxT = dbSet.getATTransactionMap().getNextATTransaction( startHeight , numOfTx, account.getAddress());
+
+		int atTxs = dbSet.getATTransactionMap().getATTransactions( startHeight ).size();
+
+		Tuple2<Integer, Integer> tx = dbSet.getTransactionFinalMap().getTransactionsAfterTimestamp(startHeight, (numOfTx > atTxs)?numOfTx-atTxs:0, account.getAddress());
+
+		if ( forkHeight > 0 )
 		{
-			//GET BLOCK
-			Block block = sortableList.get(i);
-			
-			//GET AT TRANSACTIONS
-			LinkedHashMap<Tuple2<Integer, Integer>, AT_Transaction> atTxs;
-			if ( dbSet.getBlockMap().getParentList() != null && i < forkHeight )
-			{
-				atTxs = ((ATTransactionMap)dbSet.getATTransactionMap().getParent()).getATTransactions( i );
-			}
-			else
-			{
-				atTxs = dbSet.getATTransactionMap().getATTransactions( i );
-			}
-			
-			//TOTAL TXS FOR CURRENT BLOCK HEIGHT
-			int totalTxs = block.getTransactionCount() + atTxs.size();
+			Tuple2<Integer, Integer > atTxTp = ((ATTransactionMap)dbSet.getATTransactionMap().getParent()).getNextATTransaction( startHeight , numOfTx, account.getAddress());
+			int atTxsp = ((ATTransactionMap)dbSet.getATTransactionMap().getParent()).getATTransactions( startHeight ).size();
 
-			
-			for ( int j = numOfTx; j < totalTxs; j++ )
+			Tuple2<Integer, Integer> txp = ((TransactionFinalMap)dbSet.getTransactionFinalMap().getParent()).getTransactionsAfterTimestamp(startHeight, (numOfTx > atTxs)?numOfTx-atTxsp:0, account.getAddress());
+			if ( atTxTp != null && ( txp == null || atTxTp.a <= txp.a ) && atTxTp.a < forkHeight )
 			{
-				if ( atTxs.size() > 0 && j < atTxs.size()  )
+				AT_Transaction atTx = ((ATTransactionMap)dbSet.getATTransactionMap().getParent()).get(atTxTp);
+				if ( !atTx.getSender().equalsIgnoreCase( account.getAddress() ) && atTx.getRecipient().equalsIgnoreCase( account.getAddress() ) && atTx.getAmount() > state.minActivationAmount() )
 				{
-					AT_Transaction tx = atTxs.get(new Tuple2<Integer,Integer>(i, j));
-					if ( !tx.getSender().equalsIgnoreCase( account.getAddress() ) && tx.getRecipient().equalsIgnoreCase( account.getAddress() ) && tx.getAmount() > state.minActivationAmount() )
-					{
-						return AT_API_Helper.getLongTimestamp( i , j + 1 );
-					}
+					return AT_API_Helper.getLongTimestamp( atTxTp.a , atTxTp.b + 1 );
 				}
-				else
+
+			}
+			else if ( txp != null && txp.a < forkHeight )
+			{
+				atTxs = ((ATTransactionMap)dbSet.getATTransactionMap().getParent()).getATTransactions( txp.a ).size();
+				Transaction transaction = ((TransactionFinalMap)dbSet.getTransactionFinalMap().getParent()).get(txp);
+
+				long txAmount = getAmount((Transaction)transaction, new Account(Base58.encode(state.getId())), state.getHeight());
+				
+				if(transaction.isInvolved(account) && !transaction.getCreator().getAddress().equals(account.getAddress()) && txAmount >= state.minActivationAmount() )
 				{
-					Transaction transaction = block.getTransactions().get(j - atTxs.size());
-
-					byte[] amountB = transaction.getAmount( transaction.getCreator() ).unscaledValue().toByteArray();
-					byte[] fill = new byte[ 8 - amountB.length ];
-
-					amountB = Bytes.concat(fill, amountB);
-
-					long txAmount = Longs.fromByteArray(amountB);
-					if(transaction.isInvolved(account) && !transaction.getCreator().getAddress().equals(account.getAddress()) && txAmount >= state.minActivationAmount() )
-					{
-						return AT_API_Helper.getLongTimestamp( i , j + 1 );
-					}
+					return AT_API_Helper.getLongTimestamp( tx.a , tx.b + atTxs );
 				}
 			}
-			numOfTx = 0;
 		}
-		return 0L;
+		if ( atTxT != null &&  ( tx == null || atTxT.a <= tx.a ) )
+		{
+			AT_Transaction atTx = dbSet.getATTransactionMap().get(atTxT);
+			if ( !atTx.getSender().equalsIgnoreCase( account.getAddress() ) && atTx.getRecipient().equalsIgnoreCase( account.getAddress() ) && atTx.getAmount() > state.minActivationAmount() )
+			{
+				return AT_API_Helper.getLongTimestamp( atTxT.a , atTxT.b + 1 );
+			}
+		}
+		else if ( tx != null )
+		{
+			atTxs = dbSet.getATTransactionMap().getATTransactions( tx.a ).size();
+			Transaction transaction = dbSet.getTransactionFinalMap().get(tx);
+
+			long txAmount = getAmount( transaction, new Account(Base58.encode(state.getId())), state.getHeight() );
+			
+			if(transaction.isInvolved(account) && !transaction.getCreator().getAddress().equals(account.getAddress()) && txAmount >= state.minActivationAmount() )
+			{
+				return AT_API_Helper.getLongTimestamp( tx.a , tx.b + atTxs );
+			}
+		}
+
+		return 0;
 
 	}
 
-	protected static TreeMap<Integer, Block> getSortableBlockList(DBSet db)
+
+	protected static long getAmount(Transaction tx, Account recipient, int height)
 	{
-		TreeMap<Integer, Block> returnList = new TreeMap<Integer, Block>();
-		SortableList<byte[], Block> sortableListParent = db.getBlockMap().getParentList();
-		SortableList<byte[], Block> sortableList = db.getBlockMap().getList();
-
-		if (sortableListParent != null)
+		byte[] amountB = ( height >= FIX_HEIGHT_0 ) ? 	tx.getAmount( recipient ).unscaledValue().toByteArray():
+			tx.getAmount( tx.getCreator() ).unscaledValue().toByteArray();
+		if ( amountB.length < 8 )
 		{
-			sortableListParent.sort(BlockMap.HEIGHT_INDEX);
-			int forkHeight; 
-			forkHeight = getForkHeight(db);
-			for (Pair<byte[], Block> p : sortableListParent.subList(0, forkHeight ))
-			{
-				returnList.put( p.getB().getHeight(db), p.getB() );
-			}
-		}
-		if ( !sortableList.isEmpty() )
-		{
-			for (Pair<byte[], Block> p : sortableList.subList(0, sortableList.size()))
-			{
-				returnList.put( p.getB().getHeight(db), p.getB() );
-			}
+			byte[] fill = new byte[ 8 - amountB.length ];
+			amountB = Bytes.concat(fill, amountB);
 		}
 
-		return returnList;
-
+		long txAmount = Longs.fromByteArray( amountB );
+		return txAmount;
 	}
+
 
 	public static int getForkHeight(DBSet db)
 	{
@@ -585,14 +583,12 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 			{
 				return Collections.min(db.getHeightMap().getValues()) + 1;
 			}
-
 		}
 		return 0;
 	}
 
+
 	protected static Object findTransaction(byte[] id, DBSet db){
-
-
 		int height = AT_API_Helper.longToHeight(AT_API_Helper.getLong(id));
 		int position = AT_API_Helper.longToNumOfTx(AT_API_Helper.getLong(id));
 
@@ -601,45 +597,40 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 			return null;
 		}
 
-		TreeMap<Integer, Block> blocks = getSortableBlockList(db);
+		int forkHeight = getForkHeight(db);
 
-		if ( blocks.containsKey(height) )
+		//IF NOT FORK
+		if ( forkHeight == 0 || forkHeight <= height )
 		{
-			int forkHeight = getForkHeight(db);
+			LinkedHashMap<Tuple2<Integer, Integer>, AT_Transaction> atTxs = db.getATTransactionMap().getATTransactions( height );
 
-			//IF NOT FORK
-			if ( forkHeight == 0 || forkHeight <= height )
+			if (atTxs.size() >= position)
 			{
-				LinkedHashMap<Tuple2<Integer, Integer>, AT_Transaction> atTxs = db.getATTransactionMap().getATTransactions( height );
-				List<Transaction> txs = blocks.get( height ).getTransactions();
-				if (atTxs.size() >= position)
-				{
-					AT_Transaction key = atTxs.get(new Tuple2<Integer, Integer>( height, position - 1 ));
-					return key;
-				}
-				else if ( txs.size() >= position - atTxs.size() )
-				{
-					return txs.get(position - 1 - atTxs.size());
-				}
+				AT_Transaction key = atTxs.get(new Tuple2<Integer, Integer>( height, position - 1 ));
+				return key;
 			}
-			else if ( forkHeight > height )
+			else
 			{
-				LinkedHashMap<Tuple2<Integer, Integer>, AT_Transaction>  atTxs = ((ATTransactionMap)db.getATTransactionMap().getParent()).getATTransactions( height );
-				List<Transaction> txs = blocks.get( height ).getTransactions();
-				if (atTxs.size() >= position)
-				{
-					AT_Transaction key = atTxs.get(new Tuple2<Integer, Integer>( height, position - 1 ));
-					return key;
-				}
-				else if ( txs.size() >= position - atTxs.size() )
-				{
-					return txs.get(position - 1 - atTxs.size());
-				}
-
+				return db.getTransactionFinalMap().getTransaction(height, position - atTxs.size());
 			}
 		}
+		else if ( forkHeight > height )
+		{
+			LinkedHashMap<Tuple2<Integer, Integer>, AT_Transaction>  atTxs = ((ATTransactionMap)db.getATTransactionMap().getParent()).getATTransactions( height );
+
+			if (atTxs.size() >= position)
+			{
+				AT_Transaction key = atTxs.get(new Tuple2<Integer, Integer>( height, position - 1 ));
+				return key;
+			}
+			else
+			{
+				return db.getTransactionFinalMap().getTransaction(height, position - atTxs.size());
+			}
+
+		}
+
 		return null;
 	}
-
 
 }

@@ -67,6 +67,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
 import utils.SysTray;
+import utils.UpdateUtil;
 import webserver.WebService;
 
 public class Controller extends Observable {
@@ -185,6 +186,24 @@ public class Controller extends Observable {
 								+ " and start the application again.");
 			}
 		}
+		
+		//CHECK IF DB NEEDS UPDATE
+
+		//CHECK IF NAME STORAGE NEEDS UPDATE
+		if (DBSet.getInstance().getLocalDataMap().get("nsupdate") == null )
+		{
+			//FIRST NAME STORAGE UPDATE
+			UpdateUtil.repopulateNameStorage( 100000 );
+			DBSet.getInstance().getLocalDataMap().set("nsupdate", "1");
+		}
+		//CREATE TRANSACTIONS FINAL MAP
+		if (DBSet.getInstance().getLocalDataMap().get("txfinalmap") == null )
+		{
+			//FIRST NAME STORAGE UPDATE
+			UpdateUtil.repopulateTransactionFinalMap(  );
+			DBSet.getInstance().getLocalDataMap().set("txfinalmap", "1");
+		}
+		
 
 		// BLOCKEXPLORER BOOST
 		if (Settings.getInstance().isBlockExplorerBoost()) {

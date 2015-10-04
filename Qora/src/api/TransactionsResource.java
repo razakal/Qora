@@ -17,6 +17,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import controller.Controller;
+import database.DBSet;
 import qora.account.Account;
 import qora.block.Block;
 import qora.crypto.Base58;
@@ -336,5 +337,55 @@ public class TransactionsResource {
 			e.printStackTrace();
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
 		}
+	}
+	
+
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("recipient/{address}/limit/{limit}")
+	public String getTransactionsByRecipient(@PathParam("address") String address, @PathParam("limit") int limit)
+	{
+		
+		JSONArray array = new JSONArray();
+		List<Transaction> txs = DBSet.getInstance().getTransactionFinalMap().getTransactionsByRecipient(address,limit);
+		for(Transaction transaction: txs)
+		{
+			array.add(transaction.toJson());
+		}
+		
+		return array.toJSONString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("sender/{address}/limit/{limit}")
+	public String getTransactionsBySender(@PathParam("address") String address, @PathParam("limit") int limit)
+	{
+		
+		JSONArray array = new JSONArray();
+		List<Transaction> txs = DBSet.getInstance().getTransactionFinalMap().getTransactionsBySender(address, limit);
+		for(Transaction transaction: txs)
+		{
+			array.add(transaction.toJson());
+		}
+		
+		return array.toJSONString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("address/{address}/type/{type}/limit/{limit}")
+	public String getTransactionsByTypeAndAddress(@PathParam("address") String address, @PathParam("type") int type, @PathParam("limit") int limit)
+	{
+		
+		JSONArray array = new JSONArray();
+		List<Transaction> txs = DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, type, limit);
+		for(Transaction transaction: txs)
+		{
+			array.add(transaction.toJson());
+		}
+		
+		return array.toJSONString();
 	}
 }

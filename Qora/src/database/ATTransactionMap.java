@@ -207,6 +207,28 @@ public class ATTransactionMap extends DBMap< Tuple2<Integer, Integer> ,  AT_Tran
 		return ats;
 	}
 	
+	public Tuple2<Integer,Integer > getNextATTransaction(Integer height, Integer seq, String recipient)
+	{
+		Iterable keys = Fun.filter(this.recipientKey,recipient);
+		Iterator iter = keys.iterator();
+		int prevKey = height;
+		while ( iter.hasNext() )
+		{
+			Tuple2<Integer, Integer> key = (Tuple2<Integer, Integer>) iter.next();
+			if ( key.a >= height )
+			{
+					if (key.a != prevKey)
+					{
+						seq = 0;
+					}
+					prevKey = key.a;
+					if ( key.b >= seq )
+						return key;
+			}
+		}
+		return null;
+	}
+	
 
 	
 	
