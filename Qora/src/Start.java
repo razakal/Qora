@@ -39,14 +39,11 @@ public class Start {
 				
 				try
 				{
-					if(Settings.getInstance().isGuiEnabled())
-					{
 						//START GUI
-						if(Gui.getInstance() != null)
+						if(Gui.getInstance() != null && Settings.getInstance().isSysTrayEnabled())
 						{					
 							SysTray.getInstance().createTrayIcon();
 						}
-					}
 				} catch(Exception e) {
 					System.out.println("GUI ERROR: " + e.getMessage());
 				}

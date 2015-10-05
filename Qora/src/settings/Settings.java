@@ -500,4 +500,12 @@ public class Settings {
 		
 		return DEFAULT_TIME_FORMAT;
 	}
+
+	public boolean isSysTrayEnabled() {
+		if(this.settingsJSON.containsKey("systray"))
+		{
+			return ((Boolean) this.settingsJSON.get("systray")).booleanValue();
+		}
+		return true;
+	}
 }

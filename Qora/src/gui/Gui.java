@@ -11,6 +11,7 @@ import javax.swing.UIManager;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import settings.Settings;
 import controller.Controller;
 
 public class Gui extends JFrame{
@@ -47,7 +48,8 @@ public class Gui extends JFrame{
         }
         else
         {
-        mainframe =	new MainFrame();
+        	if ( Settings.getInstance().isGuiEnabled() )
+        		mainframe =	new MainFrame();
         }
         
 	}

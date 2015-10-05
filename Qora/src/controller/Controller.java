@@ -861,9 +861,9 @@ public class Controller extends Observable {
 			}
 		}
 
-		if (Settings.getInstance().isGuiEnabled()) {
+		if (Settings.getInstance().isGuiEnabled() || Settings.getInstance().isSysTrayEnabled() ) {
 			Gui gui = Gui.getInstance();
-			gui.bringtoFront();
+			
 			SysTray.getInstance().sendMessage("INCOMING API CALL",
 					"An API call needs authorization!", MessageType.WARNING);
 			Object[] options = { "Yes", "No" };
@@ -894,6 +894,7 @@ public class Controller extends Observable {
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options,
 							options[1]);
+			gui.bringtoFront();
 		}
 
 		return result;

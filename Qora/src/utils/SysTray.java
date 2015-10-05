@@ -1,6 +1,7 @@
 package utils;
 
 import gui.Gui;
+import gui.PasswordPane;
 
 import java.awt.AWTException;
 import java.awt.HeadlessException;
@@ -17,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import controller.Controller;
 
@@ -98,7 +100,28 @@ public class SysTray {
 			}
 		});
 		menu.add(exit);
+		MenuItem unlock = new MenuItem("Unlock");
+		unlock.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				String password = PasswordPane.showUnlockWalletDialog(); 
+				if(!password.equals("") && !Controller.getInstance().unlockWallet(password))
+				{
+					JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				}
 
+			}
+		});
+		menu.add(unlock);
+		MenuItem lock = new MenuItem("Lock");
+		lock.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(Controller.getInstance().isWalletUnlocked())
+				{
+					Controller.getInstance().lockWallet();
+				}
+			}
+		});
+		menu.add(lock);
 		return menu;
 	}
 }
