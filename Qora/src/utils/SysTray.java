@@ -3,10 +3,14 @@ package utils;
 import gui.ConsolePanel;
 import gui.Gui;
 import gui.PasswordPane;
+import gui.QoraRowSorter;
 import gui.SendMessagePanel;
 import gui.SendMoneyPanel;
 import gui.assets.AssetsPanel;
+import gui.models.WalletTransactionsTableModel;
 import gui.naming.NamingServicePanel;
+import gui.settings.SettingsFrame;
+import gui.transaction.TransactionDetailsFactory;
 import gui.voting.VotingPanel;
 
 import java.awt.AWTException;
@@ -18,16 +22,24 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
+import qora.transaction.Transaction;
 import controller.Controller;
+import database.wallet.TransactionMap;
 
 public class SysTray {
 
@@ -98,7 +110,7 @@ public class SysTray {
 
 	private PopupMenu createPopupMenu() throws HeadlessException {
 		PopupMenu menu = new PopupMenu();
-
+		
 		MenuItem exit = new MenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -107,6 +119,7 @@ public class SysTray {
 			}
 		});
 		menu.add(exit);
+		
 		MenuItem unlock = new MenuItem("Unlock");
 		unlock.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -119,6 +132,7 @@ public class SysTray {
 			}
 		});
 		menu.add(unlock);
+		
 		MenuItem lock = new MenuItem("Lock");
 		lock.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -130,20 +144,14 @@ public class SysTray {
 		});
 		menu.add(lock);
 		
-		MenuItem assets = new MenuItem("Assets");
-		assets.addActionListener(new ActionListener(){
+		MenuItem settings = new MenuItem("Settings");
+		settings.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-					JFrame frame = new JFrame("Assets");
-
-				    frame.setSize(800, 600);
-				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				    frame.setVisible(true);
-					AssetsPanel ap = new AssetsPanel();
-					frame.getContentPane().add(ap);
-					
+				new SettingsFrame();
 			}
 		});
-		menu.add(assets);
+		menu.add(settings);
+		
 		
 		MenuItem console = new MenuItem("Console");
 		console.addActionListener(new ActionListener(){
@@ -159,6 +167,52 @@ public class SysTray {
 			}
 		});
 		menu.add(console);
+		
+		MenuItem transactions = new MenuItem("Transactions");
+		transactions.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+					JFrame frame = new JFrame("Transactions");
+
+				    frame.setSize(800, 600);
+				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				    frame.setVisible(true);
+				    WalletTransactionsTableModel transactionsModel = new WalletTransactionsTableModel();
+				    JTable transactionsTable = new JTable(transactionsModel);
+					
+					//TRANSACTIONS SORTER
+					Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
+					indexes.put(WalletTransactionsTableModel.COLUMN_CONFIRMATIONS, TransactionMap.TIMESTAMP_INDEX);
+					indexes.put(WalletTransactionsTableModel.COLUMN_TIMESTAMP, TransactionMap.TIMESTAMP_INDEX);
+					indexes.put(WalletTransactionsTableModel.COLUMN_ADDRESS, TransactionMap.ADDRESS_INDEX);
+					indexes.put(WalletTransactionsTableModel.COLUMN_AMOUNT, TransactionMap.AMOUNT_INDEX);
+					QoraRowSorter sorter = new QoraRowSorter(transactionsModel, indexes);
+					transactionsTable.setRowSorter(sorter);
+					
+					//TRANSACTION DETAILS
+					transactionsTable.addMouseListener(new MouseAdapter() 
+					{
+						public void mouseClicked(MouseEvent e) 
+						{
+							if(e.getClickCount() == 2) 
+							{
+								//GET ROW
+						        int row = transactionsTable.getSelectedRow();
+						        row = transactionsTable.convertRowIndexToModel(row);
+						        
+						        //GET TRANSACTION
+						        Transaction transaction = transactionsModel.getTransaction(row);
+						         
+						        //SHOW DETAIL SCREEN OF TRANSACTION
+						        TransactionDetailsFactory.getInstance().createTransactionDetail(transaction);
+						    }
+						}
+					});			
+					
+					frame.getContentPane().add(new JScrollPane(transactionsTable)  );
+					
+			}
+		});
+		menu.add(transactions);
 		
 		MenuItem payment = new MenuItem("Send Payment");
 		payment.addActionListener(new ActionListener(){
@@ -189,6 +243,21 @@ public class SysTray {
 			}
 		});
 		menu.add(messages);
+
+		MenuItem assets = new MenuItem("Assets");
+		assets.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+					JFrame frame = new JFrame("Assets");
+
+				    frame.setSize(800, 600);
+				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				    frame.setVisible(true);
+					AssetsPanel ap = new AssetsPanel();
+					frame.getContentPane().add(ap);
+					
+			}
+		});
+		menu.add(assets);
 		
 		MenuItem names = new MenuItem("Names");
 		names.addActionListener(new ActionListener(){

@@ -36,7 +36,7 @@ public class Settings {
 	private static final boolean DEFAULT_WEB_ENABLED = true;
 	
 	//GUI
-	private static final boolean DEFAULT_GUI_ENABLED = true;
+	private static final boolean DEFAULT_GUI_ENABLED = false;
 	
 	//SETTINGS.JSON FILE
 	private static final String DEFAULT_SETTINGS_PATH = "settings.json";
