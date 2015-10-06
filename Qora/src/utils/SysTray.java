@@ -176,8 +176,8 @@ public class SysTray {
 				    frame.setSize(800, 600);
 				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				    frame.setVisible(true);
-				    WalletTransactionsTableModel transactionsModel = new WalletTransactionsTableModel();
-				    JTable transactionsTable = new JTable(transactionsModel);
+				 final   WalletTransactionsTableModel transactionsModel = new WalletTransactionsTableModel();
+				final    JTable transactionsTable = new JTable(transactionsModel);
 					
 					//TRANSACTIONS SORTER
 					Map<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
