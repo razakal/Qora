@@ -94,7 +94,7 @@ public class UpdateUtil {
 
 	public static void repopulateTransactionFinalMap() {
 		DBSet.getInstance().getTransactionFinalMap().reset();
-
+		DBSet.getInstance().commit();
 		Block b = new GenesisBlock();
 		do
 		{

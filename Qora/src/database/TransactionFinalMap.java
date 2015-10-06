@@ -3,7 +3,7 @@ package database;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,27 +11,22 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.Bind;
 import org.mapdb.DB;
+import org.mapdb.DBMaker;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 import org.mapdb.BTreeMap;
 
-import at.AT_Transaction;
 import qora.account.Account;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.Transaction;
-import utils.ObserverMessage;
-import utils.Pair;
-import utils.ReverseComparator;
 import database.DBMap;
 import database.serializer.TransactionSerializer;
 
 public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transaction>
 {
-	
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 	
 	@SuppressWarnings("rawtypes")
@@ -121,19 +116,21 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 	@Override
 	protected Map<Tuple2<Integer, Integer>, Transaction> getMap(DB database) 
 	{
-		//OPEN MAP
-		return database.createTreeMap("final_transactions")
+		BTreeMap<Tuple2<Integer, Integer>, Transaction> map = database.createTreeMap("height_seq_transactions")
 				.keySerializer(BTreeKeySerializer.TUPLE2)
 				.valueSerializer(new TransactionSerializer())
-				.counterEnable()
 				.makeOrGet();
+		//OPEN MAP
+		return map;
 	}
 
 	@Override
 	protected Map<Tuple2<Integer, Integer>, Transaction> getMemoryMap() 
 	{
-		return new TreeMap<Tuple2<Integer, Integer>, Transaction>(Fun.TUPLE2_COMPARATOR);
-	}
+		DB database = DBMaker.newMemoryDB().make();
+		
+		//OPEN MAP
+		return this.getMap(database);	}
 
 	@Override
 	protected Transaction getDefaultValue() 
@@ -149,14 +146,15 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void delete(Integer height)
-	{
+	{	
+		BTreeMap map = (BTreeMap) this.map;
 		//GET ALL TRANSACTIONS THAT BELONG TO THAT ADDRESS
-		Map<Tuple2<Integer, Integer>, Transaction> heightTransactions = ((BTreeMap) this.map).subMap(
+		Collection<Tuple2> keys = ((BTreeMap<Tuple2, Transaction>) map).subMap(
 				Fun.t2(height, null),
-				Fun.t2(height, Fun.HI()));
+				Fun.t2(height, Fun.HI())).keySet();
 		
 		//DELETE TRANSACTIONS
-		for(Tuple2<Integer, Integer> key: heightTransactions.keySet())
+		for(Tuple2<Integer, Integer> key: keys)
 		{
 			this.delete(key);
 		}
@@ -269,7 +267,6 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 	}
 
 	public DBMap<Tuple2<Integer, Integer>, Transaction> getParent() {
-		// TODO Auto-generated method stub
 		return this.parent;
 	}
 }
