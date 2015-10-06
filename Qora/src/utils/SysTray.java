@@ -1,7 +1,13 @@
 package utils;
 
+import gui.ConsolePanel;
 import gui.Gui;
 import gui.PasswordPane;
+import gui.SendMessagePanel;
+import gui.SendMoneyPanel;
+import gui.assets.AssetsPanel;
+import gui.naming.NamingServicePanel;
+import gui.voting.VotingPanel;
 
 import java.awt.AWTException;
 import java.awt.HeadlessException;
@@ -18,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import controller.Controller;
@@ -122,6 +129,97 @@ public class SysTray {
 			}
 		});
 		menu.add(lock);
+		
+		MenuItem assets = new MenuItem("Assets");
+		assets.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+					JFrame frame = new JFrame("Assets");
+
+				    frame.setSize(800, 600);
+				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				    frame.setVisible(true);
+					AssetsPanel ap = new AssetsPanel();
+					frame.getContentPane().add(ap);
+					
+			}
+		});
+		menu.add(assets);
+		
+		MenuItem console = new MenuItem("Console");
+		console.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+					JFrame frame = new JFrame("Console");
+
+				    frame.setSize(800, 600);
+				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				    frame.setVisible(true);
+					ConsolePanel ap = new ConsolePanel();
+					frame.getContentPane().add(ap);
+					
+			}
+		});
+		menu.add(console);
+		
+		MenuItem payment = new MenuItem("Send Payment");
+		payment.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+					JFrame frame = new JFrame("Send Payment");
+
+				    frame.setSize(800, 600);
+				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				    frame.setVisible(true);
+					SendMoneyPanel ap = new SendMoneyPanel();
+					frame.getContentPane().add(ap);
+					
+			}
+		});
+		menu.add(payment);
+		
+		MenuItem messages = new MenuItem("Messages");
+		messages.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+					JFrame frame = new JFrame("Messages");
+
+				    frame.setSize(800, 600);
+				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				    frame.setVisible(true);
+					SendMessagePanel ap = new SendMessagePanel();
+					frame.getContentPane().add(ap);
+					
+			}
+		});
+		menu.add(messages);
+		
+		MenuItem names = new MenuItem("Names");
+		names.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+					JFrame frame = new JFrame("Names");
+
+				    frame.setSize(800, 600);
+				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				    frame.setVisible(true);
+					frame.getContentPane().add(
+							new NamingServicePanel());
+					
+			}
+		});
+		menu.add(names);
+		
+		MenuItem voting = new MenuItem("Voting");
+		voting.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+					JFrame frame = new JFrame("Voting");
+
+				    frame.setSize(800, 600);
+				    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				    frame.setVisible(true);
+					frame.getContentPane().add(
+							new VotingPanel());
+					
+			}
+		});
+		menu.add(voting);
+		
 		return menu;
 	}
 }
