@@ -103,6 +103,7 @@ public class UpdateUtil {
 			for (Transaction tx : txs)
 			{
 				DBSet.getInstance().getTransactionFinalMap().add(b.getHeight(), counter, tx);
+				counter++;
 			}
 			if ( b.getHeight()%2000 == 0 )
 			{
