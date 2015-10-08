@@ -36,7 +36,7 @@ public class Settings {
 	private static final boolean DEFAULT_WEB_ENABLED = true;
 	
 	//GUI
-	private static final boolean DEFAULT_GUI_ENABLED = false;
+	private static final boolean DEFAULT_GUI_ENABLED = true;
 	
 	//SETTINGS.JSON FILE
 	private static final String DEFAULT_SETTINGS_PATH = "settings.json";
@@ -465,6 +465,10 @@ public class Settings {
 
 	public boolean isGuiEnabled() 
 	{
+		if(System.getProperty("nogui") != null)
+		{
+			return false;
+		}
 		if(this.settingsJSON.containsKey("guienabled"))
 		{
 			return ((Boolean) this.settingsJSON.get("guienabled")).booleanValue();
