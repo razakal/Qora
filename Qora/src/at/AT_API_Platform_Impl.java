@@ -1,31 +1,25 @@
 package at;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.TreeMap;
 
-import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
-
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Longs;
 
 import qora.account.Account;
 import qora.block.Block;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
-import qora.transaction.Transaction;
 import qora.transaction.MessageTransaction;
-import utils.Pair;
+import qora.transaction.Transaction;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Longs;
+
 import database.ATTransactionMap;
-import database.BlockMap;
 import database.DBSet;
-import database.SortableList;
 import database.TransactionFinalMap;
 
 

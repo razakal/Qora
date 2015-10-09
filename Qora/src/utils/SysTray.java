@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import qora.transaction.Transaction;
+import settings.Settings;
 import controller.Controller;
 import database.wallet.TransactionMap;
 
@@ -111,14 +112,18 @@ public class SysTray {
 	private PopupMenu createPopupMenu() throws HeadlessException {
 		PopupMenu menu = new PopupMenu();
 		
-		MenuItem exit = new MenuItem("Exit");
-		exit.addActionListener(new ActionListener() {
+		
+		MenuItem decentralizedWeb = new MenuItem("Qora Web/Social Network");
+		decentralizedWeb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				 Controller.getInstance().stopAll();
-	              System.exit(0);
+				try {
+        			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()));
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
-		menu.add(exit);
+		menu.add(decentralizedWeb);
 		
 		MenuItem unlock = new MenuItem("Unlock");
 		unlock.addActionListener(new ActionListener(){
@@ -288,6 +293,15 @@ public class SysTray {
 			}
 		});
 		menu.add(voting);
+		
+		MenuItem exit = new MenuItem("Exit");
+		exit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				 Controller.getInstance().stopAll();
+	              System.exit(0);
+			}
+		});
+		menu.add(exit);
 		
 		return menu;
 	}
