@@ -34,7 +34,7 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 
 	private final static AT_API_Platform_Impl instance = new AT_API_Platform_Impl();
 
-	private final static int FIX_HEIGHT_0 = 140000;
+	private final static int FIX_HEIGHT_0 = 142000;
 
 	private DBSet dbSet;
 
