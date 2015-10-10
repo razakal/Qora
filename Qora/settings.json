@@ -1,11 +1,4 @@
 {
-	"weballowed":[
-		"127.0.0.1"
-	],
-	"blockexplorerboost":false,
-	"generatorkeycaching":true,
-	"maxconnections":100,
-	"minconnections":10,
 	"knownpeers":[
 		"192.243.117.77",
 		"193.242.149.63",
@@ -24,5 +17,19 @@
 	],
 	"rpcallowed":[
 		"127.0.0.1"
-	]
+	],
+	"weballowed":[
+		"127.0.0.1"
+	],
+	"blockexplorerboost":false,
+	"guienabled":true,
+	"rpcenabled":true,
+	"webenabled":true,
+	"systray":true,
+	"maxconnections":100,
+	"minconnections":10,
+	"generatorkeycaching":true,
+	"soundreceivepayment":true,
+	"soundnewtransaction":true,
+	"soundreceivemessage":true
 }
