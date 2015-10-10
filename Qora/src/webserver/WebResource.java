@@ -860,7 +860,7 @@ public class WebResource {
 
 			pebbleHelper.getContextMap().put(
 					"walletstatus",
-					Controller.getInstance().isWalletUnlocked() ? "wallet is unlocked" : "wallet is locked");
+					Controller.getInstance().isWalletUnlocked() ? "Wallet is unlocked" : "Wallet is locked");
 			pebbleHelper.getContextMap().put(
 					"forgestatus",
 					Controller.getInstance().getForgingStatus().getName());
