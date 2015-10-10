@@ -2073,7 +2073,7 @@ public class BlockExplorer extends Observable implements Observer
 			AT at = DBSet.getInstance().getATMap().getAT(address);
 			Block block = Controller.getInstance().getBlockByHeight(at.getCreationBlockHeight());
 			long aTtimestamp = block.getTimestamp(); 
-			BigDecimal aTbalancecreation = BigDecimal.ZERO.setScale(8); 
+			BigDecimal aTbalanceCreation = BigDecimal.ZERO.setScale(8); 
 			for (Transaction transaction : block.getTransactions()) {
 				if (transaction.getType() == Transaction.DEPLOY_AT_TRANSACTION )
 				{
@@ -2082,7 +2082,7 @@ public class BlockExplorer extends Observable implements Observer
 					if(atAccount.getAddress().equals(address))
 					{
 						all.add(transaction);
-						aTbalancecreation = ((DeployATTransaction)transaction).getAmount();
+						aTbalanceCreation = ((DeployATTransaction)transaction).getAmount();
 					}
 				}
 			}
@@ -2095,7 +2095,7 @@ public class BlockExplorer extends Observable implements Observer
 
 			Map atJSON=new LinkedHashMap();
 			atJSON = at.toJSON();
-			atJSON.put("balancecreation", aTbalancecreation.toPlainString());
+			atJSON.put("balanceCreation", aTbalanceCreation.toPlainString());
 			atJSON.put("timestamp", aTtimestamp);
 			atJSON.put("dateTime", BlockExplorer.timestampToStr(aTtimestamp));
 
