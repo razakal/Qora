@@ -72,8 +72,8 @@ import webserver.WebService;
 
 public class Controller extends Observable {
 
-	private String version = "0.22.0";
-	public static final String releaseVersion = "0.22.0";
+	private String version = "0.23.0";
+	public static final String releaseVersion = "0.23.0";
 
 	public static final int STATUS_NO_CONNECTIONS = 0;
 	public static final int STATUS_SYNCHRONIZING = 1;
@@ -158,7 +158,7 @@ public class Controller extends Observable {
 		// OPENING DATABASES
 		DBSet.getInstance();
 
-		startFromScratchOnDemand();
+//		startFromScratchOnDemand();
 
 		if (DBSet.getInstance().getBlockMap().isProcessing()) {
 			DBSet.getInstance().close();
