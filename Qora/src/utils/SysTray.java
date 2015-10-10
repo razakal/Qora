@@ -124,6 +124,17 @@ public class SysTray {
 			}
 		});
 		menu.add(decentralizedWeb);
+		MenuItem walletStatus = new MenuItem("Wallet Status (web)");
+		walletStatus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort() + "/index/status.html"));
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		menu.add(walletStatus);
 		
 		
 		
