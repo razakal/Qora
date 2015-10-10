@@ -43,18 +43,24 @@ public class BlockGenerator extends Thread implements Observer
 	
 	public enum ForgingStatus {
 	    
-		FORGING_DISABLED(0),
-		FORGING_ENABLED(1),
-		FORGING(2);
+		FORGING_DISABLED(0,"Forging disabled" ),
+		FORGING_ENABLED(1,"Forging enabled"),
+		FORGING(2,"Forging disabled");
 		
 		 private final int statuscode;
+		private String name;
 
-		 ForgingStatus(int status) {
+		 ForgingStatus(int status, String name) {
 			 statuscode = status;
+			 this.name = name;
 		  }
 
 		public int getStatuscode() {
 			return statuscode;
+		}
+
+		public String getName() {
+			return name;
 		}
 
 	    

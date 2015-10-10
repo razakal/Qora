@@ -849,6 +849,50 @@ public class WebResource {
 		}
 
 	}
+	
+	@Path("index/status.html")
+	@GET
+	public Response getStatus() {
+
+		try {
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/status.html", request);
+
+			pebbleHelper.getContextMap().put(
+					"walletstatus",
+					Controller.getInstance().isWalletUnlocked() ? "wallet is unlocked" : "wallet is locked");
+			pebbleHelper.getContextMap().put(
+					"forgestatus",
+					Controller.getInstance().getForgingStatus().getName());
+			
+			int status = Controller.getInstance().getStatus();
+			String statustext = "";
+			if(status == Controller.STATUS_NO_CONNECTIONS)
+			{
+				statustext ="No connections";
+			}
+			if(status == Controller.STATUS_SYNCHRONIZING)
+			{
+				statustext ="Synchronizing";
+			}
+			if(status == Controller.STATUS_OKE)
+			{
+				statustext ="Oke";
+			}
+			
+			pebbleHelper.getContextMap().put(
+					"status",
+					statustext);
+			
+			
+
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
+		} catch (PebbleException e) {
+			e.printStackTrace();
+			return Response.status(404).build();
+		}
+	}
 
 	private List<HTMLSearchResult> handleBlogSearch(String blogSearchOpt) {
 		List<HTMLSearchResult> results = new ArrayList<>();

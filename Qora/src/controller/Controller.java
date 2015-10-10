@@ -75,6 +75,7 @@ public class Controller extends Observable {
 	private String version = "0.23.0";
 	public static final String releaseVersion = "0.23.0";
 
+//	TODO ENUM would be better here
 	public static final int STATUS_NO_CONNECTIONS = 0;
 	public static final int STATUS_SYNCHRONIZING = 1;
 	public static final int STATUS_OKE = 2;

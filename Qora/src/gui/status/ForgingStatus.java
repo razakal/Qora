@@ -145,18 +145,18 @@ public class ForgingStatus extends JLabel implements Observer {
 		if(status ==BlockGenerator.ForgingStatus.FORGING_ENABLED)
 		{
 			this.setIcon(forgingEnabledIcon);
-			this.setText("Forging enabled");
+			this.setText(status.getName());
 		}
 		if(status == BlockGenerator.ForgingStatus.FORGING)
 		{
 			this.setIcon(forgingIcon);
-			this.setText("Forging");
+			this.setText(status.getName());
 		}
 	}
 
 	public void forgingDisabled() {
 		this.setIcon(forgingDisabledIcon);
-		this.setText("Forging disabled");
+		this.setText(BlockGenerator.ForgingStatus.FORGING_DISABLED.getName());
 	}
 
  
