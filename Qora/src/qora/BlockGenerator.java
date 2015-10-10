@@ -21,7 +21,6 @@ import qora.transaction.Transaction;
 import settings.Settings;
 import utils.ObserverMessage;
 import utils.TransactionFeeComparator;
-import utils.UpdateUtil;
 import at.AT_Block;
 import at.AT_Constants;
 import at.AT_Controller;
