@@ -45,7 +45,7 @@ public class BlockGenerator extends Thread implements Observer
 	    
 		FORGING_DISABLED(0,"Forging disabled" ),
 		FORGING_ENABLED(1,"Forging enabled"),
-		FORGING(2,"Forging disabled");
+		FORGING(2,"Forging");
 		
 		 private final int statuscode;
 		private String name;
