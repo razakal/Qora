@@ -860,13 +860,14 @@ public class WebResource {
 
 			pebbleHelper.getContextMap().put(
 					"walletstatus",
-					Controller.getInstance().isWalletUnlocked() ? "Wallet is unlocked" : "Wallet is locked");
+					Controller.getInstance().isWalletUnlocked() ?  "<img src=\"/index/img/unlocked.png\" /> Wallet is unlocked" : "<img src=\"/index/img/locked.png\" /> Wallet is locked");
 			pebbleHelper.getContextMap().put(
 					"forgestatus",
 					Controller.getInstance().getForgingStatus().getName());
 			
 			int status = Controller.getInstance().getStatus();
 			String statustext = "";
+			//TODO this needs to be moved to another place
 			if(status == Controller.STATUS_NO_CONNECTIONS)
 			{
 				statustext ="No connections";
@@ -986,7 +987,7 @@ public class WebResource {
 			"17_message_in.png", "17_message_out.png", "asset_trade.png",
 			"at_tx_in.png", "at_tx_out.png", "grleft.png", "grright.png",
 			"redleft.png", "redright.png", "bar.gif", "bar_left.gif",
-			"bar_right.gif" };
+			"bar_right.gif", "locked.png", "unlocked.png"};
 
 	@Path("index/img/{filename}")
 	@GET
