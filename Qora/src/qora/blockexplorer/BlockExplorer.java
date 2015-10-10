@@ -1682,11 +1682,11 @@ public class BlockExplorer extends Observable implements Observer
 				if(transactionDataJSON.get("value").toString().startsWith("?gz!"))
 				{
 					transactionDataJSON.put("value", GZIP.webDecompress(transactionDataJSON.get("value").toString()));	
-					transactionDataJSON.put("Òompressed", true);	
+					transactionDataJSON.put("compressed", true);	
 				}
 				else
 				{
-					transactionDataJSON.put("Òompressed", false);
+					transactionDataJSON.put("compressed", false);
 				}
 			}
 
@@ -1695,11 +1695,11 @@ public class BlockExplorer extends Observable implements Observer
 				if(transactionDataJSON.get("newValue").toString().startsWith("?gz!"))
 				{
 					transactionDataJSON.put("newValue", GZIP.webDecompress(transactionDataJSON.get("newValue").toString()));	
-					transactionDataJSON.put("Òompressed", true);	
+					transactionDataJSON.put("compressed", true);	
 				}
 				else
 				{
-					transactionDataJSON.put("Òompressed", false);
+					transactionDataJSON.put("compressed", false);
 				}
 			}
 
@@ -2073,7 +2073,7 @@ public class BlockExplorer extends Observable implements Observer
 			AT at = DBSet.getInstance().getATMap().getAT(address);
 			Block block = Controller.getInstance().getBlockByHeight(at.getCreationBlockHeight());
 			long aTtimestamp = block.getTimestamp(); 
-			BigDecimal aTbalance—reation = BigDecimal.ZERO.setScale(8); 
+			BigDecimal aTbalancecreation = BigDecimal.ZERO.setScale(8); 
 			for (Transaction transaction : block.getTransactions()) {
 				if (transaction.getType() == Transaction.DEPLOY_AT_TRANSACTION )
 				{
@@ -2082,7 +2082,7 @@ public class BlockExplorer extends Observable implements Observer
 					if(atAccount.getAddress().equals(address))
 					{
 						all.add(transaction);
-						aTbalance—reation = ((DeployATTransaction)transaction).getAmount();
+						aTbalancecreation = ((DeployATTransaction)transaction).getAmount();
 					}
 				}
 			}
@@ -2095,7 +2095,7 @@ public class BlockExplorer extends Observable implements Observer
 
 			Map atJSON=new LinkedHashMap();
 			atJSON = at.toJSON();
-			atJSON.put("balance—reation", aTbalance—reation.toPlainString());
+			atJSON.put("balancecreation", aTbalancecreation.toPlainString());
 			atJSON.put("timestamp", aTtimestamp);
 			atJSON.put("dateTime", BlockExplorer.timestampToStr(aTtimestamp));
 
