@@ -68,7 +68,7 @@ public class SysTray {
 						+ Controller.getInstance().getVersion(),
 						createPopupMenu);
 				
-
+				
 				SystemTray.getSystemTray().add(icon);
 				this.icon = icon;
 				
@@ -125,29 +125,26 @@ public class SysTray {
 		});
 		menu.add(decentralizedWeb);
 		
-		MenuItem unlock = new MenuItem("Unlock");
-		unlock.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				String password = PasswordPane.showUnlockWalletDialog(); 
-				if(!password.equals("") && !Controller.getInstance().unlockWallet(password))
-				{
-					JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
-				}
-
-			}
-		});
-		menu.add(unlock);
 		
-		MenuItem lock = new MenuItem("Lock");
+		
+		MenuItem lock = new MenuItem("Lock/Unlock");
 		lock.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				if(Controller.getInstance().isWalletUnlocked())
 				{
 					Controller.getInstance().lockWallet();
+				}else
+				{
+					String password = PasswordPane.showUnlockWalletDialog(); 
+					if(!password.equals("") && !Controller.getInstance().unlockWallet(password))
+					{
+						JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});
 		menu.add(lock);
+		
 		
 		MenuItem settings = new MenuItem("Settings");
 		settings.addActionListener(new ActionListener(){
