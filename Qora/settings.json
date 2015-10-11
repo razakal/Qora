@@ -29,6 +29,7 @@
 	"maxconnections":100,
 	"minconnections":10,
 	"generatorkeycaching":true,
+	"checkpoint":true,
 	"soundreceivepayment":true,
 	"soundnewtransaction":true,
 	"soundreceivemessage":true
