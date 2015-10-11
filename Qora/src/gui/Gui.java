@@ -3,6 +3,7 @@ package gui;
 import gui.create.NoWalletFrame;
 
 import java.awt.Color;
+import java.awt.TrayIcon.MessageType;
 
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -12,6 +13,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import settings.Settings;
+import utils.SysTray;
 import controller.Controller;
 
 public class Gui extends JFrame{
@@ -48,7 +50,7 @@ public class Gui extends JFrame{
         }
         else
         {
-        	if ( Settings.getInstance().isGuiEnabled() )
+        	if (Settings.getInstance().isGuiEnabled())
         		mainframe =	new MainFrame();
         }
         
@@ -61,7 +63,11 @@ public class Gui extends JFrame{
 	
 	public void onWalletCreated()
 	{
-		mainframe = new MainFrame();
+
+		SysTray.getInstance().sendMessage("Wallet Initialized",
+				"Your wallet is initialied", MessageType.INFO);
+		if (Settings.getInstance().isGuiEnabled())
+			mainframe = new MainFrame();
 	}
 	
 	public void bringtoFront()
