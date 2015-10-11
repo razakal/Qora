@@ -2,10 +2,15 @@ package database;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.TreeMap;
 
 import org.mapdb.BTreeKeySerializer;
+import org.mapdb.BTreeMap;
+import org.mapdb.Bind;
 import org.mapdb.DB;
+import org.mapdb.Fun;
+import org.mapdb.Fun.Tuple2;
 
 import qora.block.Block;
 
@@ -17,6 +22,8 @@ public class HeightMap extends DBMap<byte[], Integer>
 {
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 	
+	private Map<Integer,byte[]> heightIndex;
+	
 	public HeightMap(DBSet databaseSet, DB database)
 	{
 		super(databaseSet, database);
@@ -27,7 +34,19 @@ public class HeightMap extends DBMap<byte[], Integer>
 		super(parent);
 	}
 	
-	protected void createIndexes(DB database){}
+	@SuppressWarnings("unchecked")
+	protected void createIndexes(DB database){
+		heightIndex = database.createTreeMap("block_height_index").makeOrGet();
+		
+		Bind.secondaryKey((BTreeMap)this.map, heightIndex, new Fun.Function2<Integer, byte[], Integer>() {
+			@Override
+			public Integer run(byte[] arg0, Integer arg1) {
+				// TODO Auto-generated method stub
+				return arg1;
+			}
+		
+		});
+	}
 
 	@Override
 	protected Map<byte[], Integer> getMap(DB database) 
@@ -60,6 +79,11 @@ public class HeightMap extends DBMap<byte[], Integer>
 	public int get(Block block)
 	{
 		return this.get(block.getSignature());
+	}
+	
+	public byte[] getBlockByHeight(int height)
+	{
+		return heightIndex.get(height);
 	}
 	
 	public void set(Block block, int height)

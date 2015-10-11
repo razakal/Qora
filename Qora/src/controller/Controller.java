@@ -1425,7 +1425,8 @@ public class Controller extends Observable {
 	}
 
 	public Block getBlockByHeight(int parseInt) {
-		return DBSet.getInstance().getBlockMap().getBlockByHeight(parseInt);
+		byte[] b = DBSet.getInstance().getHeightMap().getBlockByHeight(parseInt);
+		return DBSet.getInstance().getBlockMap().get(b);
 	}
 
 	public byte[] getPublicKeyByAddress(String address) {

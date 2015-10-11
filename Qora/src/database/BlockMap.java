@@ -160,8 +160,4 @@ public class BlockMap extends DBMap<byte[], Block>
 		this.delete(block.getSignature());
 	}
 	
-	public Block getBlockByHeight(int height)
-    {
-        return this.map.get( Lists.newArrayList(this.getIterator(HEIGHT_INDEX, false) ).get( height -1 ));
-    }
 }
