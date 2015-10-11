@@ -828,10 +828,7 @@ public class Block {
 
 		//SET PARENT AS LAST BLOCK
 		db.getBlockMap().setLastBlock(this.getParent(db));
-		Block parent = this.getParent(db);
-
-		
-		
+				
 		for(Transaction transaction: this.getTransactions())
 		{
 			//ADD ORPHANED TRANASCTIONS BACK TO DATABASE

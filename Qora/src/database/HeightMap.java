@@ -2,7 +2,6 @@ package database;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.TreeMap;
 
 import org.mapdb.BTreeKeySerializer;
@@ -10,13 +9,10 @@ import org.mapdb.BTreeMap;
 import org.mapdb.Bind;
 import org.mapdb.DB;
 import org.mapdb.Fun;
-import org.mapdb.Fun.Tuple2;
 
 import qora.block.Block;
 
 import com.google.common.primitives.UnsignedBytes;
-
-import database.DBSet;
 
 public class HeightMap extends DBMap<byte[], Integer> 
 {
@@ -34,7 +30,7 @@ public class HeightMap extends DBMap<byte[], Integer>
 		super(parent);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void createIndexes(DB database){
 		heightIndex = database.createTreeMap("block_height_index").makeOrGet();
 		

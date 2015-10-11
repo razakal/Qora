@@ -15,7 +15,6 @@ import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 import org.mapdb.Fun.Tuple2Comparator;
 
-import com.google.common.collect.Lists;
 import com.google.common.primitives.UnsignedBytes;
 
 import qora.block.Block;
@@ -175,6 +174,7 @@ public class BlockMap extends DBMap<byte[], Block>
 		this.delete(block.getSignature());
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Collection<byte[]> getGeneratorBlocks(String address)
 	{
 		Collection<byte[]> blocks = ((BTreeMap)(this.generatorMap))

@@ -5,21 +5,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableMap;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.CharSet;
 import org.bouncycastle.util.encoders.Hex;
-import org.mapdb.Fun;
-
-import com.google.common.collect.Lists;
 
 import qora.account.Account;
-import qora.block.Block;
-import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Base58;
 import qora.transaction.MessageTransaction;
 import qora.transaction.Transaction;
@@ -27,6 +19,9 @@ import utils.Converter;
 import at.AT;
 import at.AT_API_Helper;
 import at.AT_Transaction;
+
+import com.google.common.collect.Lists;
+
 import database.DBSet;
 
 public class ATWebResource {
@@ -77,6 +72,7 @@ public class ATWebResource {
 		return tagMap;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Collection<String> getCol(TreeMap map, String key)
 	{
 		return (Collection<String>) map.get(key);

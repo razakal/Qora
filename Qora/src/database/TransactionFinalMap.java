@@ -9,20 +9,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
-import java.util.TreeMap;
 
 import org.mapdb.BTreeKeySerializer;
+import org.mapdb.BTreeMap;
 import org.mapdb.Bind;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
-import org.mapdb.BTreeMap;
 
 import qora.account.Account;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.Transaction;
-import database.DBMap;
 import database.serializer.TransactionSerializer;
 
 public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transaction>
@@ -189,6 +187,7 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 		return getTransactionsByRecipient(address, 0);
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Transaction> getTransactionsByRecipient(String address, int limit)
 	{
 		Iterable keys = Fun.filter(this.recipientKey, address);
@@ -209,6 +208,7 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 		return getTransactionsByRecipient(address, 0);
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Transaction> getTransactionsBySender(String address, int limit)
 	{
 		Iterable keys = Fun.filter(this.senderKey, address);
@@ -225,6 +225,7 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 		return txs;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Transaction> getTransactionsByTypeAndAddress(String address, Integer type, int limit)
 	{
 		Iterable keys = Fun.filter(this.typeKey, new Tuple2<String, Integer>(address, type));
@@ -241,6 +242,7 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 		return txs;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Tuple2<Integer, Integer> getTransactionsAfterTimestamp(int startHeight, int numOfTx,
 			String address) {
 		Iterable keys = Fun.filter(this.recipientKey, address);

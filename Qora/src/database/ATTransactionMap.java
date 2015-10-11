@@ -207,6 +207,7 @@ public class ATTransactionMap extends DBMap< Tuple2<Integer, Integer> ,  AT_Tran
 		return ats;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Tuple2<Integer,Integer > getNextATTransaction(Integer height, Integer seq, String recipient)
 	{
 		Iterable keys = Fun.filter(this.recipientKey,recipient);
