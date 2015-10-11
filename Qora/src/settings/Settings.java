@@ -14,6 +14,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import controller.Controller;
+
 public class Settings {
 
 	//NETWORK
@@ -465,6 +467,12 @@ public class Settings {
 
 	public boolean isGuiEnabled() 
 	{
+		
+		if(!Controller.getInstance().doesWalletDatabaseExists())
+		{
+			return true;
+		}
+		
 		if(System.getProperty("nogui") != null)
 		{
 			return false;
