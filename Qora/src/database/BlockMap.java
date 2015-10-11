@@ -1,5 +1,6 @@
 package database;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -7,6 +8,8 @@ import java.util.TreeMap;
 
 import org.mapdb.Atomic.Var;
 import org.mapdb.BTreeKeySerializer;
+import org.mapdb.BTreeMap;
+import org.mapdb.Bind;
 import org.mapdb.DB;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
@@ -16,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.UnsignedBytes;
 
 import qora.block.Block;
+import utils.Converter;
 import utils.ObserverMessage;
 import utils.ReverseComparator;
 import database.DBSet;
@@ -32,6 +36,8 @@ public class BlockMap extends DBMap<byte[], Block>
 	
 	private Var<Boolean> processingVar;
 	private Boolean processing;
+	
+	private BTreeMap<Tuple2<String, String>, byte[]> generatorMap;
 	
 	public BlockMap(DBSet databaseSet, DB database)
 	{
@@ -76,6 +82,15 @@ public class BlockMap extends DBMap<byte[], Block>
 		    public Integer run(byte[] key, Block value) {
 		   		return value.getHeight();
 		    }
+		});
+		
+		generatorMap = database.createTreeMap("generators_index").makeOrGet();
+		
+		Bind.secondaryKey((BTreeMap)this.map, generatorMap, new Fun.Function2<Tuple2<String, String>, byte[], Block>() {
+			@Override
+			public Tuple2<String, String> run(byte[] b, Block block) {
+				return new Tuple2<String, String>(block.getGenerator().getAddress(), Converter.toHex(block.getSignature()));
+			}
 		});
 	}
 
@@ -158,6 +173,14 @@ public class BlockMap extends DBMap<byte[], Block>
 	public void delete(Block block)
 	{
 		this.delete(block.getSignature());
+	}
+	
+	public Collection<byte[]> getGeneratorBlocks(String address)
+	{
+		Collection<byte[]> blocks = ((BTreeMap)(this.generatorMap))
+				.subMap(Fun.t2(address, null), Fun.t2(address,Fun.HI())).values();
+		
+		return blocks;
 	}
 	
 }

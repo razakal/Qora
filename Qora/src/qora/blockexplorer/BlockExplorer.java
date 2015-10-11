@@ -2032,17 +2032,14 @@ public class BlockExplorer extends Observable implements Observer
 		{
 			if (!address.startsWith("A"))
 			{
-
-				Block block = new GenesisBlock();
-				do
+				
+				Collection<byte[]> blocks = DBSet.getInstance().getBlockMap().getGeneratorBlocks(address);
+				
+				for (byte[] b : blocks)
 				{
-					if(block.getGenerator().getAddress().equals(address))
-					{
-						all.add(block);
-					}
-					block = block.getChild();
+					all.add(DBSet.getInstance().getBlockMap().get(b));
 				}
-				while(block != null);
+				
 			}
 
 			List<Transaction> txsRcp = DBSet.getInstance().getTransactionFinalMap().getTransactionsByRecipient(address);
