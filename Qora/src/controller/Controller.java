@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.io.IOException;
@@ -862,7 +863,7 @@ public class Controller extends Observable {
 			}
 		}
 
-		if (Settings.getInstance().isGuiEnabled() || Settings.getInstance().isSysTrayEnabled() ) {
+		if (!GraphicsEnvironment.isHeadless() &&  (Settings.getInstance().isGuiEnabled() || Settings.getInstance().isSysTrayEnabled()) ) {
 			Gui gui = Gui.getInstance();
 			
 			SysTray.getInstance().sendMessage("INCOMING API CALL",
