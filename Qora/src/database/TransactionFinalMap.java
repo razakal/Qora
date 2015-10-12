@@ -205,7 +205,7 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 	
 	public List<Transaction> getTransactionsBySender(String address)
 	{
-		return getTransactionsByRecipient(address, 0);
+		return getTransactionsBySender(address, 0);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
