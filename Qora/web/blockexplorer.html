@@ -2547,21 +2547,19 @@ function mainQuery(data) {
 						output += '</tr>';
 						
 						output += '<tr><td colspan=5><b>Message:</b> <pre>';
+						
+						if(!data[i].transaction.isText)
+						{
+							output += '<b>base58:</b> ';
+						}
+						
 						if(data[i].transaction.encrypted)
 						{
 							output += '<font color=red>encrypted</font>';
 						}
 						else
 						{
-							if(data[i].transaction.isText)
-							{
-								buf = htmlFilter(uintToString(Base58.decode(data[i].transaction.data)));
-								output += wordwrap(buf, 120, '\n', true);
-							}
-							else
-							{
-								output += '<b>base58:</b> ' + wordwrap(data[i].transaction.data, 120, '\n', true);
-							}
+							output += wordwrap(data[i].transaction.data, 120, '\n', true);
 						}
 												
 						output += '</pre></td>';
