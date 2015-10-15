@@ -97,42 +97,48 @@ public class DBSet implements Observer, IDB {
 	
 	public DBSet(DB database)
 	{
-		this.database = database;
-		this.actions = 0;
-		
-		this.balanceMap = new BalanceMap(this, database);
-		this.transactionFinalMap = new TransactionFinalMap(this, database);
-		this.blockMap = new BlockMap(this, database);
-		this.childMap = new ChildMap(this, database);
-		this.heightMap = new HeightMap(this, database);
-		this.referenceMap = new ReferenceMap(this, database);
-		this.peerMap = new PeerMap(this, database);
-		this.transactionMap = new TransactionMap(this, database);
-		this.nameMap = new NameMap(this, database);
-		this.nameStorageMap = new NameStorageMap(this, database);
-		this.orphanNameStorageMap = new OrphanNameStorageMap(this, database);
-		this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(this, database);
-		this.sharedPostsMap = new SharedPostsMap(this, database);
-		this.localDataMap = new LocalDataMap(this, database);
-		this.blogPostMap = new BlogPostMap(this, database);
-		this.hashtagPostMap = new HashtagPostMap(this, database);
-		this.transactionParentMap = new TransactionParentMap(this, database);
-		this.nameExchangeMap = new NameExchangeMap(this, database);
-		this.updateNameMap = new UpdateNameMap(this, database);
-		this.cancelSellNameMap = new CancelSellNameMap(this, database);
-		this.pollMap = new PollMap(this, database);
-		this.voteOnPollMap = new VoteOnPollMap(this, database);
-		this.assetMap = new AssetMap(this, database);
-		this.issueAssetMap = new IssueAssetMap(this, database);
-		this.orderMap = new OrderMap(this, database);
-		this.completedOrderMap = new CompletedOrderMap(this, database);
-		this.tradeMap = new TradeMap(this, database);
-		this.atMap = new ATMap(this,database);
-		this.atStateMap = new ATStateMap(this,database);
-		this.atTransactionMap = new ATTransactionMap(this,database);
-		this.transactionOfAddressMap = new TransactionsOfAddressMap(this, database);
-		this.blocksOfAddressMap = new BlocksOfAddressMap(this, database);
-		this.transactionOfNameMap = new TransactionsOfNameMap(this, database);
+		try {
+			this.database = database;
+			this.actions = 0;
+			
+			this.balanceMap = new BalanceMap(this, database);
+			this.transactionFinalMap = new TransactionFinalMap(this, database);
+			this.blockMap = new BlockMap(this, database);
+			this.childMap = new ChildMap(this, database);
+			this.heightMap = new HeightMap(this, database);
+			this.referenceMap = new ReferenceMap(this, database);
+			this.peerMap = new PeerMap(this, database);
+			this.transactionMap = new TransactionMap(this, database);
+			this.nameMap = new NameMap(this, database);
+			this.nameStorageMap = new NameStorageMap(this, database);
+			this.orphanNameStorageMap = new OrphanNameStorageMap(this, database);
+			this.orphanNameStorageHelperMap = new OrphanNameStorageHelperMap(this, database);
+			this.sharedPostsMap = new SharedPostsMap(this, database);
+			this.localDataMap = new LocalDataMap(this, database);
+			this.blogPostMap = new BlogPostMap(this, database);
+			this.hashtagPostMap = new HashtagPostMap(this, database);
+			this.transactionParentMap = new TransactionParentMap(this, database);
+			this.nameExchangeMap = new NameExchangeMap(this, database);
+			this.updateNameMap = new UpdateNameMap(this, database);
+			this.cancelSellNameMap = new CancelSellNameMap(this, database);
+			this.pollMap = new PollMap(this, database);
+			this.voteOnPollMap = new VoteOnPollMap(this, database);
+			this.assetMap = new AssetMap(this, database);
+			this.issueAssetMap = new IssueAssetMap(this, database);
+			this.orderMap = new OrderMap(this, database);
+			this.completedOrderMap = new CompletedOrderMap(this, database);
+			this.tradeMap = new TradeMap(this, database);
+			this.atMap = new ATMap(this,database);
+			this.atStateMap = new ATStateMap(this,database);
+			this.atTransactionMap = new ATTransactionMap(this,database);
+			this.transactionOfAddressMap = new TransactionsOfAddressMap(this, database);
+			this.blocksOfAddressMap = new BlocksOfAddressMap(this, database);
+			this.transactionOfNameMap = new TransactionsOfNameMap(this, database);
+			
+		} catch (Throwable e) {
+			this.close();
+			throw e;
+		}
 	}
 	
 	protected DBSet(DBSet parent)

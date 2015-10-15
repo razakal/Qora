@@ -158,35 +158,23 @@ public class Controller extends Observable {
 		this.transactionCreator = new TransactionCreator();
 
 		// OPENING DATABASES
-		DBSet.getInstance();
+		try {
+			DBSet.getInstance();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			System.out.println("Error during startup detected trying to restore backup database...");
+			reCreateDB();
+		}
 
 //		startFromScratchOnDemand();
 
 		if (DBSet.getInstance().getBlockMap().isProcessing()) {
-			DBSet.getInstance().close();
-
-			File dataDir = new File(Settings.getInstance().getDataDir());
-			if (dataDir.exists()) {
-				// delete data folder
-				java.nio.file.Files.walkFileTree(dataDir.toPath(),
-						new SimpleFileVisitorForRecursiveFolderDeletion());
-				File dataBak = getDataBakDir(dataDir);
-				if (dataBak.exists()
-						&& Settings.getInstance().isCheckpointingEnabled()) {
-					FileUtils.copyDirectory(dataBak, dataDir);
-					DBSet.reCreateDatabase();
-				} else {
-					DBSet.reCreateDatabase();
-				}
-
+			try {
+				DBSet.getInstance().close();
+			} catch (Throwable e) {
+				e.printStackTrace();
 			}
-
-			if (DBSet.getInstance().getBlockMap().isProcessing()) {
-				throw new Exception(
-						"The application was not closed correctly! Delete the folder "
-								+ dataDir.getAbsolutePath()
-								+ " and start the application again.");
-			}
+			reCreateDB();
 		}
 		
 		//CHECK IF DB NEEDS UPDATE
@@ -255,6 +243,35 @@ public class Controller extends Observable {
 		// REGISTER DATABASE OBSERVER
 		this.addObserver(DBSet.getInstance().getTransactionMap());
 		this.addObserver(DBSet.getInstance());
+	}
+
+	public void reCreateDB() throws IOException, Exception {
+		
+
+		File dataDir = new File(Settings.getInstance().getDataDir());
+		if (dataDir.exists()) {
+			// delete data folder
+			java.nio.file.Files.walkFileTree(dataDir.toPath(),
+					new SimpleFileVisitorForRecursiveFolderDeletion());
+			File dataBak = getDataBakDir(dataDir);
+			if (dataBak.exists()
+					&& Settings.getInstance().isCheckpointingEnabled()) {
+				FileUtils.copyDirectory(dataBak, dataDir);
+				System.out.println("restoring backup database");
+				DBSet.reCreateDatabase();
+				
+			} else {
+				DBSet.reCreateDatabase();
+			}
+
+		}
+
+		if (DBSet.getInstance().getBlockMap().isProcessing()) {
+			throw new Exception(
+					"The application was not closed correctly! Delete the folder "
+							+ dataDir.getAbsolutePath()
+							+ " and start the application again.");
+		}
 	}
 
 	public void startFromScratchOnDemand() throws IOException {
