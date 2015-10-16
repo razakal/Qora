@@ -1281,10 +1281,16 @@ function mainQuery(data) {
 			output += '<font size="+1">Trade</font><br>';
 		}
 		
-		if(data.type == 'standardAccount' || data.type == 'name' || data.type == 'at')
+		if(data.type == 'standardAccount' || data.type == 'at')
 		{
 			output += pages(data.pages, data.start, data.end, url, data.allOnOnePage);
 		}	
+		
+		if(data.type == 'name')
+		{
+			output += pagesOld(data.countTx.allCount, data.txOnPage, data.start, data.end, url, data.allOnOnePage);
+		}
+			
 		output += '<br>';
 		
 		{
@@ -2675,10 +2681,17 @@ function mainQuery(data) {
 				}
 			}
 		
-			if(data.type == 'standardAccount' || data.type == 'name' || data.type == 'at')
+			if(data.type == 'standardAccount' || data.type == 'at')
 			{
 				output += pages(data.pages, data.start, data.end, url, data.allOnOnePage);
 			}
+			
+			if(data.type == 'name')
+			{
+				output += pagesOld(data.countTx.allCount, data.txOnPage, data.start, data.end, url, data.allOnOnePage);
+			}
+			
+			pagesForNames
 			
 			output +=  '</table>';
 			
@@ -2773,6 +2786,68 @@ function pages(datapages, datastart, dataend, url, dataallOnOnePage)
 		
 	return pages;
 }
+
+function pagesOld(dataallCount, datatxOnPage, datastart, dataend, url, allOnOnePage)
+{
+	var pages = '';
+	var start = 0;
+	var end = 0;
+	var k = 0;
+	pages += '<table width="100%"><tr><td>Pages: ';
+	
+	if(datastart < dataallCount)
+	{
+		pages += '<a class=without style="font-size: 15px;" href=' + url + '&start=' + ( datastart + datatxOnPage + 1 ) + '>«</a> ';
+	}
+		
+	do {
+		k++;
+		if(k == 1)
+		{
+			start = dataallCount;
+		}
+		else
+		{
+			start = end - 1;
+		}
+		
+		if(start > datatxOnPage)
+		{
+			end = start - datatxOnPage;
+		}
+		else
+		{
+			end = 1;
+		}
+		
+		if(datastart <= start && datastart >= end && !allOnOnePage)
+		{
+			pages += '<b><nobr>['+ start + '-' + end + ']</nobr></b> ';
+		}
+		else
+		{
+			pages += '<nobr><a class=without href='+url.replace( '&allOnOnePage', '')+'&start='+start+'>'+ start +'-' + end +'</a></nobr> ';
+		}
+	} while (end > 1)
+	
+	if(dataend > 1)
+	{
+		pages += ' <a class=without style="font-size: 15px;" href=' + url + '&start=' + ( dataend - 1 ) + '>»</a>';
+	}
+	
+	if(allOnOnePage)
+	{
+		pages += '&nbsp;<b><nobr>[All on one page]</nobr></b>';
+	}
+	else
+	{
+		pages += '&nbsp;<a class=without href=' + url.replace( '&allOnOnePage', '') + '&allOnOnePage' + '>All on one page</a>';
+	}
+	
+	pages +=  '</table>';
+		
+	return pages;
+}	
 	
 function printBalance(balance)
 {
