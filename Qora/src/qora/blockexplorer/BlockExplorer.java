@@ -2068,8 +2068,8 @@ public class BlockExplorer extends Observable implements Observer
 			//List<Transaction> txsSnd = DBSet.getInstance().getTransactionFinalMap().getTransactionsBySender(address);
 			//all.addAll(txsRcp);
 			//all.addAll(txsSnd);
-
-			for (int type = 1; type <= 17; type++) {  // 17 - The number of transaction types.
+			
+			for (int type = 1; type <= 23; type++) {  // 17 - The number of transaction types. 23 - for the future
 				all.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, type, 0));
 			}
 			
