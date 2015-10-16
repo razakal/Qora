@@ -460,6 +460,8 @@ public class BlockExplorer extends Observable implements Observer
 				String filter = "standart";
 				boolean withoutBlocks = false;
 				boolean allOnOnePage = false;
+				String showOnly = "";
+				String showWithout = "";
 
 				if(info.getQueryParameters().containsKey("start"))
 				{
@@ -486,9 +488,19 @@ public class BlockExplorer extends Observable implements Observer
 					withoutBlocks = true;
 				}
 
+				if(info.getQueryParameters().containsKey("showOnly"))
+				{
+					showOnly = info.getQueryParameters().getFirst("showOnly");
+				}
+				
+				if(info.getQueryParameters().containsKey("showWithout"))
+				{
+					showWithout = info.getQueryParameters().getFirst("showWithout");
+				}
+				
 				output.put("lastBlock", jsonQueryLastBlock());
 
-				output.putAll(jsonQueryAddress(info.getQueryParameters().getFirst("addr"), start, txOnPage, filter, allOnOnePage, withoutBlocks));
+				output.putAll(jsonQueryAddress(info.getQueryParameters().getFirst("addr"), start, txOnPage, filter, allOnOnePage, withoutBlocks, showOnly, showWithout));
 
 				output.put("queryTimeMs", stopwatchAll.elapsedTime());
 				return output;
@@ -1972,13 +1984,23 @@ public class BlockExplorer extends Observable implements Observer
 		return output;
 	}
 
-	public Map jsonQueryAddress(String query, int start, int txOnPage, String filter, boolean allOnOnePage, boolean withoutBlocks)
+	public Map jsonQueryAddress(String query, int start, int txOnPage, String filter, boolean allOnOnePage, boolean withoutBlocks, String showOnly, String showWithout)
 	{
 		List<Object> all = new ArrayList<Object>();
 		String address = query;
+		
+		Map output = new LinkedHashMap();
 
-		Map output=new LinkedHashMap();
-
+		Map<String, Boolean> showOnlyMap = new LinkedHashMap<String, Boolean>();
+		for (String string : showOnly.split(",")) {
+			showOnlyMap.put(string, true);
+		}
+		
+		Map<String, Boolean> showWithoutMap = new LinkedHashMap<String, Boolean>();
+		for (String string : showWithout.split(",")) {
+			showWithoutMap.put(string, true);
+		}
+		
 		if(!Crypto.getInstance().isValidAddress(address))
 		{
 			output.put("error", "Address is not valid!");
@@ -2338,7 +2360,48 @@ public class BlockExplorer extends Observable implements Observer
 		output.put("balanceCheck", new Account(address).getBalance(1).toPlainString());
 
 		Map txCountJSON = new LinkedHashMap();
-
+		
+		if(!showOnly.equals(""))
+		{
+			showWithoutMap.clear();
+			int n = 1;
+			for (int txCount : txsTypeCount) {
+				if(txCount > 0)
+				{
+					if(!showOnlyMap.containsKey(String.valueOf(n)))
+					{
+						showWithoutMap.put(String.valueOf(n), true);
+					}
+				}
+				
+				n ++;
+			}
+			
+			if(blocksCount > 0)
+			{
+				if(!showOnlyMap.containsKey("blocks"))
+				{
+					showWithoutMap.put("blocks", true);
+				}	
+			}
+			
+			if(aTTxsCount > 0)
+			{
+				if(!showOnlyMap.containsKey("aTTxs"))
+				{
+					showWithoutMap.put("aTTxs", true);
+				}	
+			}
+			
+			if(tradesCount > 0)
+			{
+				if(!showOnlyMap.containsKey("trades"))
+				{
+					showWithoutMap.put("trades", true);
+				}	
+			}
+		}
+		
 		if(txsCount > 0)
 		{
 			txCountJSON.put("txsCount", txsCount);
@@ -2347,7 +2410,7 @@ public class BlockExplorer extends Observable implements Observer
 			for (int txCount : txsTypeCount) {
 				if(txCount > 0)
 				{
-					txTypeCountJSON.put(n, txCount);
+					txTypeCountJSON.put(n, txCount);					
 				}
 				n ++;
 			}
@@ -2377,22 +2440,6 @@ public class BlockExplorer extends Observable implements Observer
 
 		output.put("countTx", txCountJSON);
 
-		int sizeBuf = size;
-		int startReal;
-
-		if(withoutBlocks)
-		{
-			sizeBuf = sizeBuf - blocksCount;
-		}
-
-		if(start == -1 )
-		{
-			start = sizeBuf;
-		}
-
-
-		startReal = -1;
-
 		output.put("txOnPage", txOnPage);
 
 		output.put("filter", filter);
@@ -2401,41 +2448,90 @@ public class BlockExplorer extends Observable implements Observer
 
 		output.put("withoutBlocks", withoutBlocks);
 
-		output.put("start", start);
+		output.put("showOnly", showOnly);
 
-		int end;
-
-		if(start > txOnPage)
-		{
-			if(allOnOnePage)
-			{
-				end = 1;
-			}
-			else
-			{
-				end = start - txOnPage;	
-			}
-		}
-		else
-		{
-			end = 1;
-		}
-
-		output.put("end", end);
+		output.put("showWithout", showWithout);
+		
+		int end = -1;
 
 		int counter = 0;
 
-		int counterBuf = 0;
+		List<String> pages = new ArrayList<String>();
+
+		int onThisPage = 0;
+		int onThisPageCurent = 0;
+		boolean firstPage = false;
 
 		for (Object unit : all) {
-			if(counterBuf >= sizeBuf - start)
+
+			onThisPage ++;
+			
+			if(((unit instanceof Block) && (withoutBlocks || showWithoutMap.containsKey("blocks"))))
 			{
-				if((unit instanceof Block) && withoutBlocks)
+				onThisPage --;
+			}
+
+			if(((unit instanceof Trade) && showWithoutMap.containsKey("trades")))
+			{
+				onThisPage --;
+			}
+
+			if(((unit instanceof AT_Transaction) && showWithoutMap.containsKey("aTTxs")))
+			{
+				onThisPage --;
+			}
+
+			if(((unit instanceof Transaction) && showWithoutMap.containsKey(String.valueOf(((Transaction)unit).getType()))))
+			{
+				onThisPage --;
+			}
+			
+			if(!firstPage && onThisPage == 1)
+			{
+				pages.add("start_" + String.valueOf(size - counter));
+				firstPage = true;
+				
+				if(start == -1)
+				{
+					start = size - counter;
+				}
+			}
+
+			if(onThisPage >= txOnPage)
+			{
+				pages.add("end_"+String.valueOf(size - counter));
+				onThisPage = 0;
+				firstPage = false;
+			}
+
+			if(start != -1 && counter >= size - start && ((onThisPageCurent < txOnPage) || allOnOnePage))
+			{
+				if((unit instanceof Block) && (withoutBlocks || showWithoutMap.containsKey("blocks")))
 				{
 					counter++;
 					continue;
 				}
 
+				if((unit instanceof Trade) && showWithoutMap.containsKey("trades"))
+				{
+					counter++;
+					continue;
+				}
+
+				if((unit instanceof AT_Transaction) && showWithoutMap.containsKey("aTTxs"))
+				{
+					counter++;
+					continue;
+				}
+
+				if((unit instanceof Transaction) && showWithoutMap.containsKey(String.valueOf(((Transaction)unit).getType())))
+				{
+					counter++;
+					continue;
+				}
+
+				onThisPageCurent++;
+				
 				Map transactionJSON = new LinkedHashMap();
 
 				transactionJSON.putAll(jsonUnitPrint(unit, assetNamesByKey));
@@ -2471,26 +2567,23 @@ public class BlockExplorer extends Observable implements Observer
 
 				transactionJSON.put("balance", IncomeJSON);
 
-				output.put(sizeBuf - counterBuf, transactionJSON);
+				output.put(size - counter, transactionJSON);
 
-				if(startReal == -1)
-				{
-					startReal = counter;
-				}
-
+				end = size - counter;
 			}
 
-			if(!((unit instanceof Block) && withoutBlocks))
-			{
-				counterBuf ++;
-			}
-
-			if(counterBuf > sizeBuf - end)
-			{
-				break;
-			}
 			counter++;
 		}
+		
+		if(onThisPage > 0)
+		{
+			pages.add("end_"+String.valueOf(1));
+		}
+
+		output.put("start", start);
+		output.put("end", end);
+		
+		output.put("pages", pages);
 
 		return output;
 	}	

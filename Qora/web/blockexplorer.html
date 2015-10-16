@@ -118,11 +118,19 @@
       .navbar-header {
       width: 110px;
       }
+	  
+	  a.anchor {
+		display: block;
+		position: relative;
+		top: -64px;
+		visibility: hidden;
+	}
 	</style>
 	<script type="text/javascript">
 	
 var loading = true;
-	
+var params;
+
 function getXmlHttp(){
 	var xmlhttp;
 	try {
@@ -176,7 +184,14 @@ function asyncAjax (url, type){
 				
 				if(type == 'mainQuery')
 				{
-					document.getElementById('main').innerHTML = mainQuery(data)
+					document.getElementById('main').innerHTML = mainQuery(data);
+					genFilterUrlForAll();
+					genFilterUrl();
+					//document.getElementById(window.location.hash.replace( '#', '' )).scrollIntoView(true);
+					if(window.location.hash)
+					{
+						window.location.href = window.location.hash;
+					}
 				}
 				
 				if(type == 'aTs')
@@ -853,43 +868,6 @@ function trades(data)
 			output += addCommas(data.trades[key].amount);
 			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);		
 		}
-		/*
-		output += ' <img src=img/grright.png style="vertical-align: middle;">';
-		
-		if(data.trades[key].type == 'sell')
-		{
-			output += '<td align=center>' + addCommas(data.trades[key].realReversePrice);
-		}
-		else
-		{
-			output += '<td align=center>' + addCommas(data.trades[key].realPrice);
-		}
-		
-		output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
-		
-		output += '<td style="line-height: 150%;">';
-		output += '<a href=?addr='+data.trades[key].initiatorCreator+'>' + data.trades[key].initiatorCreator + '</a>';
-		if(data.trades[key].initiatorCreator == data.assetHaveOwner)
-		{
-			output += ' <b>&bull;</b> ';
-		}
-		if(data.trades[key].initiatorCreator == data.assetWantOwner)
-		{
-			output += ' <b>&#9674;</b> ';
-		}
-		
-		output += '<br><img src=img/grleft.png style="vertical-align: middle;"> ';
-		output += addCommas(data.trades[key].price);
-
-		if(data.trades[key].type == 'sell')
-		{
-			output += ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
-		}
-		else
-		{
-			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
-		}
-		*/
 	}
 	
 	output += '</table>';
@@ -905,6 +883,103 @@ function trades(data)
 	output += '</b>';
 	
 	return output;
+}
+
+function isFilter(param) {
+	
+	return filters.hasOwnProperty(param);
+}
+
+function delPrm(Url,Prm) {
+	var a=Url.split('?');
+	var re = new RegExp('(\\?|&)'+Prm+'=[^&]+','g');
+	Url=('?'+a[1]).replace(re,'');
+	Url=Url.replace(/^&|\?/,'');
+	var dlm=(Url=='')? '': '?';
+	return a[0]+dlm+Url;
+};
+
+function genFilterUrlForAll() {
+	elementShowOnly = document.getElementsByClassName('showOnly');
+
+	urlBuf = location.href.replace(location.hash, '');
+	urlBuf = delPrm(urlBuf, 'showWithout');
+	urlBuf = delPrm(urlBuf, 'showOnly');
+	
+	for (var i = 0; i < elementShowOnly.length; i++)
+	{
+		elementShowOnly[i].href = urlBuf + '&showOnly=' + elementShowOnly[i].id;
+	}
+
+
+	elementTypes = document.getElementsByName('types');
+	
+	if(params.hasOwnProperty('showOnly'))
+	{
+		showOnlyArray = params['showOnly'].split(',');
+		
+		for (var i = 0; i < elementTypes.length; i++)
+		{
+			for (var k = 0; k < showOnlyArray.length; k++)
+			{
+				elementTypes[i].checked = false;
+				if(elementTypes[i].value == showOnlyArray[k])
+				{
+					elementTypes[i].checked = true;
+				}
+			}
+		}
+	}
+	else if(params.hasOwnProperty('showWithout'))
+	{
+		showWithoutArray = params['showWithout'].split(',');
+
+		for (var i = 0; i < elementTypes.length; i++)
+		{
+			elementTypes[i].checked = true;
+			for (var k = 0; k < showWithoutArray.length; k++)
+			{
+				if(elementTypes[i].value == showWithoutArray[k])
+				{
+					elementTypes[i].checked = false;
+				}
+			}
+		}
+
+	}
+}
+
+function genFilterUrl() {
+	
+	if(document.getElementById("showWithout") === null)
+	{
+		return 0;
+	}
+	
+	elementTypes = document.getElementsByName('types');
+	
+	var typesArray = [];
+	
+	for (var i = 0; i < elementTypes.length; i++)
+	{
+		if(!elementTypes[i].checked)
+		{
+			typesArray.push(elementTypes[i].value);
+		}
+	}
+	
+	urlBuf = location.href.replace(location.hash, '');
+	urlBuf = delPrm(urlBuf, 'showWithout');
+	urlBuf = delPrm(urlBuf, 'showOnly');
+	
+	document.getElementById("showWithout").href = urlBuf;
+
+	if(typesArray.length>0)
+	{
+		document.getElementById("showWithout").href += '&showWithout='+typesArray.join(',');
+	}
+
+	document.getElementById("cancelFilter").href = urlBuf;
 }
 
 function mainQuery(data) {
@@ -926,6 +1001,24 @@ function mainQuery(data) {
 				withoutBlocks = '';
 			}
 	
+			if(data.showOnly)
+			{
+				showOnly = '&showOnly=' + data.showOnly;
+			}
+			else
+			{
+				showOnly = '';
+			}
+
+			if(data.showWithout)
+			{
+				showWithout = '&showWithout=' + data.showWithout;
+			}
+			else
+			{
+				showWithout = '';
+			}
+			
 			if(data.allOnOnePage)
 			{
 				allOnOnePage = '&allOnOnePage';
@@ -935,8 +1028,8 @@ function mainQuery(data) {
 				allOnOnePage = '';
 			}
 			
-			urlstart = '?addr=' + data.address+'&start=' + data.start + withoutBlocks + allOnOnePage;
-			url = '?addr=' + data.address + withoutBlocks + allOnOnePage;
+			urlstart = '?addr=' + data.address+'&start=' + data.start + withoutBlocks + allOnOnePage + showOnly + showWithout;
+			url = '?addr=' + data.address + withoutBlocks + allOnOnePage + showOnly + showWithout;
 		}
 		
 		if(data.hasOwnProperty('error'))
@@ -959,7 +1052,7 @@ function mainQuery(data) {
 				output += 'Transactions count: ' + data.countTx.txsCount + '<br>Including:<br>';
 
 				for(key in data.countTx.txsTypesCount) {
-					output += '&nbsp;&nbsp;&nbsp;'+transactionTypes[key]+': '+data.countTx.txsTypesCount[key]+ '<br>\n';
+					output += '&nbsp;&nbsp;&nbsp;<input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value='+key+'><a class=showOnly id='+key+' href=#>'+transactionTypes[key]+': '+data.countTx.txsTypesCount[key]+ '</a><br>\n';
 				}
 			}
 			else
@@ -967,36 +1060,47 @@ function mainQuery(data) {
 				output += 'Transactions count: 0<br>';
 			}
 			
+			output += '<br>';
+			
 			if(data.countTx.tradesCount > 0)
 			{
-				output += '<br>+ Trades: ' + data.countTx.tradesCount + '<br>\n';
+				output += '+ <input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=trades><a class=showOnly id=trades href=#>Trades: ' + data.countTx.tradesCount + '</a><br>\n';
 			}
 			
 			if(data.countTx.aTTxsCount > 0)
 			{
-				output += '<br>+ AT Transactions: ' + data.countTx.aTTxsCount + '<br>\n';
+				output += '+ <input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=aTTxs><a class=showOnly id=aTTxs href=#>AT Transactions: ' + data.countTx.aTTxsCount + '</a><br>\n';
 			}
-			
-			output += '<br>Received: ' + addCommas(data.totalBalance.receivedQora) + ' Qora'+'<br>';
 			
 			if(data.countTx.blocksCount > 0)
 			{
-				output += '&nbsp;&nbsp;&nbsp;Including total fee: '+addCommas(data.totalBalance.totalGeneratedFee)+' Qora ';
-				output += 'from generated ' + data.countTx.blocksCount +' blocks.'+'<br>';
-				if(data.withoutBlocks)
-				{
-					output += '&nbsp;&nbsp;&nbsp;<font size="-2"><a href=' + url.replace('&withoutBlocks', '')+'>show with generated blocks</a></font><br>';
-				}
-				else
-				{
-					output += '&nbsp;&nbsp;&nbsp;<font size="-2"><a href='+url.replace('&withoutBlocks', '')+'&withoutBlocks'+'>show without generated blocks</a></font><br>';
-				}
+				//output += '&nbsp;&nbsp;&nbsp;Including total fee: '+addCommas(data.totalBalance.totalGeneratedFee)+' Qora ';
+				//output += 'from generated ' + data.countTx.blocksCount +' blocks.'+'<br>';
+				
+				output += '+ <input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=blocks><a class=showOnly id=blocks href=#>Generated blocks: '+data.countTx.blocksCount + '</a>, including total fee: '+addCommas(data.totalBalance.totalGeneratedFee)+' Qora<br>';
+				
+				//if(data.withoutBlocks)
+				//{
+				//	output += '&nbsp;&nbsp;&nbsp;<font size="-2"><a href=' + url.replace('&withoutBlocks', '')+'>show with generated blocks</a></font><br>';
+				//}
+				//else
+				//{
+				//	output += '&nbsp;&nbsp;&nbsp;<font size="-2"><a href='+url.replace('&withoutBlocks', '')+'&withoutBlocks'+'>show without generated blocks</a></font><br>';
+				//}
 			}
+
+			output += '<br>&nbsp;&nbsp;&nbsp;<a id=showWithout href=><b>Apply filter</b></a>';
+			output += '<br>&nbsp;&nbsp;&nbsp;<a id=cancelFilter href=><b>Cancel filter</b></a>';
 			
-			output += '<br>Send: ' + addCommas(data.totalBalance.sendQora) + ' Qora'+'<br>';
+			output += '<br>';
+			
+			output += '<br>Total Received: ' + addCommas(data.totalBalance.receivedQora) + ' Qora';
+			
+			output += '<br>Total Send: ' + addCommas(data.totalBalance.sendQora) + ' Qora'+'<br>';
 			output += '<br>';
 
-			output += '<font size=+1><b>total balance:<br>';
+			
+			output += '<font size=+1><b>Total balance:<br>';
 			
 			var totalBalance = "";
 			for(key in data.totalBalance) {
@@ -1179,7 +1283,7 @@ function mainQuery(data) {
 		
 		if(data.type == 'standardAccount' || data.type == 'name' || data.type == 'at')
 		{
-			output += pages(data.countTx.allCount, data.txOnPage, data.start, data.end, url, data.allOnOnePage);
+			output += pages(data.pages, data.start, data.end, url, data.allOnOnePage);
 		}	
 		output += '<br>';
 		
@@ -1191,8 +1295,8 @@ function mainQuery(data) {
 					continue;
 				}
 				
-				output += '<a name='+i+'></a>';
-
+				output += '<a class="anchor" id='+i+' name='+i+'></a>';
+				
 				if(data[i].type == 'block') // block
 				{
 					output += '<table width=100%><tr><td>';
@@ -2569,12 +2673,11 @@ function mainQuery(data) {
 						output += '</table><br>';
 					}
 				}
-
 			}
 		
 			if(data.type == 'standardAccount' || data.type == 'name' || data.type == 'at')
 			{
-				output += pages(data.countTx.allCount, data.txOnPage, data.start, data.end, url, data.allOnOnePage);
+				output += pages(data.pages, data.start, data.end, url, data.allOnOnePage);
 			}
 			
 			output +=  '</table>';
@@ -2590,8 +2693,6 @@ function mainQuery(data) {
 	}
 	
 	return output;
-	
-	
 }
 
 function uintToString(uintArray) {
@@ -2605,53 +2706,58 @@ function htmlFilter(str)
 	return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
 }
 	
-function pages(dataallCount, datatxOnPage, datastart, dataend, url, allOnOnePage)
+function pages(datapages, datastart, dataend, url, dataallOnOnePage)
 {
 	var pages = '';
-	var start = 0;
-	var end = 0;
-	var k = 0;
-
 	pages += '<table width="100%"><tr><td>Pages: ';
 	
-	if(datastart < dataallCount)
+	if(datastart <  parseInt(datapages[0].replace( 'start_', '')))
 	{
-		pages += '<a class=without style="font-size: 15px;" href=' + url + '&start=' + ( datastart + datatxOnPage + 1 ) + '>«</a> ';
+		var start;
+		for (var i = datapages.length/2-1; i >= 0 ; i--)
+		{
+			start = parseInt(datapages[i*2].replace( 'start_', ''));
+			if(start > datastart)
+			{
+				break;
+			}
+		}
+		pages += '<a class=without style="font-size: 15px;" href=' + url + '&start=' + start + '>«</a> ';
 	}
+	
+	for (var i = 0; i < datapages.length/2; i++)
+	{
+		start = parseInt(datapages[i*2].replace( 'start_', ''));
+		end = parseInt(datapages[i*2+1].replace( 'end_', ''));
 		
-	do {
-		k++;
-		if(k == 1)
-		{
-			start = dataallCount;
-		}
-		else
-		{
-			start = end - 1;
-		}
-		
-		if(start > datatxOnPage)
-		{
-			end = start - datatxOnPage;
-		}
-		else
-		{
-			end = 1;
-		}
-		
-		if(datastart <= start && datastart >= end && !allOnOnePage)
+		if(datastart == start && dataend == end && !allOnOnePage)
 		{
 			pages += '<b><nobr>['+ start + '-' + end + ']</nobr></b> ';
 		}
 		else
 		{
-			pages += '<nobr><a class=without href='+url.replace( '&allOnOnePage', '')+'&start='+start+'>'+ start +'-' + end +'</a></nobr> ';
+			buf = "";
+			if((datastart >= end) && (dataend <= start))
+			{
+				buf = " style='font-weight: bold;'";
+			}
+			
+			pages += '<nobr><a class=without'+buf+' href='+url.replace( '&allOnOnePage', '')+'&start='+start+'>'+ start +'-' + end +'</a></nobr> ';
 		}
-	} while (end > 1)
+	}
 	
-	if(dataend > 1)
+	if(dataend >  parseInt(datapages[datapages.length-1].replace( 'end_', '')))
 	{
-		pages += ' <a class=without style="font-size: 15px;" href=' + url + '&start=' + ( dataend - 1 ) + '>»</a>';
+		var start;
+		for (var i = 0; i < datapages.length/2; i++)
+		{
+			start = parseInt(datapages[i*2].replace( 'start_', ''));
+			if(start < datastart)
+			{
+				break;
+			}
+		}
+		pages += '<a class=without style="font-size: 15px;" href=' + url + '&start=' + start + '>»</a> ';
 	}
 	
 	if(allOnOnePage)
@@ -2666,7 +2772,7 @@ function pages(dataallCount, datatxOnPage, datastart, dataend, url, allOnOnePage
 	pages +=  '</table>';
 		
 	return pages;
-}	
+}
 	
 function printBalance(balance)
 {
@@ -2760,6 +2866,9 @@ function search(data)
 
 function lastBlock(lastBlock)
 {
+	if(lastBlock === undefined)
+		return "";
+	
 	var output = '';
 	output += 'Last processed block: <a href=?block='+lastBlock.height+'>' + lastBlock.height + '</a>';
 	output += ' (' + lastBlock.dateTime +', ' + secToFine(new Date().getTime() - lastBlock.timestamp) + ' ago'+ ') ';
@@ -2813,7 +2922,7 @@ function start() {
 	document.getElementById('menuAssets').setAttribute('class', '');
 	document.getElementById('menuATs').setAttribute('class', '');
 	
-	var params = parseUrlQuery();
+	params = parseUrlQuery();
 	
 	var title = 'Qora BlockExplorer';
 	
@@ -2898,9 +3007,27 @@ function start() {
 			start = -1;
 		}
 		
+		if(params.hasOwnProperty('showOnly'))
+		{
+			showOnly = '&showOnly=' + params['showOnly'];
+		}
+		else
+		{
+			showOnly = '';
+		}
+		
+		if(params.hasOwnProperty('showWithout'))
+		{
+			showWithout = '&showWithout=' + params['showWithout'];
+		}
+		else
+		{
+			showWithout = '';
+		}
+		
 		if(params.hasOwnProperty('withoutBlocks'))
 		{
-			withoutBlocks = '&withoutBlocks';
+			withoutBlocks = '&withoutBlocks=' + params['withoutBlocks'];
 		}
 		else
 		{
@@ -2916,7 +3043,7 @@ function start() {
 			allonOnePage = '';
 		}
 		
-		asyncAjax('blockexplorer.json?addr=' + params['addr'] + '&start=' + start + withoutBlocks + allonOnePage , 'mainQuery');
+		asyncAjax('blockexplorer.json?addr=' + params['addr'] + '&start=' + start + showOnly + showWithout + allonOnePage + withoutBlocks , 'mainQuery');
 		
 		if(params['addr'].substring(0, 1) == 'A')
 		{
@@ -2952,7 +3079,25 @@ function start() {
 			allonOnePage = '';
 		}
 		
-		asyncAjax('blockexplorer.json?name=' + params['name'] + '&start=' + start + allonOnePage , 'mainQuery');
+		if(params.hasOwnProperty('showOnly'))
+		{
+			showOnly = '&showOnly=' + params['showOnly'];
+		}
+		else
+		{
+			showOnly = '';
+		}
+		
+		if(params.hasOwnProperty('showWithout'))
+		{
+			showWithout = '&showWithout=' + params['showWithout'];
+		}
+		else
+		{
+			showWithout = '';
+		}
+		
+		asyncAjax('blockexplorer.json?name=' + params['name'] + '&start=' + start + allonOnePage + showOnly + showWithout, 'mainQuery');
 		
 		document.title = title + ' - Name - ' + decodeURIComponent (params['name']);
 		
@@ -3077,7 +3222,6 @@ function start() {
 	document.title = title;
 	
 	document.getElementById('menuBlocks').setAttribute('class', 'active');
-	
 }
 	</script>
 </head>
