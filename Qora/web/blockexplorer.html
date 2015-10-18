@@ -1052,7 +1052,7 @@ function mainQuery(data) {
 				output += 'Transactions count: ' + data.countTx.txsCount + '<br>Including:<br>';
 
 				for(key in data.countTx.txsTypesCount) {
-					output += '&nbsp;&nbsp;&nbsp;<input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value='+key+'><a class=showOnly id='+key+' href=#>'+transactionTypes[key]+': '+data.countTx.txsTypesCount[key]+ '</a><br>\n';
+					output += '<div style="display:inline-block; padding-left: 20px; width: 200px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value='+key+'><a class=showOnly id='+key+' href=#>'+transactionTypes[key]+': '+data.countTx.txsTypesCount[key]+ '</a></div>\n';
 				}
 			}
 			else
@@ -1060,16 +1060,16 @@ function mainQuery(data) {
 				output += 'Transactions count: 0<br>';
 			}
 			
-			output += '<br>';
+			output += '<br><div style="display:inline-block; position: absolute; padding-left: 7px; width: 20px; font-weight:bold;">+</div>';
 			
 			if(data.countTx.tradesCount > 0)
 			{
-				output += '+ <input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=trades><a class=showOnly id=trades href=#>Trades: ' + data.countTx.tradesCount + '</a><br>\n';
+				output += '<div style="display:inline-block; padding-left: 20px; width: 200px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=trades><a class=showOnly id=trades href=#>Trades: ' + data.countTx.tradesCount + '</a></div>\n';
 			}
 			
 			if(data.countTx.aTTxsCount > 0)
 			{
-				output += '+ <input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=aTTxs><a class=showOnly id=aTTxs href=#>AT Transactions: ' + data.countTx.aTTxsCount + '</a><br>\n';
+				output += '<div style="display:inline-block; padding-left: 20px; width: 200px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=aTTxs><a class=showOnly id=aTTxs href=#>AT Transactions: ' + data.countTx.aTTxsCount + '</a></div>\n';
 			}
 			
 			if(data.countTx.blocksCount > 0)
@@ -1077,7 +1077,7 @@ function mainQuery(data) {
 				//output += '&nbsp;&nbsp;&nbsp;Including total fee: '+addCommas(data.totalBalance.totalGeneratedFee)+' Qora ';
 				//output += 'from generated ' + data.countTx.blocksCount +' blocks.'+'<br>';
 				
-				output += '+ <input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=blocks><a class=showOnly id=blocks href=#>Generated blocks: '+data.countTx.blocksCount + '</a>, including total fee: '+addCommas(data.totalBalance.totalGeneratedFee)+' Qora<br>';
+				output += '<div style="display:inline-block; padding-left: 20px; width: 500px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=blocks><a class=showOnly id=blocks href=#>Generated blocks: '+data.countTx.blocksCount + '</a>, including total fee: '+addCommas(data.totalBalance.totalGeneratedFee)+' Qora</div>';
 				
 				//if(data.withoutBlocks)
 				//{
@@ -1089,8 +1089,9 @@ function mainQuery(data) {
 				//}
 			}
 
-			output += '<br>&nbsp;&nbsp;&nbsp;<a id=showWithout href=><b>Apply filter</b></a>';
-			output += '<br>&nbsp;&nbsp;&nbsp;<a id=cancelFilter href=><b>Cancel filter</b></a>';
+			output += '<br>';
+			output += '<div style="display:inline-block; padding-left: 20px;"><a id=showWithout href=><b>Apply filter</b></a></div>';
+			output += '<div style="display:inline-block; padding-left: 20px;"><a id=cancelFilter href=><b>Cancel filter</b></a></div>';
 			
 			output += '<br>';
 			
