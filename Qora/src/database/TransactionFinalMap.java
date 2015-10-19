@@ -48,14 +48,24 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 		super(parent);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void createIndexes(DB database)
 	{
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<Tuple2<Integer, Integer>, Transaction>  openMap(DB database)
+	{
+		
+		BTreeMap<Tuple2<Integer, Integer>, Transaction> map = database.createTreeMap("height_seq_transactions")
+				.keySerializer(BTreeKeySerializer.TUPLE2)
+				.valueSerializer(new TransactionSerializer())
+				.makeOrGet();
+		
 		this.senderKey = database.createTreeSet("sender_txs")
 				.comparator(Fun.COMPARATOR)
 				.makeOrGet();
 		
-		Bind.secondaryKey((BTreeMap)map, this.senderKey, new Fun.Function2<String, Tuple2<Integer,Integer>, Transaction>(){
+		Bind.secondaryKey(map, this.senderKey, new Fun.Function2<String, Tuple2<Integer,Integer>, Transaction>(){
 			@Override
 			public String run(Tuple2<Integer, Integer> key, Transaction val) {
 				// TODO Auto-generated method stub
@@ -69,7 +79,7 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 				.comparator(Fun.COMPARATOR)
 				.makeOrGet();
 		
-		Bind.secondaryKeys((BTreeMap)map, this.recipientKey, new Fun.Function2<String[], Tuple2<Integer,Integer>, Transaction>(){
+		Bind.secondaryKeys(map, this.recipientKey, new Fun.Function2<String[], Tuple2<Integer,Integer>, Transaction>(){
 			@Override
 			public String[] run(Tuple2<Integer, Integer> key, Transaction val) {
 				List<String> recps = new ArrayList<String>();
@@ -93,7 +103,7 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 				.comparator(Fun.COMPARATOR)
 				.makeOrGet();
 		
-		Bind.secondaryKeys((BTreeMap)map, this.typeKey, new Fun.Function2<Tuple2<String, Integer>[], Tuple2<Integer,Integer>, Transaction>(){
+		Bind.secondaryKeys(map, this.typeKey, new Fun.Function2<Tuple2<String, Integer>[], Tuple2<Integer,Integer>, Transaction>(){
 			@Override
 			public Tuple2<String, Integer>[] run(Tuple2<Integer, Integer> key, Transaction val) {
 				List<Tuple2<String, Integer>> recps = new ArrayList<Tuple2<String, Integer>>();
@@ -110,17 +120,15 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 			}
 		});
 		
+		return map;
+		
 	}
 
 	@Override
 	protected Map<Tuple2<Integer, Integer>, Transaction> getMap(DB database) 
 	{
-		BTreeMap<Tuple2<Integer, Integer>, Transaction> map = database.createTreeMap("height_seq_transactions")
-				.keySerializer(BTreeKeySerializer.TUPLE2)
-				.valueSerializer(new TransactionSerializer())
-				.makeOrGet();
 		//OPEN MAP
-		return map;
+		return openMap(database);
 	}
 
 	@Override
