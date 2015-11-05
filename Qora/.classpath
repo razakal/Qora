@@ -10,7 +10,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libs/commons-net-3.3.jar"/>
-	<classpathentry kind="lib" path="libs/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-152.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/api/javax.ws.rs-api-2.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/javassist-3.18.1-GA.jar"/>
