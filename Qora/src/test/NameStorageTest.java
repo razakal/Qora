@@ -33,7 +33,7 @@ public class NameStorageTest {
 
 	@Before
 	public void setup() {
-		Ed25519.load();
+		//Ed25519.load();
 
 		databaseSet = DBSet.createEmptyDatabaseSet();
 

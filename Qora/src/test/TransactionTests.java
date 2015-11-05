@@ -49,7 +49,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureGenesisTransaction() 
 	{
-		Ed25519.load();
 		
 		//CHECK VALID SIGNATURE
 		Transaction transaction = new GenesisTransaction(new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g"), BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
@@ -59,7 +58,6 @@ public class TransactionTests {
 	@Test
 	public void validateGenesisTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE MEMORYDB
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -129,7 +127,6 @@ public class TransactionTests {
 	@Test
 	public void processGenesisTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -149,7 +146,6 @@ public class TransactionTests {
 	@Test
 	public void orphanGenesisTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -174,7 +170,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignaturePaymentTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -209,7 +204,6 @@ public class TransactionTests {
 	@Test
 	public void validatePaymentTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -336,7 +330,6 @@ public class TransactionTests {
 	@Test
 	public void processPaymentTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -394,7 +387,6 @@ public class TransactionTests {
 	@Test
 	public void orphanPaymentTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -458,7 +450,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureRegisterNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -495,7 +486,6 @@ public class TransactionTests {
 	@Test
 	public void validateRegisterNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -580,7 +570,6 @@ public class TransactionTests {
 	@Test
 	public void parseRegisterNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -662,7 +651,6 @@ public class TransactionTests {
 	@Test
 	public void processRegisterNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -698,7 +686,6 @@ public class TransactionTests {
 	@Test
 	public void orphanRegisterNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -737,7 +724,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureUpdateNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -775,7 +761,6 @@ public class TransactionTests {
 	@Test
 	public void validateUpdateNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -863,7 +848,6 @@ public class TransactionTests {
 	@Test
 	public void parseUpdateNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -948,7 +932,6 @@ public class TransactionTests {
 	@Test
 	public void processUpdateNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -997,7 +980,6 @@ public class TransactionTests {
 	@Test
 	public void orphanUpdateNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1048,7 +1030,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureSellNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1085,7 +1066,6 @@ public class TransactionTests {
 	@Test
 	public void validateSellNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1181,7 +1161,6 @@ public class TransactionTests {
 	@Test
 	public void parseSellNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1263,7 +1242,6 @@ public class TransactionTests {
 	@Test
 	public void processSellNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1311,7 +1289,6 @@ public class TransactionTests {
 	@Test
 	public void orphanSellNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1359,7 +1336,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureCancelSellNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1393,7 +1369,6 @@ public class TransactionTests {
 	@Test
 	public void validateCancelSellNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1497,7 +1472,6 @@ public class TransactionTests {
 	@Test
 	public void parseCancelSellNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1575,7 +1549,6 @@ public class TransactionTests {
 	@Test
 	public void processCancelSellNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1626,7 +1599,6 @@ public class TransactionTests {
 	@Test
 	public void orphanCancelSellNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1684,7 +1656,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureBuyNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1719,7 +1690,6 @@ public class TransactionTests {
 	@Test
 	public void validateBuyNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1826,7 +1796,6 @@ public class TransactionTests {
 	@Test
 	public void parseBuyNameTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1905,7 +1874,6 @@ public class TransactionTests {
 	@Test
 	public void processBuyNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -1972,7 +1940,6 @@ public class TransactionTests {
 	@Test
 	public void orphanBuyNameTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2042,7 +2009,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureCreatePollTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2079,7 +2045,6 @@ public class TransactionTests {
 	@Test
 	public void validateCreatePollTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2185,7 +2150,6 @@ public class TransactionTests {
 	@Test
 	public void parseCreatePollTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2277,7 +2241,6 @@ public class TransactionTests {
 	@Test
 	public void processCreatePollTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2313,7 +2276,6 @@ public class TransactionTests {
 	@Test
 	public void orphanCreatePollTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2352,7 +2314,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureVoteOnPollTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2386,7 +2347,6 @@ public class TransactionTests {
 	@Test
 	public void validateVoteOnPollTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2482,7 +2442,6 @@ public class TransactionTests {
 	@Test
 	public void parseVoteOnPollTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2564,7 +2523,6 @@ public class TransactionTests {
 	@Test
 	public void processVoteOnPollTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2620,7 +2578,6 @@ public class TransactionTests {
 	@Test
 	public void orphanVoteOnPollTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2668,7 +2625,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureArbitraryTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2702,7 +2658,6 @@ public class TransactionTests {
 	@Test
 	public void validateArbitraryTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2761,7 +2716,6 @@ public class TransactionTests {
 	@Test
 	public void parseArbitraryTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2843,7 +2797,6 @@ public class TransactionTests {
 	@Test
 	public void processArbitraryTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2875,7 +2828,6 @@ public class TransactionTests {
 	@Test
 	public void orphanArbitraryTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2910,7 +2862,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureIssueAssetTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -2947,7 +2898,6 @@ public class TransactionTests {
 	/*@Test
 	public void validateArbitraryTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3006,7 +2956,6 @@ public class TransactionTests {
 	@Test
 	public void parseIssueAssetTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3098,7 +3047,6 @@ public class TransactionTests {
 	@Test
 	public void processIssueAssetTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3142,7 +3090,6 @@ public class TransactionTests {
 	@Test
 	public void orphanIssueAssetTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3185,7 +3132,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureTransferAssetTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3220,7 +3166,6 @@ public class TransactionTests {
 	@Test
 	public void validateTransferAssetTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3370,7 +3315,6 @@ public class TransactionTests {
 	@Test
 	public void processTransferAssetTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3412,7 +3356,6 @@ public class TransactionTests {
 	@Test
 	public void orphanTransferAssetTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3457,7 +3400,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureCancelOrderTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3491,7 +3433,6 @@ public class TransactionTests {
 	@Test
 	public void validateCancelOrderTransaction() 
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A
@@ -3558,7 +3499,6 @@ public class TransactionTests {
 	@Test
 	public void parseCancelOrderTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -3639,7 +3579,6 @@ public class TransactionTests {
 	@Test
 	public void processCancelOrderTransaction()
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A
@@ -3678,7 +3617,6 @@ public class TransactionTests {
 	@Test
 	public void orphanCancelOrderTransaction()
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A
@@ -3720,7 +3658,6 @@ public class TransactionTests {
 	@Test
 	public void validateSignatureMultiPaymentTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
@@ -3761,7 +3698,6 @@ public class TransactionTests {
 	@Test
 	public void validateMultiPaymentTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
@@ -3835,7 +3771,6 @@ public class TransactionTests {
 	@Test
 	public void parseMultiPaymentTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
@@ -3937,7 +3872,6 @@ public class TransactionTests {
 	@Test
 	public void processMultiPaymentTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
@@ -3984,7 +3918,6 @@ public class TransactionTests {
 	@Test
 	public void orphanMultiPaymentTransaction()
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();

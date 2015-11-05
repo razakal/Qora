@@ -140,11 +140,6 @@ public class Controller extends Observable {
 			}
 		}
 
-		// LOAD NATIVE LIBRARIES
-		if (!Ed25519.load()) {
-			throw new Exception("Failed to load native libraries!");
-		}
-
 		this.peerHeight = new LinkedHashMap<Peer, Integer>(); // LINKED TO
 																// PRESERVE
 																// ORDER WHEN

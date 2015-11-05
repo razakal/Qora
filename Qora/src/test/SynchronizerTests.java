@@ -26,9 +26,7 @@ public class SynchronizerTests {
 
 	@Test
 	public void synchronizeNoCommonBlock()
-	{
-		Ed25519.load();
-		
+	{		
 		//GENERATE 5 BLOCKS FROM ACCOUNT 1
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 		
@@ -139,9 +137,7 @@ public class SynchronizerTests {
 	
 	@Test
 	public void synchronizeCommonBlock()
-	{
-		Ed25519.load();
-		
+	{	
 		//GENERATE 5 BLOCKS FROM ACCOUNT 1
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
 		DBSet databaseSet2 = DBSet.createEmptyDatabaseSet();
