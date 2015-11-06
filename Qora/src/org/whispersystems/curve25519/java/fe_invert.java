@@ -4,6 +4,7 @@ public class fe_invert {
 
 //CONVERT #include "fe.h"
 
+@SuppressWarnings("all")
 public static void fe_invert(int[] out,int[] z)
 {
   int[] t0 = new int[10];

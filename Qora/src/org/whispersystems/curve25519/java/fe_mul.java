@@ -37,6 +37,7 @@ Can get away with 11 carries, but then data flow is much deeper.
 With tighter constraints on inputs can squeeze carries into int32.
 */
 
+@SuppressWarnings("all")	
 public static void fe_mul(int[] h,int[] f,int[] g)
 {
   int f0 = f[0];

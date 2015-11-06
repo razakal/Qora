@@ -18,7 +18,6 @@ import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.GenesisBlock;
 import qora.crypto.Crypto;
-import qora.crypto.Ed25519;
 import qora.transaction.CreateOrderTransaction;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.IssueAssetTransaction;

@@ -10,7 +10,8 @@ replace (f,g) with (f,g) if b == 0.
 
 Preconditions: b in {0,1}.
 */
-
+	
+@SuppressWarnings("all")
 public static void fe_cmov(int[] f,int[] g,int b)
 {
   int f0 = f[0];

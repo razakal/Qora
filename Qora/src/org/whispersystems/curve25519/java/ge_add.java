@@ -8,6 +8,7 @@ public class ge_add {
 r = p + q
 */
 
+@SuppressWarnings("all")
 public static void ge_add(ge_p1p1 r,ge_p3 p,ge_cached q)
 {
   int[] t0 = new int[10];

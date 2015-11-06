@@ -4,6 +4,7 @@ public class ge_p3_0 {
 
 //CONVERT #include "ge.h"
 
+@SuppressWarnings("all")
 public static void ge_p3_0(ge_p3 h)
 {
   fe_0.fe_0(h.X);

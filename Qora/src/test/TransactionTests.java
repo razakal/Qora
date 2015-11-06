@@ -18,7 +18,6 @@ import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
 import qora.block.GenesisBlock;
 import qora.crypto.Crypto;
-import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.payment.Payment;

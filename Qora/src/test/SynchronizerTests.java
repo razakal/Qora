@@ -17,7 +17,6 @@ import qora.account.PrivateKeyAccount;
 import qora.block.Block;
 import qora.block.GenesisBlock;
 import qora.crypto.Crypto;
-import qora.crypto.Ed25519;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.Transaction;
 import database.DBSet;

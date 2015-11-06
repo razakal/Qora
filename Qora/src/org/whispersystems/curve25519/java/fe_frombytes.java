@@ -29,6 +29,7 @@ public static long load_4(byte[] in, int index)
 Ignores top bit of h.
 */
 
+@SuppressWarnings("all")
 public static void fe_frombytes(int[] h,byte[] s)
 {
   long h0 = load_4(s, 0);

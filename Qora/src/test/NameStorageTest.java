@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
-import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.GenesisTransaction;

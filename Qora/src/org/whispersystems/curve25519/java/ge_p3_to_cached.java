@@ -13,6 +13,7 @@ static int[] d2 = {
 -21827239,-5839606,-30745221,13898782,229458,15978800,-12551817,-6495438,29715968,9444199
 } ;
 
+@SuppressWarnings("all")
 public static void ge_p3_to_cached(ge_cached r,ge_p3 p)
 {
   fe_add.fe_add(r.YplusX,p.Y,p.X);

@@ -4,6 +4,7 @@ public class fe_pow22523 {
 
 //CONVERT #include "fe.h"
 
+@SuppressWarnings("all")
 public static void fe_pow22523(int[] out,int[] z)
 {
   int[] t0 = new int[10];

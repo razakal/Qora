@@ -37,6 +37,7 @@ Output:
   where l = 2^252 + 27742317777372353535851937790883648493.
 */
 
+@SuppressWarnings("all")
 public static void sc_muladd(byte[] s,byte[] a,byte[] b,byte[] c)
 {
   long a0 = 2097151 & load_3(a, 0);

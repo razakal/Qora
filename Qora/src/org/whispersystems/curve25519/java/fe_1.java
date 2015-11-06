@@ -7,7 +7,8 @@ public class fe_1 {
 /*
 h = 1
 */
-
+	
+@SuppressWarnings("all")
 public static void fe_1(int[] h)
 {
   h[0] = 1;

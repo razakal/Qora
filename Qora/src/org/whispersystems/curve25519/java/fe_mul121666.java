@@ -16,6 +16,7 @@ Postconditions:
    |h| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
 */
 
+@SuppressWarnings("all")
 public static void fe_mul121666(int[] h,int[] f)
 {
   int f0 = f[0];

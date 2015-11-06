@@ -64,6 +64,7 @@ Preconditions:
   a[31] <= 127
 */
 
+@SuppressWarnings("all")
 public static void ge_scalarmult_base(ge_p3 h,byte[] a)
 {
   byte[] e = new byte[64];

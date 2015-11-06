@@ -35,7 +35,7 @@ Output:
   where l = 2^252 + 27742317777372353535851937790883648493.
   Overwrites s in place.
 */
-
+@SuppressWarnings("all")
 public static void sc_reduce(byte[] s)
 {
   long s0 = 2097151 & load_3(s, 0);

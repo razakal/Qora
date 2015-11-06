@@ -29,6 +29,7 @@ Proof:
   so floor(2^(-255)(h + 19 2^(-25) h9 + 2^(-1))) = q.
 */
 
+@SuppressWarnings("all")
 public static void fe_tobytes(byte[] s,int[] h)
 {
   int h0 = h[0];

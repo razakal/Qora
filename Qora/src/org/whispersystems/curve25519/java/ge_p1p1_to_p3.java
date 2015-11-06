@@ -8,6 +8,7 @@ public class ge_p1p1_to_p3 {
 r = p
 */
 
+@SuppressWarnings("all")
 public static void ge_p1p1_to_p3(ge_p3 r,ge_p1p1 p)
 {
   fe_mul.fe_mul(r.X,p.X,p.T);

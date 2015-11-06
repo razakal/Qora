@@ -20,6 +20,7 @@ Postconditions:
 See fe_mul.c for discussion of implementation strategy.
 */
 
+@SuppressWarnings("all")
 public static void fe_sq(int[] h,int[] f)
 {
   int f0 = f[0];

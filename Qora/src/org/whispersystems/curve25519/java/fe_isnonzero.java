@@ -15,6 +15,7 @@ Preconditions:
 
 static final byte[] zero = new byte[32];
 
+@SuppressWarnings("all")
 public static int fe_isnonzero(int[] f)
 {
   byte[] s = new byte[32];

@@ -4,6 +4,7 @@ public class ge_p3_tobytes {
 
 //CONVERT #include "ge.h"
 
+@SuppressWarnings("all")
 public static void ge_p3_tobytes(byte[] s,ge_p3 h)
 {
   int[] recip = new int[10];

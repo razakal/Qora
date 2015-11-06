@@ -8,6 +8,7 @@ public class ge_p2_dbl {
 r = 2 * p
 */
 
+@SuppressWarnings("all")
 public static void ge_p2_dbl(ge_p1p1 r,ge_p2 p)
 {
   int[] t0 = new int[10];

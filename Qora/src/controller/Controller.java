@@ -55,7 +55,6 @@ import qora.assets.Trade;
 import qora.block.Block;
 import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Crypto;
-import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.payment.Payment;

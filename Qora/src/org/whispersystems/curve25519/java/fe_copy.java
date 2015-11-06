@@ -7,7 +7,8 @@ public class fe_copy {
 /*
 h = f
 */
-
+	
+@SuppressWarnings("all")
 public static void fe_copy(int[] h,int[] f)
 {
   int f0 = f[0];

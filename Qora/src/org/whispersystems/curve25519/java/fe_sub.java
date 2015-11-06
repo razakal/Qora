@@ -16,6 +16,7 @@ Postconditions:
    |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
 */
 
+@SuppressWarnings("all")
 public static void fe_sub(int[] h,int[] f,int[] g)
 {
   int f0 = f[0];
