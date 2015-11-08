@@ -4,6 +4,7 @@ import gui.models.BuyOrdersTableModel;
 import gui.models.SellOrdersTableModel;
 import gui.models.TradesTableModel;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -106,15 +107,20 @@ public class ExchangeFrame extends JFrame
 		//CREATE BUY PANEL
 		buyOrderPanel = new OrderPanel(this.want, this.have, true);
 		this.add(buyOrderPanel, orderGBC);
+		//buyOrderPanel.setBackground(Color.BLUE);
 		
 		//CREATE SELL PANEL
 		orderGBC.gridx = 1;
 		sellOrderPanel = new OrderPanel(this.have, this.want, false);
+		//sellOrderPanel.setBackground(Color.BLUE);
 		
 		orderGBC.fill = GridBagConstraints.NORTH;  
 		
 		this.add(sellOrderPanel, orderGBC);
-	
+		
+		sellOrderPanel.setPreferredSize(new Dimension((int)sellOrderPanel.getPreferredSize().getWidth(), (int)buyOrderPanel.getPreferredSize().getHeight()));
+		sellOrderPanel.setMinimumSize(new Dimension((int)sellOrderPanel.getPreferredSize().getWidth(), (int)buyOrderPanel.getPreferredSize().getHeight()));
+		
 		orderGBC.fill = GridBagConstraints.BOTH;  
 		
 		//CREATE SELL ORDERS LABEL

@@ -4,6 +4,7 @@ import gui.AccountRenderer;
 import gui.PasswordPane;
 import gui.models.AccountsComboBoxModel;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -23,6 +25,7 @@ import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
@@ -61,6 +64,15 @@ public class OrderPanel extends JPanel
 		//PADDING
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
+		//LABEL GBC
+		GridBagConstraints superhintGBC = new GridBagConstraints();
+		superhintGBC.insets = new Insets(0, 5, 5, 0);
+		superhintGBC.fill = GridBagConstraints.BOTH;   
+		superhintGBC.anchor = GridBagConstraints.SOUTHWEST;;
+		superhintGBC.gridx = 0;
+		superhintGBC.gridwidth = 3;
+		superhintGBC.weightx = superhintGBC.weighty = 1.0;
+		superhintGBC.weighty = 1.0;
 		//LABEL GBC
 		GridBagConstraints labelGBC = new GridBagConstraints();
 		labelGBC.insets = new Insets(0, 5, 5, 0);
@@ -245,9 +257,22 @@ public class OrderPanel extends JPanel
 		superHintText.setEditable(false);
 		superHintText.setBackground(this.getBackground());
 		superHintText.setContentType("text/html");
+		//BoxLayout layout = new BoxLayout(superHintText, BoxLayout.Y_AXIS_AXIS);
+		//superHintText.setLayout(layout);
+		
 		superHintText.setFont(txtBuyingAmount.getFont());
-		superHintText.setText( "<html><body style='font-size: 100%'>&nbsp;<br>&nbsp;</body></html>" );
-		this.add(superHintText, labelGBC);
+		superHintText.setText( "<html><body style='font-size: 100%'>&nbsp;<br>&nbsp;<br></body></html>" );
+		
+		superHintText.setPreferredSize(new Dimension(125, 40));
+		
+		JPanel scrollPaneSuperHintText = new JPanel(new BorderLayout());
+		
+		scrollPaneSuperHintText.add(superHintText, BorderLayout.SOUTH);
+		
+		this.add(scrollPaneSuperHintText, superhintGBC);
+		
+		
+		//superHintText.setAlignmentY(100f);
 		
 		labelGBC.gridy++;
 		
@@ -266,9 +291,9 @@ public class OrderPanel extends JPanel
 	public void calculateHint() 
 	{
 		if(!isDigit(this.txtPrice.getText()))
-			superHintText.setText( "<html><body style='font-size: 100%'>Enter correct price.<br>&nbsp;</body></html>" );
+			superHintText.setText( "<html><body style='font-size: 100%'>&nbsp;<br>Enter correct price.</body></html>" );
 		else if(!isDigit(this.txtAmount.getText()))
-			superHintText.setText( "<html><body style='font-size: 100%'>Enter correct amount.<br>&nbsp;</body></html>" );
+			superHintText.setText( "<html><body style='font-size: 100%'>&nbsp;<br>Enter correct amount.</body></html>" );
 		else
 			superHintText.setText( "<html><body style='font-size: 100%'>Give <b>" + this.txtAmount.getText()+ "&nbsp;"+getShortAsset(have) + "</b>" + 
 					" at the price of <b>" + this.txtPrice.getText() + "&nbsp;" + getShortAsset(want) + "</b>" +
