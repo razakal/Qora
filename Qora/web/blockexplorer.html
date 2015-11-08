@@ -735,6 +735,10 @@ function trades(data)
 	output += '<tr bgcolor="e0e0e0"><td><b>tx<td width="190"><b>Price</b></td><td width="190"><b>Amount</b></td><td width="190"><b>Total</b></td></tr>';
 	
 	for(key in data.sells) {
+	
+		if(!data.sells[key].good)
+			continue;
+			
 		output += '<tr>';
 		
 		output += '<td><a href=?tx='+key+'>#';
@@ -745,8 +749,8 @@ function trades(data)
 	
 	output += '<tr bgcolor="#f9f9f9">';
 	
-	output += '<td colspan=2><b>Total:<td>' + addCommas(data.sellsSumAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
-	output += '<td>' + addCommas(data.sellsSumTotal) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+	output += '<td colspan=2><b>Total:<td>' + addCommas(data.sellsSumAmountGood) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+	output += '<td>' + addCommas(data.sellsSumTotalGood) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
 	
 	output += '</table>';
 	
@@ -754,6 +758,10 @@ function trades(data)
 	output += '<tr bgcolor="e0e0e0"><td><b>tx<td width="190"><b>Price</b></td><td width="190"><b>Amount</b></td><td width="190"><b>Total</b></td></tr>';
 	
 	for(key in data.buys) {
+		
+		if(!data.buys[key].good)
+			continue;
+		
 		output += '<tr>';
 	
 		output += '<td><a href=?tx='+key+'>#';
@@ -764,8 +772,8 @@ function trades(data)
 
 	output += '<tr bgcolor="#f9f9f9">';
 	
-	output += '<td colspan=2><b>Total:<td>' + addCommas(data.buysSumAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
-	output += '<td>' + addCommas(data.buysSumTotal) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
+	output += '<td colspan=2><b>Total:<td>' + addCommas(data.buysSumAmountGood) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+	output += '<td>' + addCommas(data.buysSumTotalGood) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
 	
 	output += '</table>';
 	

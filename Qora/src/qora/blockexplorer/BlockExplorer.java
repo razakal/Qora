@@ -1316,8 +1316,11 @@ public class BlockExplorer extends Observable implements Observer
 
 
 		BigDecimal sumAmount = BigDecimal.ZERO.setScale(8);
-		BigDecimal sumSellingAmount = BigDecimal.ZERO.setScale(8);
+		BigDecimal sumAmountGood = BigDecimal.ZERO.setScale(8);
 
+		BigDecimal sumSellingAmount = BigDecimal.ZERO.setScale(8);
+		BigDecimal sumSellingAmountGood = BigDecimal.ZERO.setScale(8);
+		
 		for (Order order : ordersHave) 		
 		{
 			Map sellJSON = new LinkedHashMap();
@@ -1332,18 +1335,38 @@ public class BlockExplorer extends Observable implements Observer
 
 			sellJSON.put("sellingAmount", sellingAmount.toPlainString());
 
+			BigDecimal increment = order.calculateBuyIncrement(order, DBSet.getInstance());
+			BigDecimal amount = order.getAmountLeft();
+			amount = amount.subtract(amount.remainder(increment));
+			
+			boolean good = (amount.compareTo(BigDecimal.ZERO) > 0);
+			
+			sellJSON.put("good", good);
+			
+			if(good)
+			{
+				sumAmountGood = sumAmountGood.add(order.getAmountLeft());
+				
+				sumSellingAmountGood = sumSellingAmountGood.add(sellingAmount);
+			}
+			
 			sumSellingAmount = sumSellingAmount.add(sellingAmount);
-
+			
 			sellsJSON.put(Base58.encode(order.getId()), sellJSON);
 		}
 
 		output.put("sells", sellsJSON);
 
 		output.put("sellsSumAmount", sumAmount.toPlainString());
+		output.put("sellsSumAmountGood", sumAmountGood.toPlainString());
 		output.put("sellsSumTotal", sumSellingAmount.toPlainString());
+		output.put("sellsSumTotalGood", sumSellingAmountGood.toPlainString());
 
 		sumAmount = BigDecimal.ZERO.setScale(8);
+		sumAmountGood = BigDecimal.ZERO.setScale(8);
+		
 		BigDecimal sumBuyingAmount = BigDecimal.ZERO.setScale(8);
+		BigDecimal sumBuyingAmountGood = BigDecimal.ZERO.setScale(8);
 
 		for (Order order : ordersWant) 	
 		{	
@@ -1360,6 +1383,20 @@ public class BlockExplorer extends Observable implements Observer
 
 			buyJSON.put("buyingAmount", buyingAmount.toPlainString());
 
+			BigDecimal increment = order.calculateBuyIncrement(order, DBSet.getInstance());
+			BigDecimal amount = order.getAmountLeft();
+			amount = amount.subtract(amount.remainder(increment));
+			
+			boolean good = (amount.compareTo(BigDecimal.ZERO) > 0);
+			
+			buyJSON.put("good", good);
+			
+			if(good)
+			{
+				sumBuyingAmountGood = sumBuyingAmountGood.add(buyingAmount);
+				sumAmountGood = sumAmountGood.add(order.getAmountLeft());
+			}
+			
 			sumBuyingAmount = sumBuyingAmount.add(buyingAmount);
 
 			buysJSON.put(Base58.encode(order.getId()), buyJSON);
@@ -1367,7 +1404,9 @@ public class BlockExplorer extends Observable implements Observer
 		output.put("buys", buysJSON);
 
 		output.put("buysSumAmount", sumBuyingAmount.toPlainString());
+		output.put("buysSumAmountGood", sumBuyingAmountGood.toPlainString());
 		output.put("buysSumTotal", sumAmount.toPlainString());
+		output.put("buysSumTotalGood", sumAmountGood.toPlainString());
 
 		Map tradesJSON = new LinkedHashMap();
 
