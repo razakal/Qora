@@ -843,11 +843,11 @@ function trades(data)
 			}
 			output += '<a href=?addr='+data.trades[key].targetCreator+'>' + data.trades[key].targetCreator + '</a>';
 			output += '<br>';
-			output += addCommas(data.trades[key].price);
+			output += addCommas(data.trades[key].amount);
 			output += ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
 			output += ' <img src=img/grright.png style="vertical-align: middle;">';
 
-			output += '<td align=center>' + addCommas(data.trades[key].realReversePrice);
+			output += '<td align=center>' + addCommas(data.trades[key].realPrice);
 			
 			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
 		
@@ -865,7 +865,7 @@ function trades(data)
 			
 			output += '<br>';
 			output += '<img src=img/grleft.png style="vertical-align: middle;"> ';
-			output += addCommas(data.trades[key].amount);
+			output += addCommas(data.trades[key].price);
 			output += ' ' + getAssetNameMini(data.assetWant, data.assetWantName);		
 		}
 	}
