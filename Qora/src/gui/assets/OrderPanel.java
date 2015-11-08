@@ -409,6 +409,11 @@ public class OrderPanel extends JPanel
 			case Transaction.VALIDATE_OKE:
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Order has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				
+				this.txtFee.setText("1");
+				this.txtAmount.setText("");
+				this.txtPrice.setText("");
+				
 				break;	
 				
 			case Transaction.NOT_YET_RELEASED:
