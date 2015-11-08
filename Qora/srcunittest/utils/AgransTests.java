@@ -2,6 +2,7 @@ package utils;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -15,6 +16,32 @@ import qora.crypto.Crypto;
 
 public class AgransTests {
 
+	@Test
+	 public void stripTrailingZerosTest() {
+
+        // create 4 BigDecimal objects
+        BigDecimal bg1, bg2, bg3, bg4, bg5, bg6;
+
+        bg1 = new BigDecimal("235.000");
+        bg2 = new BigDecimal("23500");
+        bg3 = new BigDecimal("235.010");
+        
+        // assign the result of stripTrailingZeros method to bg3, bg4
+        bg4 = bg1.stripTrailingZeros();
+        bg5 = bg2.stripTrailingZeros();
+        bg6 = bg3.stripTrailingZeros();
+
+        
+        String str1 = bg1 + " after removing trailing zeros " +bg4.toPlainString();
+        String str2 = bg2 + " after removing trailing zeros " +bg5.toPlainString();
+        String str3 = bg3 + " after removing trailing zeros " +bg6.toPlainString();
+
+        // print bg3, bg4 values
+        System.out.println( str1 );
+        System.out.println( str2 );
+        System.out.println( str3 );
+    }
+	 
 	@Test
 	public void testSign() {
 		//address: QQQQD8UkkJPnW3yRZqJAUH9Pi9BzVKJCv8
