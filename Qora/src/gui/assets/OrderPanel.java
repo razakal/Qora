@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -20,10 +19,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
@@ -40,11 +39,17 @@ public class OrderPanel extends JPanel
 	private Asset want;
 	private JButton sellButton;
 	private JComboBox<Account> cbxAccount;
-	private JTextField txtAmount;
-	private JTextField txtPrice;
+	public JTextField txtAmount;
+	public JTextField txtPrice;
 	private JTextField txtFee;
 	private JTextField txtBuyingPrice;
 	private JTextField txtBuyingAmount;
+	private JTextPane superHintText;
+	
+	public String getShortAsset(Asset a){
+		String name = a.getName();
+		return "(" + a.getKey() + ")" + name.substring(0, Math.min(name.length(), 4));
+	}
 	
 	public OrderPanel(Asset have, Asset want, boolean buying)
 	{
@@ -70,6 +75,13 @@ public class OrderPanel extends JPanel
 		detailGBC.anchor = GridBagConstraints.NORTHWEST;
 		detailGBC.gridx = 1;	
 		
+		//DETAIL GBC
+		GridBagConstraints assetHintGBC = new GridBagConstraints();
+		assetHintGBC.insets = new Insets(0, 5, 5, 0);
+		assetHintGBC.fill = GridBagConstraints.HORIZONTAL;  
+		assetHintGBC.anchor = GridBagConstraints.NORTHWEST;
+		assetHintGBC.gridx = 2;	
+		
 		//LABEL FROM
 		labelGBC.gridy = 0;
 		JLabel fromLabel = new JLabel("Account:");
@@ -81,6 +93,11 @@ public class OrderPanel extends JPanel
 		this.cbxAccount.setRenderer(new AccountRenderer(this.have.getKey()));
         this.add(this.cbxAccount, detailGBC);
 		
+		//ASSET HINT
+		assetHintGBC.gridy = detailGBC.gridy;
+		JLabel accountHintLabel = new JLabel( getShortAsset(have));
+		this.add(accountHintLabel, assetHintGBC);
+        
 		//LABEL PRICE
 		labelGBC.gridy++;
 		JLabel priceLabel = new JLabel("Price:");
@@ -91,6 +108,11 @@ public class OrderPanel extends JPanel
 		txtPrice = new JTextField();
 		this.add(txtPrice, detailGBC);	
 		
+		//ASSET HINT
+		assetHintGBC.gridy = detailGBC.gridy;
+		JLabel priceHintLabel = new JLabel( getShortAsset(want));
+		this.add(priceHintLabel, assetHintGBC);
+				
 		if(buying)
 		{
 			//LABEL BUYING PRICE
@@ -103,6 +125,11 @@ public class OrderPanel extends JPanel
 			txtBuyingPrice = new JTextField();
 			txtBuyingPrice.setEnabled(false);
 			this.add(txtBuyingPrice, detailGBC);
+			
+			//ASSET HINT
+			assetHintGBC.gridy = detailGBC.gridy;
+			JLabel buyingPriceHintLabel = new JLabel( getShortAsset(have));
+			this.add(buyingPriceHintLabel, assetHintGBC);
 			
 			//ON PRICE CHANGE
 			txtPrice.getDocument().addDocumentListener(new DocumentListener() 
@@ -123,6 +150,27 @@ public class OrderPanel extends JPanel
 				}
 			});
 		}
+		else
+		{
+			//ON PRICE CHANGE
+			txtPrice.getDocument().addDocumentListener(new DocumentListener() 
+			{
+				public void changedUpdate(DocumentEvent e) 
+				{
+					calculateBuyingAmount(txtBuyingAmount);
+				}
+				
+				public void removeUpdate(DocumentEvent e) 
+				{
+					calculateBuyingAmount(txtBuyingAmount);
+				}
+				  
+				public void insertUpdate(DocumentEvent e) 
+				{
+					calculateBuyingAmount(txtBuyingAmount);
+				}
+			});
+		}
 		
 		//LABEL AMOUNT
 		labelGBC.gridy++;
@@ -133,6 +181,11 @@ public class OrderPanel extends JPanel
 		detailGBC.gridy++;
 		this.txtAmount = new JTextField();
 		this.add(this.txtAmount, detailGBC);	
+		
+		//ASSET HINT
+		assetHintGBC.gridy = detailGBC.gridy;
+		JLabel amountHintLabel = new JLabel( getShortAsset(have));
+		this.add(amountHintLabel, assetHintGBC);
 		
 		//LABEL AMOUNT
 		labelGBC.gridy++;
@@ -145,6 +198,11 @@ public class OrderPanel extends JPanel
 		txtBuyingAmount.setEnabled(false);
 		this.add(txtBuyingAmount, detailGBC);
 			
+		//ASSET HINT
+		assetHintGBC.gridy = detailGBC.gridy;
+		JLabel buyingAmountHintLabel = new JLabel( getShortAsset(want) );
+		this.add(buyingAmountHintLabel, assetHintGBC);
+		
 		//ON PRICE CHANGE
 		txtAmount.getDocument().addDocumentListener(new DocumentListener() 
 		{
@@ -174,10 +232,25 @@ public class OrderPanel extends JPanel
 		txtFee = new JTextField("1");
 		this.add(txtFee, detailGBC);		
 		
+		//ASSET HINT
+		assetHintGBC.gridy = detailGBC.gridy;
+		JLabel feeHintLabel = new JLabel( getShortAsset(Controller.getInstance().getAsset(0)));
+		this.add(feeHintLabel, assetHintGBC);
 		
 		//ADD SELL BUTTON
 		labelGBC.gridy++;
-		labelGBC.gridwidth = 2;
+		labelGBC.gridwidth = 3;
+		
+		superHintText = new JTextPane();
+		superHintText.setEditable(false);
+		superHintText.setBackground(this.getBackground());
+		superHintText.setContentType("text/html");
+		superHintText.setFont(txtBuyingAmount.getFont());
+		superHintText.setText( "<html><body style='font-size: 100%'>&nbsp;<br>&nbsp;</body></html>" );
+		this.add(superHintText, labelGBC);
+		
+		labelGBC.gridy++;
+		
 		this.sellButton = new JButton("Sell");
 		this.sellButton.setPreferredSize(new Dimension(125, 25));
 		this.sellButton.addActionListener(new ActionListener()
@@ -188,6 +261,28 @@ public class OrderPanel extends JPanel
 			}
 		});	
 		this.add(this.sellButton, labelGBC);
+	}
+	
+	public void calculateHint() 
+	{
+		if(!isDigit(this.txtPrice.getText()))
+			superHintText.setText( "<html><body style='font-size: 100%'>Enter correct price.<br>&nbsp;</body></html>" );
+		else if(!isDigit(this.txtAmount.getText()))
+			superHintText.setText( "<html><body style='font-size: 100%'>Enter correct amount.<br>&nbsp;</body></html>" );
+		else
+			superHintText.setText( "<html><body style='font-size: 100%'>Give <b>" + this.txtAmount.getText()+ "&nbsp;"+getShortAsset(have) + "</b>" + 
+					" at the price of <b>" + this.txtPrice.getText() + "&nbsp;" + getShortAsset(want) + "</b>" +
+					" per <b>1 " + getShortAsset(have) + "</b> that would get " + 
+					"<b>" + this.txtBuyingAmount.getText() + "&nbsp;" + getShortAsset(want) + "</b>.</body></html>" );
+	}
+	
+	private static boolean isDigit(String s) throws NumberFormatException {
+	    try {
+	        new BigDecimal(s);
+	        return true;
+	    } catch (NumberFormatException e) {
+	        return false;
+	    }
 	}
 	
 	public void calculateBuyingPrice(JTextField target) 
@@ -211,12 +306,14 @@ public class OrderPanel extends JPanel
 	    {
 	    	BigDecimal price = new BigDecimal(txtPrice.getText());		    	
 	    	BigDecimal amount = new BigDecimal(txtAmount.getText());
-	    	target.setText(price.multiply(amount).toPlainString());
+	    	target.setText(price.multiply(amount).setScale(8, RoundingMode.DOWN).toPlainString());
 	    }
 	    catch(Exception e)
 	    {
 	    	target.setText("0");
 	    }
+	    
+	    calculateHint();
 	}
 	
 	public void onSellClick()
