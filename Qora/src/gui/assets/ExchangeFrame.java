@@ -88,19 +88,26 @@ public class ExchangeFrame extends JFrame
 		tableGBC.gridy = 4;	
 		
 		//CREATE TITLE LABEL
-		JLabel lblTitle = new JLabel("(" + this.have.getKey() + ")" + this.have.getName() + "/(" + this.want.getKey() + ")" + this.want.getName());
+		JLabel lblTitle = new JLabel(
+				"(" + this.have.getKey() + ")" + this.have.getName() 
+				+ "/(" + this.want.getKey() + ")" + this.want.getName());
+				
 		lblTitle.setFont(new Font("Serif", Font.PLAIN, 24));
 		this.add(lblTitle, labelGBC);
 		
 		//CREATE BUY LABEL
 		labelGBC.gridy = 1;
-		JLabel lblBuy = new JLabel("Sell (" + this.want.getKey() + ")" + this.want.getName());
+		JLabel lblBuy = new JLabel(
+				"Buy (" + this.have.getKey() + ")" + this.have.getName()
+				+ " — Sell (" + this.want.getKey() + ")" + this.want.getName());
 		lblBuy.setFont(new Font("Serif", Font.PLAIN, 18));
 		this.add(lblBuy, labelGBC);
 		
 		//CREATE SELL LABEL
 		labelGBC.gridx = 1;
-		JLabel lblSell = new JLabel("Sell (" + this.have.getKey() + ")" + this.have.getName());
+		JLabel lblSell = new JLabel(
+				"Sell (" + this.have.getKey() + ")" + this.have.getName()
+				+ " — Buy (" + this.want.getKey() + ")" + this.want.getName());
 		lblSell.setFont(new Font("Serif", Font.PLAIN, 18));
 		this.add(lblSell, labelGBC);
 		

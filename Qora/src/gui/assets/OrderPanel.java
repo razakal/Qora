@@ -257,8 +257,6 @@ public class OrderPanel extends JPanel
 		superHintText.setEditable(false);
 		superHintText.setBackground(this.getBackground());
 		superHintText.setContentType("text/html");
-		//BoxLayout layout = new BoxLayout(superHintText, BoxLayout.Y_AXIS_AXIS);
-		//superHintText.setLayout(layout);
 		
 		superHintText.setFont(txtBuyingAmount.getFont());
 		superHintText.setText( "<html><body style='font-size: 100%'>&nbsp;<br>&nbsp;<br></body></html>" );
@@ -271,12 +269,13 @@ public class OrderPanel extends JPanel
 		
 		this.add(scrollPaneSuperHintText, superhintGBC);
 		
-		
-		//superHintText.setAlignmentY(100f);
-		
 		labelGBC.gridy++;
 		
-		this.sellButton = new JButton("Sell");
+		if(buying)
+			this.sellButton = new JButton("Buy");	
+		else
+			this.sellButton = new JButton("Sell");	
+		
 		this.sellButton.setPreferredSize(new Dimension(125, 25));
 		this.sellButton.addActionListener(new ActionListener()
 		{
