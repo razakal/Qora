@@ -1126,10 +1126,14 @@ public class Controller extends Observable {
 	}
 
 	public SortableList<BigInteger, Order> getOrders(Asset have, Asset want) {
-		return DBSet.getInstance().getOrderMap()
-				.getOrdersSortableList(have.getKey(), want.getKey());
+		return this.getOrders(have, want, false);
 	}
 
+	public SortableList<BigInteger, Order> getOrders(Asset have, Asset want, boolean filter) {
+		return DBSet.getInstance().getOrderMap()
+				.getOrdersSortableList(have.getKey(), want.getKey(), filter);
+	}
+	
 	public SortableList<Tuple2<BigInteger, BigInteger>, Trade> getTrades(
 			Asset have, Asset want) {
 		return DBSet.getInstance().getTradeMap()

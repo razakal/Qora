@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -236,13 +237,37 @@ public class OrderMap extends DBMap<BigInteger, Order>
 		return orders;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SortableList<BigInteger, Order> getOrdersSortableList(long have, long want)
+	{
+		//RETURN
+		return getOrdersSortableList(have, want, false);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public SortableList<BigInteger, Order> getOrdersSortableList(long have, long want, boolean filter)
 	{
 		//FILTER ALL KEYS
 		Collection<BigInteger> keys = ((BTreeMap<Tuple4, BigInteger>) this.haveWantKeyMap).subMap(
 				Fun.t4(have, want, null, null),
 				Fun.t4(have, want, Fun.HI(), Fun.HI())).values();
+				
+		//Filters orders with unacceptably small amount. These orders have not worked
+		if(filter){
+			List<BigInteger> keys2 = new ArrayList<BigInteger>();
+			
+			Iterator<BigInteger> iter = keys.iterator();
+			while (iter.hasNext()) {
+				BigInteger key = iter.next();
+				Order order = this.get(key);
+				
+				BigDecimal increment = order.calculateBuyIncrement(order, DBSet.getInstance());
+				BigDecimal amount = order.getAmountLeft();
+				amount = amount.subtract(amount.remainder(increment));
+				if (amount.compareTo(BigDecimal.ZERO) > 0)
+					keys2.add(key);
+			}
+			keys = keys2;
+		}
 		
 		//RETURN
 		return new SortableList<BigInteger, Order>(this, keys);

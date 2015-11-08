@@ -349,7 +349,7 @@ public class Order implements Comparable<Order> {
 		this.creator.setConfirmedBalance(this.have, this.creator.getConfirmedBalance(this.have, db).add(this.amount), db);
 	}
 	
-	private BigDecimal calculateBuyIncrement(Order order, DBSet db)
+	public BigDecimal calculateBuyIncrement(Order order, DBSet db)
 	{
 		BigInteger multiplier = BigInteger.valueOf(100000000l);
 		
