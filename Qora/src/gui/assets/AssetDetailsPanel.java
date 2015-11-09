@@ -9,9 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -204,28 +202,8 @@ public class AssetDetailsPanel extends JPanel {
 	
 	public void onOpenPairClick() {
 		
-		//GET ASSET
-		String response = JOptionPane.showInputDialog(new JFrame(), "Asset key:", "Open pair", JOptionPane.QUESTION_MESSAGE);
-		try
-		{
-			long key = Long.parseLong(response);
-			
-			if(key != this.asset.getKey())
-			{
-				Asset asset = Controller.getInstance().getAsset(key);
-				if(asset != null)
-				{
-					new ExchangeFrame(this.asset, asset);
-					return;
-				}
-			}
-			
-			JOptionPane.showMessageDialog(new JFrame(), "No asset with that key found!", "Error", JOptionPane.ERROR_MESSAGE);
-		}
-		catch(Exception e)
-		{
-			JOptionPane.showMessageDialog(new JFrame(), "Invalid key!", "Error", JOptionPane.ERROR_MESSAGE);
-		}
+		new AssetPairSelect(this.asset.getKey());
+		
 	}
 	
 	public void onFavoriteClick()

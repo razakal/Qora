@@ -1013,53 +1013,8 @@ public class BlockExplorer extends Observable implements Observer
 		return output;
 	}
 
-	public Map jsonQueryAsset(long key)
+	public Map<Long, Tuple6<Integer, Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> calcForAsset(List<Order> orders, List<Trade> trades)
 	{
-		Map output=new LinkedHashMap();
-
-		List<Order> orders = DBSet.getInstance().getOrderMap().getOrders(key);
-
-		List<Trade> trades = DBSet.getInstance().getTradeMap().getTrades(key);
-
-		Asset asset = Controller.getInstance().getAsset(key);
-
-		Map assetJSON=new LinkedHashMap();
-
-		assetJSON.put("key", asset.getKey());
-		assetJSON.put("name", asset.getName());
-		assetJSON.put("description", asset.getDescription());
-		assetJSON.put("owner", asset.getOwner().getAddress());
-		assetJSON.put("quantity", asset.getQuantity());
-		assetJSON.put("isDivisible", asset.isDivisible());
-
-
-		Block lastBlock = Controller.getInstance().getLastBlock();
-
-		if(DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature()))))
-		{
-			List<byte[]> signTransactions = DBSet.getInstance().getTransactionOfAddressMap().get(asset.getOwner().getAddress(), -1);
-
-			for (byte[] sign : signTransactions) {
-				Transaction transaction = Controller.getInstance().getTransaction(sign);
-
-				if(transaction instanceof IssueAssetTransaction)
-				{
-					IssueAssetTransaction issueAssetTransaction = ((IssueAssetTransaction)transaction);
-					if(issueAssetTransaction.getAsset().getName().equals(asset.getName()))
-					{
-						assetJSON.put("timestamp", issueAssetTransaction.getTimestamp());
-						assetJSON.put("dateTime", BlockExplorer.timestampToStr(issueAssetTransaction.getTimestamp()));
-						break;
-					}
-				}
-			}
-		}
-
-		output.put("this", assetJSON);
-
-		output.put("totalOpenOrdersCount", orders.size());
-		output.put("totalTradesCount", trades.size());
-
 		Map<Long, Integer> pairsOpenOrders = new TreeMap<Long, Integer>();
 		Map<Long, BigDecimal> volumePriceOrders = new TreeMap<Long, BigDecimal>();
 		Map<Long, BigDecimal> volumeAmountOrders = new TreeMap<Long, BigDecimal>();
@@ -1240,6 +1195,57 @@ public class BlockExplorer extends Observable implements Observer
 			}
 		}
 
+		return all;
+	}
+	
+	public Map jsonQueryAsset(long key)
+	{
+		Map output=new LinkedHashMap();
+
+		List<Order> orders = DBSet.getInstance().getOrderMap().getOrders(key);
+
+		List<Trade> trades = DBSet.getInstance().getTradeMap().getTrades(key);
+
+		Asset asset = Controller.getInstance().getAsset(key);
+
+		Map assetJSON=new LinkedHashMap();
+
+		assetJSON.put("key", asset.getKey());
+		assetJSON.put("name", asset.getName());
+		assetJSON.put("description", asset.getDescription());
+		assetJSON.put("owner", asset.getOwner().getAddress());
+		assetJSON.put("quantity", asset.getQuantity());
+		assetJSON.put("isDivisible", asset.isDivisible());
+
+
+		Block lastBlock = Controller.getInstance().getLastBlock();
+
+		if(DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature()))))
+		{
+			List<byte[]> signTransactions = DBSet.getInstance().getTransactionOfAddressMap().get(asset.getOwner().getAddress(), -1);
+
+			for (byte[] sign : signTransactions) {
+				Transaction transaction = Controller.getInstance().getTransaction(sign);
+
+				if(transaction instanceof IssueAssetTransaction)
+				{
+					IssueAssetTransaction issueAssetTransaction = ((IssueAssetTransaction)transaction);
+					if(issueAssetTransaction.getAsset().getName().equals(asset.getName()))
+					{
+						assetJSON.put("timestamp", issueAssetTransaction.getTimestamp());
+						assetJSON.put("dateTime", BlockExplorer.timestampToStr(issueAssetTransaction.getTimestamp()));
+						break;
+					}
+				}
+			}
+		}
+
+		output.put("this", assetJSON);
+
+		output.put("totalOpenOrdersCount", orders.size());
+		output.put("totalTradesCount", trades.size());
+
+		Map<Long, Tuple6<Integer, Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> all = calcForAsset(orders, trades);
 
 		if(all.containsKey(key))
 		{
