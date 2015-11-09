@@ -177,7 +177,11 @@ public class OrderMap extends DBMap<BigInteger, Order>
 	
 	public List<Order> getOrders(long haveWant) 
 	{
-		
+		return getOrders(haveWant, false);
+	}
+	
+	public List<Order> getOrders(long haveWant, boolean filter) 
+	{
 		Map<BigInteger, Boolean> orderKeys = new TreeMap<BigInteger, Boolean>();
 		
 		//FILTER ALL KEYS
@@ -187,20 +191,26 @@ public class OrderMap extends DBMap<BigInteger, Order>
 			orderKeys.put(key, true);
 		}
 		
-		
 		keys = this.getKeysWant(haveWant);
 		
 		for (BigInteger key : keys) {
 			orderKeys.put(key, true);
 		}
 		
-				
 		//GET ALL ORDERS FOR KEYS
 		List<Order> orders = new ArrayList<Order>();
 
 		for(Map.Entry<BigInteger, Boolean> orderKey : orderKeys.entrySet())
 		{
-			orders.add(this.get(orderKey.getKey()));
+			//Filters orders with unacceptably small amount. These orders have not worked
+			if(filter){
+				if(isExecutable(orderKey.getKey()))
+					orders.add(this.get(orderKey.getKey()));
+			}
+			else
+			{
+				orders.add(this.get(orderKey.getKey()));
+			}
 		}
 
 		//IF THIS IS A FORK
@@ -209,9 +219,19 @@ public class OrderMap extends DBMap<BigInteger, Order>
 			//RESORT ORDERS
 			Collections.sort(orders);
 		}
-		
+
 		//RETURN
 		return orders;
+	}
+
+	public boolean isExecutable(BigInteger key) 
+	{
+		Order order = this.get(key);
+		
+		BigDecimal increment = order.calculateBuyIncrement(order, DBSet.getInstance());
+		BigDecimal amount = order.getAmountLeft();
+		amount = amount.subtract(amount.remainder(increment));
+		return  (amount.compareTo(BigDecimal.ZERO) > 0);
 	}
 	
 	public List<Order> getOrders(long have, long want) 
@@ -258,12 +278,7 @@ public class OrderMap extends DBMap<BigInteger, Order>
 			Iterator<BigInteger> iter = keys.iterator();
 			while (iter.hasNext()) {
 				BigInteger key = iter.next();
-				Order order = this.get(key);
-				
-				BigDecimal increment = order.calculateBuyIncrement(order, DBSet.getInstance());
-				BigDecimal amount = order.getAmountLeft();
-				amount = amount.subtract(amount.remainder(increment));
-				if (amount.compareTo(BigDecimal.ZERO) > 0)
+				if(isExecutable(key))
 					keys2.add(key);
 			}
 			keys = keys2;
