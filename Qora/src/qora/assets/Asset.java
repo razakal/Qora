@@ -206,13 +206,21 @@ public class Asset {
 	
 	public String toString()
 	{
+		/*
 		if(this.getKey() == 0)
 		{
 			return "Qora";
 		}
 		else
 		{
-			return "(" + this.getKey() + ") " + this.getName();
-		}
+		*/	
+		
+		return "(" + this.getKey() + ")" + this.getName();
 	}
+	
+	public String getShort()
+	{
+		return "(" + this.getKey() + ")" + this.getName().substring(0, Math.min(this.getName().length(), 4));
+	}
+	
 }

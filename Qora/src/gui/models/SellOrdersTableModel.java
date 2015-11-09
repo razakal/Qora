@@ -36,9 +36,9 @@ public class SellOrdersTableModel extends QoraTableModel<BigInteger, Order> impl
 		
 		this.orders.registerObserver();
 		
-		columnNames[COLUMN_PRICE] += " (" + want.getKey() + ")" + want.getName();
-		columnNames[COLUMN_AMOUNT] += " (" + have.getKey() + ")" + have.getName();
-		columnNames[COLUMN_TOTAL] += " (" + want.getKey() + ")" + want.getName();
+		columnNames[COLUMN_PRICE] += " " + want.toString();
+		columnNames[COLUMN_AMOUNT] += " " + have.toString();
+		columnNames[COLUMN_TOTAL] += " " + want.toString();
 		
 		totalCalc();
 	}
