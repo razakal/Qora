@@ -2703,11 +2703,6 @@ function mainQuery(data) {
 			pagesForNames
 			
 			output +=  '</table>';
-			
-			if(data.lastBlock.boost != 'ok' && (data.type != 'block')  && (data.type != 'unconfirmed'))
-			{
-				output +=  'You can speed up the output by turning on boost mode in settings.';	
-			}
 		}
 
 	} catch(e) {

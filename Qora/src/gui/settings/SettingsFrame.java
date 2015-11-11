@@ -1,35 +1,30 @@
 package gui.settings;
 
-import gui.Menu;
-
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import network.Network;
 
 import org.json.simple.JSONObject;
 
-import qora.blockexplorer.BlockExplorer;
 import controller.Controller;
+import gui.Menu;
+import network.Network;
 import settings.Settings;
 import utils.JSonWriter;
 
@@ -302,8 +297,6 @@ public class SettingsFrame extends JFrame{
 		{
 			settingsJSONbuf.put("rpcallowed",settingsTabPane.settingsAllowedPanel.rpcAllowedTableModel.getPeers());
 		}
-		
-		settingsJSONbuf.put("blockexplorerboost", (BlockExplorer.getInstance().getBoostStatus().equals("ok") && BlockExplorer.getInstance().getIndexing()));
 		
 		try {
 	        Writer writer = new JSonWriter();

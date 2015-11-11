@@ -53,7 +53,6 @@ import qora.assets.Asset;
 import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.Block;
-import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -188,15 +187,6 @@ public class Controller extends Observable {
 			DBSet.getInstance().getLocalDataMap().set("txfinalmap", "1");
 		}
 		
-
-		// BLOCKEXPLORER BOOST
-		if (Settings.getInstance().isBlockExplorerBoost()) {
-			BlockExplorer.getInstance().setIndexing(true);
-		} else {
-			BlockExplorer.getInstance().setIndexing(false);
-			BlockExplorer.getInstance().ResetBase();
-		}
-
 		// CREATE SYNCHRONIZOR
 		this.synchronizer = new Synchronizer();
 

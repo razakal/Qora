@@ -12,12 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TreeMap;
-import java.util.logging.Logger;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -25,6 +20,11 @@ import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 import org.mapdb.Fun.Tuple6;
 
+import at.AT;
+import at.AT_Transaction;
+import controller.Controller;
+import database.DBSet;
+import database.SortableList;
 import qora.account.Account;
 import qora.assets.Asset;
 import qora.assets.Order;
@@ -56,21 +56,13 @@ import settings.Settings;
 import utils.BlockExplorerComparator;
 import utils.DateTimeFormat;
 import utils.GZIP;
-import utils.ObserverMessage;
 import utils.Pair;
 import utils.ReverseComparator;
-import at.AT;
-import at.AT_Transaction;
-import controller.Controller;
-import database.DBSet;
-import database.SortableList;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class BlockExplorer extends Observable implements Observer
+public class BlockExplorer
 {
 	private static BlockExplorer blockExplorer;
-	private boolean indexing;
-	private Timer timer = new Timer();
 
 	public static BlockExplorer getInstance()
 	{
@@ -80,240 +72,6 @@ public class BlockExplorer extends Observable implements Observer
 		}
 
 		return blockExplorer;
-	}
-
-	public BlockExplorer()
-	{
-		//ADD OBSERVER
-		Controller.getInstance().addObserver(this);
-	}
-
-	public void setIndexing(boolean indexing)
-	{
-		this.indexing = indexing;
-	}
-
-	public boolean getIndexing()
-	{
-		return this.indexing;
-	}
-
-	public static void Stop()
-	{
-		blockExplorer = null;
-	}
-
-	public void ResetBase()
-	{
-		DBSet.getInstance().getTransactionOfAddressMap().reset();
-		DBSet.getInstance().getBlocksOfAddressMap().reset();
-		DBSet.getInstance().getTransactionOfNameMap().reset();
-	}
-
-	@Override
-	public void update(Observable arg0, Object arg1) {
-
-		ObserverMessage message = (ObserverMessage) arg1;
-
-		if(message.getType() == ObserverMessage.NETWORK_STATUS)
-		{
-			if((int)message.getValue() == Controller.STATUS_OKE)
-			{
-				this.timer.cancel(); 
-				this.timer = new Timer();
-
-				TimerTask action = new TimerTask() {
-					public void run() {
-						// BLOCKEXPLORER BOOST
-						if(Settings.getInstance().isBlockExplorerBoost()) {
-							Block lastBlock = Controller.getInstance().getLastBlock();
-
-							if(!(
-									DBSet.getInstance().getBlocksOfAddressMap().getValues().size() == Controller.getInstance().getHeight()
-									&&
-									DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature())))
-									)) {
-								synchronize();
-							}
-						}		        
-					}
-				};
-
-				this.timer.schedule(action, 10000);
-			}
-
-			if((int)message.getValue() == Controller.STATUS_NO_CONNECTIONS || (int)message.getValue() == Controller.STATUS_SYNCHRONIZING)
-			{
-				this.timer.cancel(); 
-			}
-		}
-
-		if(indexing)
-		{
-			if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE)
-			{
-				Block block = (Block) message.getValue();
-
-				this.processBlock(block);
-
-				//CHECK TRANSACTIONS
-				for(Transaction transaction: block.getTransactions())
-				{
-					this.processTransaction(transaction);
-				}
-			}
-		}
-
-		if(message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE)
-		{
-			Block block = (Block) message.getValue();
-
-			this.orphanBlock(block);
-
-			//CHECK TRANSACTIONS
-			for(Transaction transaction: block.getTransactions())
-			{
-				this.orphanTransaction(transaction);
-			}
-		}
-	}
-
-	private void processTransaction(Transaction transaction)
-	{
-		//CHECK IF INVOLVED
-		List<Account> involvedAccounts = transaction.getInvolvedAccounts();  
-
-		synchronized(involvedAccounts)
-		{		
-			for(Account account: involvedAccounts)
-			{
-				//ADD TO ACCOUNT TRANSACTIONS
-				DBSet.getInstance().getTransactionOfAddressMap().add(account, transaction);
-			}
-		}
-
-		if(transaction.getType() == Transaction.REGISTER_NAME_TRANSACTION)
-		{
-			String name = ((RegisterNameTransaction)transaction).getName().toString();
-			DBSet.getInstance().getTransactionOfNameMap().add(name, transaction);
-		}
-		if(transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION)
-		{
-			String name = ((UpdateNameTransaction)transaction).getName().toString();
-			DBSet.getInstance().getTransactionOfNameMap().add(name, transaction);
-		}
-		if(transaction.getType() == Transaction.SELL_NAME_TRANSACTION)
-		{
-			String name = ((SellNameTransaction)transaction).getNameSale().getName().toString();
-			DBSet.getInstance().getTransactionOfNameMap().add(name, transaction);
-		}
-		if(transaction.getType() == Transaction.CANCEL_SELL_NAME_TRANSACTION)
-		{
-			String name = ((CancelSellNameTransaction)transaction).getName();
-			DBSet.getInstance().getTransactionOfNameMap().add(name, transaction);
-		}
-		if(transaction.getType() == Transaction.BUY_NAME_TRANSACTION)
-		{
-			String name = ((BuyNameTransaction)transaction).getNameSale().getName().toString();
-			DBSet.getInstance().getTransactionOfNameMap().add(name, transaction);
-		}
-	}
-
-	private void orphanTransaction(Transaction transaction)
-	{
-		//CHECK IF INVOLVED
-		List<Account> involvedAccounts = transaction.getInvolvedAccounts();  
-
-		synchronized(involvedAccounts)
-		{		
-			for(Account account: involvedAccounts)
-			{
-				//ADD TO ACCOUNT TRANSACTIONS
-				DBSet.getInstance().getTransactionOfAddressMap().remove(account, transaction);
-			}
-		}
-
-		if(transaction.getType() == Transaction.REGISTER_NAME_TRANSACTION)
-		{
-			String name = ((RegisterNameTransaction)transaction).getName().toString();
-			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
-		}
-		if(transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION)
-		{
-			String name = ((UpdateNameTransaction)transaction).getName().toString();
-			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
-		}
-		if(transaction.getType() == Transaction.SELL_NAME_TRANSACTION)
-		{
-			String name = ((SellNameTransaction)transaction).getNameSale().getName().toString();
-			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
-		}
-		if(transaction.getType() == Transaction.CANCEL_SELL_NAME_TRANSACTION)
-		{
-			String name = ((CancelSellNameTransaction)transaction).getName();
-			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
-		}
-		if(transaction.getType() == Transaction.BUY_NAME_TRANSACTION)
-		{
-			String name = ((BuyNameTransaction)transaction).getNameSale().getName().toString();
-			DBSet.getInstance().getTransactionOfNameMap().remove(name, transaction);
-		}
-	}	
-
-	private void processBlock(Block block)
-	{
-		//CHECK IF INVOLVED
-
-		//ADD TO ACCOUNT TRANSACTIONS
-		String s = block.getGenerator().getAddress();
-
-		DBSet.getInstance().getBlocksOfAddressMap().add(s, block);
-	}
-
-	private void orphanBlock(Block block)
-	{
-		//CHECK IF INVOLVED
-
-		//ADD TO ACCOUNT TRANSACTIONS
-		String s = block.getGenerator().getAddress();
-
-		DBSet.getInstance().getBlocksOfAddressMap().remove(s, block);
-	}
-
-	public void synchronize()
-	{
-		try{
-			//forcedSynchronize = true;
-			DBSet.getInstance().getTransactionOfAddressMap().reset();
-			DBSet.getInstance().getBlocksOfAddressMap().reset();
-			DBSet.getInstance().getTransactionOfNameMap().reset();
-
-			this.setIndexing(true);
-
-			Block block = new GenesisBlock();
-			do
-			{
-				//UPDATE
-				this.update(this, new ObserverMessage(ObserverMessage.ADD_BLOCK_TYPE, block));
-
-				if(block.getHeight() % 2000 == 0) 
-				{
-					Logger.getGlobal().info("Synchronize blockexplorer: " + block.getHeight());
-					DBSet.getInstance().commit();
-				}
-
-				//LOAD NEXT
-				block = block.getChild();
-			}
-			while(block != null);
-
-			DBSet.getInstance().commit();
-
-			Logger.getGlobal().info("Synchronize blockexplorer completed.");
-		}
-		finally{
-		}
-
 	}
 
 	public static String timestampToStr(long timestamp)
@@ -1570,31 +1328,7 @@ public class BlockExplorer extends Observable implements Observer
 		output.put("timezone", Settings.getInstance().getTimeZone());
 		output.put("timeformat", Settings.getInstance().getTimeFormat());
 
-		output.put("boost", getBoostStatus());
-
 		return output;
-	}
-
-	public String getBoostStatus()
-	{
-		Block lastBlock = Controller.getInstance().getLastBlock();	
-		Block genesisBlock = new GenesisBlock();
-
-		if(DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(genesisBlock.getGenerator().getAddress(), new String(genesisBlock.getSignature()))))
-		{
-			if(DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature()))))
-			{
-				return "ok";
-			}	
-			else
-			{
-				return "lost";
-			}
-		}	
-		else
-		{
-			return "off";
-		}		
 	}
 
 	public Map jsonQueryTopRichest(int limit, long key)
@@ -1913,39 +1647,26 @@ public class BlockExplorer extends Observable implements Observer
 
 		int txsCount = 0;
 
-		if(getBoostStatus().equals("ok"))
+		Block block = new GenesisBlock();
+		do
 		{
-			List<byte[]> signTransactions = DBSet.getInstance().getTransactionOfNameMap().get(name, -1);
-
-			for (byte[] sign : signTransactions) {
-				Transaction transaction = Controller.getInstance().getTransaction(sign);
-				all.add(transaction);
-				txsTypeCount[transaction.getType()-1] ++;
-			}
-		}
-		else
-		{
-			Block block = new GenesisBlock();
-			do
+			for(Transaction transaction: block.getTransactions())
 			{
-				for(Transaction transaction: block.getTransactions())
+				if	(
+						(transaction.getType() == Transaction.REGISTER_NAME_TRANSACTION && ((RegisterNameTransaction)transaction).getName().toString().equals(name))
+						||(transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION && ((UpdateNameTransaction)transaction).getName().toString().equals(name)) 
+						||(transaction.getType() == Transaction.SELL_NAME_TRANSACTION && ((SellNameTransaction)transaction).getNameSale().toString().equals(name))
+						||(transaction.getType() == Transaction.CANCEL_SELL_NAME_TRANSACTION && ((CancelSellNameTransaction)transaction).getName().equals(name))
+						||(transaction.getType() == Transaction.BUY_NAME_TRANSACTION && ((BuyNameTransaction)transaction).getNameSale().toString().equals(name))
+						) 
 				{
-					if	(
-							(transaction.getType() == Transaction.REGISTER_NAME_TRANSACTION && ((RegisterNameTransaction)transaction).getName().toString().equals(name))
-							||(transaction.getType() == Transaction.UPDATE_NAME_TRANSACTION && ((UpdateNameTransaction)transaction).getName().toString().equals(name)) 
-							||(transaction.getType() == Transaction.SELL_NAME_TRANSACTION && ((SellNameTransaction)transaction).getNameSale().toString().equals(name))
-							||(transaction.getType() == Transaction.CANCEL_SELL_NAME_TRANSACTION && ((CancelSellNameTransaction)transaction).getName().equals(name))
-							||(transaction.getType() == Transaction.BUY_NAME_TRANSACTION && ((BuyNameTransaction)transaction).getNameSale().toString().equals(name))
-							) 
-					{
-						all.add(transaction);
-						txsTypeCount[transaction.getType()-1] ++;
-					}
+					all.add(transaction);
+					txsTypeCount[transaction.getType()-1] ++;
 				}
-				block = block.getChild();
 			}
-			while(block != null);
+			block = block.getChild();
 		}
+		while(block != null);
 
 		Collections.sort(all, new BlockExplorerComparator()); 
 
@@ -2068,67 +1789,31 @@ public class BlockExplorer extends Observable implements Observer
 
 		Map<Tuple2<BigInteger, BigInteger>, Trade> trades = new TreeMap<Tuple2<BigInteger, BigInteger>, Trade>();
 
-		if(getBoostStatus().equals("ok"))
+		if (!address.startsWith("A"))
 		{
-			List<byte[]> signTransactions = DBSet.getInstance().getTransactionOfAddressMap().get(address, -1);
-
-			for (byte[] sign : signTransactions) {
-				Transaction transaction = Controller.getInstance().getTransaction(sign);
-				all.add(transaction);
-
-				if(transaction instanceof CreateOrderTransaction)
-				{
-					Order order = ((CreateOrderTransaction)transaction).getOrder();
-
-					SortableList<Tuple2<BigInteger, BigInteger>, Trade> tradesBuf = Controller.getInstance().getTrades(order);
-					for (Pair<Tuple2<BigInteger, BigInteger>, Trade> pair : tradesBuf) {
-						trades.put(pair.getA(), pair.getB());
-					}
-				}
+			
+			Collection<byte[]> blocks = DBSet.getInstance().getBlockMap().getGeneratorBlocks(address);
+			
+			for (byte[] b : blocks)
+			{
+				all.add(DBSet.getInstance().getBlockMap().get(b));
 			}
-
-			List<byte[]> signBlocks = DBSet.getInstance().getBlocksOfAddressMap().get(address, -1);
-
-			Block blockbuf = null;
-			for (byte[] sign : signBlocks) {
-				blockbuf = Controller.getInstance().getBlock(sign);
-				all.add(blockbuf);
-			}
+			
 		}
-		else
+		
+		for (int type = 1; type <= 23; type++) {  // 17 - The number of transaction types. 23 - for the future
+			all.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, type, 0));
+		}
+		
+		List<Transaction> orders = DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, 13, 0);
+		for (Transaction transaction : orders)
 		{
-			if (!address.startsWith("A"))
-			{
-				
-				Collection<byte[]> blocks = DBSet.getInstance().getBlockMap().getGeneratorBlocks(address);
-				
-				for (byte[] b : blocks)
-				{
-					all.add(DBSet.getInstance().getBlockMap().get(b));
-				}
-				
-			}
+			Order order =  ((CreateOrderTransaction)transaction).getOrder();
 
-			//List<Transaction> txsRcp = DBSet.getInstance().getTransactionFinalMap().getTransactionsByRecipient(address);
-			//List<Transaction> txsSnd = DBSet.getInstance().getTransactionFinalMap().getTransactionsBySender(address);
-			//all.addAll(txsRcp);
-			//all.addAll(txsSnd);
-			
-			for (int type = 1; type <= 23; type++) {  // 17 - The number of transaction types. 23 - for the future
-				all.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, type, 0));
+			SortableList<Tuple2<BigInteger, BigInteger>, Trade> tradesBuf = Controller.getInstance().getTrades(order);
+			for (Pair<Tuple2<BigInteger, BigInteger>, Trade> pair : tradesBuf) {
+				trades.put(pair.getA(), pair.getB());
 			}
-			
-			List<Transaction> orders = DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, 13, 0);
-			for (Transaction transaction : orders)
-			{
-				Order order =  ((CreateOrderTransaction)transaction).getOrder();
-
-				SortableList<Tuple2<BigInteger, BigInteger>, Trade> tradesBuf = Controller.getInstance().getTrades(order);
-				for (Pair<Tuple2<BigInteger, BigInteger>, Trade> pair : tradesBuf) {
-					trades.put(pair.getA(), pair.getB());
-				}
-			}
-
 		}
 
 		for(Map.Entry<Tuple2<BigInteger, BigInteger>, Trade> trade : trades.entrySet())
