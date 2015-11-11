@@ -710,26 +710,15 @@ public class BlockExplorer
 		pollJSON.put("description", poll.getDescription());
 		pollJSON.put("totalVotes", poll.getTotalVotes().toPlainString());
 
-
-		Block lastBlock = Controller.getInstance().getLastBlock();
-
-		if(DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature()))))
-		{
-			List<byte[]> signTransactions = DBSet.getInstance().getTransactionOfAddressMap().get(poll.getCreator().getAddress(), -1);
-
-			for (byte[] sign : signTransactions) {
-				Transaction transaction = Controller.getInstance().getTransaction(sign);
-
-				if(transaction instanceof CreatePollTransaction)
-				{
-					CreatePollTransaction createPollTransaction = ((CreatePollTransaction)transaction);
-					if(createPollTransaction.getPoll().getName().equals(poll.getName()))
-					{
-						pollJSON.put("timestamp", createPollTransaction.getTimestamp());
-						pollJSON.put("dateTime", BlockExplorer.timestampToStr(createPollTransaction.getTimestamp()));
-						break;
-					}
-				}
+		
+		List<Transaction> transactions = DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(poll.getCreator().getAddress(), Transaction.CREATE_POLL_TRANSACTION, 0);
+		for (Transaction transaction : transactions) {
+			CreatePollTransaction createPollTransaction = ((CreatePollTransaction)transaction);
+			if(createPollTransaction.getPoll().getName().equals(poll.getName()))
+			{
+				pollJSON.put("timestamp", createPollTransaction.getTimestamp());
+				pollJSON.put("dateTime", BlockExplorer.timestampToStr(createPollTransaction.getTimestamp()));
+				break;
 			}
 		}
 
@@ -750,6 +739,7 @@ public class BlockExplorer
 			}
 		};
 
+		
 		Map votesJSON = new LinkedHashMap();
 
 		List<Pair<Account, PollOption>> votes = poll.getVotes(); 
@@ -975,29 +965,19 @@ public class BlockExplorer
 		assetJSON.put("quantity", asset.getQuantity());
 		assetJSON.put("isDivisible", asset.isDivisible());
 
-
-		Block lastBlock = Controller.getInstance().getLastBlock();
-
-		if(DBSet.getInstance().getBlocksOfAddressMap().contains(Fun.t2(lastBlock.getGenerator().getAddress(), new String(lastBlock.getSignature()))))
-		{
-			List<byte[]> signTransactions = DBSet.getInstance().getTransactionOfAddressMap().get(asset.getOwner().getAddress(), -1);
-
-			for (byte[] sign : signTransactions) {
-				Transaction transaction = Controller.getInstance().getTransaction(sign);
-
-				if(transaction instanceof IssueAssetTransaction)
-				{
-					IssueAssetTransaction issueAssetTransaction = ((IssueAssetTransaction)transaction);
-					if(issueAssetTransaction.getAsset().getName().equals(asset.getName()))
-					{
-						assetJSON.put("timestamp", issueAssetTransaction.getTimestamp());
-						assetJSON.put("dateTime", BlockExplorer.timestampToStr(issueAssetTransaction.getTimestamp()));
-						break;
-					}
-				}
+		
+		List<Transaction> transactions = DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(asset.getOwner().getAddress(), Transaction.ISSUE_ASSET_TRANSACTION, 0);
+		for (Transaction transaction : transactions) {
+			IssueAssetTransaction issueAssetTransaction = ((IssueAssetTransaction)transaction);
+			if(issueAssetTransaction.getAsset().getName().equals(asset.getName()))
+			{
+				assetJSON.put("timestamp", issueAssetTransaction.getTimestamp());
+				assetJSON.put("dateTime", BlockExplorer.timestampToStr(issueAssetTransaction.getTimestamp()));
+				break;
 			}
 		}
 
+		
 		output.put("this", assetJSON);
 
 		output.put("totalOpenOrdersCount", orders.size());

@@ -50,9 +50,6 @@ public class DBSet implements Observer, IDB {
 	private ATMap atMap;
 	private ATStateMap atStateMap;
 	private ATTransactionMap atTransactionMap;
-	private TransactionsOfAddressMap transactionOfAddressMap;
-	private BlocksOfAddressMap blocksOfAddressMap;
-	private TransactionsOfNameMap transactionOfNameMap;
 	private TransactionFinalMap transactionFinalMap;
 	
 	private DB database;
@@ -131,9 +128,6 @@ public class DBSet implements Observer, IDB {
 			this.atMap = new ATMap(this,database);
 			this.atStateMap = new ATStateMap(this,database);
 			this.atTransactionMap = new ATTransactionMap(this,database);
-			this.transactionOfAddressMap = new TransactionsOfAddressMap(this, database);
-			this.blocksOfAddressMap = new BlocksOfAddressMap(this, database);
-			this.transactionOfNameMap = new TransactionsOfNameMap(this, database);
 			
 		} catch (Throwable e) {
 			this.close();
@@ -173,9 +167,6 @@ public class DBSet implements Observer, IDB {
 		this.atMap = new ATMap(parent.atMap);
 		this.atStateMap = new ATStateMap(parent.atStateMap);
 		this.atTransactionMap = new ATTransactionMap(parent.atTransactionMap);
-		this.transactionOfAddressMap = new TransactionsOfAddressMap(parent.transactionOfAddressMap);
-		this.blocksOfAddressMap = new BlocksOfAddressMap(parent.blocksOfAddressMap);
-		this.transactionOfNameMap = new TransactionsOfNameMap(parent.transactionOfNameMap);
 	}
 	
 	public void reset() {
@@ -208,8 +199,6 @@ public class DBSet implements Observer, IDB {
 		this.atMap.reset();
 		this.atStateMap.reset();
 		this.atTransactionMap.reset();
-		this.transactionOfAddressMap.reset(); 
-		this.blocksOfAddressMap.reset(); 
 	}
 	
 	public BalanceMap getBalanceMap() 
@@ -357,21 +346,6 @@ public class DBSet implements Observer, IDB {
 	public ATTransactionMap getATTransactionMap()
 	{
 		return this.atTransactionMap;
-	}
-	
-	public TransactionsOfAddressMap getTransactionOfAddressMap() 
-	{
-		return this.transactionOfAddressMap;
-	}
-	
-	public BlocksOfAddressMap getBlocksOfAddressMap() 
-	{
-		return this.blocksOfAddressMap;
-	}
-	
-	public TransactionsOfNameMap getTransactionOfNameMap() 
-	{
-		return this.transactionOfNameMap;
 	}
 	
 	public DBSet fork()
