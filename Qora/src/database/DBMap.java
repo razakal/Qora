@@ -18,6 +18,8 @@ import org.mapdb.DB;
 import org.mapdb.Fun.Function2;
 import org.mapdb.Fun.Tuple2;
 
+import controller.Controller;
+import database.wallet.WalletDatabase;
 import utils.ObserverMessage;
 
 public abstract class DBMap<T, U> extends Observable {
@@ -132,6 +134,8 @@ public abstract class DBMap<T, U> extends Observable {
 	{
 		try
 		{
+			//Controller.getInstance().
+			
 			U old = this.map.put(key, value);
 			
 			if(this.deleted != null)
@@ -142,9 +146,12 @@ public abstract class DBMap<T, U> extends Observable {
 			//COMMIT
 			if(this.databaseSet != null)
 			{
-				this.databaseSet.commit();
+				if(!(this.databaseSet instanceof WalletDatabase && Controller.getInstance().isProcessSynchronize))
+				{
+					this.databaseSet.commit();
+				}
 			}
-			
+		
 			//NOTIFY ADD
 			if(this.getObservableData().containsKey(NOTIFY_ADD))
 			{

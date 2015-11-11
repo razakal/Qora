@@ -79,6 +79,7 @@ public class Controller extends Observable {
 	public static final int STATUS_SYNCHRONIZING = 1;
 	public static final int STATUS_OKE = 2;
 
+	public boolean isProcessSynchronize = false; 
 	private int status;
 	private Network network;
 	private ApiService rpcService;
