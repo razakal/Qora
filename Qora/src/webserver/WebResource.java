@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -56,11 +57,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import qora.account.Account;
+import qora.account.PrivateKeyAccount;
 import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Base58;
 import qora.crypto.Base64;
 import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
+import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
 import qora.web.BlogProfile;
 import qora.web.HTMLSearchResult;
@@ -227,6 +230,24 @@ public class WebResource {
 		
 			UpdateUtil.repopulateNameStorage(70000);
 			return error404(request, "Namestorage repopulated!");
+		
+	}
+	@Path("index/deleteunconfirmed.html")
+	@GET
+	public Response doDeleteUnconfirmedTxs() {
+		
+		 Collection<Transaction> values = DBSet.getInstance().getTransactionMap().getValues();
+		 
+		 List<PrivateKeyAccount> privateKeyAccounts = Controller.getInstance().getPrivateKeyAccounts();
+		 
+		 for (Transaction transaction : values) {
+			 if(privateKeyAccounts.contains(transaction.getCreator()))
+			 {
+				 DBSet.getInstance().getTransactionMap().delete(transaction);
+			 }
+		}
+		 
+		return error404(request, "Unconfirmed transactions removed.");
 		
 	}
 	
