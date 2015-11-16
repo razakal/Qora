@@ -103,13 +103,6 @@ public class ATTxsTableModel extends QoraTableModel<Tuple2<Integer, Integer>, AT
 			return null;
 		}
 		
-//		Tuple2<Integer, Integer> at = this.ats.get(row).getA();
-//		Long amount = this.ats.get(row).getB().getAmount();
-		String message = "";
-		if ( this.ats.get(row).getB().getMessage() != null)
-		{
-			message = Converter.toHex(this.ats.get(row).getB().getMessage());
-		}
 		switch(column)
 		{
 		case COLUMN_HEIGHT:
@@ -123,13 +116,16 @@ public class ATTxsTableModel extends QoraTableModel<Tuple2<Integer, Integer>, AT
 		case COLUMN_AMOUNT:
 			return this.ats.get(row).getB().getAmount();
 		case COLUMN_MESSAGE:
+			String message = "";
+			if ( this.ats.get(row).getB().getMessage() != null)
+			{
+				message = Converter.toHex(this.ats.get(row).getB().getMessage());
+			}
 			return message;
 		}
 		
 		return null;
 	}
-	
-	
 
 	@Override
 	public void update(Observable o, Object arg) 

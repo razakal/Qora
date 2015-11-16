@@ -11,6 +11,8 @@ import qora.assets.Asset;
 import qora.assets.Order;
 import utils.NumberAsString;
 import utils.ObserverMessage;
+import utils.Pair;
+import database.DBSet;
 import database.SortableList;
 
 @SuppressWarnings("serial")
@@ -21,15 +23,36 @@ public class BuyOrdersTableModel extends QoraTableModel<BigInteger, Order> imple
 	public static final int COLUMN_PRICE = 2;
 	public static final int COLUMN_AMOUNT = 3;
 
-	private SortableList<BigInteger, Order> orders;
+	public SortableList<BigInteger, Order> orders;
 	
 	private String[] columnNames = {"Buying Price", "Buying Amount", "Price", "Amount"};
+	
+	BigDecimal sumAmount;
+	BigDecimal sumTotal;
 	
 	public BuyOrdersTableModel(Asset have, Asset want)
 	{
 		Controller.getInstance().addObserver(this);
-		this.orders = Controller.getInstance().getOrders(have, want);
+		this.orders = Controller.getInstance().getOrders(have, want, true);
 		this.orders.registerObserver();
+		
+		columnNames[COLUMN_BUYING_PRICE] += " " + have.toString();
+		columnNames[COLUMN_BUYING_AMOUNT] += " " + want.toString();
+		columnNames[COLUMN_PRICE] += " " + want.toString();
+		columnNames[COLUMN_AMOUNT] += " " + have.toString();
+		
+		totalCalc();
+	}
+	
+	private void totalCalc()
+	{
+		sumAmount = BigDecimal.ZERO.setScale(8);
+		sumTotal = BigDecimal.ZERO.setScale(8);
+		for (Pair<BigInteger, Order> orderPair : this.orders) 	
+		{
+			sumAmount = sumAmount.add(orderPair.getB().getPrice().multiply(orderPair.getB().getAmountLeft()).setScale(8, RoundingMode.DOWN));
+			sumTotal = sumTotal.add(orderPair.getB().getAmountLeft());
+		}
 	}
 	
 	@Override
@@ -58,38 +81,64 @@ public class BuyOrdersTableModel extends QoraTableModel<BigInteger, Order> imple
 	@Override
 	public int getRowCount() 
 	{
-		return this.orders.size();
+		return this.orders.size() + 1;
 		
 	}
 
 	@Override
 	public Object getValueAt(int row, int column) 
 	{
-		if(this.orders == null || row > this.orders.size() - 1 )
+		if(this.orders == null || row > this.orders.size() )
 		{
 			return null;
 		}
 		
-		Order order = this.orders.get(row).getB();
+		Order order = null;
+		if(row < this.orders.size())
+		{
+			order = this.orders.get(row).getB();
+		}
 		
 		switch(column)
 		{
-		case COLUMN_BUYING_PRICE:
+			case COLUMN_BUYING_PRICE:
+				
+				if(row == this.orders.size())
+					return "<html>Total:</html>";
+				
+				return NumberAsString.getInstance().numberAsString(BigDecimal.ONE.setScale(8).divide(order.getPrice(), 8, RoundingMode.DOWN));
+				
+			case COLUMN_BUYING_AMOUNT:
+				
+				if(row == this.orders.size())
+					return "<html><i>" + NumberAsString.getInstance().numberAsString(sumAmount) + "</i></html>";
+				
+				return NumberAsString.getInstance().numberAsString(order.getPrice().multiply(order.getAmountLeft()).setScale(8, RoundingMode.DOWN));
 			
-			return NumberAsString.getInstance().numberAsString(BigDecimal.ONE.setScale(8).divide(order.getPrice(), 8, RoundingMode.DOWN));
-			
-		case COLUMN_BUYING_AMOUNT:
-			
-			return NumberAsString.getInstance().numberAsString(order.getPrice().multiply(order.getAmountLeft()).setScale(8, RoundingMode.DOWN));
-		
-		case COLUMN_PRICE:
-			
-			return NumberAsString.getInstance().numberAsString(order.getPrice());
-		
-		case COLUMN_AMOUNT:
-			
-			return NumberAsString.getInstance().numberAsString(order.getAmountLeft());
-			
+			case COLUMN_PRICE:
+				
+				if(row == this.orders.size())
+					return "";
+							
+				return NumberAsString.getInstance().numberAsString(order.getPrice());
+				
+			case COLUMN_AMOUNT:
+				
+				if(row == this.orders.size())
+					return "<html><i>" + NumberAsString.getInstance().numberAsString(sumTotal) + "</i></html>";
+				
+				// It shows unacceptably small amount of red.
+				BigDecimal increment = order.calculateBuyIncrement(order, DBSet.getInstance());
+				BigDecimal amount = order.getAmountLeft();
+				String amountStr = NumberAsString.getInstance().numberAsString(amount);
+				amount = amount.subtract(amount.remainder(increment));
+				
+				if (amount.compareTo(BigDecimal.ZERO) <= 0)
+					return "<html><font color=#808080>" + amountStr + "</font></html>";
+				else
+					return "<html>" + amountStr + "</html>";
+
+				
 		}
 		
 		return null;
@@ -115,6 +164,7 @@ public class BuyOrdersTableModel extends QoraTableModel<BigInteger, Order> imple
 		//CHECK IF LIST UPDATED
 		if(message.getType() == ObserverMessage.ADD_ORDER_TYPE || message.getType() == ObserverMessage.REMOVE_ORDER_TYPE)
 		{
+			totalCalc();
 			this.fireTableDataChanged();
 		}
 	}

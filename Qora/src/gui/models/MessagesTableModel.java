@@ -649,14 +649,24 @@ public class MessagesTableModel extends JTable implements Observer{
 		}
 		public int getConfirmations()
 		{
+			
 			if( DBSet.getInstance().getTransactionMap().contains(this.signature) )
 			{
 				return 0;
 			}
 			else
 			{
-				return Controller.getInstance().getTransaction(this.signature).getConfirmations();
-			}	
+				Transaction tx = Controller.getInstance().getTransaction(this.signature);
+				if(tx != null)
+				{
+					return tx.getConfirmations();	
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			
 		}
 
 		public boolean isText()

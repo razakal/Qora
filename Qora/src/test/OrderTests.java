@@ -18,7 +18,6 @@ import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.GenesisBlock;
 import qora.crypto.Crypto;
-import qora.crypto.Ed25519;
 import qora.transaction.CreateOrderTransaction;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.IssueAssetTransaction;
@@ -31,7 +30,6 @@ public class OrderTests
 	@Test
 	public void validateSignatureOrderTransaction() 
 	{
-		Ed25519.load();
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
@@ -65,7 +63,6 @@ public class OrderTests
 	@Test
 	public void validateCreateOrderTransaction() 
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//ADD QORA ASSET
@@ -212,7 +209,6 @@ public class OrderTests
 	@Test
 	public void testOrderProcessingNonDivisible()
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A
@@ -320,7 +316,6 @@ public class OrderTests
 	@Test
 	public void testOrderProcessingWantDivisible()
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A
@@ -422,7 +417,6 @@ public class OrderTests
 	@Test
 	public void testOrderProcessingHaveDivisible()
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A
@@ -530,7 +524,6 @@ public class OrderTests
 	@Test
 	public void testOrderProcessingDivisible()
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A
@@ -637,7 +630,6 @@ public class OrderTests
 	@Test
 	public void testOrderProcessingMultipleOrders()
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A
@@ -745,7 +737,6 @@ public class OrderTests
 	@Test
 	public void testOrderProcessingForks()
 	{
-		Ed25519.load();
 		DBSet dbSet = DBSet.createEmptyDatabaseSet();
 		
 		//CREATE ASSET A

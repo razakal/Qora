@@ -53,9 +53,7 @@ import qora.assets.Asset;
 import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.Block;
-import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Crypto;
-import qora.crypto.Ed25519;
 import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.payment.Payment;
@@ -73,14 +71,15 @@ import webserver.WebService;
 
 public class Controller extends Observable {
 
-	private String version = "0.23.0";
-	public static final String releaseVersion = "0.23.0";
+	private String version = "0.24.0 beta";
+	public static final String releaseVersion = "0.24.0";
 
 //	TODO ENUM would be better here
 	public static final int STATUS_NO_CONNECTIONS = 0;
 	public static final int STATUS_SYNCHRONIZING = 1;
 	public static final int STATUS_OKE = 2;
 
+	public boolean isProcessSynchronize = false; 
 	private int status;
 	private Network network;
 	private ApiService rpcService;
@@ -140,11 +139,6 @@ public class Controller extends Observable {
 			}
 		}
 
-		// LOAD NATIVE LIBRARIES
-		if (!Ed25519.load()) {
-			throw new Exception("Failed to load native libraries!");
-		}
-
 		this.peerHeight = new LinkedHashMap<Peer, Integer>(); // LINKED TO
 																// PRESERVE
 																// ORDER WHEN
@@ -194,15 +188,6 @@ public class Controller extends Observable {
 			DBSet.getInstance().getLocalDataMap().set("txfinalmap", "1");
 		}
 		
-
-		// BLOCKEXPLORER BOOST
-		if (Settings.getInstance().isBlockExplorerBoost()) {
-			BlockExplorer.getInstance().setIndexing(true);
-		} else {
-			BlockExplorer.getInstance().setIndexing(false);
-			BlockExplorer.getInstance().ResetBase();
-		}
-
 		// CREATE SYNCHRONIZOR
 		this.synchronizer = new Synchronizer();
 
@@ -1132,10 +1117,14 @@ public class Controller extends Observable {
 	}
 
 	public SortableList<BigInteger, Order> getOrders(Asset have, Asset want) {
-		return DBSet.getInstance().getOrderMap()
-				.getOrdersSortableList(have.getKey(), want.getKey());
+		return this.getOrders(have, want, false);
 	}
 
+	public SortableList<BigInteger, Order> getOrders(Asset have, Asset want, boolean filter) {
+		return DBSet.getInstance().getOrderMap()
+				.getOrdersSortableList(have.getKey(), want.getKey(), filter);
+	}
+	
 	public SortableList<Tuple2<BigInteger, BigInteger>, Trade> getTrades(
 			Asset have, Asset want) {
 		return DBSet.getInstance().getTradeMap()

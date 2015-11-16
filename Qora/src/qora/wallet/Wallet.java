@@ -13,6 +13,14 @@ import java.util.logging.Logger;
 
 import org.mapdb.Fun.Tuple2;
 
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+
+import at.AT_Transaction;
+import controller.Controller;
+import database.DBSet;
+import database.wallet.SecureWalletDatabase;
+import database.wallet.WalletDatabase;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
@@ -37,15 +45,6 @@ import qora.transaction.VoteOnPollTransaction;
 import qora.voting.Poll;
 import utils.ObserverMessage;
 import utils.Pair;
-import at.AT_Transaction;
-
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-
-import controller.Controller;
-import database.DBSet;
-import database.wallet.SecureWalletDatabase;
-import database.wallet.WalletDatabase;
 
 public class Wallet extends Observable implements Observer
 {
@@ -414,21 +413,31 @@ public class Wallet extends Observable implements Observer
 		//REPROCESS BLOCKS
 		Block block = new GenesisBlock();
 		this.database.setLastBlockSignature(new byte[]{1,1,1,1,1,1,1,1});
-		do
-		{
-			//UPDATE
-			this.update(this, new ObserverMessage(ObserverMessage.ADD_BLOCK_TYPE, block));
-			
-			if(block.getHeight() % 2000 == 0) 
+		
+		try{
+			Controller.getInstance().isProcessSynchronize = true;
+		
+			do
 			{
-				Logger.getGlobal().info("Synchronize wallet: " + block.getHeight());
-				this.database.commit();
+				//UPDATE
+				this.update(this, new ObserverMessage(ObserverMessage.ADD_BLOCK_TYPE, block));
+				
+				if(block.getHeight() % 2000 == 0) 
+				{
+					Logger.getGlobal().info("Synchronize wallet: " + block.getHeight());
+					this.database.commit();
+				}
+				
+				//LOAD NEXT
+				block = block.getChild();
 			}
+			while(block != null);
 			
-			//LOAD NEXT
-			block = block.getChild();
+		}finally{
+			Controller.getInstance().isProcessSynchronize = false;
+			this.database.commit();
 		}
-		while(block != null);
+		
 		
 		//RESET UNCONFIRMED BALANCE
 		synchronized(accounts)

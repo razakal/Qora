@@ -254,7 +254,7 @@ public class NameStorageResource {
 						}
 						
 						BigDecimal newAmount = oldAmount.multiply(new BigDecimal(1.15));
-						newAmount = newAmount.setScale(0, BigDecimal.ROUND_UP); 
+						newAmount = newAmount.setScale(0, BigDecimal.ROUND_UP).setScale(8); 
 						pair.setB(newAmount);
 						newPairs.add(pair);
 						
