@@ -98,6 +98,12 @@ public class ApiErrorFactory
 	public static final int ERROR_NAME_NOT_OWNER = 903;
 	public static final int ERROR_TX_AMOUNT = 904;
 	
+	//Messages
+	public static final int ERROR_MESSAGE_FORMAT_NOT_HEX = 1001;
+	public static final int ERROR_MESSAGE_BLANK = 1002;
+	public static final int ERROR_NO_PUBLIC_KEY = 1003;
+	public static final int ERROR_MESSAGESIZE_EXCEEDED = 1004;
+	
 	public static int BATCH_TX_AMOUNT = 50;
 	
 	
@@ -201,6 +207,13 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_BLOG_DISABLED,"this blog is disabled");
 		this.errorMessages.put(ERROR_NAME_NOT_OWNER,"the creator address does not own the author name");
 		this.errorMessages.put(ERROR_TX_AMOUNT,"the data size is too large - currently only "+BATCH_TX_AMOUNT+" arbitrary transactions are allowed at once!");
+		
+		
+		//MESSAGES
+		this.errorMessages.put(ERROR_MESSAGE_FORMAT_NOT_HEX,"the Message format is not hex - correct the text or use isTextMessage = true");
+		this.errorMessages.put(ERROR_MESSAGE_BLANK,"The message attribute is missing or content is blank");
+		this.errorMessages.put(ERROR_NO_PUBLIC_KEY,"The recipient has not yet performed any action in the blockchain.\nYou can't send an encrypted message to him.");
+		this.errorMessages.put(ERROR_MESSAGESIZE_EXCEEDED,"Message size exceeded!");
 		
 
 	}
