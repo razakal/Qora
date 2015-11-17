@@ -1,5 +1,6 @@
 package utils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -174,7 +175,7 @@ public class BlogUtils {
 		for (ArbitraryTransaction transaction : blogPostTX) {
 
 			byte[] data = ((ArbitraryTransaction) transaction).getData();
-			String string = new String(data);
+			String string = new String(data, StandardCharsets.UTF_8);
 
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 			if (jsonObject != null) {
@@ -267,7 +268,7 @@ public class BlogUtils {
 			return null;
 		}
 		byte[] data = ((ArbitraryTransaction) transaction).getData();
-		String string = new String(data);
+		String string = new String(data, StandardCharsets.UTF_8);
 
 		JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 		if (jsonObject != null) {
