@@ -2,6 +2,7 @@ package kryo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class DiffHelper {
 
 	public static String patch(String source, String patch) throws PatchFailedException {
 		Kryo kryo = getkryo();
-		try(Input input = new Input(patch.getBytes());)
+		try(Input input = new Input(patch.getBytes(StandardCharsets.UTF_8));)
 		{
 			@SuppressWarnings("unchecked")
 			Patch<String> diff = kryo.readObject(input, Patch.class);
