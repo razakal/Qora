@@ -2162,8 +2162,8 @@ function mainQuery(data) {
 						buf = uintToString(Base58.decode(data[i].transaction.data));
 
 						buf = buf.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g, '&quot;');
-
-						output += '<td><abbr title="'+buf+'"><pre>'+wordwrap(data[i].transaction.data, 70, '\n', true)+'</pre></td>';
+						
+						output += '<td><abbr title="'+buf+'"><pre>'+wordwrap(data[i].transaction.data, 70, '\n', true)+'</pre></abbr></td>';
 						
 						if(data[i].hasOwnProperty('balance'))
 						{
@@ -2700,27 +2700,31 @@ function mainQuery(data) {
 				output += pagesOld(data.countTx.allCount, data.txOnPage, data.start, data.end, url, data.allOnOnePage);
 			}
 			
-			pagesForNames
-			
 			output +=  '</table>';
 		}
 
 	} catch(e) {
-		//output = e;
+		output += "<h1>ERROR<br>"+e+"</h1>";
 	}
 	
 	return output;
 }
 
 function uintToString(uintArray) {
-    var encodedString = String.fromCharCode.apply(null, uintArray),
-        decodedString = decodeURIComponent(escape(encodedString));
-    return decodedString;
+    var encodedString = String.fromCharCode.apply(null, uintArray);
+	try {
+		return decodeURIComponent(escape(encodedString));
+	} catch (e)	{
+		return encodedString;
+	}
 }
 
 function htmlFilter(str)
 {
-	return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+	return str
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/\n/g, "<br>");
 }
 	
 function pages(datapages, datastart, dataend, url, dataallOnOnePage)
