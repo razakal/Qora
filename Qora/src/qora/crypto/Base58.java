@@ -1,6 +1,5 @@
 /**
  * Copyright 2011 Google Inc.
- * Copyright 2013-2014 Ronald W Hoffman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,219 +13,116 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package qora.crypto;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+
 /**
- * Provides Base-58 encoding and decoding
+ * A custom form of base58 is used to encode BitCoin addresses.
  */
 public class Base58 {
+   private static final String ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+   private static final BigInteger BASE = BigInteger.valueOf(58);
 
-    /** Alphabet used for encoding and decoding */
-    private static final char[] ALPHABET =
-            "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toCharArray();
+   public static String encode(byte[] input) {
+      BigInteger bi = new BigInteger(1, input);
+      StringBuffer s = new StringBuffer();
+      while (bi.compareTo(BASE) >= 0) {
+         BigInteger mod = bi.mod(BASE);
+         s.insert(0, ALPHABET.charAt(mod.intValue()));
+         bi = bi.subtract(mod).divide(BASE);
+      }
+      s.insert(0, ALPHABET.charAt(bi.intValue()));
+      // Convert leading zeros too.
+      for (byte anInput : input) {
+         if (anInput == 0)
+            s.insert(0, ALPHABET.charAt(0));
+         else
+            break;
+      }
+      return s.toString();
+   }
 
-    /** Lookup index for US-ASCII characters (code points 0-127) */
-    private static final int[] INDEXES = new int[128];
-    static {
-        for (int i=0; i<INDEXES.length; i++)
-            INDEXES[i] = -1;
-        for (int i=0; i<ALPHABET.length; i++)
-            INDEXES[ALPHABET[i]] = i;
-    }
+   public static byte[] decode(String input) {
+      if(input.length() == 0) {
+        return null;
+      }
+      BigInteger decoded = decodeToBigInteger(input);
+      if(decoded == null) {
+         return null;
+      }
+      byte[] bytes = decoded.toByteArray();
+      // We may have got one more byte than we wanted, if the high bit of the
+      // next-to-last byte was not zero. This
+      // is because BigIntegers are represented with twos-compliment notation,
+      // thus if the high bit of the last
+      // byte happens to be 1 another 8 zero bits will be added to ensure the
+      // number parses as positive. Detect
+      // that case here and chop it off.
+      boolean stripSignByte = bytes.length > 1 && bytes[0] == 0 && bytes[1] < 0;
+      // Count the leading zeros, if any.
+      int leadingZeros = 0;
+      for (int i = 0; i < input.length() && input.charAt(i) == ALPHABET.charAt(0); i++) {
+         leadingZeros++;
+      }
+      // Now cut/pad correctly. Java 6 has a convenience for this, but Android
+      // can't use it.
+      byte[] tmp = new byte[bytes.length - (stripSignByte ? 1 : 0)
+            + leadingZeros];
+      System.arraycopy(bytes, stripSignByte ? 1 : 0, tmp, leadingZeros,
+            tmp.length - leadingZeros);
+      return tmp;
+   }
 
-    /**
-     * Encodes a byte array as a Base58 string
-     *
-     * @param       bytes           Array to be encoded
-     * @return                      Encoded string
-     */
-    
-    public static String encode(byte[] bytes) {
-        //
-        // Nothing to do for an empty array
-        //
-        if (bytes.length == 0)
-            return "";
-        //
-        // Make a copy of the input since we will be modifying it as we go along
-        //
-        byte[] input = Arrays.copyOf(bytes, bytes.length);
-        //
-        // Count the number of leading zeroes (we will need to prefix the encoded result
-        // with this many zero characters)
-        //
-        int zeroCount = 0;
-        while (zeroCount < input.length && input[zeroCount] == 0)
-            zeroCount++;
-        //
-        // Encode the input starting with the first non-zero byte
-        //
-        int offset = zeroCount;
-        byte[] encoded = new byte[input.length*2];
-        int encodedOffset = encoded.length;
-        while (offset < input.length) {
-            byte mod = divMod58(input, offset);
-            if (input[offset] == 0)
-                offset++;
-            encoded[--encodedOffset] = (byte)ALPHABET[mod];
-        }
-        //
-        // Strip any leading zero values in the encoded result
-        //
-        while (encodedOffset < encoded.length && encoded[encodedOffset] == (byte)ALPHABET[0])
-            encodedOffset++;
-        //
-        // Now add the number of leading zeroes that we found in the input array
-        //
-        for (int i=0; i<zeroCount; i++)
-            encoded[--encodedOffset] = (byte)ALPHABET[0];
-        //
-        // Create the return string from the encoded bytes
-        //
-        String encodedResult;
-        try {
-            byte[] stringBytes = Arrays.copyOfRange(encoded, encodedOffset, encoded.length);
-            encodedResult = new String(stringBytes, "US-ASCII");
-        } catch (UnsupportedEncodingException exc) {
-            encodedResult = "";             // Should never happen
-        }
-        return encodedResult;
-    }
-
-    /**
-     * Decodes a Base58 string
-     *
-     * @param       string                  Encoded string
-     * @return                              Decoded bytes
-     * @throws      AddressFormatException  Invalid Base-58 encoded string
-     */
-    public static byte[] decode(String string) {
-        //
-        // Nothing to do if we have an empty string
-        //
-        if (string.length() == 0)
-            return new byte[0];
-        //
-        // Convert the input string to a byte sequence
-        //
-        byte[] input = new byte[string.length()];
-        for (int i=0; i<string.length(); i++) {
-            int codePoint = string.codePointAt(i);
-            int digit = -1;
-            if (codePoint>=0 && codePoint<INDEXES.length)
-                digit = INDEXES[codePoint];
-            if (digit < 0)
-            	return null;
-            input[i] = (byte)digit;
-        }
-        //
-        // Count the number of leading zero characters
-        //
-        int zeroCount = 0;
-        while (zeroCount < input.length && input[zeroCount] == 0)
-            zeroCount++;
-        //
-        // Convert from Base58 encoding starting with the first non-zero character
-        //
-        byte[] decoded = new byte[input.length];
-        int decodedOffset = decoded.length;
-        int offset = zeroCount;
-        while (offset < input.length) {
-            byte mod = divMod256(input, offset);
-            if (input[offset] == 0)
-                offset++;
-            decoded[--decodedOffset] = mod;
-        }
-        //
-        // Strip leading zeroes from the decoded result
-        //
-        while (decodedOffset < decoded.length && decoded[decodedOffset] == 0)
-            decodedOffset++;
-        //
-        // Return the decoded result prefixed with the number of leading zeroes
-        // that were in the original string
-        //
-        byte[] output = Arrays.copyOfRange(decoded, decodedOffset-zeroCount, decoded.length);
-        return output;
-    }
-
-    /**
-     * Decode a Base58-encoded checksummed string and verify the checksum.  The
-     * checksum will then be removed from the decoded value.
-     *
-     * @param       string                  Base-58 encoded checksummed string
-     * @return                              Decoded value
-     * @throws      AddressFormatException  The string is not valid or the checksum is incorrect
-     */
-    public static byte[] decodeChecked(String string) {
-        //
-        // Decode the string
-        //
-        byte[] decoded = decode(string);
-        if (decoded.length < 4)
+   private static BigInteger decodeToBigInteger(String input) {
+      BigInteger bi = BigInteger.valueOf(0);
+      // Work backwards through the string.
+      for (int i = input.length() - 1; i >= 0; i--) {
+         int alphaIndex = ALPHABET.indexOf(input.charAt(i));
+         if (alphaIndex == -1) {
             return null;
-        //
-        // Verify the checksum contained in the last 4 bytes
-        //
-        byte[] bytes = Arrays.copyOfRange(decoded, 0, decoded.length-4);
-        byte[] checksum = Arrays.copyOfRange(decoded, decoded.length-4, decoded.length);
-        byte[] hash = Arrays.copyOfRange(Crypto.getInstance().doubleDigest(bytes), 0, 4);
-        if (!Arrays.equals(hash, checksum))
-        	return null;
-        //
-        // Return the result without the checksum bytes
-        //
-        return bytes;
-    }
+         }
+         bi = bi.add(BigInteger.valueOf(alphaIndex).multiply(
+               BASE.pow(input.length() - 1 - i)));
+      }
+      return bi;
+   }
 
-    /**
-     * Divide the current number by 58 and return the remainder.  The input array
-     * is updated for the next round.
-     *
-     * @param       number          Number array
-     * @param       offset          Offset within the array
-     * @return                      The remainder
-     */
-    private static byte divMod58(byte[] number, int offset) {
-        int remainder = 0;
-        for (int i=offset; i<number.length; i++) {
-            int digit = (int)number[i]&0xff;
-            int temp = remainder*256 + digit;
-            number[i] = (byte)(temp/58);
-            remainder = temp%58;
-        }
-        return (byte)remainder;
-    }
-
-    /**
-     * Divide the current number by 256 and return the remainder.  The input array
-     * is updated for the next round.
-     *
-     * @param       number          Number array
-     * @param       offset          Offset within the array
-     * @return                      The remainder
-     */
-    private static byte divMod256(byte[] number, int offset) {
-        int remainder = 0;
-        for (int i=offset; i<number.length; i++) {
-            int digit = (int)number[i]&0xff;
-            int temp = remainder*58 + digit;
-            number[i] = (byte)(temp/256);
-            remainder = temp%256;
-        }
-        return (byte)remainder;
-    }
-    
+   /**
+    * Uses the checksum in the last 4 bytes of the decoded data to verify the
+    * rest are correct. The checksum is removed from the returned data.
+    * @param input The base58 encoded string to decode and verify.
+    * @return The decoded and verified input as an array of bytes.
+    */
+   public static byte[] decodeChecked(String input) {
+      byte[] tmp = decode(input);
+      if (tmp == null) {
+         return null;
+      }
+      if (tmp.length < 4) {
+         return null;
+      }
+      byte[] checksum = new byte[4];
+      System.arraycopy(tmp, tmp.length - 4, checksum, 0, 4);
+      byte[] bytes = new byte[tmp.length - 4];
+      System.arraycopy(tmp, 0, bytes, 0, tmp.length - 4);
+      tmp = Crypto.getInstance().doubleDigest(bytes);
+      byte[] hash = new byte[4];
+      System.arraycopy(tmp, 0, hash, 0, 4);
+      if (!Arrays.equals(hash, checksum))
+         return null;
+      return bytes;
+   }
+   
 	public static String encode(BigInteger id) {
 		byte[] array = id.toByteArray();
 		return encode(array);
 	}
-
-	public static BigInteger decodeBI(String input) {
-		return new BigInteger(decode(input));
-	}
+	
+   public static BigInteger decodeBI(String input) {
+	   return new BigInteger(decode(input));
+   }
 }
