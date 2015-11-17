@@ -1,5 +1,6 @@
 package api;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -147,21 +148,16 @@ public class BlogPostResource {
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
 					.createArbitraryTransaction(account, 777,
-							dataStructure.toJSONString().getBytes(), bdFee);
+							dataStructure.toJSONString().getBytes("UTF-8"), bdFee);
 
 			return ArbitraryTransactionsResource
 					.checkArbitraryTransaction(result);
 
-		} catch (NullPointerException e) {
-			// JSON EXCEPTION
-			throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_JSON);
-		} catch (ClassCastException e) {
+		} catch (NullPointerException | UnsupportedEncodingException | ClassCastException e) {
 			// JSON EXCEPTION
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_JSON);
 		}
-
 	}
 
 	static void isPostAllowed(String blogname) {
