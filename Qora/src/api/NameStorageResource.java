@@ -1,6 +1,8 @@
 package api;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -155,7 +157,7 @@ public class NameStorageResource {
 				jsonString = compressedJsonString;
 			}
 
-			byte[] bytes = jsonString.getBytes();
+			byte[] bytes = jsonString.getBytes(StandardCharsets.UTF_8);
 			List<String> askApicalls = new ArrayList<String>();	
 			List<String> decompressedValue = new ArrayList<String>();
 			JSONObject jsonObjectForCheck = (JSONObject) JSONValue.parse(x);
@@ -210,7 +212,7 @@ public class NameStorageResource {
 						}
 
 						byte[] resultbyteArray = jsonStringForMultipleTx
-								.getBytes();
+								.getBytes(Charset.forName("UTF-8"));
 						BigDecimal currentFee = Controller
 								.getInstance()
 								.calcRecommendedFeeForArbitraryTransaction(

@@ -2,6 +2,7 @@ package api;
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -125,7 +126,7 @@ public class MessageResource {
 			byte[] messageBytes;
 			if ( isTextMessage )
 			{
-				messageBytes = message.getBytes( Charset.forName("UTF-8") );
+				messageBytes = message.getBytes(StandardCharsets.UTF_8);
 			}
 			else
 			{

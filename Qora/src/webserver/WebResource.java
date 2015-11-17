@@ -484,7 +484,7 @@ public class WebResource {
 		if (type.equalsIgnoreCase("POST")) {
 			connection.setDoOutput(true);
 			connection.getOutputStream().write(
-					json.toJSONString().getBytes("UTF-8"));
+					json.toJSONString().getBytes(StandardCharsets.UTF_8));
 			connection.getOutputStream().flush();
 			connection.getOutputStream().close();
 		}
@@ -1262,7 +1262,7 @@ public class WebResource {
 						Controller
 								.getInstance()
 								.calcRecommendedFeeForArbitraryTransaction(
-										jsonBlogPost.toJSONString().getBytes())
+										jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8))
 								.getA().toPlainString());
 
 				String result = new BlogPostResource().addBlogEntry(
@@ -1589,7 +1589,7 @@ public class WebResource {
 					jsonBlogPost.put("creator", creator);
 					Pair<BigDecimal, Integer> fee = Controller.getInstance()
 							.calcRecommendedFeeForArbitraryTransaction(
-									jsonBlogPost.toJSONString().getBytes());
+									jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8));
 					jsonBlogPost.put("fee", fee.getA().toPlainString());
 					// I am not author, but am I the owner of the blog?
 				} else if (blognameOpt != null
@@ -1727,7 +1727,7 @@ public class WebResource {
 
 					Pair<BigDecimal, Integer> fee = Controller.getInstance()
 							.calcRecommendedFeeForArbitraryTransaction(
-									jsonBlogPost.toJSONString().getBytes());
+									jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8));
 					jsonBlogPost.put("fee", fee.getA().toPlainString());
 
 					try {

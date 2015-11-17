@@ -1,15 +1,18 @@
 package api;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+
 import qora.crypto.Base58;
 import utils.Pair;
 import controller.Controller;
@@ -160,7 +163,7 @@ public class CalcFeeResource {
 			jsonObject = new JSONObject();
 			
 			//CALC FEE
-			Pair<BigDecimal, Integer> result = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(dataStructure.toJSONString().getBytes());
+			Pair<BigDecimal, Integer> result = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(dataStructure.toJSONString().getBytes(StandardCharsets.UTF_8));
 			
 			jsonObject.put("fee", result.getA().toPlainString());
 			jsonObject.put("feeRound", result.getA().setScale(0, BigDecimal.ROUND_CEILING).setScale(8).toPlainString());
