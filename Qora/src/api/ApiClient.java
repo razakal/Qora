@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -539,7 +540,7 @@ public class ApiClient {
 			if(method.equals("POST"))
 			{
 				connection.setDoOutput(true);
-				connection.getOutputStream().write(content.getBytes("UTF-8"));
+				connection.getOutputStream().write(content.getBytes(StandardCharsets.UTF_8));
 				connection.getOutputStream().flush();
 				connection.getOutputStream().close();
 			}

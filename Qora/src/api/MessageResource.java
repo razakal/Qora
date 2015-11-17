@@ -1,7 +1,6 @@
 package api;
 
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.AEScrypto;
@@ -24,7 +24,6 @@ import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.Converter;
 import utils.Pair;
-import controller.Controller;
 
 @Path("message")
 @Produces(MediaType.APPLICATION_JSON)

@@ -1,7 +1,6 @@
 package api;
 
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +20,11 @@ import javax.ws.rs.core.MediaType;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+
+import controller.Controller;
+import database.DBSet;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
@@ -29,12 +33,6 @@ import utils.APIUtils;
 import utils.GZIP;
 import utils.Pair;
 import utils.StorageUtils;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-
-import controller.Controller;
-import database.DBSet;
 
 @Path("namestorage")
 @Produces(MediaType.APPLICATION_JSON)
@@ -212,7 +210,7 @@ public class NameStorageResource {
 						}
 
 						byte[] resultbyteArray = jsonStringForMultipleTx
-								.getBytes(Charset.forName("UTF-8"));
+								.getBytes(StandardCharsets.UTF_8);
 						BigDecimal currentFee = Controller
 								.getInstance()
 								.calcRecommendedFeeForArbitraryTransaction(

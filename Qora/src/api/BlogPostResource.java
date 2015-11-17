@@ -1,7 +1,7 @@
 package api;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -16,6 +16,8 @@ import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import controller.Controller;
+import database.DBSet;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
@@ -23,8 +25,6 @@ import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.Pair;
 import utils.Qorakeys;
-import controller.Controller;
-import database.DBSet;
 
 @Path("blogpost")
 @Produces(MediaType.APPLICATION_JSON)
@@ -148,12 +148,12 @@ public class BlogPostResource {
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
 					.createArbitraryTransaction(account, 777,
-							dataStructure.toJSONString().getBytes("UTF-8"), bdFee);
+							dataStructure.toJSONString().getBytes(StandardCharsets.UTF_8), bdFee);
 
 			return ArbitraryTransactionsResource
 					.checkArbitraryTransaction(result);
 
-		} catch (NullPointerException | UnsupportedEncodingException | ClassCastException e) {
+		} catch (NullPointerException | ClassCastException e) {
 			// JSON EXCEPTION
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_JSON);
