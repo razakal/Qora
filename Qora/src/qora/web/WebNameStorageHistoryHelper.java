@@ -9,6 +9,8 @@ import java.util.Set;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.google.common.base.Charsets;
+
 import controller.Controller;
 import database.DBSet;
 import qora.transaction.ArbitraryTransaction;
@@ -56,7 +58,7 @@ public class WebNameStorageHistoryHelper {
 
 		
 //		MAKE SURE OTHER VALUE IN INNER JSON DON'T MAKE PROBLEMS!
-		String jsonString = new String(tx.getData());
+		String jsonString = new String(tx.getData(), Charsets.UTF_8);
 
 		jsonString = GZIP.webDecompress(jsonString);
 

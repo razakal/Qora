@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
@@ -24,6 +22,9 @@ import qora.web.NameStorageMap;
 import qora.web.Profile;
 import qora.web.blog.BlogEntry;
 import api.BlogPostResource;
+
+import com.twitter.Extractor;
+
 import controller.Controller;
 import database.DBSet;
 
@@ -144,15 +145,12 @@ public class BlogUtils {
 	}
 
 	public static List<String> getHashTags(String text) {
-		String regexPattern = "(#\\w+)";
-		List<String> results = new ArrayList<String>();
-		Pattern p = Pattern.compile(regexPattern);
-		Matcher m = p.matcher(text);
-		while (m.find()) {
-			results.add(m.group(1));
+		List<String> extractHashtags = new Extractor().extractHashtags(text);
+		List<String> result = new ArrayList<String>();
+		for (String hashTag : extractHashtags) {
+			result.add("#" + hashTag);
 		}
-
-		return results;
+		return result;
 	}
 
 	public static List<BlogEntry> getBlogPosts(String blogOpt) {
