@@ -1,9 +1,10 @@
 package test;
 
-import static org.junit.Assert.*;
-import kryo.DiffHelper;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import kryo.DiffHelper;
 
 public class DiffhelperTest {
 	
@@ -11,8 +12,8 @@ public class DiffhelperTest {
 	@Test
 	public void testDiffs() throws Exception {
 		
-		String source = "skerberus\nvbcs";
-		String destination = "skerberus\nvrontis\nvbcs";
+		String source = "skerberus\nvbcs\n" + "\uAA75" + "\uBCFA" + "\u5902" + "\u2ed8";
+		String destination = "skerberus\nvrontis\nvbcs\n" + "\uAA75" + "\uBCFA" + "\u5902" + "\u2ed8";
 		String diff = DiffHelper.getDiff(source, destination);
 		
 		assertEquals(destination, DiffHelper.patch(source, diff));
@@ -24,13 +25,13 @@ public class DiffhelperTest {
 		assertEquals(destination, DiffHelper.patch(source, diff));
 		
 		
-		destination = "asdf\nwayne";
+		destination = "\uAA75" + "\uBCFA" + "\u5902" + "\u2ed8" + "asdf\nwayne";
 		
 		diff = DiffHelper.getDiff(source, destination);
 		
 		assertEquals(destination, DiffHelper.patch(source, diff));
 		
-		destination = "asdf\nwayne\n \na\ne\ndffdkf";
+		destination = "\uAA75" + "\uBCFA" + "\u5902" + "\u2ed8" + "asdf\nwayne\n \na\ne\ndffdkf";
 		
 		diff = DiffHelper.getDiff(source, destination);
 		
