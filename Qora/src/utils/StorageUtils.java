@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.google.common.base.Charsets;
+
 import qora.account.PublicKeyAccount;
 import qora.naming.Name;
 import qora.transaction.ArbitraryTransaction;
@@ -89,7 +91,7 @@ public class StorageUtils {
 	public static void processUpdate(byte[] data, byte[] signature,
 			PublicKeyAccount creator, DBSet db) {
 
-			String string = new String(data);
+			String string = new String(data, Charsets.UTF_8 );
 			
 			string = GZIP.webDecompress(string);
 
@@ -287,7 +289,7 @@ public class StorageUtils {
 
 	public static void processOrphan(byte[] data, byte[] signature, DBSet db) {
 
-		String string = new String(data);
+		String string = new String(data, Charsets.UTF_8 );
 		
 		string = GZIP.webDecompress(string);
 
@@ -336,7 +338,7 @@ public class StorageUtils {
 						Transaction transaction = Controller.getInstance().getTransaction(signatureofFollowingTx, db);
 						byte[] dataOfFollowingTx = ((ArbitraryTransaction) transaction).getData();
 						
-						String dataOfFollowingTxSting = new String(dataOfFollowingTx);
+						String dataOfFollowingTxSting = new String(dataOfFollowingTx,  Charsets.UTF_8 );
 						
 						JSONObject jsonObjectOfFollowingTx = (JSONObject) JSONValue.parse(dataOfFollowingTxSting);
 						
