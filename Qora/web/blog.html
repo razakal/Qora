@@ -340,7 +340,7 @@
         	{%endif%}
       		</h1><br>
             {% endif %}
-            <li style="float: none;" class="clearfix"></li>
+            <li class="clearfix"></li>
           </ul>
         </div>
       </div>
@@ -650,7 +650,7 @@
         $('ul.nav-tabs > li:nth-child(1)').addClass('active');
     }
 
-    
+
     var transformToAssocArray;
     transformToAssocArray = function(prmstr) {
         var i, params, prmarr, tmparr;
@@ -676,17 +676,17 @@
     };
 
     $(document).ready(function() {
-    
+
    		  $('#name').change(function() {
             $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/hashtag.html?hashtag=' + $('#name').val());
             $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/hashtag.html?hashtag=' + $('#name').val());
         });
         $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/hashtag.html?hashtag=' + $('#name').val());
         $('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/hashtag.html?hashtag=' + $('#name').val());
-        
+
         searchval = $('#name').val();
         $('#name').val(searchval);
-        
+
           $('#button').click(function() {
 
             var url;
@@ -741,8 +741,8 @@
         if (getSearchParameters().hashtag === void 0) {
             $('#name').val('');
         }
-        
-       
+
+
 
     });
 
