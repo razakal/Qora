@@ -3,10 +3,9 @@ package qora.web;
 import java.util.Arrays;
 import java.util.List;
 
-import kryo.DiffHelper;
-
 import org.apache.commons.lang3.StringUtils;
 
+import utils.DiffHelper;
 import difflib.DiffUtils;
 import difflib.Patch;
 

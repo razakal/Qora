@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import kryo.DiffHelper;
+import utils.DiffHelper;
 
 public class DiffhelperTest {
 	
