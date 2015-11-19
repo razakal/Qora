@@ -62,6 +62,7 @@ public class BlogEntry {
 		handleImages();
 		handleLinks();
 		handleHashTags();
+		handleBlogTags();
 		this.nameOpt = nameOpt;
 		profileOpt = Profile.getProfileOpt(nameOpt);
 		addAvatar();
@@ -81,6 +82,24 @@ public class BlogEntry {
 				String hashtagLink =	"<a href='/index/hashtag.html?hashtag=" + hashtag.substring(1, hashtag.length()) + "'>" + hashtag + "</a>";
 				description = description.replaceAll(hashtag, hashtagLink);
 				processedHashtags.add(hashtag);
+			}
+		}
+		
+		
+		
+		
+	}
+	private void handleBlogTags() {
+		hashTags = BlogUtils.getBlogTags(description);
+		List<String> processedBlogtags = new ArrayList<>();
+		for (String blogTag : hashTags) {
+//			TODO PUT HASHTAG-linkprefix at a central place
+			//prevent double editing
+			if(!processedBlogtags.contains(blogTag))
+			{
+				String hashtagLink =	"<a href='/index/blog.html?blogname=" + blogTag.substring(1, blogTag.length()) + "'>" + blogTag + "</a>";
+				description = description.replaceAll(blogTag, hashtagLink);
+				processedBlogtags.add(blogTag);
 			}
 		}
 		
