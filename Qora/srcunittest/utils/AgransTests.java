@@ -12,6 +12,7 @@ import org.junit.Test;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.AEScrypto;
 import qora.crypto.Base58;
+import qora.crypto.Base64;
 import qora.crypto.Crypto;
 
 public class AgransTests {
@@ -135,4 +136,16 @@ public class AgransTests {
 		
 	}
 
+	@Test
+	public void testBase_58_64() {
+		String source = "skerberus\nvbcs\n" + "\uAA75" + "\uBCFA" + "\u5902" + "\u2ed8";
+		
+		String base58 = Base58.encode(source.getBytes(StandardCharsets.UTF_8));
+		String result = new String(Base58.decode(base58), StandardCharsets.UTF_8);
+		assertEquals(source, result);
+		
+		String base64 = Base64.encode(source.getBytes(StandardCharsets.UTF_8));
+		result = new String(Base64.decode(base64), StandardCharsets.UTF_8);
+		assertEquals(source, result);
+	}
 }
