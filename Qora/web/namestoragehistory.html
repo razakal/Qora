@@ -287,14 +287,14 @@
                 </li>
                   <li class="pull-right"><h4 class="panel-title pull-right">
                     <div class="comptions btn-group ">
-                      <button id="copybefore"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy before" data-clipboard-target="clipboard_before"><i class="glyphicon glyphicon-indent-right"></i></button>
+                      <!-- <button id="copybefore"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy before" data-clipboard-target="clipboard_before"><i class="glyphicon glyphicon-indent-right"></i></button>
                       <button id="copychange"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy change" data-clipboard-target="clipboard_change"><i class="glyphicon glyphicon-flash"></i></button>
                       <button id="copyafter"class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Copy after" data-clipboard-target="clipboard_after"><i class="glyphicon glyphicon-indent-left"></i></button>
                       {% autoescape true%}{% for ke in commits %}
                       <textarea id="clipboard_before" name="clipboard_before" readonly>{{ke.getBefore()}}</textarea>
                       <textarea id="clipboard_change" name="clipboard_change" readonly>{{ke.getChange()}}</textarea>
                       <textarea id="clipboard_after" name="clipboard_after" readonly>{{ke.getAfter()}}</textarea>
-                      {% endfor %}{% endautoescape%}
+                      {% endfor %}{% endautoescape%} -->
                       </div>
                       <div class="comptions btn-group "><a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{counter}}">
                         <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-fullscreen"></i></button>
@@ -344,8 +344,8 @@
         //     alert("Copied text to clipboard: " + event.data["text/plain"] );
         //   } );
         // } );
-        
-       
+
+
       $(function(){
       // bind change event to select
       $('#name-select').on('change', function () {
@@ -360,7 +360,7 @@
           return false;
       });
     });
-    
+
     	$(document).ready(function() {
        	 var searchval;
 			$("#name-select").val('{{name}}');
