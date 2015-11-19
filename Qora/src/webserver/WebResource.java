@@ -89,6 +89,7 @@ import utils.UpdateUtil;
 import api.BlogPostResource;
 import api.NameStorageResource;
 
+import com.google.common.base.Charsets;
 import com.mitchellbosecke.pebble.error.PebbleException;
 
 import controller.Controller;
@@ -2568,7 +2569,7 @@ public class WebResource {
 		website = injectValues(website);
 
 		File tmpFile = File.createTempFile("web", ".site");
-		FileUtils.writeStringToFile(tmpFile, website);
+		FileUtils.writeStringToFile(tmpFile, website, Charsets.UTF_8);
 		PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
 				tmpFile.getAbsolutePath(), request);
 		pebbleHelper.getContextMap().put("namestoragemap",
