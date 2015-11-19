@@ -88,7 +88,7 @@ public class BlogPostResource {
 			  Name	name = DBSet.getInstance().getNameMap().get(authorOpt);
 				
 			  	//Name is not owned by creator!
-				if(!name.getOwner().getAddress().equals(creator))
+				if(name == null || !name.getOwner().getAddress().equals(creator))
 				{
 					throw ApiErrorFactory.getInstance().createError(
 							ApiErrorFactory.ERROR_NAME_NOT_OWNER);
