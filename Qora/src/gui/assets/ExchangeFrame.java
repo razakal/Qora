@@ -95,13 +95,13 @@ public class ExchangeFrame extends JFrame
 		
 		//CREATE BUY LABEL
 		labelGBC.gridy = 1;
-		JLabel lblBuy = new JLabel( "Buy " + this.have.toString() + " — Sell " + this.want.toString());
+		JLabel lblBuy = new JLabel( "Buy " + this.have.toString() + " \u2014 Sell " + this.want.toString());
 		lblBuy.setFont(new Font("Serif", Font.PLAIN, 18));
 		this.add(lblBuy, labelGBC);
 		
 		//CREATE SELL LABEL
 		labelGBC.gridx = 1;
-		JLabel lblSell = new JLabel( "Sell " + this.have.toString()	+ " — Buy " + this.want.toString());
+		JLabel lblSell = new JLabel( "Sell " + this.have.toString()	+ " \u2014 Buy " + this.want.toString());
 		lblSell.setFont(new Font("Serif", Font.PLAIN, 18));
 		this.add(lblSell, labelGBC);
 		
