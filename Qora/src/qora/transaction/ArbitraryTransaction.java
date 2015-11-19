@@ -23,6 +23,7 @@ import utils.BlogUtils;
 import utils.StorageUtils;
 import api.BlogPostResource;
 
+import com.google.common.base.Charsets;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
@@ -382,7 +383,7 @@ public class ArbitraryTransaction extends Transaction {
 
 		if (getService() == 777) {
 			byte[] data = getData();
-			String string = new String(data);
+			String string = new String(data, Charsets.UTF_8);
 
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 			if (jsonObject != null) {
@@ -485,7 +486,7 @@ public class ArbitraryTransaction extends Transaction {
 	private void removeFromBlogMapOnDemand(DBSet db) {
 		if (getService() == 777) {
 			byte[] data = getData();
-			String string = new String(data);
+			String string = new String(data, Charsets.UTF_8);
 
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 			if (jsonObject != null) {
