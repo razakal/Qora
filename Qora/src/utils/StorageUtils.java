@@ -108,14 +108,24 @@ public class StorageUtils {
 						Name nameObj = db.getNameMap().get(name);
 						
 						if (nameObj == null) {
-							return;
+							
+							//addressstorage?
+							if(!name.equals(creator.getAddress()))
+							{
+								//they don't match do nothing!
+								return;
+							}
+							
+						}else
+						{
+							
+							if (!nameObj.getOwner().getAddress()
+									.equals(creator.getAddress())) {
+								// creator is not the owner of the name
+								return;
+							}
 						}
 						
-						if (!nameObj.getOwner().getAddress()
-								.equals(creator.getAddress())) {
-							// creator is not the owner of the name
-							return;
-						}
 						
 						NameStorageMap nameStorageMap = db
 								.getNameStorageMap();

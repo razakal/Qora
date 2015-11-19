@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 
 import controller.Controller;
 import database.DBSet;
+import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
@@ -119,13 +120,28 @@ public class NameStorageResource {
 			}
 
 			Name nameObj = DBSet.getInstance().getNameMap().get(name);
+//			Controller.getInstance().getAccountByAddress(name)
 
+			String creator;
 			if (nameObj == null) {
-				throw ApiErrorFactory.getInstance().createError(
-						ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
+				
+				//check if addressstorage
+				Account accountByAddress = Controller.getInstance().getAccountByAddress(name);
+				
+				if(accountByAddress == null)
+				{
+					throw ApiErrorFactory.getInstance().createError(
+							ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
+				}
+				
+				
+					creator = name;
+				
+			}else
+			{
+				creator = nameObj.getOwner().getAddress();
 			}
 
-			String creator = nameObj.getOwner().getAddress();
 			// CHECK ADDRESS
 			if (!Crypto.getInstance().isValidAddress(creator)) {
 				throw ApiErrorFactory.getInstance().createError(
