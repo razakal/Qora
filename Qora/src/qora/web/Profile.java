@@ -45,14 +45,15 @@ public class Profile {
 		Profile result = null;
 		if (name != null) {
 			Name nameObj = DBSet.getInstance().getNameMap().get(name);
-			result = Profile.getProfileOpt(nameObj);
+				result = Profile.getProfileOpt(nameObj);
 		}
 
 		return result;
 	}
 
 	public static Profile getProfileOpt(Name name) {
-		if (!isAllowedProfileName(name.getName())) {
+		
+		if (name== null || !isAllowedProfileName(name.getName())) {
 			return null;
 		}
 		Name nameReloaded = DBSet.getInstance().getNameMap()
