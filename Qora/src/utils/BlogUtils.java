@@ -162,15 +162,6 @@ public class BlogUtils {
 		return result;
 	}
 	
-	public static List<String> getTags(String text) {
-		List<String> extractHashtags = new Extractor().extractHashtags(text);
-		List<String> result = new ArrayList<String>();
-		for (String hashTag : extractHashtags) {
-			result.add("#" + hashTag);
-		}
-		return result;
-	}
-
 	public static List<BlogEntry> getBlogPosts(String blogOpt) {
 		List<BlogEntry> results = new ArrayList<>();
 
