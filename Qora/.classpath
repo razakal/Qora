@@ -101,10 +101,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-153.jar"/>
-	<classpathentry kind="lib" path="libs/twitter-text-1.13.0.jar" sourcepath="libs/sourceandjavadoc/twitter-text-1.13.0-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/twitter-text-1.13.0-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
