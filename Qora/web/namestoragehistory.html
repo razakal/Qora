@@ -306,7 +306,11 @@
               {% autoescape true%}
             {% for ke in txhistory.getKeyValueHistoryList() %}
                 <div class="panel-body">
-                  BEFORE:
+                  {% if txhistory.getKeyValueHistoryList().size > 1 %}
+				  KEY:
+				  <pre>{{ke.getKey()}}</pre>
+				  {% endif %}
+				  BEFORE:
                   <pre>{{ke.getBefore()}}</pre>
                   CHANGE ({{ke.getChangekey()}}):
                   <pre>{{ke.getChange()}}</pre>
