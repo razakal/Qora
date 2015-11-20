@@ -50,7 +50,7 @@ public class NamestorageKeyValueHistory {
 		
 		Patch<String> patch = DiffHelper.getPatch(before, after);
 		
-		List<String> generateUnifiedDiff = DiffUtils.generateUnifiedDiff(before, after, Arrays.asList(split), patch, 3);
+		List<String> generateUnifiedDiff = DiffUtils.generateUnifiedDiff("before", "after", Arrays.asList(split), patch, 3);
 		return StringUtils.join(generateUnifiedDiff, "\n");
 	}
 
