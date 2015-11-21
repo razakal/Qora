@@ -95,19 +95,13 @@ public class BlockGenerator extends Thread implements Observer
 			public void run() {
 				
 				//WE HAVE TO WAIT FOR THE WALLET TO ADD THAT LISTENER.
-				while(!Controller.getInstance().doesWalletExists())
+				while(!Controller.getInstance().doesWalletExists() || !Controller.getInstance().doesWalletDatabaseExists())
 				{
 					try {
-						Thread.sleep(500);
+						Thread.sleep(250);
 					} catch (InterruptedException e) {
 //						does not matter
 					}
-				}
-				//SECURITY MARGIN TO MAKE SURE WE CAN ADD THAT LISTENER
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-//					does not matter
 				}
 				
 				Controller.getInstance().addWalletListener(BlockGenerator.this);
