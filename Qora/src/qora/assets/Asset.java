@@ -3,13 +3,17 @@ package qora.assets;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import org.json.simple.JSONObject;
+
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
+import controller.Controller;
 import database.DBSet;
 import qora.account.Account;
 import qora.crypto.Base58;
+import qora.transaction.Transaction;
 
 public class Asset {
 
@@ -128,20 +132,6 @@ public class Asset {
 		return new Asset(owner, name, description, quantity, divisable, reference);
 	}
 	
-	/*@SuppressWarnings("unchecked")
-	public JSONObject toJson() 
-	{
-		//GET BASE
-		JSONObject name = new JSONObject();
-								
-		//ADD NAME/VALUE/OWNER
-		name.put("name", this.getName());
-		name.put("value", this.getValue());
-		name.put("owner", this.getOwner().getAddress());
-								
-		return name;	
-	}*/
-	
 	public byte[] toBytes(boolean includeReference)
 	{
 		byte[] data = new byte[0];
@@ -223,4 +213,27 @@ public class Asset {
 		return "(" + this.getKey() + ")" + this.getName().substring(0, Math.min(this.getName().length(), 4));
 	}
 	
+	@SuppressWarnings("unchecked")
+	public JSONObject toJson() {
+		
+		JSONObject assetJSON = new JSONObject();
+
+		// ADD DATA
+		assetJSON.put("key", this.getKey());
+		assetJSON.put("name", this.getName());
+		assetJSON.put("description", this.getDescription());
+		assetJSON.put("owner", this.getOwner().getAddress());
+		assetJSON.put("quantity", this.getQuantity());
+		assetJSON.put("isDivisible", this.isDivisible());
+		assetJSON.put("isConfirmed", this.isConfirmed());
+		assetJSON.put("reference", Base58.encode(this.getReference()));
+		
+		Transaction txReference = Controller.getInstance().getTransaction(this.getReference());
+		if(txReference != null)
+		{
+			assetJSON.put("timestamp", txReference.getTimestamp());
+		}
+		
+		return assetJSON;
+	}
 }
