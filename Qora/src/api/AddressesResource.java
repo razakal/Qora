@@ -1,5 +1,6 @@
 package api;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -17,15 +18,18 @@ import javax.ws.rs.core.MediaType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.mapdb.Fun.Tuple2;
 
+import controller.Controller;
+import database.DBSet;
+import database.SortableList;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import utils.APIUtils;
-import controller.Controller;
-import database.DBSet;
+import utils.Pair;
 
 @Path("addresses")
 @Produces(MediaType.APPLICATION_JSON)
@@ -256,6 +260,29 @@ public class AddressesResource {
 		return DBSet.getInstance().getBalanceMap().get(address, assetAsLong)
 				.toPlainString();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("assets/{address}")
+	public String getAssetBalance(@PathParam("address") String address) {
+		// CHECK IF VALID ADDRESS
+		if (!Crypto.getInstance().isValidAddress(address)) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_INVALID_ADDRESS);
+		}
+
+		SortableList<Tuple2<String, Long>, BigDecimal> assetsBalances = DBSet.getInstance().getBalanceMap().getBalancesSortableList(new Account(address));
+
+		JSONObject assetsBalancesJSON = new JSONObject();
+		
+		for (Pair<Tuple2<String, Long>, BigDecimal> assetsBalance : assetsBalances) 	
+		{
+			assetsBalancesJSON.put(assetsBalance.getA().b, assetsBalance.getB().toPlainString());
+		}
+		
+		return assetsBalancesJSON.toJSONString();
+	}
+			
 
 	@GET
 	@Path("balance/{address}/{confirmations}")
