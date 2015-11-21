@@ -208,14 +208,24 @@ public class ApiClient {
 				"Errors: 102 - Invalid address."
 			},
 			{
+				"GET addresses/assetbalance/<key>/<address>", 
+				"Returns the confirmed balance of the given address for the given asset key.",
+				"Errors: 102 - Invalid address. 601 - Invalid asset id."
+			},
+			{
 				"POST addresses/sign/<address> <message>", 
-				"Signs the  given message using the given address.",
+				"Signs the given message using the given address.",
 				"Errors: 102 - Invalid address. 201 - Wallet does not exist. 202 - Address does not exist in wallet. 203 - Wallet is locked."
 			},
 			{
 				"POST addresses/verify/<address> {\"message\":\"<message>\", \"publickey\":\"<publickey>\", \"signature\":\"<signature>\"}", 
 				"Verifies if the given message was signed by the given address. Returns true/false.",
 				"Errors: 101 - Invalid signature. 102 - Invalid address. 112 - Invalid public key."
+			},
+			{
+				"GET addresses/assets/<address>", 
+				"Returns the list of assets for this address with balances.",
+				"Errors: 102 - Invalid address."
 			},
 			{
 				"GET wallet", 
@@ -426,6 +436,31 @@ public class ApiClient {
 				"GET namestorage/<name>/key/<key>", 
 				"Returns an value of namekey-pair from namestorage.",
 				""
+			},
+			{
+				"POST message {\"sender\": \"<sender>\", \"recipient\": \"<recipient>\", \"message\": \"<message>\" \"amount\": \"<amount>\", \"istextmessage\": <true/false>, \"encrypt\": <true/false>}", 
+				"Send a message using the given data. \"istextmessage\" and \"encrypt\" are optional and default true. Sender and recipient can also be a name.",
+				""
+			},
+			{
+				"GET assets", 
+				"Returns an array of keys of assets with names.",
+				""
+			},
+			{
+				"GET assets/full", 
+				"Returns an array of assets with full information.",
+				""
+			},
+			{
+				"GET assets/<key>", 
+				"Returns short information about asset with the given key.",
+				"Errors: 601 - Invalid asset id."
+			},
+			{
+				"GET assets/<key>/full", 
+				"Returns full information about asset with the given key.",
+				"Errors: 601 - Invalid asset id."
 			},
 		};
 	
