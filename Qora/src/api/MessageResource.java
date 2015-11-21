@@ -15,65 +15,69 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.AEScrypto;
 import qora.crypto.Crypto;
+import qora.naming.Name;
 import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.Converter;
 import utils.Pair;
+import controller.Controller;
+import database.DBSet;
 
 @Path("message")
 @Produces(MediaType.APPLICATION_JSON)
 public class MessageResource {
 
-	
 	@Context
 	HttpServletRequest request;
-	
-	
-	
+
 	@POST
 	@Consumes(MediaType.WILDCARD)
-	public String sendMessage(String x)
-	{
-		try
-		{
-			//READ JSON
+	public String sendMessage(String x) {
+		try {
+			// READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
 			String amount = (String) jsonObject.get("amount");
-			String fee = (String) jsonObject.get("fee");
 			String sender = (String) jsonObject.get("sender");
 			String recipient = (String) jsonObject.get("recipient");
 			String message = (String) jsonObject.get("message");
-			String isTextMessageString = (String) jsonObject.get("isTextMessage");
+			String isTextMessageString = (String) jsonObject
+					.get("istextmessage");
 			String encryptString = (String) jsonObject.get("encrypt");
-			
+
 			boolean isTextMessage = true;
-			if(isTextMessageString != null)
-			{
+			if (isTextMessageString != null) {
 				isTextMessage = Boolean.valueOf(isTextMessageString);
 			}
-			
+
 			boolean encrypt = true;
-			if(encryptString != null)
-			{
+			if (encryptString != null) {
 				encrypt = Boolean.valueOf(encryptString);
 			}
-			
-			if(StringUtils.isBlank(message))
-			{
+
+			if (StringUtils.isBlank(message)) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_MESSAGE_BLANK);
 			}
+
+			Name senderObj = DBSet.getInstance().getNameMap().get(sender);
+
+			if (senderObj != null) {
+				sender = senderObj.getOwner().getAddress();
+			}
+
+			
+			Name recipientObj = DBSet.getInstance().getNameMap().get(recipient);
+			
+			if (recipientObj != null) {
+				recipient = recipientObj.getOwner().getAddress();
+			}
 			
 			Account recipientAccount = new Account(recipient);
-			
-			
-			
-			
+
 			// PARSE AMOUNT
 			BigDecimal bdAmount;
 			try {
@@ -84,15 +88,15 @@ public class MessageResource {
 						ApiErrorFactory.ERROR_INVALID_AMOUNT);
 			}
 
-			// PARSE FEE
-			BigDecimal bdFee;
-			try {
-				bdFee = new BigDecimal(fee);
-				bdFee = bdFee.setScale(8);
-			} catch (Exception e) {
-				throw ApiErrorFactory.getInstance().createError(
-						ApiErrorFactory.ERROR_INVALID_FEE);
-			}
+//			// PARSE FEE
+//			BigDecimal bdFee;
+//			try {
+//				bdFee = new BigDecimal(fee);
+//				bdFee = bdFee.setScale(8);
+//			} catch (Exception e) {
+//				throw ApiErrorFactory.getInstance().createError(
+//						ApiErrorFactory.ERROR_INVALID_FEE);
+//			}
 
 			// CHECK ADDRESS
 			if (!Crypto.getInstance().isValidAddress(sender)) {
@@ -119,64 +123,61 @@ public class MessageResource {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_INVALID_SENDER);
 			}
-			
-			
-			//TODO this is duplicate code -> Send money Panel, we should add that to a common place later
+
+			// TODO this is duplicate code -> Send money Panel, we should add
+			// that to a common place later
 			byte[] messageBytes;
-			if ( isTextMessage )
-			{
+			if (isTextMessage) {
 				messageBytes = message.getBytes(StandardCharsets.UTF_8);
-			}
-			else
-			{
-				try
-				{
-					messageBytes = Converter.parseHexString( message );
-				}
-				catch (Exception e)
-				{
+			} else {
+				try {
+					messageBytes = Converter.parseHexString(message);
+				} catch (Exception e) {
 					e.printStackTrace();
 					throw ApiErrorFactory.getInstance().createError(
 							ApiErrorFactory.ERROR_MESSAGE_FORMAT_NOT_HEX);
 				}
 			}
-			
-			
-			if ( messageBytes.length < 1 || messageBytes.length > 4000 )
-			{
+
+			if (messageBytes.length < 1 || messageBytes.length > 4000) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_MESSAGESIZE_EXCEEDED);
 			}
 
-			
 			// TODO duplicate code -> SendMoneyPanel
-			if(encrypt)
-			{
-				//sender
-				PrivateKeyAccount pkAccount = Controller.getInstance().getPrivateKeyAccountByAddress(sender);
-				byte[] privateKey = pkAccount.getPrivateKey();		
+			if (encrypt) {
+				// sender
+				PrivateKeyAccount pkAccount = Controller.getInstance()
+						.getPrivateKeyAccountByAddress(sender);
+				byte[] privateKey = pkAccount.getPrivateKey();
 
-				//recipient
-				byte[] publicKey = Controller.getInstance().getPublicKeyByAddress(recipient);
-				if(publicKey == null)
-				{
+				// recipient
+				byte[] publicKey = Controller.getInstance()
+						.getPublicKeyByAddress(recipient);
+				if (publicKey == null) {
 					throw ApiErrorFactory.getInstance().createError(
 							ApiErrorFactory.ERROR_NO_PUBLIC_KEY);
 				}
-				
-				messageBytes = AEScrypto.dataEncrypt(messageBytes, privateKey, publicKey);
+
+				messageBytes = AEScrypto.dataEncrypt(messageBytes, privateKey,
+						publicKey);
 			}
 			
-			
-			APIUtils.askAPICallAllowed("POST message\n" + x, request );
-			
-			byte[] encrypted = (encrypt)?new byte[]{1}:new byte[]{0};
-			byte[] isTextByte = (isTextMessage)? new byte[] {1}:new byte[]{0};
-			
-			
-			Pair<Transaction, Integer> result = Controller.getInstance().sendMessage(Controller.getInstance().getPrivateKeyAccountByAddress(sender), recipientAccount, bdAmount, bdFee, messageBytes, isTextByte, encrypted);
-			
-			
+			BigDecimal bdFee = Controller.getInstance().calcRecommendedFeeForMessage(messageBytes).getA();
+
+			APIUtils.askAPICallAllowed("POST message\n" + x + "\n Fee: "+ bdFee.toPlainString(), request);
+
+			byte[] encrypted = (encrypt) ? new byte[] { 1 } : new byte[] { 0 };
+			byte[] isTextByte = (isTextMessage) ? new byte[] { 1 }
+					: new byte[] { 0 };
+
+			Pair<Transaction, Integer> result = Controller.getInstance()
+					.sendMessage(
+							Controller.getInstance()
+									.getPrivateKeyAccountByAddress(sender),
+							recipientAccount, bdAmount, bdFee, messageBytes,
+							isTextByte, encrypted);
+
 			switch (result.getB()) {
 			case Transaction.VALIDATE_OKE:
 
@@ -206,7 +207,7 @@ public class MessageResource {
 
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_FEE_LESS_REQUIRED);
-				
+
 			case Transaction.NO_BALANCE:
 
 				throw ApiErrorFactory.getInstance().createError(
@@ -217,18 +218,16 @@ public class MessageResource {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_UNKNOWN);
 			}
-			
-		}
-		catch(NullPointerException e)
-		{
-			//JSON EXCEPTION
-			//e.printStackTrace();
-			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
-		}
-		catch(ClassCastException e)
-		{
-			//JSON EXCEPTION
-			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
+
+		} catch (NullPointerException e) {
+			// JSON EXCEPTION
+			// e.printStackTrace();
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_JSON);
+		} catch (ClassCastException e) {
+			// JSON EXCEPTION
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_JSON);
 		}
 	}
 }
