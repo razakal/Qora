@@ -39,6 +39,7 @@ public class ApiService {
 		s.add(CalcFeeResource.class);
 		s.add(NameStorageResource.class);
 		s.add(MessageResource.class);
+		s.add(AssetsResource.class);
 		ResourceConfig config = new ResourceConfig(s);
 		
         //CREATE CONTAINER
