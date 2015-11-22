@@ -23,6 +23,7 @@ import qora.web.Profile;
 import qora.web.blog.BlogEntry;
 import api.BlogPostResource;
 
+import com.google.common.collect.Lists;
 import com.twitter.Extractor;
 
 import controller.Controller;
@@ -163,11 +164,19 @@ public class BlogUtils {
 	}
 	
 	public static List<BlogEntry> getBlogPosts(String blogOpt) {
+		return getBlogPosts(blogOpt, -1);
+	}
+	
+	public static List<BlogEntry> getBlogPosts(String blogOpt, int limit) {
 		List<BlogEntry> results = new ArrayList<>();
 
-		List<byte[]> list = DBSet.getInstance().getBlogPostMap()
+		List<byte[]> list1 = DBSet.getInstance().getBlogPostMap()
 				.get(blogOpt == null ? "QORA" : blogOpt);
 
+		List<byte[]> list = Lists.newArrayList(list1);
+		
+		Collections.reverse(list);
+		
 		List<ArbitraryTransaction> blogPostTX = new ArrayList<>();
 		if (list != null) {
 			for (byte[] blogArbTx : list) {
@@ -178,6 +187,8 @@ public class BlogUtils {
 				}
 			}
 		}
+
+		int i = 0;
 
 		for (ArbitraryTransaction transaction : blogPostTX) {
 
@@ -196,11 +207,13 @@ public class BlogUtils {
 				
 			if (blogBlackWhiteList.isAllowedPost(
 				nameOpt != null ? nameOpt : creator, creator)) {
-				results.add(blogEntry);		
+				results.add(blogEntry);	
+				i ++;
 			}
+			
+			if(i == limit)
+				break;
 		}
-
-		Collections.reverse(results);
 
 		return results;
 

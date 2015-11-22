@@ -36,6 +36,7 @@ public class ApiService {
 		s.add(ATResource.class);
 		s.add(VersionResource.class);
 		s.add(BlogPostResource.class);
+		s.add(BlogResource.class);
 		s.add(CalcFeeResource.class);
 		s.add(NameStorageResource.class);
 		s.add(MessageResource.class);

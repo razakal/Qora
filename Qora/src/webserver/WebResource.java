@@ -2018,7 +2018,7 @@ public class WebResource {
 
 	}
 
-	public void addSharingAndLiking(BlogEntry blogEntry, String signature) {
+	public static void addSharingAndLiking(BlogEntry blogEntry, String signature) {
 		List<String> list = DBSet.getInstance().getSharedPostsMap()
 				.get(Base58.decode(blogEntry.getSignature()));
 		if (list != null) {
