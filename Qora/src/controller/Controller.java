@@ -71,8 +71,8 @@ import webserver.WebService;
 
 public class Controller extends Observable {
 
-	private String version = "0.24.0";
-	public static final String releaseVersion = "0.24.0";
+	private String version = "0.25.0 beta";
+	public static final String releaseVersion = "0.25.0";
 
 //	TODO ENUM would be better here
 	public static final int STATUS_NO_CONNECTIONS = 0;
