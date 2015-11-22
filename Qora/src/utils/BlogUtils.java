@@ -181,68 +181,23 @@ public class BlogUtils {
 
 		for (ArbitraryTransaction transaction : blogPostTX) {
 
-			byte[] data = ((ArbitraryTransaction) transaction).getData();
-			String string = new String(data, StandardCharsets.UTF_8);
+			String creator = transaction.getCreator().getAddress();
+					
+			BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList
+					.getBlogBlackWhiteList(blogOpt);
 
-			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
-			if (jsonObject != null) {
-				// MAINBLOG OR CUSTOM BLOG?
-				if ((blogOpt == null && !jsonObject
-						.containsKey(BlogPostResource.BLOGNAME_KEY))
-						|| (jsonObject
-								.containsKey(BlogPostResource.BLOGNAME_KEY) && jsonObject
-								.get(BlogPostResource.BLOGNAME_KEY).equals(
-										blogOpt))) {
-
-					String title = (String) jsonObject
-							.get(BlogPostResource.TITLE_KEY);
-					String share = (String) jsonObject
-							.get(BlogPostResource.SHARE_KEY);
-					String post = (String) jsonObject
-							.get(BlogPostResource.POST_KEY);
-					String nameOpt = (String) jsonObject
-							.get(BlogPostResource.AUTHOR);
-
-					String creator = transaction.getCreator().getAddress();
-					BlogBlackWhiteList blogBlackWhiteList = BlogBlackWhiteList
-							.getBlogBlackWhiteList(blogOpt);
-
-					if (blogBlackWhiteList.isAllowedPost(
-							nameOpt != null ? nameOpt : creator, creator)) {
-						if (StringUtils.isNotEmpty(share)) {
-							BlogEntry blogEntryToShareOpt = BlogUtils
-									.getBlogEntryOpt((ArbitraryTransaction) Controller
-											.getInstance().getTransaction(
-													Base58.decode(share)));
-							if (blogEntryToShareOpt != null
-									&& StringUtils
-											.isNotBlank(blogEntryToShareOpt
-													.getDescription())) {
-								// share gets time of sharing!
-								blogEntryToShareOpt.setTime(transaction
-										.getTimestamp());
-								blogEntryToShareOpt
-										.setShareAuthor(nameOpt != null ? nameOpt
-												: creator);
-								blogEntryToShareOpt.setShareSignatureOpt(Base58
-										.encode(transaction.getSignature()));
-								results.add(blogEntryToShareOpt);
-							}
-						} else {
-							// POST NEEDS TO BE FILLED AND POST MUST BE ALLOWED
-							if (StringUtil.isNotBlank(post)) {
-								results.add(new BlogEntry(title, post, nameOpt,
-										transaction.getTimestamp(), creator,
-										Base58.encode(transaction
-												.getSignature()), blogOpt));
-
-							}
-						}
-					}
-
-				}
+			BlogEntry blogEntry = getBlogEntryOpt(transaction);
+			
+			String nameOpt;
+			if(blogEntry.getShareAuthorOpt()!=null)
+				nameOpt = blogEntry.getShareAuthorOpt(); 
+			else
+				nameOpt = blogEntry.getNameOpt();
+				
+			if (blogBlackWhiteList.isAllowedPost(
+				nameOpt != null ? nameOpt : creator, creator)) {
+				results.add(blogEntry);		
 			}
-
 		}
 
 		Collections.reverse(results);
@@ -286,15 +241,36 @@ public class BlogUtils {
 			String nameOpt = (String) jsonObject.get(BlogPostResource.AUTHOR);
 			String blognameOpt = (String) jsonObject
 					.get(BlogPostResource.BLOGNAME_KEY);
+			String share = (String) jsonObject
+					.get(BlogPostResource.SHARE_KEY);
 
 			String creator = transaction.getCreator().getAddress();
 
+			if (StringUtils.isNotEmpty(share)) {
+				BlogEntry blogEntryToShareOpt = BlogUtils
+						.getBlogEntryOpt((ArbitraryTransaction) Controller
+								.getInstance().getTransaction(
+										Base58.decode(share)));
+				if (blogEntryToShareOpt != null
+						&& StringUtils
+								.isNotBlank(blogEntryToShareOpt
+										.getDescription())) {
+					// share gets time of sharing!
+					blogEntryToShareOpt.setTime(transaction
+							.getTimestamp());
+					blogEntryToShareOpt
+							.setShareAuthor(nameOpt != null ? nameOpt
+									: creator);
+					blogEntryToShareOpt.setShareSignatureOpt(Base58
+							.encode(transaction.getSignature()));
+					return blogEntryToShareOpt;
+				}
+			}
 			// POST NEEDS TO BE FILLED
 			if (StringUtil.isNotBlank(post)) {
 				return new BlogEntry(title, post, nameOpt,
 						transaction.getTimestamp(), creator,
 						Base58.encode(transaction.getSignature()), blognameOpt);
-
 			}
 		}
 
