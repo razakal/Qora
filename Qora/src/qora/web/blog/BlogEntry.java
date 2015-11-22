@@ -84,11 +84,8 @@ public class BlogEntry {
 				processedHashtags.add(hashtag);
 			}
 		}
-		
-		
-		
-		
 	}
+	
 	private void handleBlogTags() {
 		hashTags = BlogUtils.getBlogTags(description);
 		List<String> processedBlogtags = new ArrayList<>();
@@ -102,9 +99,6 @@ public class BlogEntry {
 				processedBlogtags.add(blogTag);
 			}
 		}
-		
-		
-		
 	}
 
 	private void addAvatar() {
@@ -129,9 +123,7 @@ public class BlogEntry {
 			imagelinks.add(url);
 			description = description.replace(matcher.group(), getImgHtml(url));
 		}
-
 	}
-	
 	
 	private String getImgHtml(String url)
 	{
@@ -217,10 +209,21 @@ public class BlogEntry {
 		json.put("titleOpt", this.getTitleOpt());
 		json.put("description", this.getDescription());
 		json.put("avatar", this.getAvatar());
+
+		if(this.getShareSignatureOpt() != null)
+			json.put("shareSignatureOpt", this.getShareSignatureOpt());
+
+		if(this.getShareAuthorOpt() != null)
+			json.put("shareAuthorOpt", this.getShareAuthorOpt());
+		
+		json.put("timestamp", this.getTime());
+		json.put("likes", this.getLikes());
+		json.put("shares", this.getShares());
+		json.put("signature", this.getSignature());
 		
 		return json;	
 	}
-
+	
 	public Profile getProfileOpt() {
 		return profileOpt;
 	}
@@ -290,7 +293,4 @@ public class BlogEntry {
 	public List<String> getHashTags() {
 		return Collections.unmodifiableList(hashTags);
 	}
-
-	
-
 }
