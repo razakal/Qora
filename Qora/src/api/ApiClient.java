@@ -428,8 +428,13 @@ public class ApiClient {
 				""
 			},
 			{
-				"GET namestorage/<name>/list", 
+				"GET namestorage/<name>/keys", 
 				"Returns an array of keys for name from namestorage.",
+				""
+			},
+			{
+				"GET namestorage/<name>/list", 
+				"Returns an array of keys with values for name from namestorage.",
 				""
 			},
 			{

@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -63,6 +64,33 @@ public class NameStorageResource {
 
 			for (String key : keySet) {
 				json.put(key, map.get(key));
+			}
+		}
+
+		return json.toJSONString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/{name}/keys")
+	public String listKeysNameStorage(@PathParam("name") String name) {
+
+		Name nameObj = DBSet.getInstance().getNameMap().get(name);
+
+		if (nameObj == null) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_NAME_NOT_REGISTERED);
+		}
+
+		Map<String, String> map = DBSet.getInstance().getNameStorageMap()
+				.get(name);
+
+		JSONArray json = new JSONArray();
+		if (map != null) {
+			Set<String> keySet = map.keySet();
+
+			for (String key : keySet) {
+				json.add(key);
 			}
 		}
 
