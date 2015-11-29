@@ -2730,6 +2730,12 @@ function htmlFilter(str)
 function pages(datapages, datastart, dataend, url, dataallOnOnePage)
 {
 	var pages = '';
+	
+	if(datapages.length == 0)
+	{
+		return pages;
+	}
+	
 	pages += '<table width="100%"><tr><td>Pages: ';
 	
 	if(datastart <  parseInt(datapages[0].replace( 'start_', '')))
