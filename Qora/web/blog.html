@@ -330,7 +330,27 @@
                 <div class="timeline-footer">
                   <a><span onclick="javascript:processLike('{{blogpost.getSignature()}}', {{blogpost.isLiking()}})" ><i class="glyphicon glyphicon-heart" style=""><font color=white>.</font>{{blogpost.getLikes()}}</i></a>
                   <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}' , '{{blogpost.getBlognameOpt()}}')" ><i class="glyphicon glyphicon-share"><font color=white>.</font>{{blogpost.getShares()}}</i></a>
+                        <div class="actionBox">
+                    <div class="media commentList">
+                      <a class="media-left" href="#">
+                        <img class="media-object commenterImage" src="/index/img/qora-user.png" alt="user image">
+                      </a>
+                      <div class="media-body">
+                        <h4 class="media-heading Commenter">User Name</h4>
+                        <p class="commentText">Comment</p>
+                        <span class="date sub-text">on Date</span>
+                      </div>
+                    </div>
+                    <form class="form-inline" role="form">
+                      <div class="form-group">
+                        <input class="form-control" type="text" placeholder="Your comment" />
+                      </div>
+                      <div class="form-group">
+                        <button class="btn btn-default">Add</button>
+                      </div>
+                    </form>
                 </div>
+              </div>
               </div>
             </li>			{% endfor %}
             {%else%}
