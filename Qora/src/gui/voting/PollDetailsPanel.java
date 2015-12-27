@@ -1,8 +1,5 @@
 package gui.voting;
 
-import gui.Gui;
-import gui.models.PollOptionsTableModel;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,10 +7,19 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableRowSorter;
 
+import gui.Gui;
+import gui.models.PollOptionsTableModel;
+import qora.assets.Asset;
 import qora.voting.Poll;
 import utils.BigDecimalStringComparator;
 
@@ -22,11 +28,14 @@ public class PollDetailsPanel extends JPanel
 {
 	private Poll poll;
 	private JTable table;
+	private PollOptionsTableModel pollOptionsTableModel;
+	private Asset asset;
 	
 	@SuppressWarnings("unchecked")
-	public PollDetailsPanel(Poll poll)
+	public PollDetailsPanel(Poll poll, Asset asset)
 	{
 		this.poll = poll;
+		this.asset = asset;
 		
 		//LAYOUT
 		this.setLayout(new GridBagLayout());
@@ -93,7 +102,7 @@ public class PollDetailsPanel extends JPanel
 		
 		//OPTIONS
 		detailGBC.gridy = 4;
-		PollOptionsTableModel pollOptionsTableModel = new PollOptionsTableModel(poll);
+		pollOptionsTableModel = new PollOptionsTableModel(poll, asset);
 		table = Gui.createSortableTable(pollOptionsTableModel, 0);
 		
 		TableRowSorter<PollOptionsTableModel> sorter =  (TableRowSorter<PollOptionsTableModel>) table.getRowSorter();
@@ -128,6 +137,12 @@ public class PollDetailsPanel extends JPanel
 		}
 		row = this.table.convertRowIndexToModel(row);
 		
-		new VoteFrame(this.poll, row);
+		new VoteFrame(this.poll, row, asset);
+	}
+	
+	public void setAsset(Asset asset)
+	{
+		this.asset = asset;
+		pollOptionsTableModel.setAsset(asset);
 	}
 }

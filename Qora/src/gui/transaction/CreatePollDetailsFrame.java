@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableRowSorter;
 
+import controller.Controller;
 import qora.crypto.Base58;
 import qora.transaction.CreatePollTransaction;
 import utils.BigDecimalStringComparator;
@@ -152,7 +153,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//OPTIONS
 		detailGBC.gridy = 7;
-		PollOptionsTableModel pollOptionsTableModel = new PollOptionsTableModel(pollCreation.getPoll());
+		PollOptionsTableModel pollOptionsTableModel = new PollOptionsTableModel(pollCreation.getPoll(), Controller.getInstance().getAsset(0l));
 		JTable table = Gui.createSortableTable(pollOptionsTableModel, 0);
 		
 		TableRowSorter<PollOptionsTableModel> sorter =  (TableRowSorter<PollOptionsTableModel>) table.getRowSorter();
