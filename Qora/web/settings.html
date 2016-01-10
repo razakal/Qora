@@ -424,6 +424,8 @@
 
 		{% if profile.getBlogBlackWhiteList().isWhitelist() %}
 		 $("#select-list-type").val("white");
+		 {%else%}
+		 $("#select-list-type").val("black");
 		{% endif %}
 		 {% for bwlistentry in profile.getBlogBlackWhiteList().getBlackwhiteList() %}
 			AddValue('{{bwlistentry}}');
