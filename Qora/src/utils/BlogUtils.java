@@ -170,10 +170,10 @@ public class BlogUtils {
 	public static List<BlogEntry> getBlogPosts(String blogOpt, int limit) {
 		List<BlogEntry> results = new ArrayList<>();
 
-		List<byte[]> list1 = DBSet.getInstance().getBlogPostMap()
+		List<byte[]> blogPostList = DBSet.getInstance().getBlogPostMap()
 				.get(blogOpt == null ? "QORA" : blogOpt);
 
-		List<byte[]> list = Lists.newArrayList(list1);
+		List<byte[]> list = blogPostList != null ? Lists.newArrayList(blogPostList) : new ArrayList<byte[]>();
 		
 		Collections.reverse(list);
 		
