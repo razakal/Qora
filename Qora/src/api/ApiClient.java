@@ -538,7 +538,7 @@ public class ApiClient {
 				""
 			},
 			{
-				"GET blog/lastentry/<blogname>",
+				"GET blog/lastEntry/<blogname>",
 				"Returns the content of the last entry of the blog.",
 				""
 			},
