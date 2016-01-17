@@ -43,8 +43,18 @@ public class ApiClient {
 				"0 - No connections. 1 - Synchronizing 2 - Oke"
 			},
 			{
+				"GET qora/status/forging",
+				"Returns the status of the forging process.",
+				"0 - Forging disabled. 1 - Forging enabled 2 - Forging"
+			},
+			{
 				"GET qora/isuptodate", 
 				"Shows if the application is synchronized with the network.",
+				""
+			},
+			{
+				"GET version",
+				"Returns the version and buildtime of the running client.",
 				""
 			},
 			{
@@ -53,8 +63,13 @@ public class ApiClient {
 				""
 			},
 			{
-				"GET peers", 
+				"GET peers",
 				"Returns an array of all the IP's of the peers to which the application is currently connected.",
+				""
+			},
+			{
+				"GET peers/height",
+				"Returns an array of peer objects containing each peer's IP and height.",
 				""
 			},
 			{
@@ -91,6 +106,21 @@ public class ApiClient {
 				"POST transactions/scan {\"start\": \"<startBlockSign>, \"blocklimit\":<amountBlocks>, \"transactionlimit\":<amountTransactions>, \"type\":<type>, \"service\":<service>, \"address\":\"<address>\"}", 
 				"Returns all the transactions that match the filters. All filters are optional but please limit that amount of transactions or blocks to scan to avoid running into issues. Return the last block it scanned, the amount of blocks it scanned and the scanned transactions.",
 				"Filters:\nstart - The signature of the starting block. \nblocklimit - The maximum amount of blocks to scan. \ntransactionlimit - The maximum amount of transactions to return.\ntype - Only return transactions with the given type.\nservice - Only return Arbitrary Transactions with the given service.\naddress - Only return transactions where the given address is involved.\nErrors: 1 -Json error. 102 - Invalid address. 101 - Invalid signature. 301 - Block does not exist.",
+			},
+			{
+				"GET transactions/recipient/<address>/limit/<limit>",
+				"Returns an array of the last <limit> transactions with a specific recipient.",
+				""
+			},
+			{
+				"GET transactions/sender/<address>/limit/<limit>",
+				"Returns an array of the last <limit> transactions with a specific sender.",
+				""
+			},
+			{
+				"GET transactions/address/<address>/type/<type>/limit/<limit>",
+				"Returns an array of the last <limit> transactions of a specific address and type.",
+				""
 			},
 			{
 				"GET blocks", 
@@ -293,6 +323,16 @@ public class ApiClient {
 				"Errors: 1 - Json error. 2 - Not enough balance. 102 - Invalid address. 105 - Invalid fee. 108 - Invalid name length. 109 - Invalid value length. 201 - Wallet does not exist. 203 - Wallet is locked. 401 - Name does not exist. 403 - Name already for sale."
 			},
 			{
+				"DELETE names/key/<name> {\"fee\":\"<fee>\", \"key\":\"<key>\"}",
+				"Delete a key from a name.",
+				"Errors: 1 - Json error. 105 - Invalid fee. 201 - Wallet no exists. 203 - Wallet locked. 401 - Name no exists. 110 - Invalid name owner. 119 - Key not exists. 120 - Last key is default key"
+			},
+			{
+				"POST names/key/<name> {\"fee\":\"<fee>\", \"key\":\"<key>\", \"value\":\"<value>\", \"update\":\"<true/false>\"}",
+				"Create or update the value of a key on a name.  \"update\" is optional and defaults to true.",
+				"Errors: 1 - Json error. 117 - Invalid update value. 105 - Invalid fee. 201 - Wallet no exists. 203 - Wallet locked. 401 - Name no exists. 110 - Invalid name owner. 118 - Key already exists."
+			},
+			{
 				"GET namesales", 
 				"Returns an array of all the namesales owned by your accounts.",
 				"Errors: 201 - Wallet does not exist."
@@ -443,7 +483,7 @@ public class ApiClient {
 				""
 			},
 			{
-				"POST message {\"sender\": \"<sender>\", \"recipient\": \"<recipient>\", \"message\": \"<message>\" \"amount\": \"<amount>\", \"istextmessage\": <true/false>, \"encrypt\": <true/false>}", 
+				"POST message {\"sender\": \"<sender>\", \"recipient\": \"<recipient>\", \"message\": \"<message>\", \"amount\": \"<amount>\", \"istextmessage\": <true/false>, \"encrypt\": <true/false>}",
 				"Send a message using the given data. \"istextmessage\" and \"encrypt\" are optional and default true. Sender and recipient can also be a name.",
 				""
 			},
@@ -467,9 +507,44 @@ public class ApiClient {
 				"Returns full information about asset with the given key.",
 				"Errors: 601 - Invalid asset id."
 			},
+			{
+				"POST blogpost/<blogname> {\"fee\": \"<fee>\", \"creator\": \"<creator>\", \"author\": \"<author>\", \"title\": \"<title>\", \"body\": \"<body>\", \"share\": \"<share>\", \"delete\": \"<delete->\"}",
+				"Posts to a blog.  <blogname>, \"author\", \"share\", and \"delete\" are optional.",
+				"Errors: 901 - body empty. 105 - invalid fee. 201 - wallet no exists. 203 - wallet locked. 903 - name not owner. 102 - invalid address. 202 - wallet adddress no exists. 902 - blog disabled"
+			},
+			{
+				"GET blog",
+				"Equivalent to blog/posts/QORA",
+				""
+			},
+			{
+				"GET blog/posts/<blogname>",
+				"List posts to a blog by transaction signature.  If <blogname> is omitted, QORA is provided.",
+				""
+			},
+			{
+				"GET blog/post/<signature>",
+				"Get the content of a blog entry specified by transaction signature.",
+				""
+			},
+			{
+				"GET blog/entries/<blogname>",
+				"Returns the content of the entries for the blog.",
+				""
+			},
+			{
+				"GET blog/entries/<blogname>/limit<limit>",
+				"Returns the content of the specified number of blog entries.",
+				""
+			},
+			{
+				"GET blog/lastentry/<blogname>",
+				"Returns the content of the last entry of the blog.",
+				""
+			},
 		};
 	
-	
+
 	public String executeCommand(String command)
 	{
 		if(command.toLowerCase().equals("help all"))
