@@ -225,16 +225,16 @@ public class BlogUtils {
 	}
 
 	public static BlogEntry getBlogEntryOpt(byte[] signature) {
+		ArbitraryTransaction transaction = null;
 		try
 		{
-			ArbitraryTransaction transaction = (ArbitraryTransaction) Controller
+			transaction = (ArbitraryTransaction) Controller
 				.getInstance().getTransaction(signature);
-
-			return BlogUtils
-				.getBlogEntryOpt(transaction);
 		} catch(Exception e) {
-			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_BLOG_ENTRY_NO_EXISTS);
+			return null;
 		}
+		return transaction == null ? null : BlogUtils
+				.getBlogEntryOpt(transaction);
 	}
 
 	/**

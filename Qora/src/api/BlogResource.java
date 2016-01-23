@@ -95,6 +95,11 @@ public class BlogResource {
 		
 		BlogEntry blogEntry = BlogUtils.getBlogEntryOpt(signatureBytes);
 	
+		if (blogEntry == null) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_BLOG_ENTRY_NO_EXISTS);
+		}
+		
 		WebResource.addSharingAndLiking(blogEntry, blogEntry.getSignature());
 		
 		return blogEntry.toJson().toJSONString();
@@ -198,7 +203,12 @@ public class BlogResource {
 		}
 		
 		BlogEntry blogEntry = BlogUtils.getBlogEntryOpt(txlist.get(txlist.size()-1));
-
+		
+		if (blogEntry == null) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_BLOG_ENTRY_NO_EXISTS);
+		}
+		
 		return blogEntry.toJson().toJSONString();
 	}
 }
