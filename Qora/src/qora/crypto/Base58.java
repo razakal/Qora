@@ -20,6 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import api.ApiErrorFactory;
+
 /**
  * Provides Base-58 encoding and decoding
  */
@@ -109,7 +111,7 @@ public class Base58 {
         // Nothing to do if we have an empty string
         //
         if (string.length() == 0)
-            return new byte[0];
+        	throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_SIGNATURE);
         //
         // Convert the input string to a byte sequence
         //
@@ -120,7 +122,7 @@ public class Base58 {
             if (codePoint>=0 && codePoint<INDEXES.length)
                 digit = INDEXES[codePoint];
             if (digit < 0)
-            	return null;
+            	throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_SIGNATURE);
             input[i] = (byte)digit;
         }
         //
