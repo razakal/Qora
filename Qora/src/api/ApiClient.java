@@ -508,7 +508,7 @@ public class ApiClient {
 				"Errors: 601 - Invalid asset ID."
 			},
 			{
-				"POST blogpost/<blogname> {\"fee\": \"<fee>\", \"creator\": \"<creator>\", \"author\": \"<author>\", \"title\": \"<title>\", \"body\": \"<body>\", \"share\": \"<share>\", \"delete\": \"<delete->\"}",
+				"POST blogpost/<blogname> {\"fee\": \"<fee>\", \"creator\": \"<creator>\", \"author\": \"<author>\", \"title\": \"<title>\", \"body\": \"<body>\", \"share\": \"<share>\", \"delete\": \"<delete>\"}",
 				"Posts to a blog.  <blogname>, \"author\", \"share\", and \"delete\" are optional.",
 				"Errors: 901 - Body empty. 105 - Invalid fee. 201 - Wallet no exists. 203 - wallet locked. 903 - name not owner. 102 - invalid address. 202 - wallet adddress no exists. 902 - blog disabled."
 			},
