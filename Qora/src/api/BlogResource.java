@@ -11,8 +11,13 @@ import javax.ws.rs.core.MediaType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import controller.Controller;
 import database.DBSet;
+import database.NameMap;
 import qora.crypto.Base58;
+import qora.naming.Name;
+import qora.transaction.Transaction;
+import qora.web.Profile;
 import qora.web.blog.BlogEntry;
 import utils.BlogUtils;
 import webserver.WebResource;
@@ -34,6 +39,23 @@ public class BlogResource {
 		if(blogname.equals("QORA"))
 		{
 			blogname = null;
+		}
+		else
+		{
+			NameMap nameMap = DBSet.getInstance().getNameMap();
+			Name name = nameMap.get(blogname);
+			
+			if(name == null){
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_NAME_NO_EXISTS);
+			}
+			
+			Profile profile = Profile.getProfileOpt(name);
+
+			if (profile == null || !profile.isProfileEnabled()) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_BLOG_DISABLED);
+			}
 		}
 		
 		List<byte[]> txlist = DBSet.getInstance().getBlogPostMap()
@@ -62,7 +84,17 @@ public class BlogResource {
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_SIGNATURE);
 		}
 		
+		//GET TRANSACTION
+		Transaction transaction = Controller.getInstance().getTransaction(signatureBytes);
+		
+		//CHECK IF TRANSACTION EXISTS
+		if(transaction == null)
+		{
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_TRANSACTION_NO_EXISTS);
+		}
+		
 		BlogEntry blogEntry = BlogUtils.getBlogEntryOpt(signatureBytes);
+	
 		WebResource.addSharingAndLiking(blogEntry, blogEntry.getSignature());
 		
 		return blogEntry.toJson().toJSONString();
@@ -78,6 +110,23 @@ public class BlogResource {
 		if(blogname.equals("QORA"))
 		{
 			blogname = null;
+		}
+		else
+		{
+			NameMap nameMap = DBSet.getInstance().getNameMap();
+			Name name = nameMap.get(blogname);
+			
+			if(name == null){
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_NAME_NO_EXISTS);
+			}
+			
+			Profile profile = Profile.getProfileOpt(name);
+
+			if (profile == null || !profile.isProfileEnabled()) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_BLOG_DISABLED);
+			}
 		}
 		
 		List<BlogEntry> blogPosts = BlogUtils.getBlogPosts(blogname, limit);
@@ -96,6 +145,11 @@ public class BlogResource {
 		return outputJSON.toJSONString();
 	}
 	
+	@GET
+	@Path("/entries")
+	public String getBlogEntry() {
+		return getBlogEntry("QORA", -1);
+	}
 	
 	@GET
 	@Path("/entries/{blogname}")
@@ -104,19 +158,47 @@ public class BlogResource {
 	}
 
 	@GET
+	@Path("/lastEntry")
+	public String getLastEntry() {
+		return getLastEntry("QORA");
+	}
+	
+	@GET
 	@Path("/lastEntry/{blogname}")
 	public String getLastEntry(@PathParam("blogname") String blogname) {
 		if(blogname.equals("QORA"))
 		{
 			blogname = null;
 		}
+		else
+		{
+			NameMap nameMap = DBSet.getInstance().getNameMap();
+			Name name = nameMap.get(blogname);
+			
+			if(name == null){
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_NAME_NO_EXISTS);
+			}
+			
+			Profile profile = Profile.getProfileOpt(name);
+
+			if (profile == null || !profile.isProfileEnabled()) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_BLOG_DISABLED);
+			}
+		}
 		
 		List<byte[]> txlist = DBSet.getInstance().getBlogPostMap()
 				.get(blogname == null ? "QORA" : blogname);
 		
-		BlogEntry blogEntry = BlogUtils.getBlogEntryOpt(txlist.get(txlist.size()-1));
-		//WebResource.addSharingAndLiking(blogEntry, blogEntry.getSignature());
+		if(txlist.size() == 0)
+		{
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_BLOG_EMPTY);
+		}
 		
+		BlogEntry blogEntry = BlogUtils.getBlogEntryOpt(txlist.get(txlist.size()-1));
+
 		return blogEntry.toJson().toJSONString();
 	}
 }

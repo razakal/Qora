@@ -21,6 +21,7 @@ import qora.web.BlogProfile;
 import qora.web.NameStorageMap;
 import qora.web.Profile;
 import qora.web.blog.BlogEntry;
+import api.ApiErrorFactory;
 import api.BlogPostResource;
 
 import com.google.common.collect.Lists;
@@ -224,11 +225,16 @@ public class BlogUtils {
 	}
 
 	public static BlogEntry getBlogEntryOpt(byte[] signature) {
-		ArbitraryTransaction transaction = (ArbitraryTransaction) Controller
+		try
+		{
+			ArbitraryTransaction transaction = (ArbitraryTransaction) Controller
 				.getInstance().getTransaction(signature);
 
-		return transaction == null ? null : BlogUtils
+			return BlogUtils
 				.getBlogEntryOpt(transaction);
+		} catch(Exception e) {
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_BLOG_ENTRY_NO_EXISTS);
+		}
 	}
 
 	/**

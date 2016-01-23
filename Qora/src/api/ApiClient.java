@@ -500,17 +500,17 @@ public class ApiClient {
 			{
 				"GET assets/<key>", 
 				"Returns short information about asset with the given key.",
-				"Errors: 601 - Invalid asset id."
+				"Errors: 601 - Invalid asset ID."
 			},
 			{
 				"GET assets/<key>/full", 
 				"Returns full information about asset with the given key.",
-				"Errors: 601 - Invalid asset id."
+				"Errors: 601 - Invalid asset ID."
 			},
 			{
 				"POST blogpost/<blogname> {\"fee\": \"<fee>\", \"creator\": \"<creator>\", \"author\": \"<author>\", \"title\": \"<title>\", \"body\": \"<body>\", \"share\": \"<share>\", \"delete\": \"<delete->\"}",
 				"Posts to a blog.  <blogname>, \"author\", \"share\", and \"delete\" are optional.",
-				"Errors: 901 - body empty. 105 - invalid fee. 201 - wallet no exists. 203 - wallet locked. 903 - name not owner. 102 - invalid address. 202 - wallet adddress no exists. 902 - blog disabled"
+				"Errors: 901 - Body empty. 105 - Invalid fee. 201 - Wallet no exists. 203 - wallet locked. 903 - name not owner. 102 - invalid address. 202 - wallet adddress no exists. 902 - blog disabled."
 			},
 			{
 				"GET blog",
@@ -519,28 +519,28 @@ public class ApiClient {
 			},
 			{
 				"GET blog/posts/<blogname>",
-				"List posts to a blog by transaction signature.  If <blogname> is omitted, QORA is provided.",
-				""
+				"List posts to a blog by transaction signature. If <blogname> is omitted, QORA is provided.",
+				"Errors: 401 - Name does not exist. 902 - Blog disabled."
 			},
 			{
 				"GET blog/post/<signature>",
 				"Get the content of a blog entry specified by transaction signature.",
-				""
+				"Errors: 101- Invalid signature. 311 - Transactions does not exist. 905 - Transaction with this signature contains no entries!"
 			},
 			{
 				"GET blog/entries/<blogname>",
-				"Returns the content of the entries for the blog.",
-				""
+				"Returns the content of the entries for the blog.  If <blogname> is omitted, QORA is provided.",
+				"Errors: 401 - Name does not exist. 902 - Blog disabled."
 			},
 			{
-				"GET blog/entries/<blogname>/limit<limit>",
+				"GET blog/entries/<blogname>/limit/<limit>",
 				"Returns the content of the specified number of blog entries.",
-				""
+				"Errors: 401 - Name does not exist. 902 - Blog disabled."
 			},
 			{
 				"GET blog/lastEntry/<blogname>",
-				"Returns the content of the last entry of the blog.",
-				""
+				"Returns the content of the last entry of the blog.  If <blogname> is omitted, QORA is provided.",
+				"Errors: 401 - Name does not exist. 902 - Blog disabled. 906 - This blog is empty."
 			},
 		};
 	
