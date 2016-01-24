@@ -201,7 +201,13 @@ public class RecoverWalletFrame extends JFrame
 	private void onConfirmClick() {
 		
 		//CHECK IF SEEDS MATCH
-		byte[] seed = Base58.decode(this.seedTxt.getText());
+		byte[] seed = null;
+		try
+		{
+			seed = Base58.decode(this.seedTxt.getText());
+		} catch(Exception e) {
+			seed = null;		
+		}
 		
 		if(seed == null || seed.length != 32)
 		{
