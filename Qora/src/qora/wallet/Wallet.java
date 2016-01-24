@@ -415,6 +415,7 @@ public class Wallet extends Observable implements Observer
 		this.database.setLastBlockSignature(new byte[]{1,1,1,1,1,1,1,1});
 		
 		try{
+			Controller.getInstance().setNeedSync(false);
 			Controller.getInstance().isProcessSynchronize = true;
 		
 			do

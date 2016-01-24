@@ -118,6 +118,10 @@ public class Controller extends Observable {
 		return this.status;
 	}
 
+	public void setNeedSync(boolean needSync) {
+		this.needSync = needSync;
+	}
+	
 	public void start() throws Exception {
 		// CHECK NETWORK PORT AVAILABLE
 		if (!Network.isPortAvailable(Network.PORT)) {
@@ -469,9 +473,8 @@ public class Controller extends Observable {
 				
 				TimerTask action = new TimerTask() {
 			        public void run() {
-			        	if(Controller.getInstance().getStatus() == STATUS_OKE)
+			        	if(needSync && Controller.getInstance().getStatus() == STATUS_OKE)
 			        	{
-			        		needSync = false;
 			        		Controller.getInstance().synchronizeWallet();
 			        	}
 			        }
