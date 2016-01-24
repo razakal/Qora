@@ -119,7 +119,7 @@ public class CreateWalletFrame extends JFrame {
       	
       	//LABEL
       	labelGBC.gridy = 4;
-      	JLabel label4 = new JLabel("KEEP THIS SEED PRIVATE AND SECURE!");
+      	JLabel label4 = new JLabel("<html><b>KEEP THIS SEED PRIVATE AND SECURE!</b></html>");
       	this.add(label4, labelGBC);
       	
      	//LABEL
