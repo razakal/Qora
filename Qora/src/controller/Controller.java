@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,7 +91,9 @@ public class Controller extends Observable {
 	private Wallet wallet;
 	private Synchronizer synchronizer;
 	private TransactionCreator transactionCreator;
-
+	private boolean needSync = false;
+	private Timer timer = new Timer();
+	
 	private Map<Peer, Integer> peerHeight;
 
 	private static Controller instance;
@@ -433,6 +437,13 @@ public class Controller extends Observable {
 		return this.network.getActiveConnections();
 	}
 
+	public void walletStatusUpdate(int height) {
+		this.setChanged();
+		this.notifyObservers(new ObserverMessage(
+				ObserverMessage.WALLET_SYNC_STATUS, height));
+	}
+		
+		
 	public void onConnect(Peer peer) {
 
 		// GET HEIGHT
@@ -450,6 +461,25 @@ public class Controller extends Observable {
 			this.setChanged();
 			this.notifyObservers(new ObserverMessage(
 					ObserverMessage.NETWORK_STATUS, this.status));
+			
+			if(needSync)
+			{
+				this.timer.cancel();
+				this.timer = new Timer();
+				
+				TimerTask action = new TimerTask() {
+			        public void run() {
+			        	if(Controller.getInstance().getStatus() == STATUS_OKE)
+			        	{
+			        		needSync = false;
+			        		Controller.getInstance().synchronizeWallet();
+			        	}
+			        }
+				};
+				
+				this.timer.schedule(action, 10000);
+			}
+			
 		}
 	}
 
@@ -790,9 +820,17 @@ public class Controller extends Observable {
 		// IF NEW WALLET CREADED
 		return this.wallet.create(seed, password, amount, false);
 	}
-
+	
 	public boolean recoverWallet(byte[] seed, String password, int amount) {
-		return this.wallet.create(seed, password, amount, true);
+		if(this.wallet.create(seed, password, amount, false))
+		{
+			Logger.getGlobal().info("The need to synchronize the wallet!");
+			needSync = true;
+
+			return true;
+		}
+		else
+			return false;
 	}
 
 	public List<Account> getAccounts() {
@@ -1036,7 +1074,11 @@ public class Controller extends Observable {
 	public Block getLastBlock() {
 		return this.blockChain.getLastBlock();
 	}
-
+	
+	public byte[] getWalletLastBlockSign() {
+		return this.wallet.getLastBlockSignature();
+	}
+	
 	public Block getBlock(byte[] header) {
 		return this.blockChain.getBlock(header);
 	}

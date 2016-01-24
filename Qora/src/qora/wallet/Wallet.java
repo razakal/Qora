@@ -424,6 +424,10 @@ public class Wallet extends Observable implements Observer
 				
 				if(block.getHeight() % 2000 == 0) 
 				{
+					Controller.getInstance().walletStatusUpdate(block.getHeight());
+					
+					//Gui.getInstance().
+					
 					Logger.getGlobal().info("Synchronize wallet: " + block.getHeight());
 					this.database.commit();
 				}
@@ -448,6 +452,8 @@ public class Wallet extends Observable implements Observer
 			}
 		}
 		Logger.getGlobal().info("Resetted balances");
+
+		Controller.getInstance().walletStatusUpdate(-1);
 		
 		//SET LAST BLOCK
 		
@@ -1505,4 +1511,9 @@ public class Wallet extends Observable implements Observer
 		}
 		
 	}	
+	
+	public byte[] getLastBlockSignature()
+	{
+		return this.database.getLastBlockSignature();
+	}
 }

@@ -29,7 +29,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import api.ApiErrorFactory;
 import controller.Controller;
 import qora.crypto.Base58;
 

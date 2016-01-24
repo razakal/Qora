@@ -13,6 +13,12 @@ import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.google.common.collect.Lists;
+import com.twitter.Extractor;
+
+import api.BlogPostResource;
+import controller.Controller;
+import database.DBSet;
 import qora.crypto.Base58;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
@@ -21,14 +27,6 @@ import qora.web.BlogProfile;
 import qora.web.NameStorageMap;
 import qora.web.Profile;
 import qora.web.blog.BlogEntry;
-import api.ApiErrorFactory;
-import api.BlogPostResource;
-
-import com.google.common.collect.Lists;
-import com.twitter.Extractor;
-
-import controller.Controller;
-import database.DBSet;
 
 public class BlogUtils {
 
