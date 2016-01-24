@@ -1109,11 +1109,7 @@ public class Controller extends Observable {
 
 	public void newBlockGenerated(Block newBlock) {
 
-		// ADD TO BLOCKCHAIN
-		// if (newBlock.isValid())
-		// {
 		this.synchronizer.process(newBlock);
-		// }
 
 		// BROADCAST
 		this.broadcastBlock(newBlock);
