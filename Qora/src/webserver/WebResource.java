@@ -435,6 +435,11 @@ public class WebResource {
 	public Response createApiCall(@Context HttpServletRequest request,
 			MultivaluedMap<String, String> form) throws IOException {
 
+		if(ServletUtils.isRemoteRequest(request))
+		{
+			return error404(request,
+					"This function is disabled for remote usage");
+		}
 		
 		String type = form.getFirst("type");
 		String apiurl = form.getFirst("apiurl");
@@ -474,21 +479,7 @@ public class WebResource {
 
 		apiurl = apiurl.startsWith("/") ? apiurl.substring(1) : apiurl;
 
-		
-		String addressToUse = "127.0.0.1";
-		if(ServletUtils.isRemoteRequest(request))
-		{
-			String remoteAddr = ServletUtils.getRemoteAddress(request);
-			if(StringUtils.isBlank(remoteAddr))
-			{
-				return error404(request,
-						"remoteAddress is blank");
-			}
-			
-			addressToUse = remoteAddr;
-		}
-		
-		URL urlToCall = new URL("http://" + addressToUse + ":"
+		URL urlToCall = new URL("http://127.0.0.1:"
 				+ Settings.getInstance().getRpcPort() + "/" + apiurl);
 		HttpURLConnection connection = (HttpURLConnection) urlToCall
 				.openConnection();
