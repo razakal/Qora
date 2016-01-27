@@ -125,6 +125,7 @@ public class NameStorageResource {
 	@Path("/update/{name}")
 	public String updateEntry(String x, @PathParam("name") String name) {
 		try {
+			APIUtils.disallowRemote(request);
 
 			// READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);

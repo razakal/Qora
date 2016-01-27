@@ -45,6 +45,8 @@ public class APIUtils {
 					ApiErrorFactory.ERROR_INVALID_SENDER);
 		}
 
+		APIUtils.askAPICallAllowed("POST payment\n" + x, request);
+
 		// CHECK IF WALLET EXISTS
 		if (!Controller.getInstance().doesWalletExists()) {
 			throw ApiErrorFactory.getInstance().createError(
@@ -64,8 +66,6 @@ public class APIUtils {
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_INVALID_SENDER);
 		}
-
-		APIUtils.askAPICallAllowed("POST payment\n" + x, request);
 
 		// SEND PAYMENT
 		Pair<Transaction, Integer> result = Controller.getInstance()
@@ -118,16 +118,20 @@ public class APIUtils {
 		}
 	}
 
+	public static void disallowRemote(HttpServletRequest request) throws WebApplicationException {
+		if (ServletUtils.isRemoteRequest(request)) {
+			throw ApiErrorFactory
+				      .getInstance()
+				      .createError(
+					      ApiErrorFactory.ERROR_WALLET_API_CALL_FORBIDDEN_BY_USER);
+		}
+	}
+
 	public static void askAPICallAllowed(final String messageToDisplay,
 			HttpServletRequest request) throws WebApplicationException {
 		// CHECK API CALL ALLOWED
 		try {
-			if (ServletUtils.isRemoteRequest(request)) {
-				throw ApiErrorFactory
-						.getInstance()
-						.createError(
-								ApiErrorFactory.ERROR_WALLET_API_CALL_FORBIDDEN_BY_USER);
-			}
+			disallowRemote(request);
 
 			if (Controller.getInstance().checkAPICallAllowed(messageToDisplay,
 					request) != JOptionPane.YES_OPTION) {

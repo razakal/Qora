@@ -35,6 +35,8 @@ public class ArbitraryTransactionsResource
 	{
 		try
 		{
+			APIUtils.askAPICallAllowed("POST arbitrarytransactions\n" + x, request );
+
 			//READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
 			int service = ((Long) jsonObject.get("service")).intValue();
@@ -85,8 +87,6 @@ public class ArbitraryTransactionsResource
 				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
 				
-			APIUtils.askAPICallAllowed("POST arbitrarytransactions\n" + x, request );
-			
 			//GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance().getPrivateKeyAccountByAddress(creator);				
 			if(account == null)
