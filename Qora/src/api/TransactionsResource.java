@@ -221,7 +221,7 @@ public class TransactionsResource {
 			{
 				blockLimit = ((Long) jsonObject.get("blocklimit")).intValue();
 
-				if (blockLimit > 16)
+				if (blockLimit > 360) // 360 ensures at least six hours of blocks can be queried at once
 				{
 					APIUtils.disallowRemote(request);
 				}
