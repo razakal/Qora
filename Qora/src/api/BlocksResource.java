@@ -34,6 +34,8 @@ public class BlocksResource
 	@GET
 	public String getBlocks()
 	{
+		APIUtils.askAPICallAllowed("GET blocks", request);
+
 		//CHECK IF WALLET EXISTS
 		if(!Controller.getInstance().doesWalletExists())
 		{
