@@ -435,12 +435,6 @@ public class WebResource {
 	public Response createApiCall(@Context HttpServletRequest request,
 			MultivaluedMap<String, String> form) throws IOException {
 
-		if(ServletUtils.isRemoteRequest(request))
-		{
-			return error404(request,
-					"This function is disabled for remote usage");
-		}
-		
 		String type = form.getFirst("type");
 		String apiurl = form.getFirst("apiurl");
 
@@ -483,6 +477,7 @@ public class WebResource {
 				+ Settings.getInstance().getRpcPort() + "/" + apiurl);
 		HttpURLConnection connection = (HttpURLConnection) urlToCall
 				.openConnection();
+		connection.setRequestProperty("X-FORWARDED-FOR", ServletUtils.getRemoteAddress(request));
 
 		// EXECUTE
 		connection.setRequestMethod(type.toUpperCase());
