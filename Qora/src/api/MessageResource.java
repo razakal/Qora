@@ -104,6 +104,10 @@ public class MessageResource {
 						ApiErrorFactory.ERROR_INVALID_SENDER);
 			}
 
+			// check this up here to avoid leaking wallet information to remote user
+			// full check is later to prompt user with calculated fee
+			APIUtils.disallowRemote(request);
+
 			// CHECK IF WALLET EXISTS
 			if (!Controller.getInstance().doesWalletExists()) {
 				throw ApiErrorFactory.getInstance().createError(

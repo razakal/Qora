@@ -71,6 +71,17 @@ public class BlogPostResource {
 						ApiErrorFactory.ERROR_INVALID_FEE);
 			}
 
+			// CHECK ADDRESS
+			if (!Crypto.getInstance().isValidAddress(creator)) {
+				throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_INVALID_ADDRESS);
+			}
+
+			isPostAllowed(blogname);
+
+			APIUtils.askAPICallAllowed("POST blogpost/" + blogname + "\n" + x,
+				request);
+
 			// CHECK IF WALLET EXISTS
 			if (!Controller.getInstance().doesWalletExists()) {
 				throw ApiErrorFactory.getInstance().createError(
@@ -96,12 +107,6 @@ public class BlogPostResource {
 				
 			}
 
-			// CHECK ADDRESS
-			if (!Crypto.getInstance().isValidAddress(creator)) {
-				throw ApiErrorFactory.getInstance().createError(
-						ApiErrorFactory.ERROR_INVALID_ADDRESS);
-			}
-
 			// CHECK ACCOUNT IN WALLET
 
 			if (Controller.getInstance().getAccountByAddress(creator) == null) {
@@ -116,11 +121,6 @@ public class BlogPostResource {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_INVALID_ADDRESS);
 			}
-
-			isPostAllowed(blogname);
-
-			APIUtils.askAPICallAllowed("POST blogpost/" + blogname + "\n" + x,
-					request);
 
 			JSONObject dataStructure = new JSONObject();
 
