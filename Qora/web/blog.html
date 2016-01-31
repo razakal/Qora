@@ -333,7 +333,11 @@
                         <div class="actionBox">
                    {% for comment in blogpost.getComments() %}
                     <div class="media commentList">
+                    {% if comment.getNameOpt() is not null %}
+                      <a class="media-left" href="/index/blog.html?blogname={{comment.nameOrCreator}}">
+                      {%else%}
                       <a class="media-left" href="#">
+                  	{%endif%}
                      {%if comment.getAvatar() is empty%}
                         <img class="media-object commenterImage" src="/index/img/qora-user.png" alt="user image">
           			{%else%}
@@ -341,7 +345,11 @@
           			{%endif%}
                       </a>
                       <div class="media-body">
+                      {% if comment.getNameOpt() is not null %}
+                        <h4 class="media-heading Commenter"><a href="/index/blog.html?blogname={{comment.nameOrCreator}}">{{comment.nameOrCreator}}</a></h4>
+          			{%else%}
                         <h4 class="media-heading Commenter">{{comment.nameOrCreator}}</h4>
+          			{%endif%}
                         <p class="commentText">{{comment.description}}</p>
                         <span class="date sub-text">{{comment.creationTime}}</span>
                       </div>
