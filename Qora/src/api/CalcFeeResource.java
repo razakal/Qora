@@ -128,6 +128,10 @@ public class CalcFeeResource {
 		}
 	}
 
+	
+	
+	
+//	TODO CALC FREE FOR COMMENTPOST ALSO NEEDED
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/blogpost")

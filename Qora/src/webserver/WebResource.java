@@ -1219,7 +1219,12 @@ public class WebResource {
 		String creator = form.getFirst("creator");
 		String contentparam = form.getFirst("content");
 		String preview = form.getFirst("preview");
+		
+		
+		
+		
 		String blogname = form.getFirst(BlogPostResource.BLOGNAME_KEY);
+		String postid = form.getFirst(BlogPostResource.COMMENT_POSTID_KEY);
 
 		if (StringUtil.isNotBlank(creator)
 				&& StringUtil.isNotBlank(contentparam)) {
@@ -1240,6 +1245,7 @@ public class WebResource {
 
 			jsonBlogPost.put("title", title);
 			jsonBlogPost.put("body", contentparam);
+			
 
 			if (StringUtils.isNotBlank(preview) && preview.equals("true")) {
 				json.put("type", "preview");
@@ -1266,8 +1272,18 @@ public class WebResource {
 										jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8))
 								.getA().toPlainString());
 
-				String result = new BlogPostResource().addBlogEntry(
-						jsonBlogPost.toJSONString(), blogname);
+				String result;
+				//COMMENT OR REAL BLOGPOST?
+				if(postid != null)
+				{
+					jsonBlogPost.put(BlogPostResource.COMMENT_POSTID_KEY, postid);
+					result = new BlogPostResource().commentBlogEntry(
+							jsonBlogPost.toJSONString());
+				}else
+				{
+					result = new BlogPostResource().addBlogEntry(
+							jsonBlogPost.toJSONString(), blogname);
+				}
 
 				json.put("type", "postSuccessful");
 				json.put("result", result);
@@ -1296,6 +1312,104 @@ public class WebResource {
 				.header("Content-Type", "application/json; charset=utf-8")
 				.entity(json.toJSONString()).build();
 	}
+	
+	
+	@Path("index/postcomment.html")
+	@GET
+	public Response postComment() {
+
+		try {
+
+			PebbleHelper pebbleHelper = PebbleHelper.getPebbleHelper(
+					"web/postblog.html", request);
+
+			pebbleHelper.getContextMap().put("errormessage", "");
+			pebbleHelper.getContextMap().put("font", "");
+			pebbleHelper.getContextMap().put("content", "");
+			pebbleHelper.getContextMap().put("option", "");
+			pebbleHelper.getContextMap().put("oldtitle", "");
+			pebbleHelper.getContextMap().put("oldcreator", "");
+			pebbleHelper.getContextMap().put("oldcontent", "");
+			pebbleHelper.getContextMap().put("oldfee", "");
+			pebbleHelper.getContextMap().put("preview", "");
+
+			List<Account> resultingAccounts;
+
+			
+			/**
+			 * Currently we allow all names and accounts, that needs to be restricted later
+			 */
+			if (Controller.getInstance().doesWalletDatabaseExists()) {
+				resultingAccounts = new ArrayList<Account>(Controller.getInstance()
+						.getAccounts());
+			} else {
+				resultingAccounts = new ArrayList<Account>();
+			}
+			List<Name> resultingNames = new ArrayList<Name>(Controller.getInstance()
+					.getNamesAsList());
+			
+			for (Name name : resultingNames) {
+				// No balance account not shown
+				if (name.getOwner().getBalance(0).compareTo(BigDecimal.ZERO) <= 0) {
+					resultingNames.remove(name);
+				}
+			}
+
+			for (Account account : resultingAccounts) {
+				if (account.getBalance(0).compareTo(BigDecimal.ZERO) <= 0) {
+					resultingAccounts.remove(account);
+				}
+			}
+
+//		 Pair<List<Account>, List<Name>> accountdAndNames = new Pair<List<Account>, List<Name>>(resultingAccounts,
+//				resultingNames);
+
+			
+
+			Collections.sort(resultingAccounts, new AccountBalanceComparator());
+			Collections.reverse(resultingAccounts);
+
+			String accountStrings = "";
+
+			for (Name name : resultingNames) {
+				accountStrings += "<option value=" + name.getName() + ">"
+						+ name.getNameBalanceString() + "</option>";
+			}
+
+			for (Account account : resultingAccounts) {
+				accountStrings += "<option value=" + account.getAddress() + ">"
+						+ account + "</option>";
+			}
+
+			// are we allowed to post
+			if (resultingNames.size() == 0 && resultingAccounts.size() == 0) {
+
+				pebbleHelper
+						.getContextMap()
+						.put("errormessage",
+								"<div id=\"result\"><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button>You can't post to this blog! None of your accounts has balance or the blog owner did not allow your accounts to post!<br></div></div>");
+
+			}
+
+			Profile activeProfileOpt = ProfileHelper.getInstance()
+					.getActiveProfileOpt(request);
+
+			if (activeProfileOpt != null
+					&& resultingNames.contains(activeProfileOpt.getName())) {
+				pebbleHelper.getContextMap().put("primaryname",
+						activeProfileOpt.getName().getName());
+			}
+
+			pebbleHelper.getContextMap().put("option", accountStrings);
+
+			return Response.ok(pebbleHelper.evaluate(),
+					"text/html; charset=utf-8").build();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return error404(request, null);
+		}
+	}
+
 
 	@Path("index/postblog.html")
 	@GET

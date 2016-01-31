@@ -99,6 +99,8 @@ public class ApiErrorFactory
 	public static final int ERROR_TX_AMOUNT = 904;
 	public static final int ERROR_BLOG_ENTRY_NO_EXISTS = 905;
 	public static final int ERROR_BLOG_EMPTY = 906;
+	public static final int ERROR_POSTID_EMPTY = 907;
+	public static final int ERROR_POST_NOT_EXISTING = 908;
 	
 	//Messages
 	public static final int ERROR_MESSAGE_FORMAT_NOT_HEX = 1001;
@@ -210,6 +212,8 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_TX_AMOUNT,"the data size is too large - currently only "+BATCH_TX_AMOUNT+" arbitrary transactions are allowed at once!");
 		this.errorMessages.put(ERROR_BLOG_ENTRY_NO_EXISTS,"transaction with this signature contains no entries!");
 		this.errorMessages.put(ERROR_BLOG_EMPTY,"this blog is empty");
+		this.errorMessages.put(ERROR_POSTID_EMPTY,"the attribute postid is empty! this is the signature of the post you want to comment");
+		this.errorMessages.put(ERROR_POST_NOT_EXISTING,"for the given postid no blogpost to comment was found");
 		
 		//MESSAGES
 		this.errorMessages.put(ERROR_MESSAGE_FORMAT_NOT_HEX,"the Message format is not hex - correct the text or use isTextMessage = true");
