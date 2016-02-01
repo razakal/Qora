@@ -79,15 +79,6 @@ public class Block {
 	// VERSION 2 AND 3 BLOCKS, WITH AT AND MESSAGE
 	public Block(int version, byte[] reference, long timestamp, long generatingBalance, PublicKeyAccount generator, byte[] generatorSignature, byte[] atBytes, long atFees)
 	{
-		this(version, reference, timestamp, generatingBalance, generator, generatorSignature);
-
-		this.atBytes = atBytes;
-		this.atFees = atFees;
-	}
-
-	// VERSION 1 BLOCKS
-	public Block(int version, byte[] reference, long timestamp, long generatingBalance, PublicKeyAccount generator, byte[] generatorSignature)
-	{
 		this.version = version;
 		this.reference = reference;
 		this.timestamp = timestamp;
@@ -96,6 +87,15 @@ public class Block {
 		this.generatorSignature = generatorSignature;
 
 		this.transactionCount = 0;
+
+		this.atBytes = atBytes;
+		this.atFees = atFees;
+	}
+
+	// VERSION 1 BLOCKS
+	public Block(int version, byte[] reference, long timestamp, long generatingBalance, PublicKeyAccount generator, byte[] generatorSignature)
+	{
+		this(version, reference, timestamp, generatingBalance, generator, generatorSignature, new byte[0], 0);
 	}
 
 	//GETTERS/SETTERS
