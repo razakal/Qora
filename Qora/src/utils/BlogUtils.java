@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -311,6 +312,7 @@ public class BlogUtils {
 			transaction = (ArbitraryTransaction) Controller.getInstance()
 					.getTransaction(signature);
 		} catch (Exception e) {
+			System.err.println(ExceptionUtils.getStackTrace(e));
 			return null;
 		}
 		return transaction == null ? null : BlogUtils
@@ -394,14 +396,18 @@ public class BlogUtils {
 							.setShareAuthor(nameOpt != null ? nameOpt : creator);
 					blogEntryToShareOpt.setShareSignatureOpt(Base58
 							.encode(transaction.getSignature()));
+					addCommentsToBlogEntry(transaction, blogEntryToShareOpt);
 					return blogEntryToShareOpt;
 				}
 			}
+			
 			// POST NEEDS TO BE FILLED
 			if (StringUtil.isNotBlank(post)) {
-				return new BlogEntry(title, post, nameOpt,
+				BlogEntry resultBlogEntry = new BlogEntry(title, post, nameOpt,
 						transaction.getTimestamp(), creator,
 						Base58.encode(transaction.getSignature()), blognameOpt);
+				addCommentsToBlogEntry(transaction, resultBlogEntry);
+				return resultBlogEntry;
 			}
 		}
 
