@@ -13,6 +13,7 @@ import qora.transaction.Transaction;
 import qora.web.ServletUtils;
 import api.ApiErrorFactory;
 import controller.Controller;
+import gui.PasswordPane;
 
 public class APIUtils {
 
@@ -139,6 +140,14 @@ public class APIUtils {
 						.getInstance()
 						.createError(
 								ApiErrorFactory.ERROR_WALLET_API_CALL_FORBIDDEN_BY_USER);
+			}
+			if(!Controller.getInstance().isWalletUnlocked())
+			{
+				String password = PasswordPane.showUnlockWalletDialog(); 
+				if(!password.equals("") && !Controller.getInstance().unlockWallet(password))
+				{
+					JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		} catch (Exception e) {
 			if (e instanceof WebApplicationException) {
