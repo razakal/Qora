@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
+import controller.Controller;
 import qora.account.Account;
 import qora.account.PublicKeyAccount;
 import qora.block.Block;
@@ -308,4 +309,15 @@ public abstract class Transaction {
 		}
 	}
 
+	public int getBlockVersion()
+	{
+		// IF ALREADY IN THE BLOCK. CONFIRMED 
+		if(this.isConfirmed())
+		{
+			return DBSet.getInstance().getTransactionParentMap().getParent(this.getSignature()).getVersion();
+		}
+		
+		// IF UNCONFIRMED
+		return Controller.getInstance().getLastBlock().getNextBlockVersion(DBSet.getInstance());	
+	}
 }
