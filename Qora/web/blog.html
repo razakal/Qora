@@ -310,9 +310,9 @@
                     </div>
                     <div class="media-right">
                       <div class="btn-group post-actions">
-                        <button class="btn btn-default" onmouseover="changeTextarea{{blogpost.getSignature()}}(location.protocol + '//' + window.location.host + '/index/showpost.html?msg={{blogpost.getSignature()}}')" id="copybutton{{blogpost.getSignature()}}" data-toggle="tooltip" data-placement="bottom" title="Copy to clipboard" data-clipboard-target="clipboard_textarea">
+                        <a class="btn btn-default" href="/index/showpost.html?msg={{blogpost.getSignature()}}">
                           <i class="glyphicon glyphicon-link"></i>
-                        </button>
+                        </a>
                         {% if blogpost.getShareSignatureOpt() is not null%}
                           <button class ="btn btn-default" onclick="javascript:processDelete('{{blogpost.getShareSignatureOpt()}}')" >
                             <i class="glyphicon glyphicon-trash" style=""></i>
@@ -833,24 +833,6 @@
         });
 {% endfor %}
     </script>
-<script type="text/javascript">
-    {% for blogpost in blogposts %}
-    var client = new ZeroClipboard( document.getElementById("copybutton{{blogpost.getSignature()}}") );
-    {% endfor %}
-
-    // client.on( "ready", function( readyEvent ) {
-      // alert( "ZeroClipboard SWF is ready!" );
-
-      // client.on( "aftercopy", function( event ) {
-        // `this` === `client`
-        // `event.target` === the element that was clicked
-    //     event.target.style.display = "none";
-    //     alert("Copied text to clipboard: " + event.data["text/plain"] );
-    //   } );
-    // } );
-
-
-</script>
 <script>
 
 </script>
