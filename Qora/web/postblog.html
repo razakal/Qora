@@ -212,6 +212,27 @@
 					$("#result").html('');
 				} else if (data.type == 'postSuccessful') {
 					$("#result").html('<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Your post was successful<br>'+wordwrap(data.result, 50, '<br>', true)+'<br></div>');
+					
+					var location1;
+					
+					if(window.parent != null)
+					{
+						location1 = window.parent.location;
+					}
+					else
+					{
+						location1 = window.location;
+					}
+						
+					if(postid != null)
+					{
+						setTimeout(function() { location1.href = "/index/showpost.html?msg=" + postid; }, 1500)
+					}
+					else
+					{
+						setTimeout(function() { location1.reload(); }, 1500)
+					}
+					
 				} else if (data.type == 'error') {
 					try {
 						var error = JSON.parse(data.error);
