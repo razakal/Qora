@@ -269,7 +269,6 @@ public class BlogUtils {
 
 			if (blogBlackWhiteList.isAllowedPost(nameOpt != null ? nameOpt
 					: creator, creator)) {
-				addCommentsToBlogEntry(transaction, blogEntry);
 				results.add(blogEntry);
 				i++;
 			}
