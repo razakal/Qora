@@ -15,6 +15,9 @@ import org.junit.Test;
 import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
+import qora.assets.Asset;
+import qora.block.Block;
+import qora.block.GenesisBlock;
 import qora.crypto.Crypto;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.MessageTransactionV3;
@@ -29,7 +32,14 @@ public class TransactionV3Tests {
 		
 		//CREATE EMPTY MEMORY DATABASE
 		DBSet databaseSet = DBSet.createEmptyDatabaseSet();
-						
+		
+		//ADD QORA ASSET
+		Asset qoraAsset = new Asset(new GenesisBlock().getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, new byte[64]);
+		databaseSet.getAssetMap().set(0l, qoraAsset);
+    	
+		GenesisBlock genesisBlock = new GenesisBlock();
+		genesisBlock.process(databaseSet);
+		
 		//CREATE KNOWN ACCOUNT
 		byte[] seed = Crypto.getInstance().digest("test".getBytes());
 		byte[] privateKey = Crypto.getInstance().createKeyPair(seed).getA();
@@ -70,6 +80,15 @@ public class TransactionV3Tests {
 				signature
 				);
 		
+		if( messageTransactionV3.getTimestamp() < Block.POWFIX_RELEASE || databaseSet.getBlockMap().getLastBlock().getHeight(databaseSet) < Transaction.MESSAGE_BLOCK_HEIGHT_RELEASE)
+		{
+			assertEquals(messageTransactionV3.isValid(databaseSet), Transaction.NOT_YET_RELEASED);
+		}
+		else
+		{
+			assertEquals(messageTransactionV3.isValid(databaseSet), Transaction.VALIDATE_OKE);
+		}
+		
 		messageTransactionV3.process(databaseSet);
 		
 		assertEquals(BigDecimal.valueOf(999).setScale(8), creator.getConfirmedBalance(databaseSet));
@@ -91,6 +110,9 @@ public class TransactionV3Tests {
 		assertEquals(messageTransactionV3.getAmount(), messageTransactionV3_2.getAmount());
 		assertEquals(messageTransactionV3.isEncrypted(), messageTransactionV3_2.isEncrypted());
 		assertEquals(messageTransactionV3.isText(), messageTransactionV3_2.isText());
+		
+		assertEquals(messageTransactionV3.isSignatureValid(), true);
+		assertEquals(messageTransactionV3_2.isSignatureValid(), true);		
 	}
 	
 }
