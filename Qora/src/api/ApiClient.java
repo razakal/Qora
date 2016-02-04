@@ -288,13 +288,13 @@ public class ApiClient {
 				"Errors: 201 - Wallet does not exist."
 			},
 			{
-				"POST payment {\"amount\":\"<amount>\", \"fee\":\"<fee>, \"sender\":\"<senderAddress>\", \"recipient\":\"<recipient>\"}", 
-				"Send a new payment using the given data. Returns the transaction in JSON when successful.",
+				"POST payment {\"asset\":\"<assetId>\", \"amount\":\"<amount>\", \"fee\":\"<fee>, \"sender\":\"<senderAddress>\", \"recipient\":\"<recipient>\"}", 
+				"Send a new payment using the given data. Returns the transaction in JSON when successful. If \"asset\" is omitted, 0 is provided (default asset: QORA).",
 				"Errors: 1 - Json error. 104 - Invalid amount. 105 - Invalid fee. 106 - Invalid sender. 107 - Invalid recipient. 201 - Wallet does not exist. 203 - Wallet is locked."
 			},
 			{
-				"POST namepayment {\"amount\":\"<amount>\", \"fee\":\"<fee>\", \"sender\":\"<senderAddress>\", \"recipient\":\"<recipientName>\"}", 
-				"Send a new neme-payment using the given data.",
+				"POST namepayment {\"asset\":\"<assetId>\", \"amount\":\"<amount>\", \"fee\":\"<fee>\", \"sender\":\"<senderAddress>\", \"recipient\":\"<recipientName>\"}", 
+				"Send a new neme-payment using the given data. If \"asset\" is omitted, 0 is provided (default asset: QORA).",
 				"Errors: 1 - Json error. 104 - Invalid amount. 105 - Invalid fee. 106 - Invalid sender. 107 - Invalid recipient. 201 - Wallet does not exist. 203 - Wallet is locked. 701 - The name is not registered. 702 -  Names for sale. 703 = Name with trailing or leading spaces."
 			},
 			{

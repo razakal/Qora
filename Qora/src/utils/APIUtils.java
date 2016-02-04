@@ -8,6 +8,7 @@ import javax.ws.rs.WebApplicationException;
 
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
+import qora.assets.Asset;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
 import qora.web.ServletUtils;
@@ -17,9 +18,27 @@ import gui.PasswordPane;
 
 public class APIUtils {
 
-	public static String processPayment(String amount, String fee,
+	public static String processPayment(String assetKeyString, String amount, String fee,
 			String sender, String recipient, String x,
 			HttpServletRequest request) {
+		
+		// PARSE AMOUNT		
+		Asset asset;
+		
+		if(assetKeyString == null)
+		{
+			asset = Controller.getInstance().getAsset(0l);
+		}
+		else
+		{
+			try {
+				asset = Controller.getInstance().getAsset(new Long(assetKeyString));
+			} catch (Exception e) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_INVALID_ASSET_ID);
+			}
+		}
+		
 		// PARSE AMOUNT
 		BigDecimal bdAmount;
 		try {
@@ -68,10 +87,20 @@ public class APIUtils {
 					ApiErrorFactory.ERROR_INVALID_SENDER);
 		}
 
-		// SEND PAYMENT
-		Pair<Transaction, Integer> result = Controller.getInstance()
+		Pair<Transaction, Integer> result;
+		if(asset.getKey() == 0l)
+		{
+			// SEND QORA PAYMENT
+			result = Controller.getInstance()
 				.sendPayment(account, new Account(recipient), bdAmount, bdFee);
-
+		}
+		else
+		{
+			// SEND ASSET PAYMENT
+			result = Controller.getInstance()
+				.transferAsset(account, new Account(recipient), asset, bdAmount, bdFee);
+		}
+			
 		switch (result.getB()) {
 		case Transaction.VALIDATE_OKE:
 
