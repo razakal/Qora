@@ -164,7 +164,7 @@ public class BlogPostResource {
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
-					.createArbitraryTransaction(account, BlogUtils.COMMENT_SERVICE_ID,
+					.createArbitraryTransaction(account, null, BlogUtils.COMMENT_SERVICE_ID,
 							dataStructure.toJSONString().getBytes(StandardCharsets.UTF_8), bdFee);
 
 			return ArbitraryTransactionsResource
@@ -284,7 +284,7 @@ public class BlogPostResource {
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
-					.createArbitraryTransaction(account, 777,
+					.createArbitraryTransaction(account, null, 777,
 							dataStructure.toJSONString().getBytes(StandardCharsets.UTF_8), bdFee);
 
 			return ArbitraryTransactionsResource

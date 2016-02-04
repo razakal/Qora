@@ -19,6 +19,7 @@ import qora.naming.Name;
 import qora.naming.NameSale;
 import qora.payment.Payment;
 import qora.transaction.ArbitraryTransaction;
+import qora.transaction.ArbitraryTransactionV3;
 import qora.transaction.MessageTransaction;
 import qora.transaction.MessageTransactionV3;
 import qora.transaction.BuyNameTransaction;
@@ -390,26 +391,39 @@ public class TransactionCreator
 		return new Pair(pollVote.calcRecommendedFee(), pollVote.getDataLength());
 	}
 	
-	public Pair<Transaction, Integer> createArbitraryTransaction(PrivateKeyAccount creator, int service, byte[] data, BigDecimal fee) 
+	public Pair<Transaction, Integer> createArbitraryTransaction(PrivateKeyAccount creator, List<Payment> payments, int service, byte[] data, BigDecimal fee) 
 	{
 		//CHECK FOR UPDATES
 		this.checkUpdate();
-								
+			
+		Transaction arbitraryTransaction;
+		
 		//TIME
 		long time = NTP.getTime();
-								
-		//CREATE SIGNATURE
-		byte[] signature = ArbitraryTransaction.generateSignature(this.fork, creator, service, data, fee, time);
+		
+		if(time < Block.POWFIX_RELEASE)
+		{
+			//CREATE SIGNATURE
+			byte[] signature = ArbitraryTransaction.generateSignature(this.fork, creator, service, data, fee, time);
 							
-		//CREATE ARBITRARY TRANSACTION
-		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(creator, service, data, fee, time, creator.getLastReference(this.fork), signature);
-								
+			//CREATE ARBITRARY TRANSACTION V1
+			arbitraryTransaction = new ArbitraryTransaction(creator, service, data, fee, time, creator.getLastReference(this.fork), signature);
+		}
+		else
+		{
+			//CREATE SIGNATURE
+			byte[] signature = ArbitraryTransactionV3.generateSignature(this.fork, creator, payments, service, data, fee, time);
+							
+			//CREATE ARBITRARY TRANSACTION V3
+			arbitraryTransaction = new ArbitraryTransactionV3(creator, payments, service, data, fee, time, creator.getLastReference(this.fork), signature);
+		}
+		
 		//VALIDATE AND PROCESS
 		return this.afterCreate(arbitraryTransaction);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(byte[] data) 
+	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(byte[] data, List<Payment> payments) 
 	{	
 		//TIME
 		long time = NTP.getTime();
@@ -420,8 +434,18 @@ public class TransactionCreator
 		//GENESIS ACCOUNT
 		PublicKeyAccount creator = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
 		
-		//CREATE ARBITRARY TRANSACTION
-		ArbitraryTransaction arbitraryTransaction = new ArbitraryTransaction(creator, 0, data, Transaction.MINIMUM_FEE, time, signature, signature);
+		Transaction arbitraryTransaction;
+		
+		if(time < Block.POWFIX_RELEASE)
+		{
+			//CREATE ARBITRARY TRANSACTION V1
+			arbitraryTransaction = new ArbitraryTransaction(creator, 0, data, Transaction.MINIMUM_FEE, time, signature, signature);
+		}
+		else
+		{
+			//CREATE ARBITRARY TRANSACTION V3
+			arbitraryTransaction = new ArbitraryTransactionV3(creator, payments, 0, data, Transaction.MINIMUM_FEE, time, signature, signature);			
+		}
 		
 		return new Pair(arbitraryTransaction.calcRecommendedFee(), arbitraryTransaction.getDataLength());
 	}
@@ -658,7 +682,7 @@ public class TransactionCreator
 		
 		if(timestamp < Block.POWFIX_RELEASE)
 		{
-			//CREATE MESSAGE TRANSACTION V1 AND V2
+			//CREATE MESSAGE TRANSACTION V1
 			byte[] signature = MessageTransaction.generateSignature(this.fork, sender, recipient, amount, fee, message, isText, encryptMessage, timestamp);
 			messageTx = new MessageTransaction(sender, recipient, amount, fee, message, isText, encryptMessage, timestamp, sender.getLastReference(this.fork), signature );
 		}
@@ -690,7 +714,7 @@ public class TransactionCreator
 		
 		if(timestamp < Block.POWFIX_RELEASE)
 		{
-			//CREATE MESSAGE TRANSACTION V1 AND V2
+			//CREATE MESSAGE TRANSACTION V1
 			messageTx = new MessageTransaction(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, signature, signature );
 		}
 		else

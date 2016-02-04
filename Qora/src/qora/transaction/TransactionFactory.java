@@ -84,8 +84,17 @@ public class TransactionFactory {
 			
 		case Transaction.ARBITRARY_TRANSACTION:
 			
-			//PARSE ARBITRARY TRANSACTION
-			return ArbitraryTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));			
+			if(timeStamp < Block.POWFIX_RELEASE)
+			{
+				//PARSE ARBITRARY TRANSACTION V1
+				return ArbitraryTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));			
+
+			}
+			else
+			{
+				//PARSE ARBITRARY TRANSACTION V3
+				return ArbitraryTransactionV3.Parse(Arrays.copyOfRange(data, 4, data.length));			
+			}
 			
 		case Transaction.ISSUE_ASSET_TRANSACTION:
 			
@@ -119,12 +128,12 @@ public class TransactionFactory {
 
 			if(timeStamp < Block.POWFIX_RELEASE)
 			{
-				// BLOCK VERSION 1 AND 2
+				// PARSE MESSAGE TRANSACTION V1
 				return MessageTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));
 			}
 			else
 			{
-				// BLOCK VERSION 3
+				// PARSE MESSAGE TRANSACTION V3
 				return MessageTransactionV3.Parse(Arrays.copyOfRange(data, 4, data.length));
 			}
 			

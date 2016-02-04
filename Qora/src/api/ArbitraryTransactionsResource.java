@@ -95,7 +95,7 @@ public class ArbitraryTransactionsResource
 			}
 				
 			//SEND PAYMENT
-			Pair<Transaction, Integer> result = Controller.getInstance().createArbitraryTransaction(account, service, dataBytes, bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance().createArbitraryTransaction(account, null, service, dataBytes, bdFee);
 				
 			return checkArbitraryTransaction(result);
 		}

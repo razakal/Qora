@@ -1258,9 +1258,14 @@ public class Controller extends Observable {
 	}
 
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForArbitraryTransaction(
-			byte[] data) {
+			byte[] data, List<Payment> payments) {
+		
+		if(payments == null) {
+			payments = new ArrayList<Payment>();
+		}
+		
 		return this.transactionCreator
-				.calcRecommendedFeeForArbitraryTransaction(data);
+				.calcRecommendedFeeForArbitraryTransaction(data, payments);
 	}
 
 	public Pair<BigDecimal, Integer> calcRecommendedFeeForMessage(byte[] message) {
@@ -1397,10 +1402,15 @@ public class Controller extends Observable {
 	}
 
 	public Pair<Transaction, Integer> createArbitraryTransaction(
-			PrivateKeyAccount creator, int service, byte[] data, BigDecimal fee) {
+			PrivateKeyAccount creator, List<Payment> payments, int service, byte[] data, BigDecimal fee) {
+		
+		if(payments == null) {
+			payments = new ArrayList<Payment>();
+		}
+		
 		// CREATE ONLY ONE TRANSACTION AT A TIME
 		synchronized (this.transactionCreator) {
-			return this.transactionCreator.createArbitraryTransaction(creator,
+			return this.transactionCreator.createArbitraryTransaction(creator, payments,
 					service, data, fee);
 		}
 	}

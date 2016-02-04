@@ -1269,7 +1269,7 @@ public class WebResource {
 						Controller
 								.getInstance()
 								.calcRecommendedFeeForArbitraryTransaction(
-										jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8))
+										jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8), null)
 								.getA().toPlainString());
 
 				String result;
@@ -1704,7 +1704,7 @@ public class WebResource {
 					jsonBlogPost.put("creator", creator);
 					Pair<BigDecimal, Integer> fee = Controller.getInstance()
 							.calcRecommendedFeeForArbitraryTransaction(
-									jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8));
+									jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8), null);
 					jsonBlogPost.put("fee", fee.getA().toPlainString());
 					// I am not author, but am I the owner of the blog?
 				} else if (blognameOpt != null
@@ -1842,7 +1842,7 @@ public class WebResource {
 
 					Pair<BigDecimal, Integer> fee = Controller.getInstance()
 							.calcRecommendedFeeForArbitraryTransaction(
-									jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8));
+									jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8), null);
 					jsonBlogPost.put("fee", fee.getA().toPlainString());
 
 					try {

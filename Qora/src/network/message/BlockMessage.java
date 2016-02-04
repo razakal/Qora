@@ -4,7 +4,6 @@ package network.message;
 import java.util.Arrays;
 
 import qora.block.Block;
-import qora.transaction.Transaction;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
