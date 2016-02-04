@@ -5,8 +5,6 @@ import java.util.Arrays;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import qora.block.Block;
-
 public class TransactionFactory {
 
 	private static TransactionFactory instance;
@@ -84,7 +82,7 @@ public class TransactionFactory {
 			
 		case Transaction.ARBITRARY_TRANSACTION:
 			
-			if(timeStamp < Block.POWFIX_RELEASE)
+			if(timeStamp < Transaction.POWFIX_RELEASE)
 			{
 				//PARSE ARBITRARY TRANSACTION V1
 				return ArbitraryTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));			
@@ -126,7 +124,7 @@ public class TransactionFactory {
 
 		case Transaction.MESSAGE_TRANSACTION:
 
-			if(timeStamp < Block.POWFIX_RELEASE)
+			if(timeStamp < Transaction.POWFIX_RELEASE)
 			{
 				// PARSE MESSAGE TRANSACTION V1
 				return MessageTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));

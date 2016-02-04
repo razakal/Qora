@@ -15,7 +15,6 @@ import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
-import qora.block.Block;
 import qora.block.GenesisBlock;
 import qora.crypto.Crypto;
 import qora.payment.Payment;
@@ -81,7 +80,7 @@ public class TransactionV3Tests {
 				signature
 				);
 		
-		if( messageTransactionV3.getTimestamp() < Block.POWFIX_RELEASE || databaseSet.getBlockMap().getLastBlock().getHeight(databaseSet) < Transaction.MESSAGE_BLOCK_HEIGHT_RELEASE)
+		if( messageTransactionV3.getTimestamp() < Transaction.POWFIX_RELEASE || databaseSet.getBlockMap().getLastBlock().getHeight(databaseSet) < Transaction.MESSAGE_BLOCK_HEIGHT_RELEASE)
 		{
 			assertEquals(messageTransactionV3.isValid(databaseSet), Transaction.NOT_YET_RELEASED);
 		}
@@ -172,7 +171,7 @@ public class TransactionV3Tests {
 				signature
 				);
 		
-		if (NTP.getTime() < Transaction.ARBITRARY_TRANSACTIONS_RELEASE || arbitraryTransactionV3.getTimestamp() < Block.POWFIX_RELEASE)
+		if (NTP.getTime() < Transaction.ARBITRARY_TRANSACTIONS_RELEASE || arbitraryTransactionV3.getTimestamp() < Transaction.POWFIX_RELEASE)
 		{
 			assertEquals(arbitraryTransactionV3.isValid(databaseSet), Transaction.NOT_YET_RELEASED);
 		}
@@ -262,7 +261,7 @@ public class TransactionV3Tests {
 				signature
 				);
 		
-		if (NTP.getTime() < Transaction.ARBITRARY_TRANSACTIONS_RELEASE || arbitraryTransactionV3.getTimestamp() < Block.POWFIX_RELEASE)
+		if (NTP.getTime() < Transaction.ARBITRARY_TRANSACTIONS_RELEASE || arbitraryTransactionV3.getTimestamp() < Transaction.POWFIX_RELEASE)
 		{
 			assertEquals(arbitraryTransactionV3.isValid(databaseSet), Transaction.NOT_YET_RELEASED);
 		}

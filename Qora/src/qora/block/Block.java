@@ -41,9 +41,6 @@ import database.DBSet;
 
 public class Block {
 
-	//RELEASES (more are in Transaction.java)
-	public static final long POWFIX_RELEASE = 1455562800000l; // version 3 // 2016-02-15T19:00:00+00:00
-
 	public static final int MAX_BLOCK_BYTES = 1048576;
 	public static final int VERSION_LENGTH = 4;
 	public static final int REFERENCE_LENGTH = 128;
@@ -551,7 +548,7 @@ public class Block {
 		{
 			return 1;
 		}
-		else if(getTimestamp() < POWFIX_RELEASE)
+		else if(getTimestamp() < Transaction.POWFIX_RELEASE)
 		{
 			return 2;
 		}

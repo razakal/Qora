@@ -39,7 +39,6 @@ import javax.swing.event.DocumentListener;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.assets.Asset;
-import qora.block.Block;
 import qora.crypto.AEScrypto;
 import qora.crypto.Crypto;
 import qora.transaction.Transaction;
@@ -710,9 +709,9 @@ public class SendMessagePanel extends JPanel
 				}
 			}
 			
-			if(key != 0l && NTP.getTime() < Block.POWFIX_RELEASE)
+			if(key != 0l && NTP.getTime() < Transaction.POWFIX_RELEASE)
 			{	
-				JOptionPane.showMessageDialog(new JFrame(), "Assets transactions will be enabled at " + DateTimeFormat.timestamptoString(Block.POWFIX_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Assets transactions will be enabled at " + DateTimeFormat.timestamptoString(Transaction.POWFIX_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			

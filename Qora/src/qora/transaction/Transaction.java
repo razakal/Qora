@@ -8,12 +8,12 @@ import java.util.List;
 import org.json.simple.JSONObject;
 
 import controller.Controller;
+import database.DBSet;
 import qora.account.Account;
 import qora.account.PublicKeyAccount;
 import qora.block.Block;
 import qora.crypto.Base58;
 import settings.Settings;
-import database.DBSet;
 
 public abstract class Transaction {
 	
@@ -102,6 +102,8 @@ public abstract class Transaction {
 	public static final int MESSAGE_BLOCK_HEIGHT_RELEASE = 99000;
 	//public static final long ASSETS_RELEASE = 1411308000000l;
 	public static final long ASSETS_RELEASE = 0l;
+	public static final long POWFIX_RELEASE = 1455562800000l; // Block Version 3 // 2016-02-15T19:00:00+00:00
+
 	
 	//PROPERTIES LENGTH
 	protected static final int TYPE_LENGTH = 4;

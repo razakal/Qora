@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 import qora.account.PublicKeyAccount;
 
-import com.google.common.primitives.Ints;
-
 public class BlockFactory {
 
 	private static BlockFactory instance;
@@ -39,10 +37,6 @@ public class BlockFactory {
 		}
 		else
 		{
-			//PARSE HEIGHT
-			byte[] versionBytes =  Arrays.copyOfRange(data, 0, 4);
-			int version = Ints.fromByteArray(versionBytes);
-			
 			//PARSE NORMAL BLOCK
 			return Block.parse(data);
 		}

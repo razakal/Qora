@@ -8,20 +8,18 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
-import qora.account.Account;
-import qora.account.PrivateKeyAccount;
-import qora.account.PublicKeyAccount;
-import qora.block.Block;
-import qora.crypto.Base58;
-import qora.crypto.Crypto;
-import utils.Converter;
-
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 import database.BalanceMap;
 import database.DBSet;
+import qora.account.Account;
+import qora.account.PrivateKeyAccount;
+import qora.account.PublicKeyAccount;
+import qora.crypto.Base58;
+import qora.crypto.Crypto;
+import utils.Converter;
 
 
 
@@ -335,7 +333,7 @@ public class MessageTransactionV3 extends Transaction {
 			return NOT_YET_RELEASED;
 		}
 		
-		if( this.getTimestamp() < Block.POWFIX_RELEASE)
+		if( this.getTimestamp() < Transaction.POWFIX_RELEASE)
 		{
 			return NOT_YET_RELEASED;
 		}

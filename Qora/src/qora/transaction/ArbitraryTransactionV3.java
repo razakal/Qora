@@ -6,17 +6,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ntp.NTP;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.google.common.base.Charsets;
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import api.BlogPostResource;
+import database.BalanceMap;
+import database.DBSet;
+import ntp.NTP;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
-import qora.block.Block;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.naming.Name;
@@ -24,15 +30,6 @@ import qora.payment.Payment;
 import qora.web.blog.BlogEntry;
 import utils.BlogUtils;
 import utils.StorageUtils;
-import api.BlogPostResource;
-
-import com.google.common.base.Charsets;
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import database.BalanceMap;
-import database.DBSet;
 
 public class ArbitraryTransactionV3 extends Transaction {
 	protected static final int CREATOR_LENGTH = 32;
@@ -298,7 +295,7 @@ public class ArbitraryTransactionV3 extends Transaction {
 			return NOT_YET_RELEASED;
 		}
 
-		if( this.getTimestamp() < Block.POWFIX_RELEASE)
+		if( this.getTimestamp() < Transaction.POWFIX_RELEASE)
 		{
 			return NOT_YET_RELEASED;
 		}

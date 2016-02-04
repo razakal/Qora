@@ -1514,7 +1514,7 @@ public class BlockExplorer
 				transactionDataJSON.put("assetName", assetNamesByKey.getNameByKey(((TransferAssetTransaction)unit).getKey()));
 			}
 
-			if(transaction.getType() == Transaction.MESSAGE_TRANSACTION && transaction.getTimestamp()>=Block.POWFIX_RELEASE) 
+			if(transaction.getType() == Transaction.MESSAGE_TRANSACTION && transaction.getTimestamp()>= Transaction.POWFIX_RELEASE) 
 			{
 				transactionDataJSON.put("assetName", assetNamesByKey.getNameByKey(((MessageTransactionV3)unit).getKey()));
 			}

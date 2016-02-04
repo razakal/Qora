@@ -15,9 +15,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import controller.Controller;
+import database.DBSet;
+import ntp.NTP;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
-import qora.block.Block;
 import qora.crypto.AEScrypto;
 import qora.crypto.Crypto;
 import qora.naming.Name;
@@ -25,9 +27,6 @@ import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.Converter;
 import utils.Pair;
-import controller.Controller;
-import database.DBSet;
-import ntp.NTP;
 
 @Path("message")
 @Produces(MediaType.APPLICATION_JSON)
@@ -61,7 +60,7 @@ public class MessageResource {
 				assetKey = Long.valueOf(assetKeyString);
 			}
 
-			if(assetKey != 0l && NTP.getTime() < Block.POWFIX_RELEASE)
+			if(assetKey != 0l && NTP.getTime() < Transaction.POWFIX_RELEASE)
 			{	
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_INVALID_ASSET_ID);
