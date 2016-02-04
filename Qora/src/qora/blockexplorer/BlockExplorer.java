@@ -2524,6 +2524,8 @@ public class BlockExplorer
 		output.put("totalATAmount", totalATAmount.toPlainString());
 		output.put("aTfee", block.getATfee().toPlainString());
 		output.put("totalFee", block.getTotalFee().toPlainString());
+		output.put("version", block.getVersion());
+
 
 		output.put("start", size+1);
 		output.put("end", 1);
