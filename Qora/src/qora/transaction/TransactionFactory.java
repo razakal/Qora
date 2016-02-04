@@ -3,6 +3,9 @@ package qora.transaction;
 import java.util.Arrays;
 
 import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import qora.block.Block;
 
 public class TransactionFactory {
 
@@ -28,6 +31,9 @@ public class TransactionFactory {
 		//READ TYPE
 		byte[] typeBytes = Arrays.copyOfRange(data, 0, Transaction.TYPE_LENGTH);
 		int type = Ints.fromByteArray(typeBytes);
+		
+		byte[] timeStampBytes = Arrays.copyOfRange(data, 4, Transaction.TIMESTAMP_LENGTH);
+		long timeStamp = Longs.fromByteArray(timeStampBytes);
 		
 		switch(type)
 		{
@@ -110,7 +116,18 @@ public class TransactionFactory {
 			return DeployATTransaction.Parse( Arrays.copyOfRange(data, 4 , data.length));
 
 		case Transaction.MESSAGE_TRANSACTION:
-			return MessageTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));
+
+			if(timeStamp < Block.POWFIX_RELEASE)
+			{
+				// BLOCK VERSION 1 AND 2
+				return MessageTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));
+			}
+			else
+			{
+				// BLOCK VERSION 3
+				return MessageTransactionV3.Parse(Arrays.copyOfRange(data, 4, data.length));
+			}
+			
 		}
 
 		throw new Exception("Invalid transaction type");

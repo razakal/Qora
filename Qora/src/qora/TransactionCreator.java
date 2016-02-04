@@ -20,6 +20,7 @@ import qora.naming.NameSale;
 import qora.payment.Payment;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.MessageTransaction;
+import qora.transaction.MessageTransactionV3;
 import qora.transaction.BuyNameTransaction;
 import qora.transaction.CancelOrderTransaction;
 import qora.transaction.CancelSellNameTransaction;
@@ -646,17 +647,28 @@ public class TransactionCreator
 	}
 	
 	public Pair<Transaction, Integer> createMessage(PrivateKeyAccount sender,
-			Account recipient, BigDecimal amount, BigDecimal fee, byte[] isText,
+			Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] isText,
 			byte[] message, byte[] encryptMessage) {
 		
 		this.checkUpdate();
 		
+		Transaction messageTx;
+
 		long timestamp = NTP.getTime();
 		
-		byte[] signature = MessageTransaction.generateSignature(this.fork, sender, recipient, amount, fee, message, isText, encryptMessage, timestamp);
-		
-		MessageTransaction messageTx = new MessageTransaction(sender, recipient, amount, fee, message, isText, encryptMessage, timestamp, sender.getLastReference(this.fork), signature );
-		
+		if(timestamp < Block.POWFIX_RELEASE)
+		{
+			//CREATE MESSAGE TRANSACTION V1 AND V2
+			byte[] signature = MessageTransaction.generateSignature(this.fork, sender, recipient, amount, fee, message, isText, encryptMessage, timestamp);
+			messageTx = new MessageTransaction(sender, recipient, amount, fee, message, isText, encryptMessage, timestamp, sender.getLastReference(this.fork), signature );
+		}
+		else
+		{
+			//CREATE MESSAGE TRANSACTION V3
+			byte[] signature = MessageTransactionV3.generateSignature(this.fork, sender, recipient, key, amount, fee, message, isText, encryptMessage, timestamp);
+			messageTx = new MessageTransactionV3(sender, recipient, key, amount, fee, message, isText, encryptMessage, timestamp, sender.getLastReference(this.fork), signature );
+		}
+			
 		return afterCreate(messageTx);
 	}
 
@@ -672,9 +684,21 @@ public class TransactionCreator
 		//GENESIS ACCOUNT
 		PublicKeyAccount sender = new PublicKeyAccount(new byte[]{1,1,1,1,1,1,1,1});
 		
-		//CREATE MESSAGE TRANSACTION
-		MessageTransaction messageTx = new MessageTransaction(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, signature, signature );
+		Transaction messageTx;
 		
+		long timestamp = NTP.getTime();
+		
+		if(timestamp < Block.POWFIX_RELEASE)
+		{
+			//CREATE MESSAGE TRANSACTION V1 AND V2
+			messageTx = new MessageTransaction(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, signature, signature );
+		}
+		else
+		{
+			//CREATE MESSAGE TRANSACTION V3
+			messageTx = new MessageTransactionV3(sender, sender, 0l, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, signature, signature );
+		}
+			
 		return new Pair(messageTx.calcRecommendedFee(), messageTx.getDataLength());
 	}
 	

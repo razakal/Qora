@@ -1463,11 +1463,11 @@ public class Controller extends Observable {
 	}
 
 	public Pair<Transaction, Integer> sendMessage(PrivateKeyAccount sender,
-			Account recipient, BigDecimal amount, BigDecimal fee,
+			Account recipient, long key, BigDecimal amount, BigDecimal fee,
 			byte[] isText, byte[] message, byte[] encryptMessage) {
 		synchronized (this.transactionCreator) {
 			return this.transactionCreator.createMessage(sender, recipient,
-					amount, fee, message, isText, encryptMessage);
+					key, amount, fee, message, isText, encryptMessage);
 		}
 
 	}

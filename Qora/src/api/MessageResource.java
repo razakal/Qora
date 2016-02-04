@@ -17,6 +17,7 @@ import org.json.simple.JSONValue;
 
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
+import qora.block.Block;
 import qora.crypto.AEScrypto;
 import qora.crypto.Crypto;
 import qora.naming.Name;
@@ -26,6 +27,7 @@ import utils.Converter;
 import utils.Pair;
 import controller.Controller;
 import database.DBSet;
+import ntp.NTP;
 
 @Path("message")
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,6 +43,7 @@ public class MessageResource {
 			// READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
 			String amount = (String) jsonObject.get("amount");
+			String assetKeyString = (String) jsonObject.get("asset");
 			String sender = (String) jsonObject.get("sender");
 			String recipient = (String) jsonObject.get("recipient");
 			String message = (String) jsonObject.get("message");
@@ -53,6 +56,17 @@ public class MessageResource {
 				isTextMessage = Boolean.valueOf(isTextMessageString);
 			}
 
+			long assetKey = 0l;
+			if (assetKeyString != null) {
+				assetKey = Long.valueOf(assetKeyString);
+			}
+
+			if(assetKey != 0l && NTP.getTime() < Block.POWFIX_RELEASE)
+			{	
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_INVALID_ASSET_ID);
+			}
+			
 			boolean encrypt = true;
 			if (encryptString != null) {
 				encrypt = Boolean.valueOf(encryptString);
@@ -179,7 +193,7 @@ public class MessageResource {
 					.sendMessage(
 							Controller.getInstance()
 									.getPrivateKeyAccountByAddress(sender),
-							recipientAccount, bdAmount, bdFee, messageBytes,
+							recipientAccount, assetKey, bdAmount, bdFee, messageBytes,
 							isTextByte, encrypted);
 
 			switch (result.getB()) {
