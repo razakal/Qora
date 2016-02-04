@@ -32,7 +32,7 @@ public class TransactionFactory {
 		byte[] typeBytes = Arrays.copyOfRange(data, 0, Transaction.TYPE_LENGTH);
 		int type = Ints.fromByteArray(typeBytes);
 		
-		byte[] timeStampBytes = Arrays.copyOfRange(data, 4, Transaction.TIMESTAMP_LENGTH);
+		byte[] timeStampBytes = Arrays.copyOfRange(data, 4, 4 + Transaction.TIMESTAMP_LENGTH);
 		long timeStamp = Longs.fromByteArray(timeStampBytes);
 		
 		switch(type)
