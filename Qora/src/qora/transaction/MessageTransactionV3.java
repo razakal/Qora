@@ -74,6 +74,11 @@ public class MessageTransactionV3 extends Transaction {
 		return this.recipient;
 	}
 
+	public long getKey()
+	{
+		return this.key;
+	}
+	
 	public BigDecimal getAmount()
 	{
 		return this.amount;

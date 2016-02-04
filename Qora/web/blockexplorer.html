@@ -2635,7 +2635,18 @@ function mainQuery(data) {
 						{
 							output += '<td><a href=?addr='+data[i].transaction.creator+'>'+data[i].transaction.creator+'</a></td>';
 						}
-						output += '<td>'+addCommas(data[i].transaction.amount)+' <font size="-2">Qora</font>';
+						
+						output += '<td>'+addCommas(data[i].transaction.amount);
+						
+						if(data[i].transaction.hasOwnProperty('asset'))
+						{
+							output += ' ' + getAssetNameMini(data[i].transaction.asset, data[i].transaction.assetName);
+						}
+						else
+						{
+							output += ' <font size="-2">Qora</font>'
+						}
+						
 						output += '<br>fee: '+addCommas(data[i].transaction.fee)+' <font size="-2">Qora</font></td>';
 						
 						if(data[i].transaction.recipient == data.address)
