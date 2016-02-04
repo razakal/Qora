@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
+import qora.block.Block;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import utils.Converter;
@@ -330,6 +331,11 @@ public class MessageTransactionV3 extends Transaction {
 	public int isValid(DBSet db) {
 		//CHECK IF RELEASED
 		if( db.getBlockMap().getLastBlock().getHeight(db) < Transaction.MESSAGE_BLOCK_HEIGHT_RELEASE)
+		{
+			return NOT_YET_RELEASED;
+		}
+		
+		if( this.getTimestamp() < Block.POWFIX_RELEASE)
 		{
 			return NOT_YET_RELEASED;
 		}
