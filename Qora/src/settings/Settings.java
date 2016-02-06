@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -25,6 +26,8 @@ public class Settings {
 	private static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
 	private static final int DEFAULT_PING_INTERVAL = 30000;
 	private static final boolean DEFAULT_TRYING_CONNECT_TO_BAD_PEERS = true;
+	private static final String[] DEFAULT_PEERS = { "188.166.53.239" , "193.242.148.251" };
+
 	
 	//RPC
 	private static final int DEFAULT_RPC_PORT = 9085;
@@ -160,6 +163,7 @@ public class Settings {
 		return currentSettingsPath;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Peer> getKnownPeers()
 	{
 		try
@@ -167,6 +171,9 @@ public class Settings {
 			//GET PEERS FROM JSON
 			JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
 			
+			if(peersArray.isEmpty())
+				peersArray.addAll(Arrays.asList(DEFAULT_PEERS));
+				
 			//CREATE LIST WITH PEERS
 			List<Peer> peers = new ArrayList<Peer>();
 			
