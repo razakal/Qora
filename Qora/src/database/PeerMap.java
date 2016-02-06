@@ -17,6 +17,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.UnsignedBytes;
 
+import database.PeerMap.PeerInfo;
 import network.Peer;
 import ntp.NTP;
 import settings.Settings;
@@ -230,7 +231,6 @@ public class PeerMap extends DBMap<byte[], byte[]>
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Peer> getBestPeers(int amount, boolean allFromSettings)
 	{
 		try
@@ -261,7 +261,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 				}
 			}
 			
-			Collections.sort(listPeerInfo, new ReverseComparator(new PeerInfoComparator())); 
+			Collections.sort(listPeerInfo, new ReverseComparator<PeerInfo>(new PeerInfoComparator())); 
 			
 			for (PeerInfo peer : listPeerInfo) {
 				InetAddress address = InetAddress.getByAddress(peer.getAddress());
@@ -335,6 +335,9 @@ public class PeerMap extends DBMap<byte[], byte[]>
 				
 				peers.add(new PeerInfo(addressBI, data));
 			}
+			
+			//SORT
+			Collections.sort(peers, new ReverseComparator<PeerInfo>(new PeerInfoComparator())); 
 			
 			//RETURN
 			return peers;
@@ -425,7 +428,10 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			
 			PeerInfo peerInfo = new PeerInfo(addressByte, data);
 			
-			boolean findMoreWeekAgo = (NTP.getTime() - peerInfo.getFindTime() > 7*24*60*60*1000);  
+			boolean findMoreWeekAgo = false;
+			if(peerInfo.getFindTime() > 0){
+				findMoreWeekAgo = (NTP.getTime() - peerInfo.getFindTime() > 7*24*60*60*1000);  
+			}
 			
 			boolean neverWhite = peerInfo.getWhitePingCouner() == 0;
 			

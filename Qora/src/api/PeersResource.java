@@ -2,6 +2,7 @@ package api;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import controller.Controller;
 import database.DBSet;
@@ -82,12 +84,17 @@ public class PeersResource
 	public String getFull() throws UnknownHostException
 	{
 		List<PeerInfo> iplist = DBSet.getInstance().getPeerMap().getAllPeers(1000);
-		JSONArray array = new JSONArray();
 		
+		Map<String, JSONObject> output=new LinkedHashMap<String, JSONObject>();
+
 		for(PeerInfo peer: iplist)
 		{
 			JSONObject o = new JSONObject();
-			o.put("peer", InetAddress.getByAddress(peer.getAddress()).getHostAddress());
+			
+			o.put("findTime", DateTimeFormat.timestamptoString(peer.getFindTime()));
+			o.put("FindTimeStamp", peer.getFindTime());
+
+			
 			if(peer.getWhiteConnectTime()>0) {
 				o.put("lastWhite", DateTimeFormat.timestamptoString(peer.getWhiteConnectTime()));
 				o.put("lastWhiteTimeStamp", peer.getWhiteConnectTime());
@@ -104,10 +111,11 @@ public class PeersResource
 				o.put("lastGray", "never");
 			}
 			o.put("whitePingCounter", peer.getWhitePingCouner());
-			array.add(o);
+			output.put(InetAddress.getByAddress(peer.getAddress()).getHostAddress(), o);
+			
 		}
 		
-		return array.toJSONString();
+		return JSONValue.toJSONString(output);
 	}
 		
 	@POST

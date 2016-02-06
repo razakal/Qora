@@ -74,7 +74,7 @@ public class ApiClient {
 			},
 			{
 				"GET peers/height",
-				"Returns an array of peer objects containing each peer's IP and height and ping ms.",
+				"Returns an array of peer objects containing each peer's IP and height and ping time.",
 				""
 			},
 			{
