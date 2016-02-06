@@ -36,6 +36,8 @@ public class ConnectionCreator extends Thread {
 					//ITERATE knownPeers
 					for(Peer peer: knownPeers)
 					{
+						knownPeersCounter ++;
+
 						//CHECK IF WE ALREADY HAVE MAX CONNECTIONS
 						if(Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
 						{
@@ -46,8 +48,6 @@ public class ConnectionCreator extends Thread {
 								if(true)
 								//if(!peer.getAddress().isSiteLocalAddress() && !peer.getAddress().isLoopbackAddress() && !peer.getAddress().isAnyLocalAddress())
 								{
-									knownPeersCounter ++;
-
 									//CONNECT
 									Logger.getGlobal().info(
 											"Connecting to known peer " + peer.getAddress().getHostAddress() 
@@ -89,6 +89,8 @@ public class ConnectionCreator extends Thread {
 											if(foreignPeersCounter >= maxReceivePeers) {
 												break;
 											}
+
+											foreignPeersCounter ++;
 											
 											//CHECK IF THAT PEER IS NOT BLACKLISTED
 											if(!PeerManager.getInstance().isBlacklisted(newPeer))
@@ -99,8 +101,6 @@ public class ConnectionCreator extends Thread {
 													//CHECK IF SOCKET IS NOT LOCALHOST
 													if(!newPeer.getAddress().isSiteLocalAddress() && !newPeer.getAddress().isLoopbackAddress() && !newPeer.getAddress().isAnyLocalAddress())
 													{
-														foreignPeersCounter ++;
-
 														Logger.getGlobal().info(
 																"Connecting to peer " + newPeer.getAddress().getHostAddress() + " proposed by " + peer.getAddress().getHostAddress() 
 																+ " :: " + foreignPeersCounter + " / " + maxReceivePeers + " / " + peersMessage.getPeers().size() 
