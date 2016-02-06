@@ -1,6 +1,7 @@
 package network;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
 
 import database.DBSet;
@@ -33,8 +34,11 @@ public class PeerManager {
 	
 	public List<Peer> getKnownPeers()
 	{
+		List<Peer> knownPeers = new ArrayList<Peer>();
 		//ASK DATABASE FOR A LIST OF PEERS
-		List<Peer> knownPeers = DBSet.getInstance().getPeerMap().getBestPeers(Settings.getInstance().getMaxReceivePeers(), true);
+		if(!DBSet.getInstance().isStoped()){
+			knownPeers = DBSet.getInstance().getPeerMap().getBestPeers(Settings.getInstance().getMaxReceivePeers(), true);
+		}
 		
 		//RETURN
 		return knownPeers;
@@ -43,7 +47,9 @@ public class PeerManager {
 	public void addPeer(Peer peer)
 	{
 		//ADD TO DATABASE
-		DBSet.getInstance().getPeerMap().addPeer(peer);
+		if(!DBSet.getInstance().isStoped()){
+			DBSet.getInstance().getPeerMap().addPeer(peer);
+		}
 	}
 	
 	public void blacklistPeer(Peer peer)
