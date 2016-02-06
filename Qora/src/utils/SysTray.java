@@ -64,10 +64,11 @@ public class SysTray {
 			} else {
 				createPopupMenu = createPopupMenu();
 				TrayIcon icon = new TrayIcon(createImage(
-						"images/icons/icon16.png", "tray icon"), "Qora "
+						"images/icons/icon32.png", "tray icon"), "Qora "
 						+ Controller.getInstance().getVersion(),
 						createPopupMenu);
 				
+				icon.setImageAutoSize(true);
 				
 				SystemTray.getSystemTray().add(icon);
 				this.icon = icon;
