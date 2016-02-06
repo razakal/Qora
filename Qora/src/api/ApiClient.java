@@ -53,6 +53,11 @@ public class ApiClient {
 				""
 			},
 			{
+				"GET qora/settings", 
+				"Shows settings.",
+				""
+			},
+			{
 				"GET version",
 				"Returns the version and buildtime of the running client.",
 				""
@@ -69,7 +74,17 @@ public class ApiClient {
 			},
 			{
 				"GET peers/height",
-				"Returns an array of peer objects containing each peer's IP and height.",
+				"Returns an array of peer objects containing each peer's IP and height and ping ms.",
+				""
+			},
+			{
+				"GET peers/full",
+				"Returns an full info about known peers.",
+				""
+			},
+			{
+				"GET peers/best",
+				"Returns the best nodes.",
 				""
 			},
 			{

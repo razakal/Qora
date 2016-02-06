@@ -53,26 +53,7 @@ public class PeersResource
 			JSONObject o = new JSONObject();
 			o.put("peer", peer.getKey().getAddress().getHostAddress());
 			o.put("height", peer.getValue());
-			array.add(o);
-		}
-		
-		return array.toJSONString();
-	}
-	
-	@SuppressWarnings("unchecked")
-	@GET
-	@Path("pings")
-	public String getPings()
-	{
-		Map<Peer,Integer> peers = Controller.getInstance().getPeerHeights();
-		JSONArray array = new JSONArray();
-		
-		for(Map.Entry<Peer, Integer> peer: peers.entrySet())
-		{
-			JSONObject o = new JSONObject();
-			o.put("peer", peer.getKey().getAddress().getHostAddress());
 			o.put("ping", peer.getKey().getPing());
-			
 			array.add(o);
 		}
 		
@@ -130,7 +111,7 @@ public class PeersResource
 	}
 		
 	@POST
-	@Path("/clear")
+	@Path("/clear") //not work?
 	public String clear()
 	{
 		DBSet.getInstance().getPeerMap().reset();
