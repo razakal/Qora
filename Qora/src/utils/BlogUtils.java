@@ -283,18 +283,22 @@ public class BlogUtils {
 
 	public static void addCommentsToBlogEntry(ArbitraryTransaction transaction,
 			BlogEntry blogEntry) {
-		CommentPostMap commentPostMap = DBSet.getInstance().getCommentPostMap();
-		List<byte[]> comments = commentPostMap.get(transaction.getSignature());
-		if(comments != null)
+		
+		if(blogEntry.getBlognameOpt() == null || Profile.getProfileOpt(blogEntry.getBlognameOpt()) != null && Profile.getProfileOpt(blogEntry.getBlognameOpt()).isCommentingAllowed())
 		{
-			for (byte[] commentByteArray : comments) {
-				Transaction commentTa = Controller.getInstance()
-						.getTransaction(commentByteArray);
-				if (commentTa != null) {
-					BlogEntry commentBlogEntryOpt = getCommentBlogEntryOpt((ArbitraryTransaction) commentTa);
-					if(commentBlogEntryOpt != null)
-					{
-						blogEntry.addComment(commentBlogEntryOpt);
+			CommentPostMap commentPostMap = DBSet.getInstance().getCommentPostMap();
+			List<byte[]> comments = commentPostMap.get(transaction.getSignature());
+			if(comments != null)
+			{
+				for (byte[] commentByteArray : comments) {
+					Transaction commentTa = Controller.getInstance()
+							.getTransaction(commentByteArray);
+					if (commentTa != null) {
+						BlogEntry commentBlogEntryOpt = getCommentBlogEntryOpt((ArbitraryTransaction) commentTa);
+						if(commentBlogEntryOpt != null)
+						{
+							blogEntry.addComment(commentBlogEntryOpt);
+						}
 					}
 				}
 			}

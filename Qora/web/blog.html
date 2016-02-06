@@ -362,11 +362,13 @@
                       </div>
                     </div>
                 {% endfor %}
+                {%if blogprofile is empty or blogprofile.isCommentingAllowed() %}
                     <form class="form-inline" role="form">
                       <div class="form-group">
                         <a style="cursor: pointer;" onclick="javascript:showCommentForm('{{blogpost.getSignature()}}');">Comment</a>
                       </div>
                     </form>
+                {%endif%}
                 </div>
               </div>
               </div>

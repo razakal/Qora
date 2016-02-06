@@ -382,7 +382,7 @@ public class ArbitraryTransaction extends Transaction {
 		return Crypto.getInstance().sign(creator, data);
 	}
 
-	private void addToCommentMapOnDemand(DBSet db) {
+	public void addToCommentMapOnDemand(DBSet db) {
 
 		if (getService() == BlogUtils.COMMENT_SERVICE_ID) {
 			byte[] data = getData();

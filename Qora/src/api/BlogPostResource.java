@@ -22,6 +22,7 @@ import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.transaction.Transaction;
+import qora.web.Profile;
 import qora.web.blog.BlogEntry;
 import utils.APIUtils;
 import utils.BlogUtils;
@@ -101,8 +102,12 @@ public class BlogPostResource {
 					ApiErrorFactory.ERROR_INVALID_ADDRESS);
 			}
 
-			// TODO CHECK IF ALLOWED TO COMMENT - THIS NEEDS AN EXTRA LIST, MAYBE ONLY OWNER CAN POST BUT EVERYONE IS ALLOWED TO COMMENT!!!
-//			isPostAllowed(blognameOpt);
+			Profile profileOpt = Profile.getProfileOpt(blognameOpt);
+			if(profileOpt != null && profileOpt.isCommentingDisabled())
+			{
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_COMMENTING_DISABLED);
+			}
 
 			APIUtils.askAPICallAllowed("POST blogpost/comment" + "\n" +  x,
 				request);

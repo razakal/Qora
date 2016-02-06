@@ -700,6 +700,8 @@ public class WebResource {
 
 			boolean blogenable = Boolean.valueOf(form
 					.getFirst(Qorakeys.BLOGENABLE.toString()));
+			boolean blockComments = Boolean.valueOf(form
+					.getFirst(Qorakeys.BLOGBLOCKCOMMENTS.toString()));
 			boolean profileenable = Boolean.valueOf(form
 					.getFirst(Qorakeys.PROFILEENABLE.toString()));
 			String titleOpt = form.getFirst(Qorakeys.BLOGTITLE.toString());
@@ -725,6 +727,7 @@ public class WebResource {
 			profile.saveBlogDescription(blogDescrOpt);
 			profile.saveBlogTitle(titleOpt);
 			profile.setBlogEnabled(blogenable);
+			profile.setBlockComments(blockComments);
 			profile.setProfileEnabled(profileenable);
 
 			profile.getBlogBlackWhiteList().clearList();
