@@ -101,13 +101,16 @@ public class ConnectionCreator extends Thread {
 													//CHECK IF SOCKET IS NOT LOCALHOST
 													if(!newPeer.getAddress().isSiteLocalAddress() && !newPeer.getAddress().isLoopbackAddress() && !newPeer.getAddress().isAnyLocalAddress())
 													{
-														Logger.getGlobal().info(
+														if(Settings.getInstance().isTryingConnectToBadPeers() || !newPeer.isBad())
+														{
+															Logger.getGlobal().info(
 																"Connecting to peer " + newPeer.getAddress().getHostAddress() + " proposed by " + peer.getAddress().getHostAddress() 
 																+ " :: " + foreignPeersCounter + " / " + maxReceivePeers + " / " + peersMessage.getPeers().size() 
 																+ " :: Connections: " + callback.getActiveConnections().size());
 														
-														//CONNECT
-														newPeer.connect(callback);
+															//CONNECT
+															newPeer.connect(callback);
+														}
 													}
 												}
 											}

@@ -19,9 +19,8 @@ import com.google.common.primitives.UnsignedBytes;
 
 import network.Peer;
 import ntp.NTP;
-import qora.transaction.Transaction;
 import settings.Settings;
-import utils.PeersForSortComparator;
+import utils.PeerInfoComparator;
 import utils.ReverseComparator;
 
 public class PeerMap extends DBMap<byte[], byte[]> 
@@ -118,30 +117,30 @@ public class PeerMap extends DBMap<byte[], byte[]>
 	}
 	
 	
-	public class PeersForSort {
+	public class PeerInfo {
 
+		static final int TIMESTAMP_LENGTH = 8; 
+		static final int STATUS_LENGTH = 2; 
+		
 		private byte[] address;
+		private byte[] status;
+		private long findTime;
 		private long whiteConnectTime;
 		private long grayConnectTime;
-		private long pingCouner;
-		
-		public PeersForSort(byte[] address, long whiteConnectTime, long grayConnectTime, long pingCouner) {
-			this.address = address;
-			this.whiteConnectTime = whiteConnectTime;
-			this.grayConnectTime = grayConnectTime;
-			this.pingCouner = pingCouner;
-		} 
-		public PeersForSort(byte[] address) {
-			this.address = address;
-			this.whiteConnectTime = 0;
-			this.grayConnectTime = 0;
-			this.pingCouner = 0;
-		} 
+		private long whitePingCouner;
 		
 		public byte[] getAddress(){
 			return address;
 		}
+		
+		public byte[] getStatus(){
+			return status;
+		}
 
+		public long getFindTime(){
+			return findTime;
+		}
+		
 		public long getWhiteConnectTime(){
 			return whiteConnectTime;
 		}
@@ -150,10 +149,85 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			return grayConnectTime;
 		}
 		
-		public long getPingCouner(){
-			return pingCouner;
+		public long getWhitePingCouner(){
+			return whitePingCouner;
 		}
+
+		public PeerInfo(byte[] address, byte[] data){
+			if(data != null && data.length == 2 + TIMESTAMP_LENGTH * 4)
+			{
+				int position = 0;
 				
+				byte[] statusBytes = Arrays.copyOfRange(data, position, position + STATUS_LENGTH);
+				position += STATUS_LENGTH;
+				
+				byte[] findTimeBytes = Arrays.copyOfRange(data, position, position + TIMESTAMP_LENGTH);
+				long longFindTime = Longs.fromByteArray(findTimeBytes);
+				position += TIMESTAMP_LENGTH;
+
+				byte[] whiteConnectTimeBytes = Arrays.copyOfRange(data, position, position + TIMESTAMP_LENGTH);
+				long longWhiteConnectTime = Longs.fromByteArray(whiteConnectTimeBytes);
+				position += TIMESTAMP_LENGTH;
+				
+				byte[] grayConnectTimeBytes = Arrays.copyOfRange(data, position, position + TIMESTAMP_LENGTH);
+				long longGrayConnectTime = Longs.fromByteArray(grayConnectTimeBytes);
+				position += TIMESTAMP_LENGTH;
+				
+				byte[] whitePingCounerBytes = Arrays.copyOfRange(data, position, position + TIMESTAMP_LENGTH);
+				long longWhitePingCouner = Longs.fromByteArray(whitePingCounerBytes);
+				
+				this.address = address;
+				this.status = statusBytes;
+				this.findTime = longFindTime;
+				this.whiteConnectTime = longWhiteConnectTime;
+				this.grayConnectTime = longGrayConnectTime;
+				this.whitePingCouner = longWhitePingCouner;
+			}
+			else
+			{				
+				this.address = address;
+				this.status = BYTE_WHITELISTED;
+				this.findTime = 0;
+				this.whiteConnectTime = 0;
+				this.grayConnectTime = 0;
+				this.whitePingCouner = 0;
+				
+				this.updateFindTime();
+			}
+		} 
+		
+		public void addWhitePingCouner(int n){
+			this.whitePingCouner += n;
+		}
+		
+		public void updateWhiteConnectTime(){
+			this.whiteConnectTime = NTP.getTime();
+		}
+		
+		public void updateGrayConnectTime(){
+			this.grayConnectTime = NTP.getTime();
+		}
+		
+		public void updateFindTime(){
+			this.findTime = NTP.getTime();
+		}
+		
+		public byte[] toBytes(){
+
+			byte[] findTimeBytes = Longs.toByteArray(this.findTime);
+			findTimeBytes = Bytes.ensureCapacity(findTimeBytes, TIMESTAMP_LENGTH, 0);
+			
+			byte[] whiteConnectTimeBytes = Longs.toByteArray(this.whiteConnectTime);
+			findTimeBytes = Bytes.ensureCapacity(whiteConnectTimeBytes, TIMESTAMP_LENGTH, 0);
+			
+			byte[] grayConnectTimeBytes = Longs.toByteArray(this.grayConnectTime);
+			findTimeBytes = Bytes.ensureCapacity(grayConnectTimeBytes, TIMESTAMP_LENGTH, 0);
+			
+			byte[] whitePingCounerBytes = Longs.toByteArray(this.whitePingCouner);
+			whitePingCounerBytes = Bytes.ensureCapacity(whitePingCounerBytes, TIMESTAMP_LENGTH, 0);
+			
+			return Bytes.concat(BYTE_WHITELISTED, findTimeBytes, whiteConnectTimeBytes, grayConnectTimeBytes, whitePingCounerBytes);	
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -166,7 +240,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			
 			//PEERS
 			List<Peer> peers = new ArrayList<Peer>();
-			List<PeersForSort> peersForSort = new ArrayList<PeersForSort>();
+			List<PeerInfo> listPeerInfo = new ArrayList<PeerInfo>();
 			//ITERATE AS LONG AS:
 			// 1. we have not reached the amount of peers
 			// 2. we have read all records
@@ -179,36 +253,17 @@ public class PeerMap extends DBMap<byte[], byte[]>
 				
 				byte[] data = this.get(addressBI);
 				
-				if(Arrays.equals(Arrays.copyOfRange(data, 0, 2), BYTE_WHITELISTED))
+				PeerInfo peerInfo = new PeerInfo(addressBI, data);
+				
+				if(Arrays.equals(peerInfo.getStatus(), BYTE_WHITELISTED))
 				{
-					//InetAddress address = InetAddress.getByAddress(addressBI);
-					
-					if(data.length==26)
-					{
-						int position = 2;
-						byte[] timestampBytesBytes = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-						long whiteConnectTime = Longs.fromByteArray(timestampBytesBytes);
-						position += Transaction.TIMESTAMP_LENGTH;
-						byte[] grayConnectTimeBytes = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-						long grayConnectTime = Longs.fromByteArray(grayConnectTimeBytes);
-						position += Transaction.TIMESTAMP_LENGTH;
-						byte[] pingCounerBytes = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-						long pingCouner = Longs.fromByteArray(pingCounerBytes);
-						
-						peersForSort.add(new PeersForSort(addressBI, whiteConnectTime, grayConnectTime, pingCouner));
-					}
-					else
-					{
-						peersForSort.add(new PeersForSort(addressBI));
-					}
-						
-										
-				}			
+					listPeerInfo.add(peerInfo);
+				}
 			}
 			
-			Collections.sort(peersForSort, new ReverseComparator(new PeersForSortComparator())); 
+			Collections.sort(listPeerInfo, new ReverseComparator(new PeerInfoComparator())); 
 			
-			for (PeersForSort peer : peersForSort) {
+			for (PeerInfo peer : listPeerInfo) {
 				InetAddress address = InetAddress.getByAddress(peer.getAddress());
 
 				//CHECK IF SOCKET IS NOT LOCALHOST
@@ -221,12 +276,9 @@ public class PeerMap extends DBMap<byte[], byte[]>
 						else
 							return peers;
 					}
-
-					//CREATE PEER
-					Peer peer1 = new Peer(address);	
-					
+				
 					//ADD TO LIST
-					peers.add(peer1);
+					peers.add(new Peer(address));
 				}	
 			}
 			
@@ -262,7 +314,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 		}	
 	}
 	
-	public List<PeersForSort> getAllPeers(int amount)
+	public List<PeerInfo> getAllPeers(int amount)
 	{
 		try
 		{
@@ -270,7 +322,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			Iterator<byte[]> iterator = this.getKeys().iterator();
 			
 			//PEERS
-			List<PeersForSort> peers = new ArrayList<PeersForSort>();
+			List<PeerInfo> peers = new ArrayList<PeerInfo>();
 			
 			//ITERATE AS LONG AS:
 			// 1. we have not reached the amount of peers
@@ -279,24 +331,9 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			{
 				//GET ADDRESS
 				byte[] addressBI = iterator.next();
-				
-				int position = 2;
 				byte [] data = this.get(addressBI);
-				long whiteConnectTime = 0;
-				long grayConnectTime = 0;
-				long pingCouner = 0;
-				if(data.length==26)
-				{
-					byte[] timestampBytesBytes = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-					whiteConnectTime = Longs.fromByteArray(timestampBytesBytes);
-					position += Transaction.TIMESTAMP_LENGTH;
-					byte[] grayConnectTimeBytes = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-					grayConnectTime = Longs.fromByteArray(grayConnectTimeBytes);
-					position += Transaction.TIMESTAMP_LENGTH;
-					byte[] pingCounerBytes = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-					pingCouner = Longs.fromByteArray(pingCounerBytes);
-				}		
-				peers.add(new PeersForSort(addressBI, whiteConnectTime, grayConnectTime, pingCouner));
+				
+				peers.add(new PeerInfo(addressBI, data));
 			}
 			
 			//RETURN
@@ -306,62 +343,42 @@ public class PeerMap extends DBMap<byte[], byte[]>
 		{
 			e.printStackTrace();
 			
-			return new ArrayList<PeersForSort>();
+			return new ArrayList<PeerInfo>();
 		}
 	}
 	
 	
 	public void addPeer(Peer peer)
 	{
-		// BYTE_WHITELISTED 2 whiteConnectTime 8 grayConnectTime 8  
-		byte[] whiteConnectTime = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
-		byte[] grayConnectTime = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
-		byte[] pingCounter = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
+		PeerInfo peerInfo;
+		byte[] address = peer.getAddress().getAddress();
 		
-		if(this.map.containsKey(peer.getAddress().getAddress()))
+		if(this.map.containsKey(address))
 		{
-			byte[] data = this.map.get(peer.getAddress().getAddress());
+			byte[] data = this.map.get(address);
 			
-			try {
-				if(data.length == 26)
-				{
-					int position = 2;
-					whiteConnectTime = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-					position += Transaction.TIMESTAMP_LENGTH;
-					grayConnectTime = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-					position += Transaction.TIMESTAMP_LENGTH;
-					pingCounter = Arrays.copyOfRange(data, position, position + Transaction.TIMESTAMP_LENGTH);
-				}
-			
-			} catch (Exception e) {
-				
-			}
-			
+			peerInfo = new PeerInfo(address, data);
+		}
+		else
+		{
+			peerInfo = new PeerInfo(address, null);
 		}
 		
-		long timestamp = NTP.getTime();
-		byte[] timestampBytes = Longs.toByteArray(timestamp);
-		timestampBytes = Bytes.ensureCapacity(timestampBytes, Transaction.TIMESTAMP_LENGTH, 0);
-
-		if(peer.getPingCounter()>1)
+		if(peer.getPingCounter() > 1)
 		{
 			if(peer.isWhite())
 			{
-				long longPingCounter = Longs.fromByteArray(pingCounter);
-				longPingCounter ++;
-				pingCounter = Longs.toByteArray(longPingCounter);
-				pingCounter = Bytes.ensureCapacity(pingCounter, Transaction.TIMESTAMP_LENGTH, 0);
-				
-				whiteConnectTime = Bytes.ensureCapacity(timestampBytes, Transaction.TIMESTAMP_LENGTH, 0);
+				peerInfo.addWhitePingCouner(1);
+				peerInfo.updateWhiteConnectTime();
 			}
 			else
 			{
-				grayConnectTime = Bytes.ensureCapacity(timestampBytes, Transaction.TIMESTAMP_LENGTH, 0);
+				peerInfo.updateGrayConnectTime();
 			}
 		}
 		
 		//ADD PEER INTO DB
-		this.map.put(peer.getAddress().getAddress(), Bytes.concat(BYTE_WHITELISTED, whiteConnectTime, grayConnectTime, pingCounter));
+		this.map.put(address, peerInfo.toBytes());
 	}
 	
 	public void blacklistPeer(Peer peer)
@@ -392,6 +409,27 @@ public class PeerMap extends DBMap<byte[], byte[]>
 		if(this.contains(address.getAddress()))
 		{
 			return Arrays.equals(this.get(address.getAddress()), BYTE_BLACKLISTED);
+		}
+			
+		return false;
+	}
+	
+	public boolean isBad(InetAddress address)
+	{
+		byte[] addressByte = address.getAddress();
+
+		//CHECK IF PEER IS BAD
+		if(this.contains(addressByte))
+		{
+			byte[] data = this.map.get(addressByte);
+			
+			PeerInfo peerInfo = new PeerInfo(addressByte, data);
+			
+			boolean findMoreWeekAgo = (NTP.getTime() - peerInfo.getFindTime() > 7*24*60*60*1000);  
+			
+			boolean neverWhite = peerInfo.getWhitePingCouner() == 0;
+			
+			return findMoreWeekAgo && neverWhite;
 		}
 			
 		return false;

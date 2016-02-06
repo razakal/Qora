@@ -13,6 +13,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import database.DBSet;
 import network.message.Message;
 import network.message.MessageFactory;
 import settings.Settings;
@@ -253,6 +254,11 @@ public class Peer extends Thread{
 	public boolean isWhite()
 	{
 		return this.white; 
+	}
+	
+	public boolean isBad()
+	{
+		return DBSet.getInstance().getPeerMap().isBad(this.getAddress()); 
 	}
 	
 	public void close() 

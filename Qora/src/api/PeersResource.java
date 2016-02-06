@@ -16,7 +16,7 @@ import org.json.simple.JSONObject;
 
 import controller.Controller;
 import database.DBSet;
-import database.PeerMap.PeersForSort;
+import database.PeerMap.PeerInfo;
 import network.Peer;
 import network.PeerManager;
 import utils.DateTimeFormat;
@@ -100,10 +100,10 @@ public class PeersResource
 	@Path("full")
 	public String getFull() throws UnknownHostException
 	{
-		List<PeersForSort> iplist = DBSet.getInstance().getPeerMap().getAllPeers(1000);
+		List<PeerInfo> iplist = DBSet.getInstance().getPeerMap().getAllPeers(1000);
 		JSONArray array = new JSONArray();
 		
-		for(PeersForSort peer: iplist)
+		for(PeerInfo peer: iplist)
 		{
 			JSONObject o = new JSONObject();
 			o.put("peer", InetAddress.getByAddress(peer.getAddress()).getHostAddress());
@@ -122,7 +122,7 @@ public class PeersResource
 			else{
 				o.put("lastGray", "never");
 			}
-			o.put("pingCounter", peer.getPingCouner());
+			o.put("whitePingCounter", peer.getWhitePingCouner());
 			array.add(o);
 		}
 		

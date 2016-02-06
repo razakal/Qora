@@ -8,6 +8,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import controller.Controller;
+import settings.Settings;
 import utils.APIUtils;
 
 @Path("qora")
@@ -50,5 +51,12 @@ public class QoraResource
 	public String isUpToDate() 
 	{ 
 		return String.valueOf(Controller.getInstance().isUpToDate());
+	}
+	
+	@GET 
+	@Path("/settings")
+	public String getSettings() 
+	{ 
+		return Settings.getInstance().Dump().toJSONString(); 
 	}
 }

@@ -24,6 +24,7 @@ public class Settings {
 	private static final int DEFAULT_MAX_SENT_PEERS = 20;
 	private static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
 	private static final int DEFAULT_PING_INTERVAL = 30000;
+	private static final boolean DEFAULT_TRYING_CONNECT_TO_BAD_PEERS = true;
 	
 	//RPC
 	private static final int DEFAULT_RPC_PORT = 9085;
@@ -244,6 +245,16 @@ public class Settings {
 		return DEFAULT_CONNECTION_TIMEOUT;
 	}
 	
+	public boolean isTryingConnectToBadPeers()
+	{
+		if(this.settingsJSON.containsKey("tryingconnecttobadpeers"))
+		{
+			return ((Boolean) this.settingsJSON.get("tryingconnecttobadpeers")).booleanValue();
+		}
+		
+		return DEFAULT_TRYING_CONNECT_TO_BAD_PEERS;
+	}
+		
 	public int getRpcPort()
 	{
 		if(this.settingsJSON.containsKey("rpcport"))

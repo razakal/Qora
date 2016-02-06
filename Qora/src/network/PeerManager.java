@@ -42,15 +42,6 @@ public class PeerManager {
 	
 	public void addPeer(Peer peer)
 	{
-		//NO NEED TO INSERT PEER INTO DATABASE IF IT IS ALREADY IN SETTINGS
-		for(Peer knownPeer: Settings.getInstance().getKnownPeers())
-		{
-			if(knownPeer.getAddress().equals(peer.getAddress()))
-			{
-				return;
-			}
-		}
-		
 		//ADD TO DATABASE
 		DBSet.getInstance().getPeerMap().addPeer(peer);
 	}
