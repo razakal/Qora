@@ -102,6 +102,7 @@ public class ApiErrorFactory
 	public static final int ERROR_POSTID_EMPTY = 907;
 	public static final int ERROR_POST_NOT_EXISTING = 908;
 	public static final int ERROR_COMMENTING_DISABLED = 909;
+	public static final int ERROR_COMMENT_NOT_EXISTING = 910;
 	
 	//Messages
 	public static final int ERROR_MESSAGE_FORMAT_NOT_HEX = 1001;
@@ -216,6 +217,7 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_POSTID_EMPTY,"the attribute postid is empty! this is the signature of the post you want to comment");
 		this.errorMessages.put(ERROR_POST_NOT_EXISTING,"for the given postid no blogpost to comment was found");
 		this.errorMessages.put(ERROR_COMMENTING_DISABLED,"commenting is for this blog disabled");
+		this.errorMessages.put(ERROR_COMMENT_NOT_EXISTING,"for the given signature no comment was found");
 		
 		//MESSAGES
 		this.errorMessages.put(ERROR_MESSAGE_FORMAT_NOT_HEX,"the Message format is not hex - correct the text or use isTextMessage = true");

@@ -1650,6 +1650,133 @@ public class WebResource {
 		}
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@POST
+	@Path("index/deletecomment.html")
+	@Consumes("application/x-www-form-urlencoded")
+	public Response deleteComment(@Context HttpServletRequest request,
+			MultivaluedMap<String, String> form) {
+
+		JSONObject jsonanswer = new JSONObject();
+		try {
+
+			String signature = form.getFirst("signature");
+
+			if (signature != null) {
+
+				BlogEntry blogEntryOpt = BlogUtils.getCommentBlogEntryOpt(signature);
+
+				if (blogEntryOpt == null) {
+					// TODO put this snippet in method
+					jsonanswer.put("type", "deleteError");
+					jsonanswer
+							.put("errordetail",
+									"The comment you are trying to delete does not exist!");
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				}
+
+				if (!Controller.getInstance().doesWalletDatabaseExists()) {
+					jsonanswer.put("type", "deleteError");
+					jsonanswer.put("errordetail", "You don't have a wallet!");
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				}
+
+				String creator = blogEntryOpt.getCreator();
+
+				Account accountByAddress = Controller.getInstance()
+						.getAccountByAddress(creator);
+				String blognameOpt = blogEntryOpt.getBlognameOpt();
+				// Did I create that blogpost?
+				JSONObject jsonBlogPost = new JSONObject();
+				jsonBlogPost.put(BlogPostResource.DELETE_KEY, signature);
+				if (accountByAddress != null) {
+					// TODO create blogpost json in method --> move to BlogUtils
+					// (for every kind delete/share and so on)
+					jsonBlogPost.put("creator", creator);
+					Pair<BigDecimal, Integer> fee = Controller.getInstance()
+							.calcRecommendedFeeForArbitraryTransaction(
+									jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8), null);
+					jsonBlogPost.put("fee", fee.getA().toPlainString());
+					// I am not author, but am I the owner of the blog?
+				} else if (blognameOpt != null
+						&& Controller.getInstance().getNamesAsListAsString()
+								.contains(blognameOpt)) {
+					Name name = DBSet.getInstance().getNameMap()
+							.get(blognameOpt);
+					jsonBlogPost.put("creator", name.getOwner().getAddress());
+					jsonBlogPost.put(BlogPostResource.AUTHOR, blognameOpt);
+				} else {
+					jsonanswer.put("type", "deleteError");
+					jsonanswer
+							.put("errordetail",
+									"You are not allowed to delete this comment! You need to be the owner of the blog or author of the comment!");
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				}
+
+				try {
+
+					String result = new BlogPostResource().deleteCommentEntry(
+							jsonBlogPost.toJSONString());
+
+					jsonanswer.put("type", "deleteSuccessful");
+					jsonanswer.put("result", result);
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+				} catch (WebApplicationException e) {
+
+					jsonanswer.put("type", "deleteError");
+					jsonanswer.put("errordetail", e.getResponse().getEntity());
+
+					return Response
+							.status(200)
+							.header("Content-Type",
+									"application/json; charset=utf-8")
+							.entity(jsonanswer.toJSONString()).build();
+
+				}
+
+			}
+
+			jsonanswer.put("type", "deleteError");
+			jsonanswer.put("errordetail",
+					"the signature parameter must be set!");
+
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(jsonanswer.toJSONString()).build();
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+
+			jsonanswer.put("type", "deleteError");
+			jsonanswer.put("errordetail", e.getMessage());
+
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity(jsonanswer.toJSONString()).build();
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@POST

@@ -390,19 +390,60 @@ public class ArbitraryTransaction extends Transaction {
 
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 			if (jsonObject != null) {
-				String post = (String) jsonObject
-						.get(BlogPostResource.POST_KEY);
+				
+				String signatureOfCommentOpt = (String) jsonObject
+						.get(BlogPostResource.DELETE_KEY);
+				
+				//CHECK IF THIS IS A DELETE OR CREATE OF A COMMENT
+				if(StringUtils.isNotBlank(signatureOfCommentOpt))
+				{
+					BlogEntry commentEntryOpt = BlogUtils.getCommentBlogEntryOpt(signatureOfCommentOpt);
+					
+					String authorOpt = (String) jsonObject
+							.get(BlogPostResource.AUTHOR);
 
-				String postid = (String) jsonObject
-						.get(BlogPostResource.COMMENT_POSTID_KEY);
+					if (commentEntryOpt != null) {
+						String creatorOfDeleteTX = getCreator().getAddress();
+						String creatorOfEntryToDelete = commentEntryOpt
+								.getCreator();
 
-				// DOES POST MET MINIMUM CRITERIUM?
-				if (StringUtils.isNotBlank(post)
-						&& StringUtils.isNotBlank(postid)) {
+							// OWNER IS DELETING OWN POST?
+							if (creatorOfDeleteTX
+									.equals(creatorOfEntryToDelete)) {
+								deleteCommentInternal(db, commentEntryOpt);
+								// BLOGOWNER IS DELETING POST
+							} else if (authorOpt != null
+									&& commentEntryOpt.getBlognameOpt() != null) {
+								Name name = db.getNameMap().get(
+										commentEntryOpt.getBlognameOpt());
+								if (name != null
+										&& name.getOwner().getAddress()
+												.equals(creatorOfDeleteTX)) {
+									deleteCommentInternal(db, commentEntryOpt);
+									
+								}
+							}
 
-					db.getCommentPostMap().add(Base58.decode(postid),
-							getSignature());
+					}
+				}else
+				{
+					String post = (String) jsonObject
+							.get(BlogPostResource.POST_KEY);
+					
+					String postid = (String) jsonObject
+							.get(BlogPostResource.COMMENT_POSTID_KEY);
+					
+					// DOES POST MET MINIMUM CRITERIUM?
+					if (StringUtils.isNotBlank(post)
+							&& StringUtils.isNotBlank(postid)) {
+						
+						db.getPostCommentMap().add(Base58.decode(postid),
+								getSignature());
+						db.getCommentPostMap().add(getSignature(), Base58.decode(postid));
+					}
 				}
+				
+				
 			}
 
 		}
@@ -510,6 +551,20 @@ public class ArbitraryTransaction extends Transaction {
 			db.getBlogPostMap().remove(blogEntryOpt.getBlognameOpt(),
 					Base58.decode(blogEntryOpt.getSignature()));
 		}
+	}
+	
+	public void deleteCommentInternal(DBSet db, BlogEntry commentEntry) {
+		
+		byte[] signatureOfComment = Base58.decode(commentEntry.getSignature());
+			byte[] signatureOfBlogPostOpt = db.getCommentPostMap().get(Base58.decode(commentEntry.getSignature()));
+			// removing from hashtagmap
+			
+			if(signatureOfBlogPostOpt != null)
+			{
+				db.getPostCommentMap().remove(signatureOfBlogPostOpt, signatureOfComment);
+				db.getCommentPostMap().remove(signatureOfComment);
+				
+			}
 	}
 
 	// TODO implement readd delete if orphaned!

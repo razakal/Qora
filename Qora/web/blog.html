@@ -361,6 +361,9 @@
                         <span class="date sub-text">{{comment.creationTime}}</span>
                       </div>
                     </div>
+                     <button class ="btn btn-default" onclick="javascript:processCommentDelete('{{comment.getSignature()}}')" >
+                            <i class="glyphicon glyphicon-trash" style=""></i>
+                          </button>
                 {% endfor %}
                 {%if blogprofile is empty or blogprofile.isCommentingAllowed() %}
                     <form class="form-inline" role="form">
@@ -522,6 +525,30 @@
 
 			$.post(
 			"/index/deletepost.html",
+			{
+				signature: signature,
+			}).done( function(data) {
+				if(data.type == 'deleteError'){
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete Error<br>'
+										+ data.errordetail + '</div></center>');
+				} else if (data.type == 'deleteSuccessful'){
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete successful<br>'
+										+ '</div></center>');
+				}
+
+
+			}).fail( function(xhr, textStatus, errorThrown) {
+				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete Error<br>'
+										+ 'Connection Error<br>'
+										+ xhr.responseText + '</div></center>');
+			});
+
+			return 0;
+   		 }
+		function processCommentDelete(signature) {
+
+			$.post(
+			"/index/deletecomment.html",
 			{
 				signature: signature,
 			}).done( function(data) {

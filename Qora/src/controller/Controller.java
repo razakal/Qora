@@ -196,6 +196,13 @@ public class Controller extends Observable {
 			DBSet.getInstance().getLocalDataMap().set("txfinalmap", "1");
 		}
 		
+		if (DBSet.getInstance().getLocalDataMap().get("blogpostmap") == null ||  !DBSet.getInstance().getLocalDataMap().get("blogpostmap").equals("2"))
+		{
+			//recreate comment postmap
+			UpdateUtil.repopulateCommentPostMap();
+			DBSet.getInstance().getLocalDataMap().set("blogpostmap", "2");
+		}
+		
 		// CREATE SYNCHRONIZOR
 		this.synchronizer = new Synchronizer();
 

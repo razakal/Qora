@@ -116,7 +116,7 @@ public class UpdateUtil {
 	}
 	
 	public static void repopulateCommentPostMap() {
-		DBSet.getInstance().getCommentPostMap().reset();
+		DBSet.getInstance().getPostCommentMap().reset();
 		DBSet.getInstance().commit();
 		Block b = new GenesisBlock();
 		do
