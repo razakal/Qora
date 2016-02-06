@@ -23,12 +23,16 @@ public class ConnectionCreator extends Thread {
 		{	
 			while(true)
 			{
+				int maxReceivePeers = Settings.getInstance().getMaxReceivePeers();
+				
 				//CHECK IF WE NEED NEW CONNECTIONS
 				if(Settings.getInstance().getMinConnections() >= callback.getActiveConnections().size())
 				{			
 					//GET LIST OF KNOWN PEERS
 					List<Peer> knownPeers = PeerManager.getInstance().getKnownPeers();
 					
+					int knownPeersCounter = 0;
+										
 					//ITERATE knownPeers
 					for(Peer peer: knownPeers)
 					{
@@ -42,8 +46,13 @@ public class ConnectionCreator extends Thread {
 								if(true)
 								//if(!peer.getAddress().isSiteLocalAddress() && !peer.getAddress().isLoopbackAddress() && !peer.getAddress().isAnyLocalAddress())
 								{
+									knownPeersCounter ++;
+
 									//CONNECT
-									Logger.getGlobal().info("Connecting to peer : " + peer.getAddress());
+									Logger.getGlobal().info(
+											"Connecting to known peer " + peer.getAddress().getHostAddress() 
+											+ " :: " + knownPeersCounter + " / " + knownPeers.size() 
+											+ " :: Connections: " + callback.getActiveConnections().size());
 								
 									peer.connect(callback);
 								}
@@ -69,12 +78,18 @@ public class ConnectionCreator extends Thread {
 								PeersMessage peersMessage = (PeersMessage) peer.getResponse(getPeersMessage);
 								if(peersMessage != null)
 								{
+									int foreignPeersCounter = 0;
 									//FOR ALL THE RECEIVED PEERS
+									
 									for(Peer newPeer: peersMessage.getPeers())
 									{		
 										//CHECK IF WE ALREADY HAVE MAX CONNECTIONS
 										if(Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
 										{
+											if(foreignPeersCounter >= maxReceivePeers) {
+												break;
+											}
+											
 											//CHECK IF THAT PEER IS NOT BLACKLISTED
 											if(!PeerManager.getInstance().isBlacklisted(newPeer))
 											{
@@ -84,7 +99,12 @@ public class ConnectionCreator extends Thread {
 													//CHECK IF SOCKET IS NOT LOCALHOST
 													if(!newPeer.getAddress().isSiteLocalAddress() && !newPeer.getAddress().isLoopbackAddress() && !newPeer.getAddress().isAnyLocalAddress())
 													{
-														Logger.getGlobal().info("Connecting to peer : " + newPeer.getAddress());
+														foreignPeersCounter ++;
+
+														Logger.getGlobal().info(
+																"Connecting to peer " + newPeer.getAddress().getHostAddress() + " proposed by " + peer.getAddress().getHostAddress() 
+																+ " :: " + foreignPeersCounter + " / " + maxReceivePeers + " / " + peersMessage.getPeers().size() 
+																+ " :: Connections: " + callback.getActiveConnections().size());
 														
 														//CONNECT
 														newPeer.connect(callback);

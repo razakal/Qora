@@ -237,7 +237,7 @@ public class Network extends Observable implements ConnectionCallback {
 		case Message.GET_PEERS_TYPE: 
 			
 			//CREATE NEW PEERS MESSAGE WITH PEERS
-			Message answer = MessageFactory.getInstance().createPeersMessage(PeerManager.getInstance().getKnownPeers());
+			Message answer = MessageFactory.getInstance().createPeersMessage(PeerManager.getInstance().getBestPeers());
 			answer.setId(message.getId());
 			
 			//SEND TO SENDER

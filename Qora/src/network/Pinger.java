@@ -1,6 +1,7 @@
 package network;
 
 import settings.Settings;
+import database.DBSet;
 import network.message.Message;
 import network.message.MessageFactory;
 
@@ -48,6 +49,8 @@ public class Pinger extends Thread
 			
 			//UPDATE PING
 			this.ping = System.currentTimeMillis() - start;
+			this.peer.addPingCounter(); 
+			DBSet.getInstance().getPeerMap().addPeer(this.peer);
 			
 			//SLEEP
 			try 

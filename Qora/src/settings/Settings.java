@@ -20,6 +20,8 @@ public class Settings {
 	//NETWORK
 	private static final int DEFAULT_MIN_CONNECTIONS = 5;
 	private static final int DEFAULT_MAX_CONNECTIONS = 20;
+	private static final int DEFAULT_MAX_RECEIVE_PEERS = 20;
+	private static final int DEFAULT_MAX_SENT_PEERS = 20;
 	private static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
 	private static final int DEFAULT_PING_INTERVAL = 30000;
 	
@@ -200,6 +202,26 @@ public class Settings {
 		}
 		
 		return DEFAULT_MAX_CONNECTIONS;
+	}
+	
+	public int getMaxReceivePeers()
+	{
+		if(this.settingsJSON.containsKey("maxreceivepeers"))
+		{
+			return ((Long) this.settingsJSON.get("maxreceivepeers")).intValue();
+		}
+		
+		return DEFAULT_MAX_RECEIVE_PEERS;
+	}
+	
+	public int getMaxSentPeers()
+	{
+		if(this.settingsJSON.containsKey("maxsentpeers"))
+		{
+			return ((Long) this.settingsJSON.get("maxsentpeers")).intValue();
+		}
+		
+		return DEFAULT_MAX_SENT_PEERS;
 	}
 	
 	public int getMinConnections()

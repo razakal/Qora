@@ -13,9 +13,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import settings.Settings;
 import network.message.Message;
 import network.message.MessageFactory;
+import settings.Settings;
 
 public class Peer extends Thread{
 
@@ -24,6 +24,8 @@ public class Peer extends Thread{
 	private Socket socket;
 	private OutputStream out;
 	private Pinger pinger;
+	private boolean white;
+	private long pingCounter;
 	
 	private Map<Integer, BlockingQueue<Message>> messages;
 	
@@ -41,6 +43,8 @@ public class Peer extends Thread{
 			this.socket = socket;
 			this.address = socket.getInetAddress();
 			this.messages = Collections.synchronizedMap(new HashMap<Integer, BlockingQueue<Message>>());
+			this.white = false;
+			this.pingCounter = 0;
 			
 			//ENABLE KEEPALIVE
 			//this.socket.setKeepAlive(true);
@@ -72,14 +76,27 @@ public class Peer extends Thread{
 		return address;
 	}
 	
+	public long getPingCounter()
+	{
+		return this.pingCounter;
+	}
+	
+	public void addPingCounter()
+	{
+		this.pingCounter ++;
+	}
+	
 	public long getPing()
 	{
 		return this.pinger.getPing();
 	}
 	
+	
 	public void connect(ConnectionCallback callback)
 	{
 		this.callback = callback;
+		this.white = true;
+		this.pingCounter = 0;
 		
 		try
 		{
@@ -233,6 +250,11 @@ public class Peer extends Thread{
 		this.callback.onDisconnect(this);
 	}
 
+	public boolean isWhite()
+	{
+		return this.white; 
+	}
+	
 	public void close() 
 	{
 		try

@@ -1,5 +1,3 @@
-import gui.Gui;
-
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
@@ -7,6 +5,7 @@ import javax.swing.UIManager;
 
 import api.ApiClient;
 import controller.Controller;
+import gui.Gui;
 import settings.Settings;
 import utils.SysTray;
 
