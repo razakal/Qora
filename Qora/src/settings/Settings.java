@@ -26,7 +26,7 @@ public class Settings {
 	private static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
 	private static final int DEFAULT_PING_INTERVAL = 30000;
 	private static final boolean DEFAULT_TRYING_CONNECT_TO_BAD_PEERS = true;
-	private static final String[] DEFAULT_PEERS = { "188.166.53.239" , "193.242.148.251" };
+	private static final String[] DEFAULT_PEERS = { };
 
 	
 	//RPC
