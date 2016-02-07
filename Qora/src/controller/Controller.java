@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Files;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -38,6 +41,7 @@ import gui.Gui;
 import network.Network;
 import network.Peer;
 import network.message.BlockMessage;
+import network.message.FindMyselfMessage;
 import network.message.GetBlockMessage;
 import network.message.GetSignaturesMessage;
 import network.message.HeightMessage;
@@ -95,6 +99,8 @@ public class Controller extends Observable {
 	private TransactionCreator transactionCreator;
 	private boolean needSync = false;
 	private Timer timer = new Timer();
+	private Random random = new SecureRandom();
+	byte[] foundMyselfID = new byte[128];
 	
 	private Map<Peer, Integer> peerHeight;
 
@@ -106,6 +112,10 @@ public class Controller extends Observable {
 		return version;
 	}
 
+	public byte[] getFoundMyselfID (){
+		return this.foundMyselfID;
+	}
+	
 	public Map<Peer, Integer> getPeerHeights() {
 		return peerHeight;
 	}
@@ -152,6 +162,9 @@ public class Controller extends Observable {
 	}
 	
 	public void start() throws Exception {
+		
+		this.random.nextBytes(foundMyselfID);
+		
 		// CHECK NETWORK PORT AVAILABLE
 		if (!Network.isPortAvailable(Network.PORT)) {
 			throw new Exception("Network port " + Network.PORT
@@ -501,8 +514,13 @@ public class Controller extends Observable {
 				height));
 		
 		// SEND VERSION MESSAGE
-		peer.sendMessage(MessageFactory.getInstance().createVersionMessage( Controller.getInstance().getVersion(),
-				BuildTime.getBuildTimestamp()
+		peer.sendMessage( MessageFactory.getInstance().createVersionMessage( 
+				Controller.getInstance().getVersion(),
+				BuildTime.getBuildTimestamp() ));
+
+		// SEND FOUNDMYSELF MESSAGE
+		peer.sendMessage( MessageFactory.getInstance().createFindMyselfMessage( 
+				Controller.getInstance().getFoundMyselfID() 
 				));
 
 		if (this.status == STATUS_NO_CONNECTIONS) {
@@ -719,6 +737,18 @@ public class Controller extends Observable {
 							new Pair<String, Long>(versionMessage.getStrVersion(), versionMessage.getBuildDateTime()) );
 				}
 
+				break;
+				
+			case Message.FIND_MYSELF_TYPE:
+
+				FindMyselfMessage findMyselfMessage = (FindMyselfMessage) message;
+				
+				if(Arrays.equals(findMyselfMessage.getFoundMyselfID(),Controller.getInstance().getFoundMyselfID())) {
+					message.getSender().close();
+				}
+				
+				Logger.getGlobal().info("Connected myself. Disconnect.");
+				
 				break;
 			}
 		}

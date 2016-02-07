@@ -30,7 +30,8 @@ public class Message {
 	public static final int TRANSACTION_TYPE = 8;
 	public static final int PING_TYPE = 9;
 	public static final int VERSION_TYPE = 10;
-	
+	public static final int FIND_MYSELF_TYPE = 11;
+
 	private int type;
 	private Peer sender;
 	private int id;

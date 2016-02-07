@@ -54,6 +54,11 @@ public class MessageFactory {
 		return new VersionMessage(strVersion, buildDateTime);
 	}
 	
+	public Message createFindMyselfMessage(byte[] foundMyselfID)
+	{
+		return new FindMyselfMessage(foundMyselfID);
+	}
+	
 	public Message createGetHeadersMessage(byte[] parent)
 	{
 		return new GetSignaturesMessage(parent);
@@ -216,6 +221,13 @@ public class MessageFactory {
 			//CREATE MESSAGE FROM DATA
 			message = VersionMessage.parse(data);
 			break;
+			
+		//FIND_MYSELF
+		case Message.FIND_MYSELF_TYPE:
+									
+			//CREATE MESSAGE FROM DATA
+			message = FindMyselfMessage.parse(data);
+			break;			
 			
 		default:
 			

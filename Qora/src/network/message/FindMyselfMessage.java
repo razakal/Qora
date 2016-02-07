@@ -1,59 +1,39 @@
 package network.message;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
 
 public class FindMyselfMessage extends Message{
 
-	private static final int SIGNATURE_LENGTH = 128;
-	private static final int DATA_LENGTH = 4;
+	private static final int FIND_MYSELF_ID_LENGTH = 128;
 	
-	private List<byte[]> signatures;
+	private byte[] foundMyselfID;
 	
-	public FindMyselfMessage(List<byte[]> signatures)
+	public FindMyselfMessage(byte[] foundMyselfID)
 	{
-		super(SIGNATURES_TYPE);	
+		super(FIND_MYSELF_TYPE);	
 		
-		this.signatures = signatures;
+		this.foundMyselfID = foundMyselfID;
 	}
 	
-	public List<byte[]> getSignatures()
+	public byte[] getFoundMyselfID()
 	{
-		return this.signatures;
+		return this.foundMyselfID;
 	}
 	
 	public static FindMyselfMessage parse(byte[] data) throws Exception
 	{
-		//READ LENGTH
-		byte[] lengthBytes =  Arrays.copyOfRange(data, 0, DATA_LENGTH);
-		int length = Ints.fromByteArray(lengthBytes);
-		
 		//CHECK IF DATA MATCHES LENGTH
-		if(data.length != DATA_LENGTH + (length * SIGNATURE_LENGTH))
+		if(data.length != FIND_MYSELF_ID_LENGTH)
 		{
 			throw new Exception("Data does not match length");
 		}
 		
-		//CREATE HEADERS LIST
-		List<byte[]> headers = new ArrayList<byte[]>();
+		//READ FIND_MYSELF_ID
+		byte[] foundMyselfID = Arrays.copyOfRange(data, 0, FIND_MYSELF_ID_LENGTH);
 		
-		for(int i=0; i<length; i++)
-		{
-			//CALCULATE POSITION
-			int position = DATA_LENGTH + (i * SIGNATURE_LENGTH);
-			
-			//READ HEADER
-			byte[] header = Arrays.copyOfRange(data, position, position + SIGNATURE_LENGTH);
-			
-			//ADD TO LIST
-			headers.add(header);
-		}
-		
-		return new FindMyselfMessage(headers);
+		return new FindMyselfMessage(foundMyselfID);
 	}
 	
 	@Override
@@ -61,18 +41,8 @@ public class FindMyselfMessage extends Message{
 	{
 		byte[] data = new byte[0];
 		
-		//WRITE LENGTH
-		int length = this.signatures.size();
-		byte[] lengthBytes = Ints.toByteArray(length);
-		lengthBytes = Bytes.ensureCapacity(lengthBytes, DATA_LENGTH, 0);
-		data = Bytes.concat(data, lengthBytes);
-		
-		//WRITE SIGNATURES
-		for(byte[] header: this.signatures)
-		{
-			//WRITE SIGNATURE
-			data = Bytes.concat(data, header);
-		}
+		//WRITE  FIND_MYSELF_ID
+		data = Bytes.concat(data, this.foundMyselfID);
 		
 		//ADD CHECKSUM
 		data = Bytes.concat(super.toBytes(), this.generateChecksum(data), data);
@@ -83,7 +53,7 @@ public class FindMyselfMessage extends Message{
 	@Override
 	public int getDataLength()
 	{
-		return DATA_LENGTH + (this.signatures.size() * SIGNATURE_LENGTH);
+		return FIND_MYSELF_ID_LENGTH;
 	}
 
 }
