@@ -14,7 +14,12 @@ public class DateTimeFormat
 
 		String timeZone = Settings.getInstance().getTimeZone(); 
 		String strTimeFormat = Settings.getInstance().getTimeFormat();
-		
+
+		return timestamptoString(timestamp, strTimeFormat, timeZone);
+	}
+	
+	public static String timestamptoString(long timestamp, String strTimeFormat, String timeZone){
+
 		DateFormat dateFormat;
 		
 		Date date = new Date(timestamp);
@@ -31,7 +36,6 @@ public class DateTimeFormat
 		
 		return dateFormat.format(date);
 	}
-	
 	
 	public static String timeAgo(long timestamp)
 	{

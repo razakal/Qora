@@ -15,7 +15,7 @@ public class BuildTime
 	private static long bufgetBuildDateTime = 0;
 
 	public static String getBuildDateTimeString(){
-		return DateTimeFormat.timestamptoString(getBuildTimestamp());
+		return DateTimeFormat.timestamptoString(getBuildTimestamp(), "yyyy-MM-dd HH:mm:ss z", "UTC");
 	}
 	
 	public static long getBuildTimestamp(){

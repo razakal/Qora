@@ -22,7 +22,7 @@ public class VersionResource {
 		
 		jsonObject.put("version", Controller.getInstance().getVersion());
 
-		jsonObject.put("buildtime", BuildTime.getBuildDateTimeString());
+		jsonObject.put("buildTime", BuildTime.getBuildDateTimeString());
 	
 
 		return jsonObject.toJSONString();
