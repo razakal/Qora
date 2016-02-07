@@ -312,6 +312,26 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			return new ArrayList<Peer>();
 		}	
 	}
+
+	public List<String> getAllPeersAddresses(int amount) {
+		try
+		{
+			List<String> addresses = new ArrayList<String>();
+			Iterator<byte[]> iterator = this.getKeys().iterator();
+			while(iterator.hasNext() && (amount == -1 || addresses.size() < amount))
+			{
+				byte[] addressBI = iterator.next();
+				addresses.add(InetAddress.getByAddress(addressBI).getHostAddress());
+			}
+			return addresses;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+				
+			return new ArrayList<String>();
+		}
+	}
 	
 	public List<PeerInfo> getAllPeers(int amount)
 	{

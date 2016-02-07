@@ -68,23 +68,23 @@ public class ApiClient {
 				""
 			},
 			{
-				"GET peers/height",
-				"Returns an array of peer objects containing each peer's IP and height and ping time.",
-				""
-			},
-			{
-				"GET peers/full",
-				"Returns an full info about known peers.",
+				"GET peers/detail",
+				"Returns an array of connected peer objects containing each peer's IP, height, ping time, onlineTime, findingTime, PingCounter, lastWhite time connection, lastGray time connection and version.",
 				""
 			},
 			{
 				"GET peers/best",
-				"Returns the best nodes.",
+				"Returns the best known nodes.",
+				""
+			},
+			{
+				"GET peers/known",
+				"Returns an array of all known peers.",
 				""
 			},
 			{
 				"DELETE peers/known",
-				"Forget the stats for known peers.",
+				"Forget all known peers with all statistics.",
 				""
 			},
 			{
