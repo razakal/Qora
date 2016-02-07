@@ -49,6 +49,7 @@ import network.message.Message;
 import network.message.MessageFactory;
 import network.message.TransactionMessage;
 import network.message.VersionMessage;
+import ntp.NTP;
 import qora.BlockChain;
 import qora.BlockGenerator;
 import qora.BlockGenerator.ForgingStatus;
@@ -79,7 +80,7 @@ import webserver.WebService;
 
 public class Controller extends Observable {
 
-	private String version = "0.26.0 beta";
+	private String version = "0.25.0 beta";
 	public static final String releaseVersion = "0.25.0";
 
 //	TODO ENUM would be better here
@@ -509,20 +510,23 @@ public class Controller extends Observable {
 		// GET HEIGHT
 		int height = this.blockChain.getHeight();
 
+		if(NTP.getTime() >= Transaction.POWFIX_RELEASE)
+		{
+			// SEND VERSION MESSAGE
+			peer.sendMessage( MessageFactory.getInstance().createVersionMessage( 
+				Controller.getInstance().getVersion(),
+				BuildTime.getBuildTimestamp() ));
+		
+			// SEND FOUNDMYSELF MESSAGE
+			peer.sendMessage( MessageFactory.getInstance().createFindMyselfMessage( 
+				Controller.getInstance().getFoundMyselfID() 
+				));
+		}
+		
 		// SEND HEIGTH MESSAGE
 		peer.sendMessage(MessageFactory.getInstance().createHeightMessage(
 				height));
 		
-		// SEND VERSION MESSAGE
-		peer.sendMessage( MessageFactory.getInstance().createVersionMessage( 
-				Controller.getInstance().getVersion(),
-				BuildTime.getBuildTimestamp() ));
-
-		// SEND FOUNDMYSELF MESSAGE
-		peer.sendMessage( MessageFactory.getInstance().createFindMyselfMessage( 
-				Controller.getInstance().getFoundMyselfID() 
-				));
-
 		if (this.status == STATUS_NO_CONNECTIONS) {
 			// UPDATE STATUS
 			this.status = STATUS_OKE;
