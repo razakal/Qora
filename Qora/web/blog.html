@@ -337,13 +337,16 @@
                 <div class="timeline-footer">
                   <a><span onclick="javascript:processLike('{{blogpost.getSignature()}}', {{blogpost.isLiking()}})" ><i class="glyphicon glyphicon-heart" style=""><font color=white>.</font>{{blogpost.getLikes()}}</i></a>
                   <a class="pull-right"><span onclick="javascript:processShare('{{blogpost.getSignature()}}' , '{{blogpost.getBlognameOpt()}}')" ><i class="glyphicon glyphicon-share"><font color=white>.</font>{{blogpost.getShares()}}</i></a>
-                        <div class="actionBox">
+                   
+				   <div class="commentList">
                    {% for comment in blogpost.getComments() %}
-                    <div class="media commentList">
-                    {% if comment.getNameOpt() is not null %}
-                      <a class="media-left" href="/index/blog.html?blogname={{comment.nameOrCreator}}">
+                    <div class="commentEntry">
+                    
+					<div class="media-left">
+					{% if comment.getNameOpt() is not null %}
+                      <a href="/index/blog.html?blogname={{comment.nameOrCreator}}">
                       {%else%}
-                      <a class="media-left" href="#">
+                      <a href="#">
                   	{%endif%}
                      {%if comment.getAvatar() is empty%}
                         <img class="media-object commenterImage" src="/index/img/qora-user.png" alt="user image">
@@ -351,19 +354,26 @@
                         <img class="media-object commenterImage" src="{{comment.getAvatar()}}" alt="user image">
           			{%endif%}
                       </a>
-                      <div class="media-body">
+					
+					</div>
+					  
+					<div class="media-body">
                       {% if comment.getNameOpt() is not null %}
-                        <h4 class="media-heading Commenter"><a href="/index/blog.html?blogname={{comment.nameOrCreator}}">{{comment.nameOrCreator}}</a></h4>
+						<h4 class="media-heading Commenter"><a href="/index/blog.html?blogname={{comment.nameOrCreator}}">{{comment.nameOrCreator}}</a></h4>
           			{%else%}
-                        <h4 class="media-heading Commenter">{{comment.nameOrCreator}}</h4>
+						<h4 class="media-heading Commenter">{{comment.nameOrCreator}}</h4>
           			{%endif%}
                         <p class="commentText">{{comment.description}}</p>
                         <span class="date sub-text">{{comment.creationTime}}</span>
-                      </div>
-                    </div>
-                     <button class ="btn btn-default" onclick="javascript:processCommentDelete('{{comment.getSignature()}}')" >
-                            <i class="glyphicon glyphicon-trash" style=""></i>
-                          </button>
+					</div>
+                    
+					<div class="media-right">
+						<button class ="btn btn-default" onclick="javascript:processCommentDelete('{{comment.getSignature()}}')" >
+							<i class="glyphicon glyphicon-trash" style=""></i>
+						</button>
+					</div>
+					
+					</div>
                 {% endfor %}
                 {%if blogprofile is empty or blogprofile.isCommentingAllowed() %}
                     <form class="form-inline" role="form">
