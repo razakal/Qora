@@ -124,7 +124,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 		
 		private byte[] address;
 		private byte[] status;
-		private long findTime;
+		private long findingTime;
 		private long whiteConnectTime;
 		private long grayConnectTime;
 		private long whitePingCouner;
@@ -137,8 +137,8 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			return status;
 		}
 
-		public long getFindTime(){
-			return findTime;
+		public long getFindingTime(){
+			return findingTime;
 		}
 		
 		public long getWhiteConnectTime(){
@@ -178,7 +178,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 				
 				this.address = address;
 				this.status = statusBytes;
-				this.findTime = longFindTime;
+				this.findingTime = longFindTime;
 				this.whiteConnectTime = longWhiteConnectTime;
 				this.grayConnectTime = longGrayConnectTime;
 				this.whitePingCouner = longWhitePingCouner;
@@ -187,12 +187,12 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			{				
 				this.address = address;
 				this.status = BYTE_WHITELISTED;
-				this.findTime = 0;
+				this.findingTime = 0;
 				this.whiteConnectTime = 0;
 				this.grayConnectTime = 0;
 				this.whitePingCouner = 0;
 				
-				this.updateFindTime();
+				this.updateFindingTime();
 			}
 		} 
 		
@@ -208,13 +208,13 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			this.grayConnectTime = NTP.getTime();
 		}
 		
-		public void updateFindTime(){
-			this.findTime = NTP.getTime();
+		public void updateFindingTime(){
+			this.findingTime = NTP.getTime();
 		}
 		
 		public byte[] toBytes(){
 
-			byte[] findTimeBytes = Longs.toByteArray(this.findTime);
+			byte[] findTimeBytes = Longs.toByteArray(this.findingTime);
 			findTimeBytes = Bytes.ensureCapacity(findTimeBytes, TIMESTAMP_LENGTH, 0);
 			
 			byte[] whiteConnectTimeBytes = Longs.toByteArray(this.whiteConnectTime);
@@ -405,6 +405,23 @@ public class PeerMap extends DBMap<byte[], byte[]>
 		}	*/		
 	}
 	
+	public PeerInfo getInfo(InetAddress address) 
+	{
+		byte[] addressByte = address.getAddress();
+
+		if(this.map == null){
+			return new PeerInfo(addressByte, null);
+		}
+		
+		if(this.map.containsKey(addressByte))
+		{
+			byte[] data = this.map.get(addressByte);
+			
+			return new PeerInfo(addressByte, data);
+		}
+		return new PeerInfo(addressByte, null);
+	}
+	
 	public boolean isBlacklisted(InetAddress address)
 	{
 		//CHECK IF PEER IS BLACKLISTED
@@ -427,7 +444,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			
 			PeerInfo peerInfo = new PeerInfo(addressByte, data);
 			
-			boolean findMoreWeekAgo = (NTP.getTime() - peerInfo.getFindTime() > 7*24*60*60*1000);  
+			boolean findMoreWeekAgo = (NTP.getTime() - peerInfo.getFindingTime() > 7*24*60*60*1000);  
 			
 			boolean neverWhite = peerInfo.getWhitePingCouner() == 0;
 			
