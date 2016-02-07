@@ -512,15 +512,15 @@ public class Controller extends Observable {
 
 		if(NTP.getTime() >= Transaction.POWFIX_RELEASE)
 		{
-			// SEND VERSION MESSAGE
-			peer.sendMessage( MessageFactory.getInstance().createVersionMessage( 
-				Controller.getInstance().getVersion(),
-				BuildTime.getBuildTimestamp() ));
-		
 			// SEND FOUNDMYSELF MESSAGE
 			peer.sendMessage( MessageFactory.getInstance().createFindMyselfMessage( 
 				Controller.getInstance().getFoundMyselfID() 
 				));
+
+			// SEND VERSION MESSAGE
+			peer.sendMessage( MessageFactory.getInstance().createVersionMessage( 
+				Controller.getInstance().getVersion(),
+				BuildTime.getBuildTimestamp() ));
 		}
 		
 		// SEND HEIGTH MESSAGE
