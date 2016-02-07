@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOError;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -14,12 +13,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-
 import settings.Settings;
-import utils.JSonWriter;
+import utils.StrJSonFine;
 
 public class ApiClient {
 
@@ -690,24 +685,10 @@ public class ApiClient {
 			BufferedReader br = new BufferedReader(isReader);
 			String result = br.readLine(); //TODO READ ALL OR HARDCODE HELP
 			
+			
 			try
 			{
-				Writer writer = new JSonWriter();
-				Object jsonResult = JSONValue.parse(result);
-				
-				if(jsonResult instanceof JSONArray)
-				{
-					((JSONArray) jsonResult).writeJSONString(writer);
-					return writer.toString();
-				}
-				if(jsonResult instanceof JSONObject)
-				{
-					((JSONObject) jsonResult).writeJSONString(writer);
-					return writer.toString();
-				}
-				
-				writer.close();
-				return result;
+				return StrJSonFine.convert(result);
 			}
 			catch(Exception e)
 			{
