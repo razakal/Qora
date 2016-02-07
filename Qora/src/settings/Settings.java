@@ -19,11 +19,11 @@ import network.Peer;
 public class Settings {
 
 	//NETWORK
-	private static final int DEFAULT_MIN_CONNECTIONS = 5;
-	private static final int DEFAULT_MAX_CONNECTIONS = 20;
+	private static final int DEFAULT_MIN_CONNECTIONS = 10;
+	private static final int DEFAULT_MAX_CONNECTIONS = 50;
 	private static final int DEFAULT_MAX_RECEIVE_PEERS = 20;
 	private static final int DEFAULT_MAX_SENT_PEERS = 20;
-	private static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
+	private static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
 	private static final int DEFAULT_PING_INTERVAL = 30000;
 	private static final boolean DEFAULT_TRYING_CONNECT_TO_BAD_PEERS = true;
 	private static final String[] DEFAULT_PEERS = { };
