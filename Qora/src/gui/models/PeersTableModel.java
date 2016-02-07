@@ -24,12 +24,13 @@ public class PeersTableModel extends AbstractTableModel implements Observer{
 	private static final int COLUMN_REILABLE = 3;
 	private static final int COLUMN_INITIATOR = 4;
 	private static final int COLUMN_FINDING_AGO = 5;
+	private static final int COLUMN_ONLINE_TIME = 6;
 	
 	private Timer timer = new Timer();
 	
 	private List<Peer> peers;
 	
-	private String[] columnNames = {"IP", "Height", "Ping mc", "Reliable", "Initiator", "Finding ago"};
+	private String[] columnNames = {"IP", "Height", "Ping mc", "Reliable", "Initiator", "Finding ago", "Online Time"};
 	
 	public PeersTableModel()
 	{
@@ -111,6 +112,10 @@ public class PeersTableModel extends AbstractTableModel implements Observer{
 			
 			case COLUMN_FINDING_AGO:
 				return DateTimeFormat.timeAgo(peerInfo.getFindingTime());
+				
+
+			case COLUMN_ONLINE_TIME:
+				return DateTimeFormat.timeAgo(peer.getConnectionTime());
 				
 		}
 		

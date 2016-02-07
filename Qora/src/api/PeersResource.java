@@ -21,6 +21,7 @@ import database.DBSet;
 import database.PeerMap.PeerInfo;
 import network.Peer;
 import network.PeerManager;
+import ntp.NTP;
 import utils.DateTimeFormat;
 
 @Path("peers")
@@ -42,6 +43,13 @@ public class PeersResource
 		return array.toJSONString();
 	}
 	
+	@GET
+	@Path("info")
+	public String getInfo()
+	{
+		return getTest();
+	}
+
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("height")
@@ -56,6 +64,8 @@ public class PeersResource
 			o.put("peer", peer.getKey().getAddress().getHostAddress());
 			o.put("height", peer.getValue());
 			o.put("ping", peer.getKey().getPing());
+			o.put("onlineTime", (NTP.getTime() - peer.getKey().getConnectionTime())/1000);
+
 			array.add(o);
 		}
 		
@@ -80,7 +90,7 @@ public class PeersResource
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GET
-	@Path("full")
+	@Path("stat")
 	public String getFull() throws UnknownHostException
 	{
 		List<PeerInfo> iplist = DBSet.getInstance().getPeerMap().getAllPeers(1000);

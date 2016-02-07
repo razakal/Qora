@@ -352,6 +352,10 @@ public class PeerMap extends DBMap<byte[], byte[]>
 	
 	public void addPeer(Peer peer)
 	{
+		if(this.map == null){
+			return;
+		}
+		
 		PeerInfo peerInfo;
 		byte[] address = peer.getAddress().getAddress();
 		

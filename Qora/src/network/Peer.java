@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import database.DBSet;
 import network.message.Message;
 import network.message.MessageFactory;
+import ntp.NTP;
 import settings.Settings;
 
 public class Peer extends Thread{
@@ -27,6 +28,7 @@ public class Peer extends Thread{
 	private Pinger pinger;
 	private boolean white;
 	private long pingCounter;
+	private long connectionTime;
 	
 	private Map<Integer, BlockingQueue<Message>> messages;
 	
@@ -46,6 +48,7 @@ public class Peer extends Thread{
 			this.messages = Collections.synchronizedMap(new HashMap<Integer, BlockingQueue<Message>>());
 			this.white = false;
 			this.pingCounter = 0;
+			this.connectionTime = NTP.getTime();
 			
 			//ENABLE KEEPALIVE
 			//this.socket.setKeepAlive(true);
@@ -102,6 +105,7 @@ public class Peer extends Thread{
 		this.callback = callback;
 		this.white = true;
 		this.pingCounter = 0;
+		this.connectionTime = NTP.getTime();
 		
 		try
 		{
@@ -259,6 +263,11 @@ public class Peer extends Thread{
 	{
 		return this.white; 
 	}
+	
+	public long getConnectionTime()
+	{
+		return this.connectionTime; 
+	}	
 	
 	public boolean isBad()
 	{
