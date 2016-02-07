@@ -165,6 +165,9 @@ public class BlockGenerator extends Thread implements Observer
 	{
 		while(true)
 		{
+			if(DBSet.getInstance().isStoped())
+				continue;
+			
 			//CHECK IF WE ARE UPTODATE
 			if(!Controller.getInstance().isUpToDate())
 			{
