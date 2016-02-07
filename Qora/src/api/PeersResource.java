@@ -78,23 +78,22 @@ public class PeersResource
 		return array.toJSONString();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GET
 	@Path("full")
 	public String getFull() throws UnknownHostException
 	{
 		List<PeerInfo> iplist = DBSet.getInstance().getPeerMap().getAllPeers(1000);
 		
-		Map<String, JSONObject> output=new LinkedHashMap<String, JSONObject>();
+		Map output=new LinkedHashMap();
 
 		for(PeerInfo peer: iplist)
 		{
-			JSONObject o = new JSONObject();
+			Map o = new LinkedHashMap();
 			
 			o.put("findTime", DateTimeFormat.timestamptoString(peer.getFindTime()));
 			o.put("FindTimeStamp", peer.getFindTime());
 
-			
 			if(peer.getWhiteConnectTime()>0) {
 				o.put("lastWhite", DateTimeFormat.timestamptoString(peer.getWhiteConnectTime()));
 				o.put("lastWhiteTimeStamp", peer.getWhiteConnectTime());
@@ -112,7 +111,6 @@ public class PeersResource
 			}
 			o.put("whitePingCounter", peer.getWhitePingCouner());
 			output.put(InetAddress.getByAddress(peer.getAddress()).getHostAddress(), o);
-			
 		}
 		
 		return JSONValue.toJSONString(output);

@@ -405,6 +405,7 @@ public class Controller extends Observable {
 
 			createDataCheckpoint();
 
+			Logger.getGlobal().info("Closed.");
 			// FORCE CLOSE
 			System.exit(0);
 		}

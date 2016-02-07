@@ -17,7 +17,6 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.UnsignedBytes;
 
-import database.PeerMap.PeerInfo;
 import network.Peer;
 import ntp.NTP;
 import settings.Settings;
@@ -219,10 +218,10 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			findTimeBytes = Bytes.ensureCapacity(findTimeBytes, TIMESTAMP_LENGTH, 0);
 			
 			byte[] whiteConnectTimeBytes = Longs.toByteArray(this.whiteConnectTime);
-			findTimeBytes = Bytes.ensureCapacity(whiteConnectTimeBytes, TIMESTAMP_LENGTH, 0);
+			whiteConnectTimeBytes = Bytes.ensureCapacity(whiteConnectTimeBytes, TIMESTAMP_LENGTH, 0);
 			
 			byte[] grayConnectTimeBytes = Longs.toByteArray(this.grayConnectTime);
-			findTimeBytes = Bytes.ensureCapacity(grayConnectTimeBytes, TIMESTAMP_LENGTH, 0);
+			grayConnectTimeBytes = Bytes.ensureCapacity(grayConnectTimeBytes, TIMESTAMP_LENGTH, 0);
 			
 			byte[] whitePingCounerBytes = Longs.toByteArray(this.whitePingCouner);
 			whitePingCounerBytes = Bytes.ensureCapacity(whitePingCounerBytes, TIMESTAMP_LENGTH, 0);
@@ -428,10 +427,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			
 			PeerInfo peerInfo = new PeerInfo(addressByte, data);
 			
-			boolean findMoreWeekAgo = false;
-			if(peerInfo.getFindTime() > 0){
-				findMoreWeekAgo = (NTP.getTime() - peerInfo.getFindTime() > 7*24*60*60*1000);  
-			}
+			boolean findMoreWeekAgo = (NTP.getTime() - peerInfo.getFindTime() > 7*24*60*60*1000);  
 			
 			boolean neverWhite = peerInfo.getWhitePingCouner() == 0;
 			
