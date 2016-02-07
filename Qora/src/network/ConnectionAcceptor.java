@@ -4,6 +4,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Logger;
 
+import ntp.NTP;
+import qora.transaction.Transaction;
 import settings.Settings;
 
 public class ConnectionAcceptor extends Thread{
@@ -60,7 +62,13 @@ public class ConnectionAcceptor extends Thread{
 							/*connectionSocket.getInetAddress().isSiteLocalAddress() 
 							 * || connectionSocket.getInetAddress().isAnyLocalAddress() 
 							 * || connectionSocket.getInetAddress().isLoopbackAddress() 
-							 * || callback.isConnectedTo(connectionSocket.getInetAddress()) || */
+							 *  */
+							(
+									(NTP.getTime() < Transaction.POWFIX_RELEASE ) 
+									&& 
+									callback.isConnectedTo(connectionSocket.getInetAddress())
+							)
+							||
 							PeerManager.getInstance().isBlacklisted(connectionSocket.getInetAddress()))
 					{
 						//DO NOT CONNECT TO OURSELF/EXISTING CONNECTION
