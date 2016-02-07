@@ -383,7 +383,7 @@ public class DBSet implements Observer, IDB {
 	
 	public boolean isStoped()
 	{
-		return this.database == null;
+		return this.database.isClosed();
 	}
 	
 	public void commit()
