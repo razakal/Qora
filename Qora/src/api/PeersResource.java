@@ -63,6 +63,7 @@ public class PeersResource
 			JSONObject o = new JSONObject();
 			o.put("peer", peer.getKey().getAddress().getHostAddress());
 			o.put("height", peer.getValue());
+			o.put("version", Controller.getInstance().getVersionOfPeer(peer.getKey()));
 			o.put("ping", peer.getKey().getPing());
 			o.put("onlineTime", (NTP.getTime() - peer.getKey().getConnectionTime())/1000);
 
