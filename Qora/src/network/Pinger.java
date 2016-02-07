@@ -32,10 +32,16 @@ public class Pinger extends Thread
 			//CREATE PING
 			Message pingMessage = MessageFactory.getInstance().createPingMessage();
 			
+			if(!this.run)
+				break;
+			
 			//GET RESPONSE
 			long start = System.currentTimeMillis();
 			Message response = this.peer.getResponse(pingMessage);
-			
+
+			if(!this.run)
+				break;
+
 			//CHECK IF VALID PING
 			if(response == null || response.getType() != Message.PING_TYPE)
 			{
