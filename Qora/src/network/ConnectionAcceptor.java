@@ -53,7 +53,12 @@ public class ConnectionAcceptor extends Thread{
 					Socket connectionSocket = socket.accept();
 					
 					//CHECK IF SOCKET IS NOT LOCALHOST || WE ARE ALREADY CONNECTED TO THAT SOCKET || BLACKLISTED
-					if(/*connectionSocket.getInetAddress().isSiteLocalAddress() || connectionSocket.getInetAddress().isAnyLocalAddress() || connectionSocket.getInetAddress().isLoopbackAddress() ||*/ callback.isConnectedTo(connectionSocket.getInetAddress()) || PeerManager.getInstance().isBlacklisted(connectionSocket.getInetAddress()))
+					if(
+							/*connectionSocket.getInetAddress().isSiteLocalAddress() 
+							 * || connectionSocket.getInetAddress().isAnyLocalAddress() 
+							 * || connectionSocket.getInetAddress().isLoopbackAddress() 
+							 * || callback.isConnectedTo(connectionSocket.getInetAddress()) || */
+							PeerManager.getInstance().isBlacklisted(connectionSocket.getInetAddress()))
 					{
 						//DO NOT CONNECT TO OURSELF/EXISTING CONNECTION
 						connectionSocket.close();
