@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -14,25 +12,23 @@ import controller.Controller;
 
 public class BuildTime
 {
-	private static String bufgetBuildDateTime = "";
+	private static long bufgetBuildDateTime = 0;
 
-	public static String getBuildTime(){
+	public static String getBuildDateTimeString(){
 		bufgetBuildDateTime = getClassBuildTime();
-		return bufgetBuildDateTime.substring(bufgetBuildDateTime.indexOf(" ")+1);
+		return DateTimeFormat.timestamptoString(bufgetBuildDateTime);
 	}
 	
-	public static String getBuildDate(){
-		bufgetBuildDateTime = getClassBuildTime();
-		return bufgetBuildDateTime.substring(0, bufgetBuildDateTime.indexOf(" "));
-	}
-	
-	public static String getBuildDateTime(){
+	public static long getBuildTimestamp(){
 		return getClassBuildTime();
 	}
 	
-	private static String getClassBuildTime() {
+	private static long getClassBuildTime() {
 		Date d = null;
-		if(bufgetBuildDateTime.equals(""))
+		
+		long buildDateTimeStamp = 0;
+		
+		if(bufgetBuildDateTime == 0)
 	    {
 			//GET BUILD DATE FOR COMPILED VERSION
 			File file = new File("Qora.jar");
@@ -43,10 +39,7 @@ public class BuildTime
 					JarFile jf = new JarFile(file);
 					ZipEntry ze = jf.getEntry("META-INF/MANIFEST.MF");
 					d = new Date(ze.getTime ());
-
-					SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					
-					bufgetBuildDateTime = f.format(d);
+					buildDateTimeStamp = d.getTime();
 		    	} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -64,15 +57,12 @@ public class BuildTime
 	    				try 
 	    				{
 	    					d = new Date(new File(resource.toURI()).lastModified());
-	    					SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    					f.setTimeZone(TimeZone.getTimeZone("UTC"));
-	    					bufgetBuildDateTime = f.format(d);
-	    					
+	    					buildDateTimeStamp = d.getTime();
 	    		        } catch (URISyntaxException ignored) { }
 	    			}  
 	    		}
 	    	}
 	    }
-	    return bufgetBuildDateTime;
+	    return buildDateTimeStamp;
 	}
 }

@@ -40,6 +40,7 @@ import network.Peer;
 import network.message.BlockMessage;
 import network.message.GetBlockMessage;
 import network.message.GetSignaturesMessage;
+import network.message.HeightMessage;
 import network.message.Message;
 import network.message.MessageFactory;
 import network.message.TransactionMessage;
@@ -64,6 +65,7 @@ import qora.voting.Poll;
 import qora.voting.PollOption;
 import qora.wallet.Wallet;
 import settings.Settings;
+import utils.BuildTime;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
@@ -73,7 +75,7 @@ import webserver.WebService;
 
 public class Controller extends Observable {
 
-	private String version = "0.25.0 beta";
+	private String version = "0.26.0 beta";
 	public static final String releaseVersion = "0.25.0";
 
 //	TODO ENUM would be better here
@@ -96,6 +98,8 @@ public class Controller extends Observable {
 	
 	private Map<Peer, Integer> peerHeight;
 
+	private Map<Peer, Pair<String, Long>> peersVersions;
+	
 	private static Controller instance;
 
 	public String getVersion() {
@@ -104,6 +108,31 @@ public class Controller extends Observable {
 
 	public Map<Peer, Integer> getPeerHeights() {
 		return peerHeight;
+	}
+	
+	public Integer getHeightOfPeer(Peer peer) {
+		if(peerHeight!=null && peerHeight.containsKey(peer)){
+			return peerHeight.get(peer);
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	public Map<Peer, Pair<String, Long>> getPeersVersions() {
+		return peersVersions;
+	}
+	
+	public Pair<String, Long> getVersionOfPeer(Peer peer) {
+		if(peerHeight!=null && peersVersions.containsKey(peer)){
+			return peersVersions.get(peer);
+		}
+		else
+		{
+			return new Pair<String, Long>("", 0l); 
+			//\u22640.24.0
+		}
 	}
 
 	public static Controller getInstance() {
@@ -156,6 +185,9 @@ public class Controller extends Observable {
 																// FROM LONGEST
 																// CONNECTION
 																// ALIVE)
+		
+		this.peersVersions = new LinkedHashMap<Peer, Pair<String, Long>>();
+		
 		this.status = STATUS_NO_CONNECTIONS;
 		this.transactionCreator = new TransactionCreator();
 
@@ -464,9 +496,14 @@ public class Controller extends Observable {
 		// GET HEIGHT
 		int height = this.blockChain.getHeight();
 
-		// SEND VERSION MESSAGE
-		peer.sendMessage(MessageFactory.getInstance().createVersionMessage(
+		// SEND HEIGTH MESSAGE
+		peer.sendMessage(MessageFactory.getInstance().createHeightMessage(
 				height));
+		
+		// SEND VERSION MESSAGE
+		peer.sendMessage(MessageFactory.getInstance().createVersionMessage( Controller.getInstance().getVersion(),
+				BuildTime.getBuildTimestamp()
+				));
 
 		if (this.status == STATUS_NO_CONNECTIONS) {
 			// UPDATE STATUS
@@ -507,6 +544,8 @@ public class Controller extends Observable {
 		synchronized (this.peerHeight) {
 			this.peerHeight.remove(peer);
 
+			this.peersVersions.remove(peer);
+			
 			if (this.peerHeight.size() == 0) {
 				// UPDATE STATUS
 				this.status = STATUS_NO_CONNECTIONS;
@@ -543,14 +582,14 @@ public class Controller extends Observable {
 
 				break;
 
-			case Message.VERSION_TYPE:
+			case Message.HEIGHT_TYPE:
 
-				VersionMessage versionMessage = (VersionMessage) message;
+				HeightMessage heightMessage = (HeightMessage) message;
 
 				// ADD TO LIST
 				synchronized (this.peerHeight) {
-					this.peerHeight.put(versionMessage.getSender(),
-							versionMessage.getHeight());
+					this.peerHeight.put(heightMessage.getSender(),
+							heightMessage.getHeight());
 				}
 
 				break;
@@ -666,6 +705,18 @@ public class Controller extends Observable {
 					List<Peer> excludes = new ArrayList<Peer>();
 					excludes.add(message.getSender());
 					this.network.broadcast(message, excludes);
+				}
+
+				break;
+				
+			case Message.VERSION_TYPE:
+
+				VersionMessage versionMessage = (VersionMessage) message;
+
+				// ADD TO LIST
+				synchronized (this.peersVersions) {
+					this.peersVersions.put(versionMessage.getSender(),
+							new Pair<String, Long>(versionMessage.getStrVersion(), versionMessage.getBuildDateTime()) );
 				}
 
 				break;

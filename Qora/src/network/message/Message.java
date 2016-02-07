@@ -22,13 +22,14 @@ public class Message {
 	
 	public static final int GET_PEERS_TYPE = 1;
 	public static final int PEERS_TYPE = 2;
-	public static final int VERSION_TYPE = 3;
+	public static final int HEIGHT_TYPE = 3;
 	public static final int GET_SIGNATURES_TYPE = 4;
 	public static final int SIGNATURES_TYPE = 5;
 	public static final int GET_BLOCK_TYPE = 6;
 	public static final int BLOCK_TYPE = 7;
 	public static final int TRANSACTION_TYPE = 8;
 	public static final int PING_TYPE = 9;
+	public static final int VERSION_TYPE = 10;
 	
 	private int type;
 	private Peer sender;
