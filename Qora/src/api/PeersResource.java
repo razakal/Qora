@@ -91,8 +91,8 @@ public class PeersResource
 		{
 			Map o = new LinkedHashMap();
 			
-			o.put("findTime", DateTimeFormat.timestamptoString(peer.getFindTime()));
-			o.put("FindTimeStamp", peer.getFindTime());
+			o.put("findingTime", DateTimeFormat.timestamptoString(peer.getFindingTime()));
+			o.put("findingTimeStamp", peer.getFindingTime());
 
 			if(peer.getWhiteConnectTime()>0) {
 				o.put("lastWhite", DateTimeFormat.timestamptoString(peer.getWhiteConnectTime()));
