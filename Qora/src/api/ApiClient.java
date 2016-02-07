@@ -83,6 +83,11 @@ public class ApiClient {
 				""
 			},
 			{
+				"DELETE peers/known",
+				"Forget the stats for known peers.",
+				""
+			},
+			{
 				"GET transactions", 
 				"Returns an array of your accounts each with their 50 last transactions.",
 				"Errors: 201 - Wallet does not exist."
