@@ -100,6 +100,7 @@ public class Controller extends Observable {
 	private TransactionCreator transactionCreator;
 	private boolean needSync = false;
 	private Timer timer = new Timer();
+	private Timer timerPeerHeightUpdate = new Timer();
 	private Random random = new SecureRandom();
 	byte[] foundMyselfID = new byte[128];
 	
@@ -115,6 +116,16 @@ public class Controller extends Observable {
 
 	public byte[] getFoundMyselfID (){
 		return this.foundMyselfID;
+	}
+	
+	public void getSendMyHeightToPeer (Peer peer) {
+	
+		// GET HEIGHT
+		int height = this.blockChain.getHeight();
+				
+		// SEND HEIGTH MESSAGE
+		peer.sendMessage(MessageFactory.getInstance().createHeightMessage(
+				height));
 	}
 	
 	public Map<Peer, Integer> getPeerHeights() {
@@ -285,7 +296,31 @@ public class Controller extends Observable {
 				stopAll();
 			}
 		});
+		
+		
+		//TIMER TO SEND HEIGHT TO NETWORK EVERY 5 MIN 
+		
+		this.timerPeerHeightUpdate.cancel();
+		this.timerPeerHeightUpdate = new Timer();
+		
+		TimerTask action = new TimerTask() {
+	        public void run() {
+	        	if(Controller.getInstance().getStatus() == STATUS_OKE)
+	        	{
+	        		if(Controller.getInstance().getActivePeers().size() > 0)
+	        		{
+	        			Peer peer = Controller.getInstance().getActivePeers().get(
+	        				random.nextInt( Controller.getInstance().getActivePeers().size() )
+	        				);
+		        		Controller.getInstance().getSendMyHeightToPeer(peer);
+	        		}
+	        	}
+	        }
+		};
+		
+		this.timerPeerHeightUpdate.schedule(action, 5*60*1000, 5*60*1000);
 
+		
 		// REGISTER DATABASE OBSERVER
 		this.addObserver(DBSet.getInstance().getTransactionMap());
 		this.addObserver(DBSet.getInstance());
