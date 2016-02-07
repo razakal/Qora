@@ -95,6 +95,10 @@ public class Peer extends Thread{
 	
 	public void connect(ConnectionCallback callback)
 	{
+		if(DBSet.getInstance().isStoped()){
+			return;
+		}
+		
 		this.callback = callback;
 		this.white = true;
 		this.pingCounter = 0;
