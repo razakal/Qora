@@ -12,6 +12,8 @@ public class ConnectionAcceptor extends Thread{
 	
 	private ServerSocket socket;
 	
+	private boolean isRun;
+	
 	public ConnectionAcceptor(ConnectionCallback callback)
 	{
 		this.callback = callback;
@@ -19,7 +21,8 @@ public class ConnectionAcceptor extends Thread{
 	
 	public void run()
 	{
-		while(true)
+		this.isRun = true;
+		while(isRun)
 		{
 			try
 			{	
@@ -76,5 +79,10 @@ public class ConnectionAcceptor extends Thread{
 				Logger.getGlobal().warning("Error accepting new connection");			
 			}
 		}
+	}
+	
+	public void halt()
+	{
+		this.isRun = false;
 	}
 }

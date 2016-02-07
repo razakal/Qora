@@ -11,6 +11,7 @@ import settings.Settings;
 public class ConnectionCreator extends Thread {
 
 	private ConnectionCallback callback;
+	private boolean isRun;
 	
 	public ConnectionCreator(ConnectionCallback callback)
 	{
@@ -19,14 +20,15 @@ public class ConnectionCreator extends Thread {
 	
 	public void run()
 	{
+		this.isRun = true;
 		try
 		{	
-			while(true)
+			while(isRun)
 			{
 				int maxReceivePeers = Settings.getInstance().getMaxReceivePeers();
 				
 				//CHECK IF WE NEED NEW CONNECTIONS
-				if(Settings.getInstance().getMinConnections() >= callback.getActiveConnections().size())
+				if(this.isRun && Settings.getInstance().getMinConnections() >= callback.getActiveConnections().size())
 				{			
 					//GET LIST OF KNOWN PEERS
 					List<Peer> knownPeers = PeerManager.getInstance().getKnownPeers();
@@ -39,7 +41,7 @@ public class ConnectionCreator extends Thread {
 						knownPeersCounter ++;
 
 						//CHECK IF WE ALREADY HAVE MAX CONNECTIONS
-						if(Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
+						if(this.isRun && Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
 						{
 							//CHECK IF ALREADY CONNECTED TO PEER
 							if(!callback.isConnectedTo(peer.getAddress()))
@@ -62,7 +64,7 @@ public class ConnectionCreator extends Thread {
 				}
 				
 				//CHECK IF WE STILL NEED NEW CONNECTIONS
-				if(Settings.getInstance().getMinConnections() >= callback.getActiveConnections().size())
+				if(this.isRun && Settings.getInstance().getMinConnections() >= callback.getActiveConnections().size())
 				{
 					//OLD SCHOOL ITERATE activeConnections
 					//avoids Exception when adding new elements
@@ -71,7 +73,7 @@ public class ConnectionCreator extends Thread {
 						Peer peer = callback.getActiveConnections().get(i);
 	
 						//CHECK IF WE ALREADY HAVE MAX CONNECTIONS
-						if(Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
+						if(this.isRun && Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
 						{
 								//ASK PEER FOR PEERS
 								Message getPeersMessage = MessageFactory.getInstance().createGetPeersMessage();
@@ -84,7 +86,7 @@ public class ConnectionCreator extends Thread {
 									for(Peer newPeer: peersMessage.getPeers())
 									{		
 										//CHECK IF WE ALREADY HAVE MAX CONNECTIONS
-										if(Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
+										if(this.isRun && Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
 										{
 											if(foreignPeersCounter >= maxReceivePeers) {
 												break;
@@ -134,4 +136,8 @@ public class ConnectionCreator extends Thread {
 		}					
 	}
 	
+	public void halt()
+	{
+		this.isRun = false;
+	}
 }
