@@ -897,7 +897,7 @@ public class Controller extends Observable {
 		try {
 			synchronized (this.peerHeight) {
 				for (Peer peer : this.peerHeight.keySet()) {
-					if (peer == null) {
+					if (highestPeer == null && peer != null) {
 						highestPeer = peer;
 					} else {
 						// IF HEIGHT IS BIGGER
