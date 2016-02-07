@@ -312,7 +312,9 @@ public class Controller extends Observable {
 	        			Peer peer = Controller.getInstance().getActivePeers().get(
 	        				random.nextInt( Controller.getInstance().getActivePeers().size() )
 	        				);
-		        		Controller.getInstance().getSendMyHeightToPeer(peer);
+	        			if(peer != null){
+	        				Controller.getInstance().getSendMyHeightToPeer(peer);
+	        			}
 	        		}
 	        	}
 	        }
