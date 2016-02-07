@@ -573,23 +573,25 @@ public class Controller extends Observable {
 			this.notifyObservers(new ObserverMessage(
 					ObserverMessage.NETWORK_STATUS, this.status));
 			
-			if(needSync)
-			{
-				this.timer.cancel();
-				this.timer = new Timer();
-				
-				TimerTask action = new TimerTask() {
-			        public void run() {
-			        	if(needSync && Controller.getInstance().getStatus() == STATUS_OKE)
-			        	{
-			        		Controller.getInstance().synchronizeWallet();
-			        	}
-			        }
-				};
-				
-				this.timer.schedule(action, 10000);
-			}
+			this.timer.cancel();
+			this.timer = new Timer();
 			
+			TimerTask action = new TimerTask() {
+		        public void run() {
+		        	
+		        	if(Controller.getInstance().getStatus() == STATUS_OKE)
+			        {
+			        	Logger.getGlobal().info("STATUS OKE");
+				       	
+				       	if(needSync)
+				       	{
+				       		Controller.getInstance().synchronizeWallet();
+				       	}
+			        }
+		        }
+			};
+				
+			this.timer.schedule(action, 10000);
 		}
 	}
 
