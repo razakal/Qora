@@ -15,12 +15,15 @@ public class BuildTime
 	private static long bufgetBuildDateTime = 0;
 
 	public static String getBuildDateTimeString(){
-		bufgetBuildDateTime = getClassBuildTime();
-		return DateTimeFormat.timestamptoString(bufgetBuildDateTime);
+		return DateTimeFormat.timestamptoString(getBuildTimestamp());
 	}
 	
 	public static long getBuildTimestamp(){
-		return getClassBuildTime();
+		if(bufgetBuildDateTime == 0)
+	    {
+			bufgetBuildDateTime = getClassBuildTime(); 
+	    }
+	    return bufgetBuildDateTime;
 	}
 	
 	private static long getClassBuildTime() {
@@ -28,41 +31,39 @@ public class BuildTime
 		
 		long buildDateTimeStamp = 0;
 		
-		if(bufgetBuildDateTime == 0)
-	    {
-			//GET BUILD DATE FOR COMPILED VERSION
-			File file = new File("Qora.jar");
-	    	if(file.exists())
-	    	{
-		    	try {
-					@SuppressWarnings("resource")
-					JarFile jf = new JarFile(file);
-					ZipEntry ze = jf.getEntry("META-INF/MANIFEST.MF");
-					d = new Date(ze.getTime ());
-					buildDateTimeStamp = d.getTime();
-		    	} catch (IOException e) {
-					e.printStackTrace();
-				}
-		    }
-	    	else
-	    	{
-	    		//GET BUILD DATE FOR DEBUG VERSION
-	    		
-	    		URL resource = Controller.class.getResource(Controller.class.getSimpleName() + ".class");
-	    		
-	    		if (resource != null) 
-	    		{
-	    			if (resource.getProtocol().equals("file")) 
-	    			{
-	    				try 
-	    				{
-	    					d = new Date(new File(resource.toURI()).lastModified());
-	    					buildDateTimeStamp = d.getTime();
-	    		        } catch (URISyntaxException ignored) { }
-	    			}  
-	    		}
-	    	}
+		//GET BUILD DATE FOR COMPILED VERSION
+		File file = new File("Qora.jar");
+    	if(file.exists())
+    	{
+	    	try {
+				@SuppressWarnings("resource")
+				JarFile jf = new JarFile(file);
+				ZipEntry ze = jf.getEntry("META-INF/MANIFEST.MF");
+				d = new Date(ze.getTime ());
+				buildDateTimeStamp = d.getTime();
+	    	} catch (IOException e) {
+				e.printStackTrace();
+			}
 	    }
+    	else
+    	{
+    		//GET BUILD DATE FOR DEBUG VERSION
+    		
+    		URL resource = Controller.class.getResource(Controller.class.getSimpleName() + ".class");
+    		
+    		if (resource != null) 
+    		{
+    			if (resource.getProtocol().equals("file")) 
+    			{
+    				try 
+    				{
+    					d = new Date(new File(resource.toURI()).lastModified());
+    					buildDateTimeStamp = d.getTime();
+    		        } catch (URISyntaxException ignored) { }
+    			}  
+    		}
+    	}
+	    
 	    return buildDateTimeStamp;
 	}
 }
