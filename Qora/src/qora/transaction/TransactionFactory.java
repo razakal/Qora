@@ -127,7 +127,7 @@ public class TransactionFactory {
 			if(timeStamp < Transaction.POWFIX_RELEASE)
 			{
 				// PARSE MESSAGE TRANSACTION V1
-				return MessageTransaction.Parse(Arrays.copyOfRange(data, 4, data.length));
+				return MessageTransactionV1.Parse(Arrays.copyOfRange(data, 4, data.length));
 			}
 			else
 			{

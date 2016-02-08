@@ -28,7 +28,7 @@ import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.DeployATTransaction;
 import qora.transaction.IssueAssetTransaction;
-import qora.transaction.MessageTransaction;
+import qora.transaction.MessageTransactionV1;
 import qora.transaction.MessageTransactionV3;
 import qora.transaction.MultiPaymentTransaction;
 import qora.transaction.PaymentTransaction;
@@ -683,8 +683,8 @@ public class TransactionCreator
 		if(timestamp < Transaction.POWFIX_RELEASE)
 		{
 			//CREATE MESSAGE TRANSACTION V1
-			byte[] signature = MessageTransaction.generateSignature(this.fork, sender, recipient, amount, fee, message, isText, encryptMessage, timestamp);
-			messageTx = new MessageTransaction(sender, recipient, amount, fee, message, isText, encryptMessage, timestamp, sender.getLastReference(this.fork), signature );
+			byte[] signature = MessageTransactionV1.generateSignature(this.fork, sender, recipient, amount, fee, message, isText, encryptMessage, timestamp);
+			messageTx = new MessageTransactionV1(sender, recipient, amount, fee, message, isText, encryptMessage, timestamp, sender.getLastReference(this.fork), signature );
 		}
 		else
 		{
@@ -715,7 +715,7 @@ public class TransactionCreator
 		if(timestamp < Transaction.POWFIX_RELEASE)
 		{
 			//CREATE MESSAGE TRANSACTION V1
-			messageTx = new MessageTransaction(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, signature, signature );
+			messageTx = new MessageTransactionV1(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, signature, signature );
 		}
 		else
 		{
