@@ -95,6 +95,10 @@ public class Peer extends Thread{
 		return this.pinger.getPing();
 	}
 	
+	public boolean isPinger()
+	{
+		return this.pinger != null;
+	}
 	
 	public void connect(ConnectionCallback callback)
 	{

@@ -69,12 +69,17 @@ public class ApiClient {
 			},
 			{
 				"GET peers/detail",
-				"Returns an array of connected peer objects containing each peer's IP, height, ping time, onlineTime, findingTime, PingCounter, lastWhite time connection, lastGray time connection and version.",
+				"Returns an array of all connected peer objects containing each peer's IP, height, version, ping time, onlineTime, findingTime, PingCounter, lastWhite time connection, lastGray time connection and status.",
 				""
 			},
 			{
+				"GET peers/detail/<ip>",
+				"Returns all available information for peer with given ip.",
+				"Errors: 123 - invalid network address."
+			},
+			{
 				"GET peers/best",
-				"Returns the best known nodes.",
+				"Returns an array of the best known nodes.",
 				""
 			},
 			{

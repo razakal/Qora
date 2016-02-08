@@ -45,6 +45,7 @@ public class ApiErrorFactory
 	public static final int ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR = 120;
 	public static final int ERROR_FEE_LESS_REQUIRED = 121;
 	public static final int ERROR_WALLET_NOT_IN_SYNC = 122;
+	public static final int ERROR_INVALID_NETWORK_ADDRESS = 123;
 	
 	//WALLET
 	public static final int ERROR_WALLET_NO_EXISTS = 201;
@@ -109,6 +110,7 @@ public class ApiErrorFactory
 	public static final int ERROR_MESSAGE_BLANK = 1002;
 	public static final int ERROR_NO_PUBLIC_KEY = 1003;
 	public static final int ERROR_MESSAGESIZE_EXCEEDED = 1004;
+
 	
 	public static int BATCH_TX_AMOUNT = 50;
 	
@@ -160,7 +162,8 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_LAST_KEY_IS_DEFAULT_KEY_ERROR, "you can't delete the key \""+Qorakeys.DEFAULT.toString() +"\" if it is the only key");
 		this.errorMessages.put(ERROR_FEE_LESS_REQUIRED, "fee less required");
 		this.errorMessages.put(ERROR_WALLET_NOT_IN_SYNC, "wallet needs to be synchronized");
-		
+		this.errorMessages.put(ERROR_INVALID_NETWORK_ADDRESS,"invalid network address");
+				
 		//WALLET
 		this.errorMessages.put(ERROR_WALLET_NO_EXISTS, "wallet does not exist");
 		this.errorMessages.put(ERROR_WALLET_ADDRESS_NO_EXISTS, "address does not exist in wallet");
@@ -224,7 +227,7 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_MESSAGE_BLANK,"The message attribute is missing or content is blank");
 		this.errorMessages.put(ERROR_NO_PUBLIC_KEY,"The recipient has not yet performed any action in the blockchain.\nYou can't send an encrypted message to him.");
 		this.errorMessages.put(ERROR_MESSAGESIZE_EXCEEDED,"Message size exceeded!");
-		
+
 	}
 	
 	
