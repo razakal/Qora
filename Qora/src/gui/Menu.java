@@ -1,7 +1,5 @@
 package gui;
 
-import gui.settings.SettingsFrame;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,9 +11,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import gui.settings.SettingsFrame;
 import settings.Settings;
-import controller.Controller;
-
 import utils.URLViewer;
 
 public class Menu extends JMenuBar 
@@ -116,8 +113,7 @@ public class Menu extends JMenuBar
         {
         	public void actionPerformed(ActionEvent e)
         	{
-               Controller.getInstance().stopAll();
-               System.exit(0);
+        		new ClosingDialog();
         	}
         });
        

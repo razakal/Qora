@@ -78,6 +78,14 @@ public class Gui extends JFrame{
 		}
 	}
 
+	public void hideMainFrame()
+	{
+		if(mainframe != null)
+		{
+			mainframe.setVisible(false);
+		}
+	}
+	
 	public void onCancelCreateWallet() 
 	{
 		Controller.getInstance().stopAll();

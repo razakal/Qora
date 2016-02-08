@@ -1,7 +1,5 @@
 package gui;
 
-import gui.status.StatusPanel;
-
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -12,7 +10,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import controller.Controller;
+import gui.status.StatusPanel;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame{
@@ -50,9 +48,7 @@ public class MainFrame extends JFrame{
         {
             public void windowClosing(WindowEvent e)
             {
-            	setVisible(false);
-            	Controller.getInstance().stopAll();
-            	System.exit(0);
+            	new ClosingDialog();
             }
         });
         
@@ -62,5 +58,4 @@ public class MainFrame extends JFrame{
         this.setVisible(true);
         
 	}
-	
 }
