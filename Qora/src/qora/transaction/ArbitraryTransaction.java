@@ -17,8 +17,21 @@ import qora.web.blog.BlogEntry;
 
 public abstract class ArbitraryTransaction extends Transaction {
 
+	int version; 
+	
 	public ArbitraryTransaction(BigDecimal fee, long timestamp, byte[] reference, byte[] signature) {
 		super(ARBITRARY_TRANSACTION, fee, timestamp, reference, signature);
+		
+		if(timestamp < Transaction.POWFIX_RELEASE) {
+			version = 1;
+		} else {
+			version = 3;
+		}
+	}
+	
+	public int getVersion()
+	{
+		return this.version;
 	}
 	
 	// GETTERS/SETTERS
