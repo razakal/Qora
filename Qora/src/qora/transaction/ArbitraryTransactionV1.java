@@ -6,20 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ntp.NTP;
+
 import org.apache.commons.lang3.StringUtils;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import com.google.common.base.Charsets;
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import api.BlogPostResource;
-import database.BalanceMap;
-import database.DBSet;
-import ntp.NTP;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
@@ -30,33 +22,37 @@ import qora.payment.Payment;
 import qora.web.blog.BlogEntry;
 import utils.BlogUtils;
 import utils.StorageUtils;
+import api.BlogPostResource;
 
-public class ArbitraryTransactionV3 extends ArbitraryTransaction {
+import com.google.common.base.Charsets;
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import database.DBSet;
+
+public class ArbitraryTransactionV1 extends ArbitraryTransaction {
 	protected static final int CREATOR_LENGTH = 32;
 	protected static final int SERVICE_LENGTH = 4;
 	protected static final int DATA_SIZE_LENGTH = 4;
 	protected static final int REFERENCE_LENGTH = 64;
 	protected static final int FEE_LENGTH = 8;
 	protected static final int SIGNATURE_LENGTH = 64;
-	private static final int PAYMENTS_SIZE_LENGTH = 4;
 	protected static final int BASE_LENGTH = TIMESTAMP_LENGTH
 			+ REFERENCE_LENGTH + CREATOR_LENGTH + SERVICE_LENGTH
-			+ DATA_SIZE_LENGTH + FEE_LENGTH + SIGNATURE_LENGTH
-			+ PAYMENTS_SIZE_LENGTH;
+			+ DATA_SIZE_LENGTH + FEE_LENGTH + SIGNATURE_LENGTH;
 
 	private PublicKeyAccount creator;
 	private int service;
 	private byte[] data;
-	private List<Payment> payments;
 
-	public ArbitraryTransactionV3(PublicKeyAccount creator,
-			List<Payment> payments, int service, byte[] data, BigDecimal fee,
-			long timestamp, byte[] reference, byte[] signature) {
+	public ArbitraryTransactionV1(PublicKeyAccount creator, int service,
+			byte[] data, BigDecimal fee, long timestamp, byte[] reference,
+			byte[] signature) {
 		super(fee, timestamp, reference, signature);
 
 		this.service = service;
 		this.data = data;
-		this.payments = payments;
 		this.creator = creator;
 	}
 
@@ -70,11 +66,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 	@Override
 	public byte[] getData() {
 		return this.data;
-	}
-
-	@Override
-	public List<Payment> getPayments() {
-		return this.payments;
 	}
 
 	// PARSE CONVERT
@@ -104,26 +95,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		PublicKeyAccount creator = new PublicKeyAccount(creatorBytes);
 		position += CREATOR_LENGTH;
 
-		// READ PAYMENTS SIZE
-		byte[] paymentsLengthBytes = Arrays.copyOfRange(data, position,
-				position + PAYMENTS_SIZE_LENGTH);
-		int paymentsLength = Ints.fromByteArray(paymentsLengthBytes);
-		position += PAYMENTS_SIZE_LENGTH;
-
-		if (paymentsLength < 0 || paymentsLength > 400) {
-			throw new Exception("Invalid payments length");
-		}
-
-		// READ PAYMENTS
-		List<Payment> payments = new ArrayList<Payment>();
-		for (int i = 0; i < paymentsLength; i++) {
-			Payment payment = Payment.parse(Arrays.copyOfRange(data, position,
-					position + Payment.BASE_LENGTH));
-			payments.add(payment);
-
-			position += Payment.BASE_LENGTH;
-		}
-
 		// READ SERVICE
 		byte[] serviceBytes = Arrays.copyOfRange(data, position, position
 				+ SERVICE_LENGTH);
@@ -151,8 +122,8 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		byte[] signatureBytes = Arrays.copyOfRange(data, position, position
 				+ SIGNATURE_LENGTH);
 
-		return new ArbitraryTransactionV3(creator, payments, service,
-				arbitraryData, fee, timestamp, reference, signatureBytes);
+		return new ArbitraryTransactionV1(creator, service, arbitraryData, fee,
+				timestamp, reference, signatureBytes);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -165,12 +136,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		transaction.put("creator", this.creator.getAddress());
 		transaction.put("service", this.service);
 		transaction.put("data", Base58.encode(this.data));
-
-		JSONArray payments = new JSONArray();
-		for (Payment payment : this.payments) {
-			payments.add(payment.toJson());
-		}
-		transaction.put("payments", payments);
 
 		return transaction;
 	}
@@ -195,16 +160,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 		// WRITE CREATOR
 		data = Bytes.concat(data, this.creator.getPublicKey());
-
-		// WRITE PAYMENTS SIZE
-		int paymentsLength = this.payments.size();
-		byte[] paymentsLengthBytes = Ints.toByteArray(paymentsLength);
-		data = Bytes.concat(data, paymentsLengthBytes);
-
-		// WRITE PAYMENTS
-		for (Payment payment : this.payments) {
-			data = Bytes.concat(data, payment.toBytes());
-		}
 
 		// WRITE SERVICE
 		byte[] serviceBytes = Ints.toByteArray(this.service);
@@ -257,16 +212,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		// WRITE CREATOR
 		data = Bytes.concat(data, this.creator.getPublicKey());
 
-		// WRITE PAYMENTS SIZE
-		int paymentsLength = this.payments.size();
-		byte[] paymentsLengthBytes = Ints.toByteArray(paymentsLength);
-		data = Bytes.concat(data, paymentsLengthBytes);
-
-		// WRITE PAYMENTS
-		for (Payment payment : this.payments) {
-			data = Bytes.concat(payment.toBytes());
-		}
-
 		// WRITE SERVICE
 		byte[] serviceBytes = Ints.toByteArray(this.service);
 		data = Bytes.concat(data, serviceBytes);
@@ -295,55 +240,14 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 			return NOT_YET_RELEASED;
 		}
 
-		if (this.getTimestamp() < Transaction.POWFIX_RELEASE) {
-			return NOT_YET_RELEASED;
-		}
-
-		// CHECK PAYMENTS SIZE
-		if (this.payments.size() < 0 || this.payments.size() > 400) {
-			return INVALID_PAYMENTS_LENGTH;
-		}
-
 		// CHECK DATA SIZE
 		if (data.length > 4000 || data.length < 1) {
 			return INVALID_DATA_LENGTH;
 		}
 
-		// REMOVE FEE
-		DBSet fork = db.fork();
-		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(fork)
-				.subtract(this.fee), fork);
-
-		// CHECK PAYMENTS
-		for (Payment payment : this.payments) {
-			// CHECK IF RECIPIENT IS VALID ADDRESS
-			if (!Crypto.getInstance().isValidAddress(
-					payment.getRecipient().getAddress())) {
-				return INVALID_ADDRESS;
-			}
-
-			// CHECK IF AMOUNT IS POSITIVE
-			if (payment.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-				return NEGATIVE_AMOUNT;
-			}
-
-			// CHECK IF SENDER HAS ENOUGH ASSET BALANCE
-			if (this.creator.getConfirmedBalance(payment.getAsset(), fork)
-					.compareTo(payment.getAmount()) == -1) {
-				return NO_BALANCE;
-			}
-
-			// CHECK IF AMOUNT IS DIVISIBLE
-			if (!db.getAssetMap().get(payment.getAsset()).isDivisible()) {
-				// CHECK IF AMOUNT DOES NOT HAVE ANY DECIMALS
-				if (payment.getAmount().stripTrailingZeros().scale() > 0) {
-					// AMOUNT HAS DECIMALS
-					return INVALID_AMOUNT;
-				}
-			}
-
-			// PROCESS PAYMENT IN FORK
-			payment.process(this.creator, fork);
+		// CHECK IF CREATOR HAS ENOUGH MONEY
+		if (this.creator.getBalance(1, db).compareTo(this.fee) == -1) {
+			return NO_BALANCE;
 		}
 
 		// CHECK IF REFERENCE IS OKE
@@ -383,17 +287,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 		// UPDATE REFERENCE OF CREATOR
 		this.creator.setLastReference(this.signature, db);
-
-		// PROCESS PAYMENTS
-		for (Payment payment : this.payments) {
-			payment.process(this.creator, db);
-
-			// UPDATE REFERENCE OF RECIPIENT
-			if (Arrays.equals(payment.getRecipient().getLastReference(db),
-					new byte[0])) {
-				payment.getRecipient().setLastReference(this.signature, db);
-			}
-		}
 	}
 
 	@Override
@@ -413,17 +306,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 		// UPDATE REFERENCE OF CREATOR
 		this.creator.setLastReference(this.reference, db);
-
-		// ORPHAN PAYMENTS
-		for (Payment payment : this.payments) {
-			payment.orphan(this.creator, db);
-
-			// UPDATE REFERENCE OF RECIPIENT
-			if (Arrays.equals(payment.getRecipient().getLastReference(db),
-					this.signature)) {
-				payment.getRecipient().removeReference(db);
-			}
-		}
 	}
 
 	@Override
@@ -436,10 +318,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		List<Account> accounts = new ArrayList<Account>();
 
 		accounts.add(this.creator);
-
-		for (Payment payment : this.payments) {
-			accounts.add(payment.getRecipient());
-		}
 
 		return accounts;
 	}
@@ -457,36 +335,17 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 	@Override
 	public BigDecimal getAmount(Account account) {
-		BigDecimal amount = BigDecimal.ZERO.setScale(8);
 		String address = account.getAddress();
 
-		// IF SENDER
 		if (address.equals(this.creator.getAddress())) {
-			amount = amount.subtract(this.fee);
+			return BigDecimal.ZERO.setScale(8).subtract(this.fee);
 		}
 
-		// CHECK PAYMENTS
-		for (Payment payment : this.payments) {
-			// IF QORA ASSET
-			if (payment.getAsset() == BalanceMap.QORA_KEY) {
-				// IF SENDER
-				if (address.equals(this.creator.getAddress())) {
-					amount = amount.subtract(payment.getAmount());
-				}
-
-				// IF RECIPIENT
-				if (address.equals(payment.getRecipient().getAddress())) {
-					amount = amount.add(payment.getAmount());
-				}
-			}
-		}
-
-		return amount;
+		return BigDecimal.ZERO.setScale(8);
 	}
 
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator,
-			List<Payment> payments, int service, byte[] arbitraryData,
-			BigDecimal fee, long timestamp) {
+			int service, byte[] arbitraryData, BigDecimal fee, long timestamp) {
 		byte[] data = new byte[0];
 
 		// WRITE TYPE
@@ -505,16 +364,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 		// WRITE CREATOR
 		data = Bytes.concat(data, creator.getPublicKey());
-
-		// WRITE PAYMENTS SIZE
-		int paymentsLength = payments.size();
-		byte[] paymentsLengthBytes = Ints.toByteArray(paymentsLength);
-		data = Bytes.concat(data, paymentsLengthBytes);
-
-		// WRITE PAYMENTS
-		for (Payment payment : payments) {
-			data = Bytes.concat(payment.toBytes());
-		}
 
 		// WRITE SERVICE
 		byte[] serviceBytes = Ints.toByteArray(service);
@@ -536,6 +385,7 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		return Crypto.getInstance().sign(creator, data);
 	}
 
+	@Override
 	public void addToCommentMapOnDemand(DBSet db) {
 
 		if (getService() == BlogUtils.COMMENT_SERVICE_ID) {
@@ -544,15 +394,15 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(string);
 			if (jsonObject != null) {
-
+				
 				String signatureOfCommentOpt = (String) jsonObject
 						.get(BlogPostResource.DELETE_KEY);
-
-				// CHECK IF THIS IS A DELETE OR CREATE OF A COMMENT
-				if (StringUtils.isNotBlank(signatureOfCommentOpt)) {
-					BlogEntry commentEntryOpt = BlogUtils
-							.getCommentBlogEntryOpt(signatureOfCommentOpt);
-
+				
+				//CHECK IF THIS IS A DELETE OR CREATE OF A COMMENT
+				if(StringUtils.isNotBlank(signatureOfCommentOpt))
+				{
+					BlogEntry commentEntryOpt = BlogUtils.getCommentBlogEntryOpt(signatureOfCommentOpt);
+					
 					String authorOpt = (String) jsonObject
 							.get(BlogPostResource.AUTHOR);
 
@@ -561,41 +411,43 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 						String creatorOfEntryToDelete = commentEntryOpt
 								.getCreator();
 
-						// OWNER IS DELETING OWN POST?
-						if (creatorOfDeleteTX.equals(creatorOfEntryToDelete)) {
-							deleteCommentInternal(db, commentEntryOpt);
-							// BLOGOWNER IS DELETING POST
-						} else if (authorOpt != null
-								&& commentEntryOpt.getBlognameOpt() != null) {
-							Name name = db.getNameMap().get(
-									commentEntryOpt.getBlognameOpt());
-							if (name != null
-									&& name.getOwner().getAddress()
-											.equals(creatorOfDeleteTX)) {
+							// OWNER IS DELETING OWN POST?
+							if (creatorOfDeleteTX
+									.equals(creatorOfEntryToDelete)) {
 								deleteCommentInternal(db, commentEntryOpt);
-
+								// BLOGOWNER IS DELETING POST
+							} else if (authorOpt != null
+									&& commentEntryOpt.getBlognameOpt() != null) {
+								Name name = db.getNameMap().get(
+										commentEntryOpt.getBlognameOpt());
+								if (name != null
+										&& name.getOwner().getAddress()
+												.equals(creatorOfDeleteTX)) {
+									deleteCommentInternal(db, commentEntryOpt);
+									
+								}
 							}
-						}
 
 					}
-				} else {
+				}else
+				{
 					String post = (String) jsonObject
 							.get(BlogPostResource.POST_KEY);
-
+					
 					String postid = (String) jsonObject
 							.get(BlogPostResource.COMMENT_POSTID_KEY);
-
+					
 					// DOES POST MET MINIMUM CRITERIUM?
 					if (StringUtils.isNotBlank(post)
 							&& StringUtils.isNotBlank(postid)) {
-
+						
 						db.getPostCommentMap().add(Base58.decode(postid),
 								getSignature());
-						db.getCommentPostMap().add(getSignature(),
-								Base58.decode(postid));
+						db.getCommentPostMap().add(getSignature(), Base58.decode(postid));
 					}
 				}
-
+				
+				
 			}
 
 		}
@@ -684,6 +536,7 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		}
 	}
 
+	@Override
 	public void deleteInternal(DBSet db, boolean isShare, BlogEntry blogEntryOpt) {
 		if (isShare) {
 			byte[] sharesignature = Base58.decode(blogEntryOpt
@@ -704,20 +557,20 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 					Base58.decode(blogEntryOpt.getSignature()));
 		}
 	}
-
+	
+	@Override
 	public void deleteCommentInternal(DBSet db, BlogEntry commentEntry) {
-
+		
 		byte[] signatureOfComment = Base58.decode(commentEntry.getSignature());
-		byte[] signatureOfBlogPostOpt = db.getCommentPostMap().get(
-				Base58.decode(commentEntry.getSignature()));
-		// removing from hashtagmap
-
-		if (signatureOfBlogPostOpt != null) {
-			db.getPostCommentMap().remove(signatureOfBlogPostOpt,
-					signatureOfComment);
-			db.getCommentPostMap().remove(signatureOfComment);
-
-		}
+			byte[] signatureOfBlogPostOpt = db.getCommentPostMap().get(Base58.decode(commentEntry.getSignature()));
+			// removing from hashtagmap
+			
+			if(signatureOfBlogPostOpt != null)
+			{
+				db.getPostCommentMap().remove(signatureOfBlogPostOpt, signatureOfComment);
+				db.getCommentPostMap().remove(signatureOfComment);
+				
+			}
 	}
 
 	// TODO implement readd delete if orphaned!
@@ -749,6 +602,11 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 			}
 		}
+	}
+
+	@Override
+	public List<Payment> getPayments() {
+		return null;
 	}
 
 }
