@@ -1773,11 +1773,8 @@ public class BlockExplorer
 
 		output.put("address", address);
 
-		Map<Tuple2<BigInteger, BigInteger>, Trade> trades = new TreeMap<Tuple2<BigInteger, BigInteger>, Trade>();
-
 		if (!address.startsWith("A"))
 		{
-			
 			Collection<byte[]> blocks = DBSet.getInstance().getBlockMap().getGeneratorBlocks(address);
 			
 			for (byte[] b : blocks)
@@ -1787,10 +1784,23 @@ public class BlockExplorer
 			
 		}
 		
+		List<Transaction> transactions = new ArrayList<Transaction>();;
 		for (int type = 1; type <= 23; type++) {  // 17 - The number of transaction types. 23 - for the future
-			all.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, type, 0));
+			transactions.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, type, 0));
 		}
 		
+		Map<String, Boolean> signatures = new LinkedHashMap<String, Boolean>();
+		
+		for (Transaction transaction : transactions){
+			byte[] signature = transaction.getSignature();
+			if(!signatures.containsKey( new String(signature) ))
+			{	
+				signatures.put(new String(signature), true);
+				all.add(transaction);
+			}
+		}
+
+		Map<Tuple2<BigInteger, BigInteger>, Trade> trades = new TreeMap<Tuple2<BigInteger, BigInteger>, Trade>();
 		List<Transaction> orders = DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, 13, 0);
 		for (Transaction transaction : orders)
 		{
