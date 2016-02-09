@@ -400,6 +400,7 @@ public class MessagesTableModel extends JTable implements Observer{
 				transaction.getRecipient().getAddress(),
 				transaction.getTimestamp(),
 				transaction.getAmount(),
+				transaction.getKey(),
 				transaction.getFee(),
 				transaction.getSignature(),
 				transaction.getCreator().getPublicKey(),
@@ -556,10 +557,11 @@ public class MessagesTableModel extends JTable implements Observer{
 		private byte[] recipientPublicKey;
 		private long timestamp;
 		private BigDecimal amount;
+		private long assetKey;
 		private BigDecimal fee;
 		private byte[] signature;
 		
-		public MessageBuf( byte[] rawMessage, boolean encrypted, String sender, String recipient, long timestamp, BigDecimal amount, BigDecimal fee, byte[] signature, byte[] senderPublicKey, boolean isText )
+		public MessageBuf( byte[] rawMessage, boolean encrypted, String sender, String recipient, long timestamp, BigDecimal amount, long assetKey, BigDecimal fee, byte[] signature, byte[] senderPublicKey, boolean isText )
 		{
 			this.rawMessage = rawMessage;
 			this.encrypted = encrypted;	
@@ -569,6 +571,7 @@ public class MessagesTableModel extends JTable implements Observer{
 			this.recipient = recipient;
 			this.timestamp = timestamp;
 			this.amount = amount;
+			this.assetKey = assetKey;
 			this.fee = fee;
 			this.senderPublicKey = senderPublicKey;
 			this.recipientPublicKey = null;
@@ -614,6 +617,10 @@ public class MessagesTableModel extends JTable implements Observer{
 		public BigDecimal getAmount()
 		{
 			return this.amount;
+		}
+		public long getAssetKey()
+		{
+			return this.assetKey;
 		}
 		public byte[] getSignature()
 		{
@@ -676,7 +683,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		
 		public String getDecrMessageHtml(int width, boolean selected, boolean images)
 		{
-			Account account = Controller.getInstance().getAccountByAddress( sender );
+			Account account = Controller.getInstance().getAccountByAddress( this.sender );
 			String imginout = "";
 			if(account != null)
 		    {
@@ -687,25 +694,25 @@ public class MessagesTableModel extends JTable implements Observer{
 				imginout = "<img src='file:images/messages/send.png'>";
 		    }
 			
-			String imglock = "";
+			String imgLock = "";
 			
-			if(encrypted)
+			if(this.encrypted)
 			{	
-				if(opened)
+				if(this.opened)
 				{
-					imglock = "<img src='file:images/messages/unlocked.png'>";
+					imgLock = "<img src='file:images/messages/unlocked.png'>";
 				}
 				else
 				{
-					imglock = "<img src='file:images/messages/locked.png'>";
+					imgLock = "<img src='file:images/messages/locked.png'>";
 				}
 			}
 			else
 			{
-				imglock = "<img src='file:images/messages/unlockedred.png'>";
+				imgLock = "<img src='file:images/messages/unlockedred.png'>";
 			}
 		
-			int confirmations = getConfirmations();
+			int confirmations = this.getConfirmations();
 			
 			String strconfirmations = Integer.toString( confirmations );
 			
@@ -726,9 +733,9 @@ public class MessagesTableModel extends JTable implements Observer{
 				colorTextBackground = "D1E8FF";
 			}
 			
-			if( encrypted )
+			if( this.encrypted )
 			{
-				if( opened )
+				if( this.opened )
 				{
 					colorTextMessage = "0000FF";
 				}
@@ -738,28 +745,30 @@ public class MessagesTableModel extends JTable implements Observer{
 				}	
 			}
 			
-			String decrMessage = getDecrMessage(); 
+			String decrMessage = this.getDecrMessage(); 
 			decrMessage = decrMessage.replace( "<" , "&lt;" );
 			decrMessage = decrMessage.replace( ">" , "&gt;" );
 			decrMessage = decrMessage.replace( "\n" , "<br>" );
 			
 			String fontsmall = "";
 			
-			if(amount.compareTo(new BigDecimal(100000)) >= 0)
+			if(this.amount.compareTo(new BigDecimal(100000)) >= 0)
 			{
 				fontsmall = " size='2'";
 			}
+
+			String strAsset = Controller.getInstance().getAsset(this.getAssetKey()).getShort();
 		
 			return	  "<html>\n"
 					+ "<body width='" + width + "'>\n"
 					+ "<table border='0' cellpadding='3' cellspacing='0'><tr>\n<td bgcolor='" + colorHeader + "' width='" + (width/2-1) + "'>\n"
-					+ "<font size='2' color='" + colorTextHeader + "'>\nFrom:"+sender
+					+ "<font size='2' color='" + colorTextHeader + "'>\nFrom:" + this.sender
 					+ "\n<br>\nTo:"
-					+ recipient+"\n</font></td>\n"
+					+ this.recipient + "\n</font></td>\n"
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
 					+ "<font color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
-					+ DateTimeFormat.timestamptoString(timestamp) + "\n<br>\n"
-					+ "<font"+fontsmall+">Amount: " +  NumberAsString.getInstance().numberAsString(amount)+" Fee: "
+					+ DateTimeFormat.timestamptoString(this.timestamp) + "\n<br>\n"
+					+ "<font"+fontsmall+">Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " Fee: "
 					+ NumberAsString.getInstance().numberAsString(fee)+"</font>"
 					+ "\n</font></td></tr></table>"
 					+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
@@ -767,14 +776,14 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "<font color='" + colorTextMessage + "'>\n"
 					+ decrMessage
 					+ "\n</font>"
-					+ "<td width='30'>"+ imglock
+					+ "<td width='30'>"+ imgLock
 					+ "</td></tr>\n</table>\n"
 					+ "</body></html>\n";
 		}
 		
 		public String getDecrMessageTXT()
 		{
-			Account account = Controller.getInstance().getAccountByAddress( sender );
+			Account account = Controller.getInstance().getAccountByAddress( this.sender );
 			
 			String imginout = "";
 			if( account != null )
@@ -786,39 +795,41 @@ public class MessagesTableModel extends JTable implements Observer{
 				imginout = "Send'>";
 		    }
 			
-			String imglock = "";
+			String imgLock = "";
 			
-			if( encrypted )
+			if( this.encrypted )
 			{	
-				if( opened )
+				if( this.opened )
 				{
-					imglock = "Decrypted";
+					imgLock = "Decrypted";
 				}
 				else
 				{
-					imglock = "Encrypted";
+					imgLock = "Encrypted";
 				}
 			}
 			else
 			{
-				imglock = "Unencrypted";
+				imgLock = "Unencrypted";
 			}
 			
-			int confirmations = getConfirmations();
+			int confirmations = this.getConfirmations();
 			
-			String strconfirmations = Integer.toString( confirmations );
+			String strConfirmations = Integer.toString( confirmations );
 			
 			if( confirmations < 1 )
 			{
-				strconfirmations = strconfirmations + " !";
+				strConfirmations = strConfirmations + " !";
 			}
-						
-			return 	  "Date: " + DateTimeFormat.timestamptoString(timestamp) + "\n"
-					+ "Sender: " + sender + "\n"
-					+ "Recipient: " + recipient + "\n"
-					+ "Amount: " +  NumberAsString.getInstance().numberAsString(amount) + " Fee: " + NumberAsString.getInstance().numberAsString(fee) + "\n"
-					+ "Type: " + imginout + ". " + imglock + "\n"
-					+ "Confirmations: " + strconfirmations + "\n"
+			
+			String strAsset = Controller.getInstance().getAsset(this.getAssetKey()).getShort();
+			
+			return 	  "Date: " + DateTimeFormat.timestamptoString(this.timestamp) + "\n"
+					+ "Sender: " + this.sender + "\n"
+					+ "Recipient: " + this.recipient + "\n"
+					+ "Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " Fee: " + NumberAsString.getInstance().numberAsString(this.fee) + "\n"
+					+ "Type: " + imginout + ". " + imgLock + "\n"
+					+ "Confirmations: " + strConfirmations + "\n"
 					+ "[MESSAGE START]\n"
 					+ getDecrMessage() + "\n"
 					+ "[MESSAGE END]\n";
