@@ -1,7 +1,5 @@
 package gui.models;
 
-import gui.PasswordPane;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
@@ -37,6 +35,9 @@ import javax.swing.table.TableCellRenderer;
 
 import org.bouncycastle.crypto.InvalidCipherTextException;
 
+import controller.Controller;
+import database.DBSet;
+import gui.PasswordPane;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.block.Block;
@@ -48,10 +49,7 @@ import utils.Converter;
 import utils.DateTimeFormat;
 import utils.NumberAsString;
 import utils.ObserverMessage;
-import utils.Pair;
 import utils.TableMenuPopupUtil;
-import controller.Controller;
-import database.DBSet;
 
 @SuppressWarnings("serial")
 public class MessagesTableModel extends JTable implements Observer{
