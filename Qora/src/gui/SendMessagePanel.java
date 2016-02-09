@@ -715,7 +715,7 @@ public class SendMessagePanel extends JPanel
 				return;
 			}
 			
-			//CREATE PAYMENT
+			//CREATE TX MESSAGE
 			result = Controller.getInstance().sendMessage(Controller.getInstance().getPrivateKeyAccountByAddress(sender.getAddress()), recipient, key, amount, fee, messageBytes, isTextByte, encrypted);
 			
 			//CHECK VALIDATE MESSAGE

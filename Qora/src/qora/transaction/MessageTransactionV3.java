@@ -369,8 +369,9 @@ public class MessageTransactionV3 extends MessageTransaction {
 			return INVALID_REFERENCE;
 		}
 		
-		//CHECK IF AMOUNT IS POSITIVE
-		if(this.amount.compareTo(BigDecimal.ZERO) <= 0)
+		//CHECK IF AMOUNT IS POSITIVE. 
+		//NOW IN V3 MAY BE ZERO
+		if(this.amount.compareTo(BigDecimal.ZERO) < 0)
 		{
 			return NEGATIVE_AMOUNT;
 		}

@@ -18,12 +18,22 @@ import qora.crypto.Crypto;
 public class AgransTests {
 
 	@Test
+	public void testBigDecimal() {
+		
+		System.out.println( BigDecimal.ONE.compareTo(BigDecimal.ZERO));
+		System.out.println( BigDecimal.ZERO.compareTo(BigDecimal.ONE));
+		System.out.println( BigDecimal.ONE.compareTo(BigDecimal.ONE));
+		
+	}
+
+	@Test
 	public void testLong() {
 		assertEquals(0l, 0L);
 		assertEquals(1243124l, 1243124L);
 		// L differs more from unity
 	}
 
+	
 	@Test
 	public void stripTrailingZerosTest() {
 
