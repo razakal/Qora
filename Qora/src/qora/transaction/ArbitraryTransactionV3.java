@@ -318,6 +318,12 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		this.creator.setConfirmedBalance(this.creator.getConfirmedBalance(fork)
 				.subtract(this.fee), fork);
 
+		//CHECK IF SENDER HAS ENOUGH QORA BALANCE
+		if(this.creator.getConfirmedBalance(fork).compareTo(BigDecimal.ZERO) == -1)
+		{
+			return NO_BALANCE;
+		}	
+		
 		// CHECK PAYMENTS
 		for (Payment payment : this.payments) {
 			// CHECK IF RECIPIENT IS VALID ADDRESS
