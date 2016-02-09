@@ -314,7 +314,7 @@ public class SendMessagePanel extends JPanel
 		txtAmountGBC.gridx = 1;
 		txtAmountGBC.gridy = 6;
 		
-		txtAmount = new JTextField("1.00000000");
+		txtAmount = new JTextField("0.00000000");
 		txtAmount.setPreferredSize(new Dimension(130,22));
 		this.add(txtAmount, txtAmountGBC);
 		
@@ -725,9 +725,9 @@ public class SendMessagePanel extends JPanel
 				
 				//RESET FIELDS
 				
-				if(amount.compareTo(new BigDecimal(1.0)) == 1) //IF MORE THAN ONE
+				if(amount.compareTo(BigDecimal.ZERO) == 1) //IF MORE THAN ZERO
 				{
-					this.txtAmount.setText("1.00000000");
+					this.txtAmount.setText("0.00000000");
 				}
 				
 				if(this.txtTo.getText().startsWith("A"))
