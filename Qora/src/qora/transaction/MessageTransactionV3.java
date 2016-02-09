@@ -252,12 +252,10 @@ public class MessageTransactionV3 extends MessageTransaction {
 		return data;	
 	}
 
-
 	@Override
 	public int getDataLength() {
 		return TYPE_LENGTH + BASE_LENGTH + this.data.length;
 	}
-
 
 	@Override
 	public boolean isSignatureValid() {
@@ -324,7 +322,6 @@ public class MessageTransactionV3 extends MessageTransaction {
 	
 	}
 
-
 	@Override
 	public int isValid(DBSet db) {
 		//CHECK IF RELEASED
@@ -387,7 +384,6 @@ public class MessageTransactionV3 extends MessageTransaction {
 		return VALIDATE_OKE;
 	}
 
-
 	@Override
 	public void process(DBSet db) {
 		//UPDATE SENDER
@@ -409,7 +405,6 @@ public class MessageTransactionV3 extends MessageTransaction {
 			}
 		}
 	}
-
 
 	@Override
 	public void orphan(DBSet db) {
@@ -433,18 +428,15 @@ public class MessageTransactionV3 extends MessageTransaction {
 		}
 	}
 
-
 	@Override
 	public PublicKeyAccount getCreator() {
 		return this.creator;
 	}
 
-
 	@Override
 	public List<Account> getInvolvedAccounts() {
 		return Arrays.asList(this.creator, this.recipient);
 	}
-
 
 	@Override
 	public boolean isInvolved(Account account) {
@@ -557,6 +549,5 @@ public class MessageTransactionV3 extends MessageTransaction {
 		
 		return Crypto.getInstance().sign(creator, data);
 	}
-
 }
 

@@ -48,6 +48,8 @@ public abstract class MessageTransaction extends Transaction {
 	
 	public abstract boolean isEncrypted();
 
+	public abstract long getKey();
+
 	@Override
 	public abstract JSONObject toJson();
 
@@ -82,14 +84,10 @@ public abstract class MessageTransaction extends Transaction {
 	
 	public static Transaction Parse(byte[] data) throws Exception
 	{
-		int position = 0;
-		
 		// READ TIMESTAMP
-		byte[] timestampBytes = Arrays.copyOfRange(data, position, position
-				+ TIMESTAMP_LENGTH);
+		byte[] timestampBytes = Arrays.copyOfRange(data, 0, TIMESTAMP_LENGTH);
 		long timestamp = Longs.fromByteArray(timestampBytes);
-		position += TIMESTAMP_LENGTH;
-	
+		
 		if(timestamp < Transaction.POWFIX_RELEASE)
 		{
 			return MessageTransactionV1.Parse(data);			
@@ -100,22 +98,36 @@ public abstract class MessageTransaction extends Transaction {
 	
 	public static byte[] generateSignature(PrivateKeyAccount creator, Account recipient, BigDecimal amount, BigDecimal fee, byte[] arbitraryData, byte[] isText, byte[] encrypted, long timestamp) 
 	{
-		return MessageTransactionV1.generateSignature(creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
-	}
+		if(timestamp < Transaction.POWFIX_RELEASE) {
+			return MessageTransactionV1.generateSignature(creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
+		} else {
+			return MessageTransactionV3.generateSignature(creator, recipient, 0L, amount, fee, arbitraryData, isText, encrypted, timestamp);	
+		}	}
 	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Account recipient, BigDecimal amount, BigDecimal fee, byte[] arbitraryData,byte[] isText, byte[] encrypted, long timestamp) 
 	{
-		return MessageTransactionV1.generateSignature(db, creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
+		if(timestamp < Transaction.POWFIX_RELEASE) {
+			return MessageTransactionV1.generateSignature(db, creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
+		} else {
+			return MessageTransactionV3.generateSignature(db, creator, recipient, 0L, amount, fee, arbitraryData, isText, encrypted, timestamp);	
+		}
 	}
 
 	public static byte[] generateSignature(PrivateKeyAccount creator, Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] arbitraryData, byte[] isText, byte[] encrypted, long timestamp) 
 	{
-		return MessageTransactionV3.generateSignature(creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);
-	}
+		if(timestamp < Transaction.POWFIX_RELEASE) {
+			return MessageTransactionV1.generateSignature(creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
+		} else {
+			return MessageTransactionV3.generateSignature(creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);	
+		}	}
 	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] arbitraryData,byte[] isText, byte[] encrypted, long timestamp) 
 	{
-		return MessageTransactionV3.generateSignature(db, creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);
+		if(timestamp < Transaction.POWFIX_RELEASE) {
+			return MessageTransactionV1.generateSignature(db, creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
+		} else {
+			return MessageTransactionV3.generateSignature(db, creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);	
+		}
 	}
 }
 

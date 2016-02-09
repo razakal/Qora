@@ -56,6 +56,10 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 		this.service = service;
 		this.data = data;
+		if(payments == null)
+		{
+			payments = new ArrayList<Payment>();
+		}
 		this.payments = payments;
 		this.creator = creator;
 	}

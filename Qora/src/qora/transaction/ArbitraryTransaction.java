@@ -88,16 +88,11 @@ public abstract class ArbitraryTransaction extends Transaction {
 	
 	public static Transaction Parse(byte[] data) throws Exception
 	{
-		int position = 0;
-	
 		// READ TIMESTAMP
-		byte[] timestampBytes = Arrays.copyOfRange(data, position, position
-				+ TIMESTAMP_LENGTH);
+		byte[] timestampBytes = Arrays.copyOfRange(data, 0, TIMESTAMP_LENGTH);
 		long timestamp = Longs.fromByteArray(timestampBytes);
-		position += TIMESTAMP_LENGTH;
 	
-		if(timestamp < Transaction.POWFIX_RELEASE)
-		{
+		if(timestamp < Transaction.POWFIX_RELEASE) {
 			return ArbitraryTransactionV1.Parse(data);			
 		} else {
 			return ArbitraryTransactionV3.Parse(data);
@@ -106,13 +101,25 @@ public abstract class ArbitraryTransaction extends Transaction {
 	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator,
 			int service, byte[] arbitraryData, BigDecimal fee, long timestamp) {
-		return ArbitraryTransactionV1.generateSignature(db, creator, service, 
-			arbitraryData, fee, timestamp);
+
+		if(timestamp < Transaction.POWFIX_RELEASE) {
+			return ArbitraryTransactionV1.generateSignature(db, creator, service, 
+					arbitraryData, fee, timestamp);	
+		} else {
+			return ArbitraryTransactionV3.generateSignature(db, creator, null, service, 
+					arbitraryData, fee, timestamp);	
+		}
 	}
 	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, List<Payment> payments,
 			int service, byte[] arbitraryData, BigDecimal fee, long timestamp) {
-		return ArbitraryTransactionV3.generateSignature(db, creator, payments, 
-				service, arbitraryData, fee, timestamp);
+
+		if(timestamp < Transaction.POWFIX_RELEASE) {
+			return ArbitraryTransactionV1.generateSignature(db, creator, service, 
+					arbitraryData, fee, timestamp);	
+		} else {
+			return ArbitraryTransactionV3.generateSignature(db, creator, payments, service, 
+					arbitraryData, fee, timestamp);	
+		}
 	}
 }

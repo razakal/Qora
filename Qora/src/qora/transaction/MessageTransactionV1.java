@@ -498,6 +498,10 @@ public class MessageTransactionV1 extends MessageTransaction {
 		
 		return Crypto.getInstance().sign(creator, data);
 	}
-
+	
+	@Override
+	public long getKey() {
+		return 0L;
+	}
 }
 

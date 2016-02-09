@@ -606,7 +606,6 @@ public class ArbitraryTransactionV1 extends ArbitraryTransaction {
 
 	@Override
 	public List<Payment> getPayments() {
-		return null;
+		return new ArrayList<Payment>();
 	}
-
 }
