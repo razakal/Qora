@@ -75,6 +75,7 @@ public class Menu extends JMenuBar
         //CONSOLE
         JMenuItem consoleItem = new JMenuItem("Debug");
         consoleItem.getAccessibleContext().setAccessibleDescription("Debug information");
+        consoleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.ALT_MASK));
         consoleItem.addActionListener(new ActionListener()
         {
         	public void actionPerformed(ActionEvent e)
@@ -87,6 +88,7 @@ public class Menu extends JMenuBar
         //SETTINGS
         JMenuItem settingsItem = new JMenuItem("Settings");
         settingsItem.getAccessibleContext().setAccessibleDescription("Settings of program");
+        settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
         settingsItem.addActionListener(new ActionListener()
         {
         	public void actionPerformed(ActionEvent e)
@@ -99,6 +101,7 @@ public class Menu extends JMenuBar
         //WEB SERVER
         webServerItem = new JMenuItem("Decentralized Web server");
         webServerItem.getAccessibleContext().setAccessibleDescription("http://127.0.0.1:"+Settings.getInstance().getWebPort());
+        webServerItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.ALT_MASK));
         webServerItem.addActionListener(new ActionListener()
         {
         	public void actionPerformed(ActionEvent e)
@@ -117,6 +120,7 @@ public class Menu extends JMenuBar
         //WEB SERVER
         blockExplorerItem = new JMenuItem("Built-in BlockExplorer");
         blockExplorerItem.getAccessibleContext().setAccessibleDescription("http://127.0.0.1:"+Settings.getInstance().getWebPort()+"/index/blockexplorer.html");
+        blockExplorerItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.ALT_MASK));
         blockExplorerItem.addActionListener(new ActionListener()
         {
         	public void actionPerformed(ActionEvent e)
@@ -135,6 +139,7 @@ public class Menu extends JMenuBar
         //ABOUT
         JMenuItem aboutItem = new JMenuItem("About");
         aboutItem.getAccessibleContext().setAccessibleDescription("Information about the application");
+        aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
         aboutItem.addActionListener(new ActionListener()
         {
         	public void actionPerformed(ActionEvent e)
