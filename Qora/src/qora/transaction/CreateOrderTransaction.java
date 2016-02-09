@@ -274,6 +274,15 @@ public class CreateOrderTransaction extends Transaction
 			return NO_BALANCE;
 		}
 		
+		//ONLY AFTER POWFIX_RELEASE TO SAVE THE OLD NETWORK
+		if(this.timestamp >= Transaction.POWFIX_RELEASE) {
+			//CHECK IF SENDER HAS ENOUGH QORA BALANCE
+			if(this.creator.getConfirmedBalance(fork).compareTo(BigDecimal.ZERO) == -1)
+			{
+				return NO_BALANCE;
+			}	
+		}
+		
 		//CHECK IF HAVE IS NOT DIVISBLE
 		if(!this.order.getHaveAsset(db).isDivisible())
 		{
