@@ -250,6 +250,15 @@ public class MultiPaymentTransaction extends Transaction {
 		DBSet fork = db.fork();
 		this.sender.setConfirmedBalance(this.sender.getConfirmedBalance(fork).subtract(this.fee), fork);
 		
+		//ONLY AFTER POWFIX_RELEASE TO SAVE THE OLD NETWORK
+		if(this.timestamp >= Transaction.POWFIX_RELEASE) {
+			//CHECK IF SENDER HAS ENOUGH QORA BALANCE
+			if(this.sender.getConfirmedBalance(fork).compareTo(BigDecimal.ZERO) == -1)
+			{
+				return NO_BALANCE;
+			}	
+		}
+		
 		//CHECK PAYMENTS
 		for(Payment payment: this.payments)
 		{	
