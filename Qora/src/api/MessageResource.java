@@ -59,7 +59,7 @@ public class MessageResource {
 			if (assetKeyString != null) {
 				assetKey = Long.valueOf(assetKeyString);
 			}
-
+			
 			if(assetKey != 0l && NTP.getTime() < Transaction.POWFIX_RELEASE)
 			{	
 				throw ApiErrorFactory.getInstance().createError(
@@ -94,8 +94,12 @@ public class MessageResource {
 			// PARSE AMOUNT
 			BigDecimal bdAmount;
 			try {
-				bdAmount = new BigDecimal(amount);
-				bdAmount = bdAmount.setScale(8);
+				if(amount != null) {	
+					bdAmount = new BigDecimal(amount);
+					bdAmount = bdAmount.setScale(8);
+				} else {
+					bdAmount = BigDecimal.ZERO.setScale(8);
+				}
 			} catch (Exception e) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_INVALID_AMOUNT);
