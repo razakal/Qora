@@ -77,67 +77,86 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridwidth = 3;
 		detailGBC.gridx = 1;		
 		
+		
+		int componentLevel = 0;
 		//LABEL TYPE
-		labelGBC.gridy = 0;
+		labelGBC.gridy = componentLevel;
 		
 		JLabel typeLabel = new JLabel("Type:");
 		this.add(typeLabel, labelGBC);
-						
+		
 		//TYPE
-		detailGBC.gridy = 0;
+		detailGBC.gridy = componentLevel;
 		JLabel type = new JLabel("Message Transaction");
 		this.add(type, detailGBC);
 		
 		//LABEL SIGNATURE
-		labelGBC.gridy = 1;
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
 		JLabel signatureLabel = new JLabel("Signature:");
 		this.add(signatureLabel, labelGBC);
 				
 		//SIGNATURE
-		detailGBC.gridy = 1;
+		detailGBC.gridy = componentLevel;
 		JTextField signature = new JTextField(Base58.encode(messageTransaction.getSignature()));
 		signature.setEditable(false);
 		this.add(signature, detailGBC);
 		
 		//LABEL REFERENCE
-		labelGBC.gridy = 2;
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
 		JLabel referenceLabel = new JLabel("Reference:");
 		this.add(referenceLabel, labelGBC);
 						
 		//REFERENCE
-		detailGBC.gridy = 2;
+		detailGBC.gridy = componentLevel;
 		JTextField reference = new JTextField(Base58.encode(messageTransaction.getReference()));
 		reference.setEditable(false);
 		this.add(reference, detailGBC);
 		
 		//LABEL TIMESTAMP
-		labelGBC.gridy = 3;
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
 		JLabel timestampLabel = new JLabel("Timestamp:");
 		this.add(timestampLabel, labelGBC);
 						
 		//TIMESTAMP
-		detailGBC.gridy = 3;
+		detailGBC.gridy = componentLevel;
 		JLabel timestamp = new JLabel(DateTimeFormat.timestamptoString(messageTransaction.getTimestamp()));
 		this.add(timestamp, detailGBC);
 		
 		//LABEL SENDER
-		labelGBC.gridy = 4;
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
 		JLabel senderLabel = new JLabel("Creator:");
 		this.add(senderLabel, labelGBC);
 		
 		//SENDER
-		detailGBC.gridy = 4;
+		detailGBC.gridy = componentLevel;
 		JTextField sender = new JTextField(messageTransaction.getCreator().getAddress());
 		sender.setEditable(false);
 		this.add(sender, detailGBC);
 		
+		//LABEL RECIPIENT
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
+		JLabel recipientLabel = new JLabel("Recipient:");
+		this.add(recipientLabel, labelGBC);
+		
+		//RECIPIENT
+		detailGBC.gridy = componentLevel;
+		JTextField recipient = new JTextField(messageTransaction.getRecipient().getAddress());
+		recipient.setEditable(false);
+		this.add(recipient, detailGBC);		
+		
 		//LABEL SERVICE
-		labelGBC.gridy = 5;
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
 		JLabel serviceLabel = new JLabel("Message:");
 		this.add(serviceLabel, labelGBC);
 		
 		//SERVICE
-		detailGBC.gridy = 5;
+		detailGBC.gridy = componentLevel;
 		detailGBC.gridwidth = 2;
 		service = new JTextField( ( messageTransaction.isText() ) ? new String(messageTransaction.getData(), Charset.forName("UTF-8")) : Converter.toHex(messageTransaction.getData()));
 		service.setEditable(false);
@@ -145,14 +164,13 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridwidth = 3;
 		//ENCRYPTED CHECKBOX
 		
-		//TEXTFIELD GBC
+		//ENCRYPTED
 		GridBagConstraints chcGBC = new GridBagConstraints();
-		chcGBC.insets = new Insets(5,5,5,5);
 		chcGBC.fill = GridBagConstraints.HORIZONTAL;  
 		chcGBC.anchor = GridBagConstraints.NORTHWEST;
-
-		chcGBC.gridy = 5;
+		chcGBC.gridy = componentLevel;
 		chcGBC.gridx = 3;
+		chcGBC.gridwidth = 1;
         final JCheckBox encrypted = new JCheckBox("Encrypted");
         
         encrypted.setSelected(messageTransaction.isEncrypted());
@@ -226,24 +244,49 @@ public class MessageTransactionDetailsFrame extends JFrame
         	}
         });	  
         
+		//LABEL AMOUNT
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
+		JLabel amountLabel = new JLabel("Amount:");
+		this.add(amountLabel, labelGBC);
+				
+		//AMOUNT
+		detailGBC.gridy = componentLevel;
+		detailGBC.gridwidth = 2;
+		JTextField amount = new JTextField(messageTransaction.getAmount().toPlainString());
+		amount.setEditable(false);
+		this.add(amount, detailGBC);	
+		
+		//ASSET
+		detailGBC.gridy = componentLevel;
+		detailGBC.gridx = 3;
+		detailGBC.gridwidth = 1;
+		JTextField asset = new JTextField(Controller.getInstance().getAsset( messageTransaction.getKey()).toString());
+		asset.setEditable(false);
+		this.add(asset, detailGBC);	
+		detailGBC.gridx = 1;
+		detailGBC.gridwidth = 3;
+		
 		//LABEL FEE
-		labelGBC.gridy = 6;
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
 		JLabel feeLabel = new JLabel("Fee:");
 		this.add(feeLabel, labelGBC);
 						
 		//FEE
-		detailGBC.gridy = 6;
+		detailGBC.gridy = componentLevel;
 		JTextField fee = new JTextField(messageTransaction.getFee().toPlainString());
 		fee.setEditable(false);
 		this.add(fee, detailGBC);	
 		
 		//LABEL CONFIRMATIONS
-		labelGBC.gridy = 7;
+		componentLevel ++;
+		labelGBC.gridy = componentLevel;
 		JLabel confirmationsLabel = new JLabel("Confirmations:");
 		this.add(confirmationsLabel, labelGBC);
 								
 		//CONFIRMATIONS
-		detailGBC.gridy = 7;
+		detailGBC.gridy = componentLevel;
 		JLabel confirmations = new JLabel(String.valueOf(messageTransaction.getConfirmations()));
 		this.add(confirmations, detailGBC);	
 		           

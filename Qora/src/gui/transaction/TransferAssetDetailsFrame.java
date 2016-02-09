@@ -128,7 +128,7 @@ public class TransferAssetDetailsFrame extends JFrame
 		JLabel assetLabel = new JLabel("Asset:");
 		this.add(assetLabel, labelGBC);
 		
-		//RECIPIENT
+		//ASSET
 		detailGBC.gridy = 6;
 		JTextField asset = new JTextField(String.valueOf(assetTransfer.getKey()));
 		asset.setEditable(false);
