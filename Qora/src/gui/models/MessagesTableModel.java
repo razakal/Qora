@@ -768,7 +768,7 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
 					+ "<font color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
 					+ DateTimeFormat.timestamptoString(this.timestamp) + "\n<br>\n"
-					+ "<font"+fontsmall+">Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " Fee: "
+					+ "<font"+fontsmall+">Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . Fee: "
 					+ NumberAsString.getInstance().numberAsString(fee)+"</font>"
 					+ "\n</font></td></tr></table>"
 					+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
@@ -827,7 +827,7 @@ public class MessagesTableModel extends JTable implements Observer{
 			return 	  "Date: " + DateTimeFormat.timestamptoString(this.timestamp) + "\n"
 					+ "Sender: " + this.sender + "\n"
 					+ "Recipient: " + this.recipient + "\n"
-					+ "Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " Fee: " + NumberAsString.getInstance().numberAsString(this.fee) + "\n"
+					+ "Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . Fee: " + NumberAsString.getInstance().numberAsString(this.fee) + "\n"
 					+ "Type: " + imginout + ". " + imgLock + "\n"
 					+ "Confirmations: " + strConfirmations + "\n"
 					+ "[MESSAGE START]\n"
