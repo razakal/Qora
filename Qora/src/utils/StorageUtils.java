@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -263,6 +264,7 @@ public class StorageUtils {
 								DiffHelper.patch(oldValueOpt, (String) patchJsonKey.get(key)));
 					} catch (Throwable e) {
 						Logger.getGlobal().info("Invalid patch!");
+						Logger.getGlobal().log(Level.FINE, "Invalid patch!", e);
 					}
 				}
 			}
