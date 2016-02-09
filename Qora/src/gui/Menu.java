@@ -54,9 +54,10 @@ public class Menu extends JMenuBar
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-
+		
         lockItem = new JMenuItem("lock");
         lockItem.getAccessibleContext().setAccessibleDescription("Lock/Unlock Wallet");
+        lockItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
         
         lockItem.addActionListener(new ActionListener()
         {
