@@ -5,17 +5,25 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableRowSorter;
 
+import gui.Gui;
+import gui.models.PaymentsTableModel;
 import qora.crypto.Base58;
 import qora.transaction.ArbitraryTransaction;
+import utils.BigDecimalStringComparator;
 import utils.DateTimeFormat;
 
 @SuppressWarnings("serial")
@@ -59,88 +67,141 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		detailGBC.gridwidth = 2;
 		detailGBC.gridx = 1;		
 		
+		int componentLevel = 0;
+
 		//LABEL TYPE
-		labelGBC.gridy = 0;
+		labelGBC.gridy = componentLevel;
 		JLabel typeLabel = new JLabel("Type:");
 		this.add(typeLabel, labelGBC);
 						
 		//TYPE
-		detailGBC.gridy = 0;
+		detailGBC.gridy = componentLevel;
 		JLabel type = new JLabel("Arbitrary Transaction");
 		this.add(type, detailGBC);
 		
+		componentLevel ++;
+
 		//LABEL SIGNATURE
-		labelGBC.gridy = 1;
+		labelGBC.gridy = componentLevel;
 		JLabel signatureLabel = new JLabel("Signature:");
 		this.add(signatureLabel, labelGBC);
 				
 		//SIGNATURE
-		detailGBC.gridy = 1;
+		detailGBC.gridy = componentLevel;
 		JTextField signature = new JTextField(Base58.encode(arbitraryTransaction.getSignature()));
 		signature.setEditable(false);
 		this.add(signature, detailGBC);
 		
+		componentLevel ++;
+
 		//LABEL REFERENCE
-		labelGBC.gridy = 2;
+		labelGBC.gridy = componentLevel;
 		JLabel referenceLabel = new JLabel("Reference:");
 		this.add(referenceLabel, labelGBC);
 						
 		//REFERENCE
-		detailGBC.gridy = 2;
+		detailGBC.gridy = componentLevel;
 		JTextField reference = new JTextField(Base58.encode(arbitraryTransaction.getReference()));
 		reference.setEditable(false);
 		this.add(reference, detailGBC);
 		
+		componentLevel ++;
+
 		//LABEL TIMESTAMP
-		labelGBC.gridy = 3;
+		labelGBC.gridy = componentLevel;
 		JLabel timestampLabel = new JLabel("Timestamp:");
 		this.add(timestampLabel, labelGBC);
 						
 		//TIMESTAMP
-		detailGBC.gridy = 3;
+		detailGBC.gridy = componentLevel;
 		JLabel timestamp = new JLabel(DateTimeFormat.timestamptoString(arbitraryTransaction.getTimestamp()));
 		this.add(timestamp, detailGBC);
 		
+		componentLevel ++;
+		
 		//LABEL SENDER
-		labelGBC.gridy = 4;
+		labelGBC.gridy = componentLevel;
 		JLabel senderLabel = new JLabel("Creator:");
 		this.add(senderLabel, labelGBC);
 		
 		//SENDER
-		detailGBC.gridy = 4;
+		detailGBC.gridy = componentLevel;
 		JTextField sender = new JTextField(arbitraryTransaction.getCreator().getAddress());
 		sender.setEditable(false);
 		this.add(sender, detailGBC);
 		
+		componentLevel ++;
+		
 		//LABEL SERVICE
-		labelGBC.gridy = 5;
+		labelGBC.gridy = componentLevel;
 		JLabel serviceLabel = new JLabel("Service ID:");
 		this.add(serviceLabel, labelGBC);
 		
 		//SERVICE
-		detailGBC.gridy = 5;
+		detailGBC.gridy = componentLevel;
 		JTextField service = new JTextField(String.valueOf(arbitraryTransaction.getService()));
 		service.setEditable(false);
 		this.add(service, detailGBC);			
 		
+		componentLevel ++;
+
+		//LABEL DATA
+		labelGBC.gridy = componentLevel;
+		JLabel dataLabel = new JLabel("Data:");
+		this.add(dataLabel, labelGBC);
+				
+		//DATA
+		detailGBC.gridy = componentLevel;
+		JTextArea txtAreaData = new JTextArea(Base58.encode(arbitraryTransaction.getData()));
+		txtAreaData.setToolTipText(new String(arbitraryTransaction.getData(), Charset.forName("UTF-8")));
+		txtAreaData.setRows(4);
+		txtAreaData.setBorder(sender.getBorder());
+		txtAreaData.setEditable(false);
+		this.add(txtAreaData, detailGBC);
+		
+		if(arbitraryTransaction.getPayments().size() > 0)
+		{
+			componentLevel ++;
+			
+			//LABEL PAYMENTS
+			labelGBC.gridy = componentLevel;
+			JLabel paymentsLabel = new JLabel("Payments:");
+			this.add(paymentsLabel, labelGBC);
+			
+			//PAYMENTS
+			detailGBC.gridy = componentLevel;
+			PaymentsTableModel paymentsTableModel = new PaymentsTableModel(arbitraryTransaction.getPayments());
+			JTable table = Gui.createSortableTable(paymentsTableModel, 1);
+			
+			@SuppressWarnings("unchecked")
+			TableRowSorter<PaymentsTableModel> sorter =  (TableRowSorter<PaymentsTableModel>) table.getRowSorter();
+			sorter.setComparator(PaymentsTableModel.COLUMN_AMOUNT, new BigDecimalStringComparator());
+			
+			this.add(new JScrollPane(table), detailGBC);
+		}
+		
+		componentLevel ++;
+		
 		//LABEL FEE
-		labelGBC.gridy = 6;
+		labelGBC.gridy = componentLevel;
 		JLabel feeLabel = new JLabel("Fee:");
 		this.add(feeLabel, labelGBC);
 						
 		//FEE
-		detailGBC.gridy = 6;
+		detailGBC.gridy = componentLevel;
 		JTextField fee = new JTextField(arbitraryTransaction.getFee().toPlainString());
 		fee.setEditable(false);
 		this.add(fee, detailGBC);	
 		
+		componentLevel ++;
+
 		//LABEL CONFIRMATIONS
-		labelGBC.gridy = 7;
+		labelGBC.gridy = componentLevel;
 		JLabel confirmationsLabel = new JLabel("Confirmations:");
 		this.add(confirmationsLabel, labelGBC);
 								
 		//CONFIRMATIONS
-		detailGBC.gridy = 7;
+		detailGBC.gridy = componentLevel;
 		JLabel confirmations = new JLabel(String.valueOf(arbitraryTransaction.getConfirmations()));
 		this.add(confirmations, detailGBC);	
 		           
