@@ -171,10 +171,10 @@ public class Menu extends JMenuBar
 			@Override
 			public void menuSelected(MenuEvent arg0) {
         		if(Controller.getInstance().isWalletUnlocked()) {
-        			lockItem.setText("To Lock Wallet");
+        			lockItem.setText("Lock Wallet");
         			lockItem.setIcon(lockedIcon);
         		} else {
-        			lockItem.setText("To Unlock Wallet");
+        			lockItem.setText("Unlock Wallet");
         			lockItem.setIcon(unlockedIcon);
         		}
 			}
