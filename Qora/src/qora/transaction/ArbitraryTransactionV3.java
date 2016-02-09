@@ -56,11 +56,11 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 
 		this.service = service;
 		this.data = data;
+		this.payments = payments;
 		if(payments == null)
 		{
-			payments = new ArrayList<Payment>();
+			this.payments = new ArrayList<>();
 		}
-		this.payments = payments;
 		this.creator = creator;
 	}
 
@@ -367,18 +367,22 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 	@Override
 	public void process(DBSet db) {
 
-		// NAME STORAGE UPDATE
-		if (service == 10) {
-			StorageUtils.processUpdate(getData(), signature, creator,
-					DBSet.getInstance());
-			StorageUtils.processUpdate(getData(), signature, creator, db);
-			// BLOGPOST?
-		} else if (service == 777) {
-			addToBlogMapOnDemand(DBSet.getInstance());
-			addToBlogMapOnDemand(db);
-		} else if (service == BlogUtils.COMMENT_SERVICE_ID) {
-			addToCommentMapOnDemand(DBSet.getInstance());
-			addToCommentMapOnDemand(db);
+		try {
+			// NAME STORAGE UPDATE
+			if (service == 10) {
+				StorageUtils.processUpdate(getData(), signature, creator,
+						DBSet.getInstance());
+				StorageUtils.processUpdate(getData(), signature, creator, db);
+				// BLOGPOST?
+			} else if (service == 777) {
+				addToBlogMapOnDemand(DBSet.getInstance());
+				addToBlogMapOnDemand(db);
+			} else if (service == BlogUtils.COMMENT_SERVICE_ID) {
+				addToCommentMapOnDemand(DBSet.getInstance());
+				addToCommentMapOnDemand(db);
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 
 		// UPDATE CREATOR
