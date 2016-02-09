@@ -82,27 +82,34 @@ public class MessagesTableModel extends JTable implements Observer{
 		topRenderer.setVerticalAlignment(DefaultTableCellRenderer.TOP);
 		this.getColumn("").setCellRenderer( topRenderer );
 		
-		List<Pair<Account, Transaction>> transaction = Controller.getInstance().getLastTransactions(30000);
-		
-		for (Pair<Account, Transaction> pair : transaction) 
-		{
-			if(pair.getB().getType() == Transaction.MESSAGE_TRANSACTION)
+		List<Transaction> transactions = new ArrayList<Transaction>();;
+
+		for (Transaction transaction : Controller.getInstance().getUnconfirmedTransactions()) {
+			if(transaction.getType() == Transaction.MESSAGE_TRANSACTION)
 			{
-				boolean is = false;
-				for (MessageBuf message : messageBufs) {
-					if(Arrays.equals(pair.getB().getSignature(), message.getSignature()))
-					{
-						is = true;
-						break;
-					}
-				}
-				if(!is)
-				{
-					addMessage(messageBufs.size(),(MessageTransaction)pair.getB());
-				}
+				transactions.add(transaction);
 			}
 		}
 		
+		for (Account account : Controller.getInstance().getAccounts()) {
+			transactions.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(account.getAddress(), Transaction.MESSAGE_TRANSACTION, 0));	
+		}
+		
+		for (Transaction messagetx : transactions) {
+			boolean is = false;
+			for (MessageBuf message : messageBufs) {
+				if(Arrays.equals(messagetx.getSignature(), message.getSignature()))
+				{
+					is = true;
+					break;
+				}
+			}
+			if(!is)
+			{
+				addMessage(messageBufs.size(),(MessageTransaction)messagetx);
+			}
+		}
+				
 		Collections.sort(messageBufs, comparator);
 		
 		messagesModel.setRowCount(messageBufs.size());
