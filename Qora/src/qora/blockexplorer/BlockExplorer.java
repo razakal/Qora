@@ -43,7 +43,7 @@ import qora.transaction.CreateOrderTransaction;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.DeployATTransaction;
 import qora.transaction.IssueAssetTransaction;
-import qora.transaction.MessageTransactionV3;
+import qora.transaction.MessageTransaction;
 import qora.transaction.MultiPaymentTransaction;
 import qora.transaction.RegisterNameTransaction;
 import qora.transaction.SellNameTransaction;
@@ -1514,24 +1514,67 @@ public class BlockExplorer
 				transactionDataJSON.put("assetName", assetNamesByKey.getNameByKey(((TransferAssetTransaction)unit).getKey()));
 			}
 
-			if(transaction.getType() == Transaction.MESSAGE_TRANSACTION && transaction.getTimestamp()>= Transaction.POWFIX_RELEASE) 
+			if(transaction.getType() == Transaction.MESSAGE_TRANSACTION) 
 			{
-				transactionDataJSON.put("assetName", assetNamesByKey.getNameByKey(((MessageTransactionV3)unit).getKey()));
+				transactionDataJSON.put("assetName", assetNamesByKey.getNameByKey(((MessageTransaction)unit).getKey()));
 			}
 			
 			if(transaction.getType() == Transaction.MULTI_PAYMENT_TRANSACTION) 
 			{
-				BigDecimal totalAmount = BigDecimal.ZERO.setScale(8); 
+				Map<Long, Pair<String, BigDecimal>> totalAmountOfAssets = new TreeMap<Long, Pair<String, BigDecimal>>();;
+
 				for (Payment payment : ((MultiPaymentTransaction)transaction).getPayments()) {
-					totalAmount = totalAmount.add(payment.getAmount());
+					BigDecimal amount = BigDecimal.ZERO.setScale(8); 
+					if(totalAmountOfAssets.containsKey(payment.getAsset())) {
+						amount = totalAmountOfAssets.get(payment.getAsset()).getB();
+					}
+					amount = amount.add(payment.getAmount());
+					totalAmountOfAssets.put(payment.getAsset(), new Pair<String, BigDecimal>(assetNamesByKey.getNameByKey(payment.getAsset()), amount) );
 				}
-				transactionDataJSON.put("totalAmount", totalAmount.toPlainString());
+				
+				Map amountOfAssetsJSON = new LinkedHashMap();
 
-				long assetKey = ((MultiPaymentTransaction)transaction).getPayments().get(0).getAsset();
-				transactionDataJSON.put("asset", assetKey);
+				for(Map.Entry<Long, Pair<String, BigDecimal>> assetInfo : totalAmountOfAssets.entrySet())
+				{	
+					Map assetJSON = new LinkedHashMap();
 
-				transactionDataJSON.put("assetName", assetNamesByKey.getNameByKey(assetKey));
+					assetJSON.put("assetName", assetInfo.getValue().getA());
+					assetJSON.put("amount", assetInfo.getValue().getB().toPlainString());
+					
+					amountOfAssetsJSON.put(assetInfo.getKey(), assetJSON);
+				}
+
+				transactionDataJSON.put("assetsAmounts", amountOfAssetsJSON);
 			}
+			
+			if(transaction.getType() == Transaction.ARBITRARY_TRANSACTION) 
+			{
+				Map<Long, Pair<String, BigDecimal>> totalAmountOfAssets = new TreeMap<Long, Pair<String, BigDecimal>>();;
+
+				for (Payment payment : ((ArbitraryTransaction)transaction).getPayments()) {
+					BigDecimal amount = BigDecimal.ZERO.setScale(8); 
+					if(totalAmountOfAssets.containsKey(payment.getAsset())) {
+						amount = totalAmountOfAssets.get(payment.getAsset()).getB();
+					}
+					amount = amount.add(payment.getAmount());
+					totalAmountOfAssets.put(payment.getAsset(), new Pair<String, BigDecimal>(assetNamesByKey.getNameByKey(payment.getAsset()), amount) );
+				}
+				
+				Map amountOfAssetsJSON = new LinkedHashMap();
+
+				for(Map.Entry<Long, Pair<String, BigDecimal>> assetInfo : totalAmountOfAssets.entrySet())
+				{	
+					Map assetJSON = new LinkedHashMap();
+
+					assetJSON.put("assetName", assetInfo.getValue().getA());
+					assetJSON.put("amount", assetInfo.getValue().getB().toPlainString());
+					
+					amountOfAssetsJSON.put(assetInfo.getKey(), assetJSON);
+				}
+
+				transactionDataJSON.put("assetsAmounts", amountOfAssetsJSON);
+			}
+
 
 			if(transaction.getType() == Transaction.VOTE_ON_POLL_TRANSACTION) 
 			{
@@ -1799,7 +1842,7 @@ public class BlockExplorer
 				all.add(transaction);
 			}
 		}
-
+		
 		Map<Tuple2<BigInteger, BigInteger>, Trade> trades = new TreeMap<Tuple2<BigInteger, BigInteger>, Trade>();
 		List<Transaction> orders = DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, 13, 0);
 		for (Transaction transaction : orders)
@@ -1907,7 +1950,7 @@ public class BlockExplorer
 					MultiPaymentTransaction multiPaymentTransaction = (MultiPaymentTransaction)unit;
 					if(multiPaymentTransaction.getSender().getAddress().equals(address))
 					{
-						balances[i].addTransactionBalance(0l, 
+						balances[i].addTransactionBalance(0L, 
 								BigDecimal.ZERO.setScale(8).subtract(multiPaymentTransaction.getFee()));
 					}
 
@@ -1927,6 +1970,31 @@ public class BlockExplorer
 					}
 				}
 
+				else if(unit instanceof ArbitraryTransaction)
+				{
+					ArbitraryTransaction arbitraryTransaction = (ArbitraryTransaction)unit;
+					if(arbitraryTransaction.getCreator().getAddress().equals(address))
+					{
+						balances[i].addTransactionBalance(0L, 
+								BigDecimal.ZERO.setScale(8).subtract(arbitraryTransaction.getFee()));
+					}
+
+					for(Payment payment: arbitraryTransaction.getPayments())
+					{
+						if(arbitraryTransaction.getCreator().getAddress().equals(address))
+						{
+							balances[i].addTransactionBalance(payment.getAsset(), 
+									BigDecimal.ZERO.setScale(8).subtract(payment.getAmount()));
+						}
+
+						if(payment.getRecipient().getAddress().equals(address))
+						{
+							balances[i].addTransactionBalance(payment.getAsset(), 
+									payment.getAmount());
+						}		
+					}
+				}
+				
 				else if(unit instanceof IssueAssetTransaction)
 				{
 					Asset asset = DBSet.getInstance().getAssetMap().get(DBSet.getInstance().getIssueAssetMap().get(((IssueAssetTransaction)unit).getSignature()));

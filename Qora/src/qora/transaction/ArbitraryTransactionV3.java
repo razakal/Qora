@@ -174,8 +174,11 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 		for (Payment payment : this.payments) {
 			payments.add(payment.toJson());
 		}
-		transaction.put("payments", payments);
-
+		
+		if(payments.size()>0) {
+			transaction.put("payments", payments);
+		}
+		
 		return transaction;
 	}
 
