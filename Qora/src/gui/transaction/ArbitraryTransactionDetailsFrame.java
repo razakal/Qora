@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableRowSorter;
 
@@ -145,19 +146,45 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		
 		componentLevel ++;
 
-		//LABEL DATA
+		//LABEL DATA AS BASE58
 		labelGBC.gridy = componentLevel;
-		JLabel dataLabel = new JLabel("Data:");
+		JLabel dataLabel = new JLabel("Data as Base58:");
 		this.add(dataLabel, labelGBC);
 				
-		//DATA
+		//DATA AS BASE58
 		detailGBC.gridy = componentLevel;
 		JTextArea txtAreaData = new JTextArea(Base58.encode(arbitraryTransaction.getData()));
-		txtAreaData.setToolTipText(new String(arbitraryTransaction.getData(), Charset.forName("UTF-8")));
-		txtAreaData.setRows(4);
+		txtAreaData.setRows(6);
+		txtAreaData.setColumns(63);
 		txtAreaData.setBorder(sender.getBorder());
 		txtAreaData.setEditable(false);
-		this.add(txtAreaData, detailGBC);
+		txtAreaData.setLineWrap(true);
+		
+		JScrollPane AreaDataScroll = new JScrollPane(txtAreaData);
+		AreaDataScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		AreaDataScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.add(AreaDataScroll, detailGBC);
+		
+		componentLevel ++;
+
+		//LABEL DATA AS TEXT
+		labelGBC.gridy = componentLevel;
+		JLabel dataTextLabel = new JLabel("Data as Text:");
+		this.add(dataTextLabel, labelGBC);
+		
+		//DATA AS TEXT
+		detailGBC.gridy = componentLevel;
+		JTextArea txtAreaDataText = new JTextArea(new String(arbitraryTransaction.getData(), Charset.forName("UTF-8")));
+		txtAreaDataText.setRows(6);
+		txtAreaData.setColumns(63);
+		txtAreaDataText.setBorder(sender.getBorder());
+		txtAreaDataText.setEditable(false);
+		txtAreaDataText.setLineWrap(true);
+
+		JScrollPane AreaDataTextScroll = new JScrollPane(txtAreaDataText);
+		AreaDataTextScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		AreaDataTextScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      	this.add(AreaDataTextScroll, detailGBC);
 		
 		if(arbitraryTransaction.getPayments().size() > 0)
 		{
