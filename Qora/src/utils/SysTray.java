@@ -1,18 +1,5 @@
 package utils;
 
-import gui.ConsolePanel;
-import gui.Gui;
-import gui.PasswordPane;
-import gui.QoraRowSorter;
-import gui.SendMessagePanel;
-import gui.SendMoneyPanel;
-import gui.assets.AssetsPanel;
-import gui.models.WalletTransactionsTableModel;
-import gui.naming.NamingServicePanel;
-import gui.settings.SettingsFrame;
-import gui.transaction.TransactionDetailsFactory;
-import gui.voting.VotingPanel;
-
 import java.awt.AWTException;
 import java.awt.HeadlessException;
 import java.awt.Image;
@@ -37,10 +24,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import qora.transaction.Transaction;
-import settings.Settings;
 import controller.Controller;
 import database.wallet.TransactionMap;
+import gui.ClosingDialog;
+import gui.ConsolePanel;
+import gui.Gui;
+import gui.PasswordPane;
+import gui.QoraRowSorter;
+import gui.SendMessagePanel;
+import gui.SendMoneyPanel;
+import gui.assets.AssetsPanel;
+import gui.models.WalletTransactionsTableModel;
+import gui.naming.NamingServicePanel;
+import gui.settings.SettingsFrame;
+import gui.transaction.TransactionDetailsFactory;
+import gui.voting.VotingPanel;
+import qora.transaction.Transaction;
+import settings.Settings;
 
 public class SysTray {
 
@@ -306,8 +306,7 @@ public class SysTray {
 		MenuItem exit = new MenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				 Controller.getInstance().stopAll();
-	              System.exit(0);
+				new ClosingDialog();
 			}
 		});
 		menu.add(exit);
