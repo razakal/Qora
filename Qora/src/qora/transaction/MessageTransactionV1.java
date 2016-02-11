@@ -164,6 +164,7 @@ public class MessageTransactionV1 extends MessageTransaction {
 		transaction.put("creator", this.creator.getAddress());
 		transaction.put("recipient", this.recipient.getAddress());
 		transaction.put("amount", this.amount.toPlainString());
+		transaction.put("asset", this.getKey());
 		if ( this.isText() && !this.isEncrypted() )
 		{
 			transaction.put("data", new String(this.data, Charset.forName("UTF-8")));
