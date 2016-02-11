@@ -755,12 +755,15 @@ public class MessagesTableModel extends JTable implements Observer{
 			decrMessage = decrMessage.replace( ">" , "&gt;" );
 			decrMessage = decrMessage.replace( "\n" , "<br>" );
 			
-			String fontsmall = "";
+			String fontSize = "";
 			
 			if(this.amount.compareTo(new BigDecimal(100000)) >= 0)
 			{
-				fontsmall = " size='2'";
+				fontSize = " size='2'";
+			} else {
+				fontSize = " size='2.5'";
 			}
+			
 
 			String strAsset = Controller.getInstance().getAsset(this.getAssetKey()).getShort();
 		
@@ -771,14 +774,14 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "\n<br>\nTo:"
 					+ this.recipient + "\n</font></td>\n"
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
-					+ "<font color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
-					+ DateTimeFormat.timestamptoString(this.timestamp) + "\n<br>\n"
-					+ "<font"+fontsmall+">Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . Fee: "
+					+ "<font size='2.5' color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
+					+ DateTimeFormat.timestamptoString(this.timestamp) + "\n<br></font>\n"
+					+ "<font" + fontSize + " color='" + colorTextHeader + "'>Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . Fee: "
 					+ NumberAsString.getInstance().numberAsString(fee)+"</font>"
-					+ "\n</font></td></tr></table>"
+					+ "</td></tr></table>"
 					+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
 					+ "<td width='" + width + "'>\n"
-					+ "<font color='" + colorTextMessage + "'>\n"
+					+ "<font size='2.5' color='" + colorTextMessage + "'>\n"
 					+ decrMessage
 					+ "\n</font>"
 					+ "<td width='30'>"+ imgLock
