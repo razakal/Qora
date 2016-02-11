@@ -1075,11 +1075,9 @@ public class Controller extends Observable {
 
 		if (!GraphicsEnvironment.isHeadless() &&  (Settings.getInstance().isGuiEnabled() || Settings.getInstance().isSysTrayEnabled()) ) {
 			Gui gui = Gui.getInstance();
-			
 			SysTray.getInstance().sendMessage("INCOMING API CALL",
 					"An API call needs authorization!", MessageType.WARNING);
 			Object[] options = { "Yes", "No" };
-
 
 			 StringBuilder sb = new StringBuilder("Permission Request: ");
 	            sb.append("Do you want to authorize the following API call?\n\n"
@@ -1099,7 +1097,8 @@ public class Controller extends Observable {
 	                }
 	            };
 
-
+			gui.bringtoFront();
+			
 			result = JOptionPane
 					.showOptionDialog(gui,
 							jsp, "INCOMING API CALL",
