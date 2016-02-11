@@ -217,7 +217,12 @@ public class Settings {
 		if(this.genesisStamp == -1) {
 			if(this.settingsJSON.containsKey("testnetstamp"))
 			{
-				this.genesisStamp = ((Long) this.settingsJSON.get("testnetstamp")).longValue();
+				if(this.settingsJSON.get("testnetstamp").toString().equals("now") ||
+						((Long) this.settingsJSON.get("testnetstamp")).longValue() == 0) {
+					this.genesisStamp = System.currentTimeMillis();				
+				} else {
+					this.genesisStamp = ((Long) this.settingsJSON.get("testnetstamp")).longValue();
+				}
 			} else {
 				this.genesisStamp = DEFAULT_MAINNET_STAMP;
 			}
