@@ -105,9 +105,9 @@ public class Network extends Observable implements ConnectionCallback {
 	}
 	
 	@Override
-	public void onError(Peer peer) {
+	public void onError(Peer peer, String error) {
 		
-		Logger.getGlobal().warning("Connection error : " + peer.getAddress());
+		Logger.getGlobal().warning("Connection error : " + peer.getAddress() + " : " + error);
 		
 		//REMOVE FROM CONNECTED PEERS
 		synchronized(this.connectedPeers)

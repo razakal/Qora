@@ -770,7 +770,7 @@ public class Controller extends Observable {
 				if (!transaction.isSignatureValid()
 						|| transaction.getType() == Transaction.GENESIS_TRANSACTION) {
 					// DISHONEST PEER
-					this.network.onError(message.getSender());
+					this.network.onError(message.getSender(), "invalid transaction signature");
 
 					return;
 				}
@@ -901,7 +901,7 @@ public class Controller extends Observable {
 
 			if (peer != null) {
 				// DISHONEST PEER
-				this.network.onError(peer);
+				this.network.onError(peer, e.getMessage());
 			}
 		}
 

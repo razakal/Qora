@@ -175,10 +175,8 @@ public class Peer extends Thread{
 				}
 				else
 				{
-					Logger.getGlobal().warning("received message with wrong magic");
-					
 					//ERROR
-					callback.onError(this);
+					callback.onError(this, "received message with wrong magic");
 					return;
 				}
 			}
@@ -201,7 +199,7 @@ public class Peer extends Thread{
 			if(!this.socket.isConnected())
 			{
 				//ERROR
-				callback.onError(this);
+				callback.onError(this, "socket not still alive");
 				
 				return false;
 			}
@@ -219,7 +217,7 @@ public class Peer extends Thread{
 		catch (Exception e) 
 		{
 			//ERROR
-			callback.onError(this);
+			callback.onError(this, e.getMessage());
 			
 			//RETURN
 			return false;
