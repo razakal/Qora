@@ -54,9 +54,10 @@ public class GenesisBlock extends Block{
 
 				this.addTransaction(new GenesisTransaction(new Account(address), new BigDecimal(10000000000L/10).setScale(8), genesisTimestamp));
 				
-				this.testnetInfo += "\ngenesisAccount(" + String.valueOf(nonce) + "): " + address +  " AddrSeed: " + Base58.encode(accountSeed);
+				this.testnetInfo += "\ngenesisAccount(" + String.valueOf(nonce) + "): " + address +  " / POST addresses " + Base58.encode(accountSeed);
 		    }
-			this.testnetInfo += "\nPOST addresses AddrSeed";
+			this.testnetInfo += "\nStart the other nodes with command:";
+			this.testnetInfo += "\njava -Xms512m -Xmx1024m -jar Qora.jar -testnet=" + genesisTimestamp;
 
 			
 			//GENERATE AND VALIDATE TRANSACTIONSSIGNATURE
