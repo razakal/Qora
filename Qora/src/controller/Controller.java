@@ -1068,7 +1068,7 @@ public class Controller extends Observable {
 			if (headers.hasMoreElements()) {
 				uuid = headers.nextElement();
 				if (ApiClient.isAllowedDebugWindowCall(uuid)) {
-					return result;
+					return ApiClient.SELF_CALL;
 				}
 			}
 		}
@@ -1105,7 +1105,6 @@ public class Controller extends Observable {
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options,
 							options[1]);
-			gui.bringtoFront();
 		}
 
 		return result;

@@ -20,7 +20,7 @@ public class ApiClient {
 
 	
 	public static final String APICALLKEY = "apicallkey";
-
+	public static final int SELF_CALL = 10;
 
 	private static List<String> allowedcalls = new CopyOnWriteArrayList<>();
 	
