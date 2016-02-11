@@ -39,12 +39,11 @@ public class NetworkStatus extends JLabel implements Observer
 		
 		this.addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent mEvt) {
-				if(currentHeight < Controller.getInstance().getHeight())
-				{
+				if(currentHeight == Controller.getInstance().getHeight()) {
+					setToolTipText("Block height: " + currentHeight);
+				} else if(currentHeight < Controller.getInstance().getHeight()) {
 					setToolTipText("Block height: " + currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight());
-				}
-				else
-				{
+				} else {
 					setToolTipText("Block height: " + currentHeight + "/" + Controller.getInstance().getMaxPeerHeight());
 				}
 		}});
