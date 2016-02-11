@@ -4,6 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Logger;
 
+import controller.Controller;
 import ntp.NTP;
 import qora.transaction.Transaction;
 import settings.Settings;
@@ -31,7 +32,7 @@ public class ConnectionAcceptor extends Thread{
 				if(socket == null)
 				{
 					//START LISTENING
-					socket = new ServerSocket(Network.PORT); 
+					socket = new ServerSocket(Controller.getInstance().getNetworkPort()); 
 				}
 				
 				
@@ -51,7 +52,7 @@ public class ConnectionAcceptor extends Thread{
 					//REOPEN SOCKET
 					if(socket.isClosed())
 					{
-						socket = new ServerSocket(Network.PORT); 
+						socket = new ServerSocket(Controller.getInstance().getNetworkPort()); 
 					}
 					
 					//ACCEPT CONNECTION
@@ -64,7 +65,7 @@ public class ConnectionAcceptor extends Thread{
 							 * || connectionSocket.getInetAddress().isLoopbackAddress() 
 							 *  */
 							(
-									(NTP.getTime() < Transaction.POWFIX_RELEASE ) 
+									(NTP.getTime() < Transaction.getPOWFIX_RELEASE() ) 
 									&& 
 									callback.isConnectedTo(connectionSocket.getInetAddress())
 							)

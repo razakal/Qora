@@ -11,15 +11,15 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import utils.ObserverMessage;
 import controller.Controller;
 import network.message.Message;
 import network.message.MessageFactory;
+import utils.ObserverMessage;
 
 public class Network extends Observable implements ConnectionCallback {
 
-	public static final int PORT = 9084;
-	//public static final int PORT = 4809;
+	public static final int MAINNET_PORT = 9084;
+	public static final int TESTNET_PORT = 4809;
 	
 	private static final int MAX_HANDLED_MESSAGES_SIZE = 10000;
 	

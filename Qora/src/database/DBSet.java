@@ -199,11 +199,11 @@ public class DBSet implements Observer, IDB {
 		this.cancelSellNameMap.reset();
 		this.pollMap.reset();
 		this.voteOnPollMap.reset();
-		this.assetMap.reset();
-		this.issueAssetMap.reset();
+		this.tradeMap.reset();
 		this.orderMap.reset();
 		this.completedOrderMap.reset();
-		this.tradeMap.reset();
+		this.issueAssetMap.reset();
+		this.assetMap.reset();
 		this.atMap.reset();
 		this.atStateMap.reset();
 		this.atTransactionMap.reset();

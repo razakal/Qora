@@ -709,9 +709,9 @@ public class SendMessagePanel extends JPanel
 				}
 			}
 			
-			if(key != 0l && NTP.getTime() < Transaction.POWFIX_RELEASE)
+			if(key != 0l && NTP.getTime() < Transaction.getPOWFIX_RELEASE())
 			{	
-				JOptionPane.showMessageDialog(new JFrame(), "Assets transactions will be enabled at " + DateTimeFormat.timestamptoString(Transaction.POWFIX_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Assets transactions will be enabled at " + DateTimeFormat.timestamptoString(Transaction.getPOWFIX_RELEASE()) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			

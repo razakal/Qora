@@ -401,7 +401,7 @@ public class TransactionCreator
 		//TIME
 		long time = NTP.getTime();
 		
-		if(time < Transaction.POWFIX_RELEASE)
+		if(time < Transaction.getPOWFIX_RELEASE())
 		{
 			//CREATE SIGNATURE
 			byte[] signature = ArbitraryTransactionV1.generateSignature(this.fork, creator, service, data, fee, time);
@@ -436,7 +436,7 @@ public class TransactionCreator
 		
 		Transaction arbitraryTransaction;
 		
-		if(time < Transaction.POWFIX_RELEASE)
+		if(time < Transaction.getPOWFIX_RELEASE())
 		{
 			//CREATE ARBITRARY TRANSACTION V1
 			arbitraryTransaction = new ArbitraryTransactionV1(creator, 0, data, Transaction.MINIMUM_FEE, time, signature, signature);
@@ -680,7 +680,7 @@ public class TransactionCreator
 
 		long timestamp = NTP.getTime();
 		
-		if(timestamp < Transaction.POWFIX_RELEASE)
+		if(timestamp < Transaction.getPOWFIX_RELEASE())
 		{
 			//CREATE MESSAGE TRANSACTION V1
 			byte[] signature = MessageTransactionV1.generateSignature(this.fork, sender, recipient, amount, fee, message, isText, encryptMessage, timestamp);
@@ -712,7 +712,7 @@ public class TransactionCreator
 		
 		long timestamp = NTP.getTime();
 		
-		if(timestamp < Transaction.POWFIX_RELEASE)
+		if(timestamp < Transaction.getPOWFIX_RELEASE())
 		{
 			//CREATE MESSAGE TRANSACTION V1
 			messageTx = new MessageTransactionV1(sender, sender, Transaction.MINIMUM_FEE, Transaction.MINIMUM_FEE, message, new byte[1], new byte[1], time, signature, signature );

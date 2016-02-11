@@ -22,7 +22,7 @@ public abstract class MessageTransaction extends Transaction {
 	public MessageTransaction(BigDecimal fee, long timestamp, byte[] reference, byte[] signature) {
 		super(MESSAGE_TRANSACTION, fee, timestamp, reference, signature);
 		
-		if(timestamp < Transaction.POWFIX_RELEASE) {
+		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
 			version = 1;
 		} else {
 			version = 3;
@@ -88,7 +88,7 @@ public abstract class MessageTransaction extends Transaction {
 		byte[] timestampBytes = Arrays.copyOfRange(data, 0, TIMESTAMP_LENGTH);
 		long timestamp = Longs.fromByteArray(timestampBytes);
 		
-		if(timestamp < Transaction.POWFIX_RELEASE)
+		if(timestamp < Transaction.getPOWFIX_RELEASE())
 		{
 			return MessageTransactionV1.Parse(data);			
 		} else {
@@ -98,7 +98,7 @@ public abstract class MessageTransaction extends Transaction {
 	
 	public static byte[] generateSignature(PrivateKeyAccount creator, Account recipient, BigDecimal amount, BigDecimal fee, byte[] arbitraryData, byte[] isText, byte[] encrypted, long timestamp) 
 	{
-		if(timestamp < Transaction.POWFIX_RELEASE) {
+		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
 			return MessageTransactionV1.generateSignature(creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
 		} else {
 			return MessageTransactionV3.generateSignature(creator, recipient, 0L, amount, fee, arbitraryData, isText, encrypted, timestamp);	
@@ -106,7 +106,7 @@ public abstract class MessageTransaction extends Transaction {
 	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Account recipient, BigDecimal amount, BigDecimal fee, byte[] arbitraryData,byte[] isText, byte[] encrypted, long timestamp) 
 	{
-		if(timestamp < Transaction.POWFIX_RELEASE) {
+		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
 			return MessageTransactionV1.generateSignature(db, creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
 		} else {
 			return MessageTransactionV3.generateSignature(db, creator, recipient, 0L, amount, fee, arbitraryData, isText, encrypted, timestamp);	
@@ -115,7 +115,7 @@ public abstract class MessageTransaction extends Transaction {
 
 	public static byte[] generateSignature(PrivateKeyAccount creator, Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] arbitraryData, byte[] isText, byte[] encrypted, long timestamp) 
 	{
-		if(timestamp < Transaction.POWFIX_RELEASE) {
+		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
 			return MessageTransactionV1.generateSignature(creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
 		} else {
 			return MessageTransactionV3.generateSignature(creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);	
@@ -123,7 +123,7 @@ public abstract class MessageTransaction extends Transaction {
 	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] arbitraryData,byte[] isText, byte[] encrypted, long timestamp) 
 	{
-		if(timestamp < Transaction.POWFIX_RELEASE) {
+		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
 			return MessageTransactionV1.generateSignature(db, creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
 		} else {
 			return MessageTransactionV3.generateSignature(db, creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);	

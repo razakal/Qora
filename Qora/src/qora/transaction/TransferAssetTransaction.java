@@ -240,7 +240,7 @@ public class TransferAssetTransaction extends Transaction {
 	public int isValid(DBSet db) 
 	{
 		//CHECK IF RELEASED
-		if(NTP.getTime() < ASSETS_RELEASE)
+		if(NTP.getTime() < Transaction.getASSETS_RELEASE())
 		{
 			return NOT_YET_RELEASED;
 		}

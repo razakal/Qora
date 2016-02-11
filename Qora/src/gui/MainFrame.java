@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import gui.status.StatusPanel;
+import settings.Settings;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame{
@@ -19,7 +20,11 @@ public class MainFrame extends JFrame{
 	{
 		//CREATE FRAME
 		super("Qora");
-		       
+		
+		if(Settings.getInstance().isTestnet()) {
+			setTitle("Qora TestNet " + Settings.getInstance().getGenesisStamp());
+		}
+		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
 		icons.add(Toolkit.getDefaultToolkit().getImage("images/icons/icon16.png"));

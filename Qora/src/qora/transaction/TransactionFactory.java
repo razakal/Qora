@@ -82,7 +82,7 @@ public class TransactionFactory {
 			
 		case Transaction.ARBITRARY_TRANSACTION:
 			
-			if(timeStamp < Transaction.POWFIX_RELEASE)
+			if(timeStamp < Transaction.getPOWFIX_RELEASE())
 			{
 				//PARSE ARBITRARY TRANSACTION V1
 				return ArbitraryTransactionV1.Parse(Arrays.copyOfRange(data, 4, data.length));			
@@ -124,7 +124,7 @@ public class TransactionFactory {
 
 		case Transaction.MESSAGE_TRANSACTION:
 
-			if(timeStamp < Transaction.POWFIX_RELEASE)
+			if(timeStamp < Transaction.getPOWFIX_RELEASE())
 			{
 				// PARSE MESSAGE TRANSACTION V1
 				return MessageTransactionV1.Parse(Arrays.copyOfRange(data, 4, data.length));

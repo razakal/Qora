@@ -31,6 +31,8 @@ import javax.swing.JTextArea;
 import org.apache.commons.io.FileUtils;
 import org.mapdb.Fun.Tuple2;
 
+import com.google.common.primitives.Longs;
+
 import api.ApiClient;
 import api.ApiService;
 import at.AT;
@@ -103,7 +105,8 @@ public class Controller extends Observable {
 	private Timer timerPeerHeightUpdate = new Timer();
 	private Random random = new SecureRandom();
 	byte[] foundMyselfID = new byte[128];
-	
+	private byte[] messageMagic;
+
 	private Map<Peer, Integer> peerHeight;
 
 	private Map<Peer, Pair<String, Long>> peersVersions;
@@ -114,7 +117,28 @@ public class Controller extends Observable {
 		return version;
 	}
 
-	public byte[] getFoundMyselfID (){
+	public int getNetworkPort() {
+		if(Settings.getInstance().isTestnet()) {
+			return Network.TESTNET_PORT;
+		} else {
+			return Network.MAINNET_PORT;
+		}
+	}
+	
+	public byte[] getMessageMagic() {
+		if(this.messageMagic == null) {
+			long longTestNetStamp = Settings.getInstance().getGenesisStamp();
+			if(Settings.getInstance().isTestnet()){
+				byte[] seedTestNetStamp = Crypto.getInstance().digest(Longs.toByteArray(longTestNetStamp));
+				this.messageMagic =  Arrays.copyOfRange(seedTestNetStamp, 0, Message.MAGIC_LENGTH);	
+			} else {
+				this.messageMagic = Message.MAINNET_MAGIC;
+			}
+		}
+		return this.messageMagic;
+	}
+	
+	public byte[] getFoundMyselfID() {
 		return this.foundMyselfID;
 	}
 	
@@ -178,8 +202,8 @@ public class Controller extends Observable {
 		this.random.nextBytes(foundMyselfID);
 		
 		// CHECK NETWORK PORT AVAILABLE
-		if (!Network.isPortAvailable(Network.PORT)) {
-			throw new Exception("Network port " + Network.PORT
+		if (!Network.isPortAvailable(Controller.getInstance().getNetworkPort())) {
+			throw new Exception("Network port " + Controller.getInstance().getNetworkPort()
 					+ " already in use!");
 		}
 
@@ -281,6 +305,10 @@ public class Controller extends Observable {
 		// CREATE WALLET
 		this.wallet = new Wallet();
 
+		if(Settings.getInstance().isTestnet() && this.wallet.getLastTransactions(1).size() > 0) {
+			this.wallet.synchronize();	
+		}
+		
 		// CREATE BLOCKGENERATOR
 		this.blockGenerator = new BlockGenerator();
 		// START BLOCKGENERATOR
@@ -329,6 +357,10 @@ public class Controller extends Observable {
 	}
 
 	public void reCreateDB() throws IOException, Exception {
+		reCreateDB(true);
+	}
+	
+	public void reCreateDB(boolean useDataBak) throws IOException, Exception {
 		
 
 		File dataDir = new File(Settings.getInstance().getDataDir());
@@ -337,7 +369,7 @@ public class Controller extends Observable {
 			java.nio.file.Files.walkFileTree(dataDir.toPath(),
 					new SimpleFileVisitorForRecursiveFolderDeletion());
 			File dataBak = getDataBakDir(dataDir);
-			if (dataBak.exists()
+			if (useDataBak && dataBak.exists()
 					&& Settings.getInstance().isCheckpointingEnabled()) {
 				FileUtils.copyDirectory(dataBak, dataDir);
 				System.out.println("restoring backup database");
@@ -547,7 +579,7 @@ public class Controller extends Observable {
 		// GET HEIGHT
 		int height = this.blockChain.getHeight();
 
-		if(NTP.getTime() >= Transaction.POWFIX_RELEASE)
+		if(NTP.getTime() >= Transaction.getPOWFIX_RELEASE())
 		{
 			// SEND FOUNDMYSELF MESSAGE
 			peer.sendMessage( MessageFactory.getInstance().createFindMyselfMessage( 

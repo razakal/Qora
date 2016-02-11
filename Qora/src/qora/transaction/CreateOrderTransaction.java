@@ -275,7 +275,7 @@ public class CreateOrderTransaction extends Transaction
 		}
 		
 		//ONLY AFTER POWFIX_RELEASE TO SAVE THE OLD NETWORK
-		if(this.timestamp >= Transaction.POWFIX_RELEASE) {
+		if(this.timestamp >= Transaction.getPOWFIX_RELEASE()) {
 			//CHECK IF SENDER HAS ENOUGH QORA BALANCE
 			if(this.creator.getConfirmedBalance(fork).compareTo(BigDecimal.ZERO) == -1)
 			{

@@ -195,7 +195,7 @@ public class CreatePollTransaction extends Transaction
 	public int isValid(DBSet db) 
 	{
 		//CHECK IF RELEASED
-		if(NTP.getTime() < VOTING_RELEASE)
+		if(NTP.getTime() < Transaction.getVOTING_RELEASE())
 		{
 			return NOT_YET_RELEASED;
 		}

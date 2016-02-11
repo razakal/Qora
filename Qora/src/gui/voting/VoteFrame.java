@@ -299,7 +299,7 @@ public class VoteFrame extends JFrame
 				
 			case Transaction.NOT_YET_RELEASED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + DateTimeFormat.timestamptoString(Transaction.VOTING_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + DateTimeFormat.timestamptoString(Transaction.getVOTING_RELEASE()) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 			
 			case Transaction.ALREADY_VOTED_FOR_THAT_OPTION:

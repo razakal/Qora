@@ -13,6 +13,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import controller.Controller;
 import database.DBSet;
 import network.message.Message;
 import network.message.MessageFactory;
@@ -114,7 +115,7 @@ public class Peer extends Thread{
 		try
 		{
 			//OPEN SOCKET
-			this.socket = new Socket(address, Network.PORT);
+			this.socket = new Socket(address, Controller.getInstance().getNetworkPort());
 			
 			//ENABLE KEEPALIVE
 			//this.socket.setKeepAlive(true);
@@ -153,7 +154,7 @@ public class Peer extends Thread{
 				byte[] messageMagic = new byte[Message.MAGIC_LENGTH];
 				in.readFully(messageMagic);
 				
-				if(Arrays.equals(messageMagic, Message.MAGIC))
+				if(Arrays.equals(messageMagic, Controller.getInstance().getMessageMagic()))
 				{
 					//PROCESS NEW MESSAGE
 					Message message = MessageFactory.getInstance().parse(this, in);

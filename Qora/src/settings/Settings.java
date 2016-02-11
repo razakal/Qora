@@ -28,6 +28,9 @@ public class Settings {
 	private static final boolean DEFAULT_TRYING_CONNECT_TO_BAD_PEERS = true;
 	private static final String[] DEFAULT_PEERS = { };
 
+	//TESTNET 
+	public static final long DEFAULT_MAINNET_STAMP = 1400247274336L; // QORA RELEASE
+	private long genesisStamp = -1;
 	
 	//RPC
 	private static final int DEFAULT_RPC_PORT = 9085;
@@ -200,6 +203,27 @@ public class Settings {
 			//RETURN EMPTY LIST
 			return new ArrayList<Peer>();
 		}
+	}
+	
+	public void setGenesisStamp(long testNetStamp) {
+		this.genesisStamp = testNetStamp;
+	}
+	
+	public boolean isTestnet () {
+		return this.getGenesisStamp() != DEFAULT_MAINNET_STAMP;
+	}
+	
+	public long getGenesisStamp() {
+		if(this.genesisStamp == -1) {
+			if(this.settingsJSON.containsKey("testnetstamp"))
+			{
+				this.genesisStamp = ((Long) this.settingsJSON.get("testnetstamp")).longValue();
+			} else {
+				this.genesisStamp = DEFAULT_MAINNET_STAMP;
+			}
+		}
+		
+		return this.genesisStamp;
 	}
 	
 	public int getMaxConnections()

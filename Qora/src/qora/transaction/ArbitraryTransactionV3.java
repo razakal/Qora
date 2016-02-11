@@ -298,11 +298,11 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 	@Override
 	public int isValid(DBSet db) {
 		// CHECK IF RELEASED
-		if (NTP.getTime() < ARBITRARY_TRANSACTIONS_RELEASE) {
+		if (NTP.getTime() < Transaction.getARBITRARY_TRANSACTIONS_RELEASE()) {
 			return NOT_YET_RELEASED;
 		}
 
-		if (this.getTimestamp() < Transaction.POWFIX_RELEASE) {
+		if (this.getTimestamp() < Transaction.getPOWFIX_RELEASE()) {
 			return NOT_YET_RELEASED;
 		}
 

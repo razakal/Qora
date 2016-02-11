@@ -437,7 +437,7 @@ public class OrderPanel extends JPanel
 				
 			case Transaction.NOT_YET_RELEASED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Assets will be enabled at " + DateTimeFormat.timestamptoString(Transaction.ASSETS_RELEASE) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), "Assets will be enabled at " + DateTimeFormat.timestamptoString(Transaction.getASSETS_RELEASE()) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.HAVE_EQUALS_WANT:

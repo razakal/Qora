@@ -80,7 +80,7 @@ public class TransactionV3Tests {
 				signature
 				);
 		
-		if( messageTransactionV3.getTimestamp() < Transaction.POWFIX_RELEASE || databaseSet.getBlockMap().getLastBlock().getHeight(databaseSet) < Transaction.MESSAGE_BLOCK_HEIGHT_RELEASE)
+		if( messageTransactionV3.getTimestamp() < Transaction.getPOWFIX_RELEASE() || databaseSet.getBlockMap().getLastBlock().getHeight(databaseSet) < Transaction.getMESSAGE_BLOCK_HEIGHT_RELEASE())
 		{
 			assertEquals(messageTransactionV3.isValid(databaseSet), Transaction.NOT_YET_RELEASED);
 		}
@@ -171,7 +171,7 @@ public class TransactionV3Tests {
 				signature
 				);
 		
-		if (NTP.getTime() < Transaction.ARBITRARY_TRANSACTIONS_RELEASE || arbitraryTransactionV3.getTimestamp() < Transaction.POWFIX_RELEASE)
+		if (NTP.getTime() < Transaction.getARBITRARY_TRANSACTIONS_RELEASE() || arbitraryTransactionV3.getTimestamp() < Transaction.getPOWFIX_RELEASE())
 		{
 			assertEquals(arbitraryTransactionV3.isValid(databaseSet), Transaction.NOT_YET_RELEASED);
 		}
@@ -261,7 +261,7 @@ public class TransactionV3Tests {
 				signature
 				);
 		
-		if (NTP.getTime() < Transaction.ARBITRARY_TRANSACTIONS_RELEASE || arbitraryTransactionV3.getTimestamp() < Transaction.POWFIX_RELEASE)
+		if (NTP.getTime() < Transaction.getARBITRARY_TRANSACTIONS_RELEASE() || arbitraryTransactionV3.getTimestamp() < Transaction.getPOWFIX_RELEASE())
 		{
 			assertEquals(arbitraryTransactionV3.isValid(databaseSet), Transaction.NOT_YET_RELEASED);
 		}

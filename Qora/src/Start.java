@@ -20,6 +20,15 @@ public class Start {
 			if(arg.equals("-cli"))
 			{
 				cli = true;
+			} if(arg.equals("-testnet")) {
+				Settings.getInstance().setGenesisStamp(System.currentTimeMillis());
+			} else if(arg.startsWith("-testnet=") && arg.length() > 9) {
+				try
+				{
+					Settings.getInstance().setGenesisStamp(Long.parseLong(arg.substring(9)));
+				} catch(Exception e) {
+					Settings.getInstance().setGenesisStamp(Settings.DEFAULT_MAINNET_STAMP);
+				}
 			}
 		}
 		

@@ -235,7 +235,7 @@ public class MultiPaymentTransaction extends Transaction {
 	public int isValid(DBSet db) 
 	{
 		//CHECK IF RELEASED
-		if(NTP.getTime() < ASSETS_RELEASE)
+		if(NTP.getTime() < Transaction.getASSETS_RELEASE())
 		{
 			return NOT_YET_RELEASED;
 		}
@@ -251,7 +251,7 @@ public class MultiPaymentTransaction extends Transaction {
 		this.sender.setConfirmedBalance(this.sender.getConfirmedBalance(fork).subtract(this.fee), fork);
 		
 		//ONLY AFTER POWFIX_RELEASE TO SAVE THE OLD NETWORK
-		if(this.timestamp >= Transaction.POWFIX_RELEASE) {
+		if(this.timestamp >= Transaction.getPOWFIX_RELEASE()) {
 			//CHECK IF SENDER HAS ENOUGH QORA BALANCE
 			if(this.sender.getConfirmedBalance(fork).compareTo(BigDecimal.ZERO) == -1)
 			{

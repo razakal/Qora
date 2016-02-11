@@ -325,12 +325,12 @@ public class MessageTransactionV3 extends MessageTransaction {
 	@Override
 	public int isValid(DBSet db) {
 		//CHECK IF RELEASED
-		if( db.getBlockMap().getLastBlock().getHeight(db) < Transaction.MESSAGE_BLOCK_HEIGHT_RELEASE)
+		if( db.getBlockMap().getLastBlock().getHeight(db) < Transaction.getMESSAGE_BLOCK_HEIGHT_RELEASE())
 		{
 			return NOT_YET_RELEASED;
 		}
 		
-		if( this.getTimestamp() < Transaction.POWFIX_RELEASE)
+		if( this.getTimestamp() < Transaction.getPOWFIX_RELEASE())
 		{
 			return NOT_YET_RELEASED;
 		}

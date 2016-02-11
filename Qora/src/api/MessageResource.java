@@ -60,7 +60,7 @@ public class MessageResource {
 				assetKey = Long.valueOf(assetKeyString);
 			}
 			
-			if(assetKey != 0l && NTP.getTime() < Transaction.POWFIX_RELEASE)
+			if(assetKey != 0l && NTP.getTime() < Transaction.getPOWFIX_RELEASE())
 			{	
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_INVALID_ASSET_ID);
