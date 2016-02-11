@@ -54,27 +54,32 @@ public class MessageTransactionV1 extends MessageTransaction {
 		this.encrypted = encrypted;
 		this.isText = isText;
 	}
-
+	
+	@Override
 	public Account getSender()
 	{
 		return this.creator;
 	}
 
+	@Override
 	public byte[] getData() 
 	{
 		return this.data;
 	}
 
+	@Override
 	public Account getRecipient()
 	{
 		return this.recipient;
 	}
 
+	@Override
 	public BigDecimal getAmount()
 	{
 		return this.amount;
 	}
 	
+	@Override
 	public byte[] getEncrypted()
 	{
 		byte[] enc = new byte[1];
@@ -82,11 +87,13 @@ public class MessageTransactionV1 extends MessageTransaction {
 		return enc;
 	}
 	
+	@Override
 	public boolean isText()
 	{
 		return (Arrays.equals(this.isText,new byte[1]))?false:true;
 	}
 	
+	@Override
 	public boolean isEncrypted()
 	{
 		return (Arrays.equals(this.encrypted,new byte[1]))?false:true;
