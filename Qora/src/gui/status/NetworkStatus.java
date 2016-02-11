@@ -11,10 +11,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.ToolTipManager;
 
-import utils.GUIUtils;
-import utils.ObserverMessage;
 import controller.Controller;
 import qora.block.Block;
+import utils.GUIUtils;
+import utils.ObserverMessage;
 
 @SuppressWarnings("serial")
 public class NetworkStatus extends JLabel implements Observer
@@ -39,7 +39,7 @@ public class NetworkStatus extends JLabel implements Observer
 		
 		this.addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent mEvt) {
-				if(currentHeight != Controller.getInstance().getHeight())
+				if(currentHeight < Controller.getInstance().getHeight())
 				{
 					setToolTipText("Block height: " + currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight());
 				}
