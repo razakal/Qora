@@ -34,6 +34,8 @@ public class Start {
 		
 		if(!cli)
 		{			
+			System.out.println("Qora is starting...");
+			
 			try
 			{
 				//ONE MUST BE ENABLED
