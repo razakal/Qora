@@ -255,6 +255,16 @@ public class Wallet extends Observable implements Observer
 		this.database.getAssetFavoritesSet().add(asset.getKey());
 	}
 	
+	public void replaseAssetFavorite(List<Long> keys)
+	{
+		if(!this.exists())
+		{
+			return;
+		}
+		
+		this.database.getAssetFavoritesSet().replace(keys);
+	}
+	
 	public void removeAssetFavorite(Asset asset)
 	{
 		if(!this.exists())

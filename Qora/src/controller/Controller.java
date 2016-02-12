@@ -72,6 +72,7 @@ import qora.voting.Poll;
 import qora.voting.PollOption;
 import qora.wallet.Wallet;
 import settings.Settings;
+import utils.AssetsFavorites;
 import utils.BuildTime;
 import utils.ObserverMessage;
 import utils.Pair;
@@ -106,11 +107,13 @@ public class Controller extends Observable {
 	private Random random = new SecureRandom();
 	byte[] foundMyselfID = new byte[128];
 	private byte[] messageMagic;
-
+	
 	private Map<Peer, Integer> peerHeight;
 
 	private Map<Peer, Pair<String, Long>> peersVersions;
-	
+
+	public AssetsFavorites assetsFavorites;
+
 	private static Controller instance;
 
 	public String getVersion() {
@@ -350,12 +353,19 @@ public class Controller extends Observable {
 		
 		this.timerPeerHeightUpdate.schedule(action, 5*60*1000, 5*60*1000);
 
+		this.assetsFavorites = new AssetsFavorites();
 		
 		// REGISTER DATABASE OBSERVER
 		this.addObserver(DBSet.getInstance().getTransactionMap());
 		this.addObserver(DBSet.getInstance());
 	}
 
+	public void replaseAssetsFavorites() {
+		if(this.wallet != null) {
+			this.wallet.replaseAssetFavorite(this.assetsFavorites.getKeys());
+		}
+	}
+	
 	public void reCreateDB() throws IOException, Exception {
 		reCreateDB(true);
 	}
