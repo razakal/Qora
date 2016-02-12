@@ -88,7 +88,7 @@ public class SysTray implements Observer{
 				
 				SystemTray.getSystemTray().add(icon);
 				this.icon = icon;
-				
+			
 				icon.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
@@ -98,10 +98,8 @@ public class SysTray implements Observer{
 						}
 					}
 				});
-				icon.addMouseListener(new MouseAdapter() {
-					public void mouseEntered(MouseEvent mEvt) {
-						setToolTipText(toolTipText);
-				}});
+				
+				this.update(new Observable(), new ObserverMessage(ObserverMessage.NETWORK_STATUS, Controller.getInstance().getStatus()));
 			}
 		}
 	}
@@ -242,7 +240,6 @@ public class SysTray implements Observer{
 					});			
 					
 					frame.getContentPane().add(new JScrollPane(transactionsTable)  );
-					
 			}
 		});
 		menu.add(transactions);
@@ -346,7 +343,7 @@ public class SysTray implements Observer{
 		}
 		
 		ObserverMessage message = (ObserverMessage) arg1;
-		
+			
 		this.toolTipText = "Qora " + Controller.getInstance().getVersion() + "\n";
 		
 		if(Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS)
@@ -389,15 +386,15 @@ public class SysTray implements Observer{
 			}	
 		}
 		
-		toolTipText += this.networkStatus + " " + this.syncProcent;
+		this.toolTipText += this.networkStatus + " " + this.syncProcent;
 
-		if(this.currentHeight == Controller.getInstance().getHeight()) {
-			toolTipText += "\nHeight: " + this.currentHeight;
+		if(Controller.getInstance().getStatus() == Controller.STATUS_OKE || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
+			this.toolTipText += "\nHeight: " + Controller.getInstance().getHeight();
+		} else if(this.currentHeight == Controller.getInstance().getHeight()) {
+			this.toolTipText += "\nHeight: " + this.currentHeight;
 		} else if(this.currentHeight < Controller.getInstance().getHeight()) {
-			toolTipText += "\nHeight: " + this.currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
-		} else {
-			toolTipText += "\nHeight: " + currentHeight + "/" + Controller.getInstance().getMaxPeerHeight();
-		}
+			this.toolTipText += "\nHeight: " + this.currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
+		} 
 		
 		setToolTipText(toolTipText);
 	}
