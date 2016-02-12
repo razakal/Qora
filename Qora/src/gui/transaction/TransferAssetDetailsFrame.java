@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import controller.Controller;
 import qora.crypto.Base58;
 import qora.transaction.TransferAssetTransaction;
 import utils.DateTimeFormat;
@@ -130,7 +131,7 @@ public class TransferAssetDetailsFrame extends JFrame
 		
 		//ASSET
 		detailGBC.gridy = 6;
-		JTextField asset = new JTextField(String.valueOf(assetTransfer.getKey()));
+		JTextField asset = new JTextField(String.valueOf(Controller.getInstance().getAsset(assetTransfer.getKey()).toString()));
 		asset.setEditable(false);
 		this.add(asset, detailGBC);	
 		
