@@ -353,8 +353,6 @@ public class Controller extends Observable {
 		
 		this.timerPeerHeightUpdate.schedule(action, 5*60*1000, 5*60*1000);
 
-		this.assetsFavorites = new AssetsFavorites();
-		
 		// REGISTER DATABASE OBSERVER
 		this.addObserver(DBSet.getInstance().getTransactionMap());
 		this.addObserver(DBSet.getInstance());
@@ -362,7 +360,7 @@ public class Controller extends Observable {
 
 	public void replaseAssetsFavorites() {
 		if(this.wallet != null) {
-			this.wallet.replaseAssetFavorite(this.assetsFavorites.getKeys());
+			this.wallet.replaseAssetFavorite();
 		}
 	}
 	
