@@ -573,7 +573,7 @@ public class ApiClient {
 				"Errors: 401 - Name does not exist. 902 - Blog disabled."
 			},
 			{
-				"GET blog/lastEntry/<blogname>",
+				"GET blog/lastentry/<blogname>",
 				"Returns the content of the last entry of the blog.  If <blogname> is omitted, QORA is provided.",
 				"Errors: 401 - Name does not exist. 902 - Blog disabled. 906 - This blog is empty."
 			},
