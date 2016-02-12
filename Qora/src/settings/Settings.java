@@ -3,12 +3,16 @@ package settings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.InetAddress;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -166,13 +170,49 @@ public class Settings {
 		return currentSettingsPath;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Peer> getKnownPeers()
+	{
+		return getKnownPeers(false);
+	}
+	
+	public List<Peer> getKnownPeers(boolean loadPeersFromInternet)
+	{
+		List<Peer> knownPeers = new ArrayList<Peer>();
+		JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
+		
+		knownPeers = getKnownPeersFromJSONArray(peersArray);
+		
+		if(knownPeers.size() == 0 || loadPeersFromInternet)
+		{
+			knownPeers = getKnownPeersFromInternet();
+		}
+			
+		return knownPeers;
+	}
+	
+	public List<Peer> getKnownPeersFromInternet() 
+	{
+		try {
+			URL u = new URL("https://raw.githubusercontent.com/Qoracoin/Qora/master/Qora/settings.json");
+			InputStream in = u.openStream();
+			String stringSettings = IOUtils.toString( in );
+			JSONObject internetSettingsJSON = (JSONObject) JSONValue.parse(stringSettings);
+			JSONArray peersArray = (JSONArray) internetSettingsJSON.get("knownpeers");
+
+			return getKnownPeersFromJSONArray(peersArray);
+			
+		} catch (Exception e) {
+			//RETURN EMPTY LIST
+			return new ArrayList<Peer>();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Peer> getKnownPeersFromJSONArray(JSONArray peersArray)
 	{
 		try
 		{
 			//GET PEERS FROM JSON
-			JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
 			
 			if(peersArray.isEmpty())
 				peersArray.addAll(Arrays.asList(DEFAULT_PEERS));
@@ -182,16 +222,22 @@ public class Settings {
 			
 			for(int i=0; i<peersArray.size(); i++)
 			{
-				InetAddress address = InetAddress.getByName((String) peersArray.get(i));
-				
-				//CHECK IF SOCKET IS NOT LOCALHOST
-				if(!address.equals(InetAddress.getLocalHost()))
+				try
 				{
-					//CREATE PEER
-					Peer peer = new Peer(address);
-								
-					//ADD TO LIST
-					peers.add(peer);
+					InetAddress address = InetAddress.getByName((String) peersArray.get(i));
+					
+					//CHECK IF SOCKET IS NOT LOCALHOST
+					if(!address.equals(InetAddress.getLocalHost()))
+					{
+						//CREATE PEER
+						Peer peer = new Peer(address);
+									
+						//ADD TO LIST
+						peers.add(peer);
+					}
+				}catch(Exception e)
+				{
+					Logger.getGlobal().info((String) peersArray.get(i) + " - invalid peer address!");
 				}
 			}
 			
