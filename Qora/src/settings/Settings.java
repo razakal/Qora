@@ -183,9 +183,14 @@ public class Settings {
 			);
 		
 		List<Peer> knownPeers = new ArrayList<Peer>();
-		JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
 		
-		knownPeers = getKnownPeersFromJSONArray(peersArray);
+		try {
+			JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
+		
+			knownPeers = getKnownPeersFromJSONArray(peersArray);
+		} finally {
+			knownPeers = new ArrayList<Peer>();
+		}
 		
 		if(knownPeers.size() == 0 || loadPeersFromInternet)
 		{
