@@ -68,6 +68,11 @@ public class ApiClient {
 				""
 			},
 			{
+				"POST peers <address>",
+				"Adds address of peer.",
+				"Errors: 123 - invalid network address."
+			},
+			{
 				"GET peers/detail",
 				"Returns an array of all connected peer objects containing each peer's IP, height, version, ping time, onlineTime, findingTime, PingCounter, lastWhite time connection, lastGray time connection and status.",
 				""
