@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.DB;
@@ -291,8 +292,16 @@ public class PeerMap extends DBMap<byte[], byte[]>
 				}	
 			}
 			
+			if(allFromSettings) {
+				Logger.getGlobal().info("Peers loaded from database : " + peers.size());
+			}
+
 			List<Peer> knownPeers = Settings.getInstance().getKnownPeers();
 			
+			if(allFromSettings) {
+				Logger.getGlobal().info("Peers loaded from settings : " + knownPeers.size());
+			}
+				
 			for (Peer knownPeer : knownPeers) {
 				if(!allFromSettings && peers.size() >= amount)
 					break;
