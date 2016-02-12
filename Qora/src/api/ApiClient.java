@@ -53,7 +53,7 @@ public class ApiClient {
 				""
 			},
 			{
-				"GET version",
+				"GET qora/version",
 				"Returns the version and buildtime of the running client.",
 				""
 			},
