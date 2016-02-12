@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -41,36 +42,29 @@ public class BlogPostResource {
 	public static final String POST_KEY = "post";
 	//THIS IS ONLY NEEDED FOR COMMENTS -> id of the post to comment!
 	public static final String COMMENT_POSTID_KEY = "postid";
-	
-	
-
 
 	@Context
 	HttpServletRequest request;
 	
 	
 	@SuppressWarnings("unchecked")
-	@POST
-	@Path("/comment/delete")
-	public String deleteCommentEntry(String x) {
+	@DELETE
+	@Path("/comment/{commentid}")
+	public String deleteCommentEntry(@PathParam("commentid") String signatureOfComment) {
 		try {
-			
-			// READ JSON
-			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
-			String creator = (String) jsonObject.get("creator");
-			String authorOpt = (String) jsonObject.get(BlogPostResource.AUTHOR);
-			String signatureOfComment = (String) jsonObject.get(BlogPostResource.DELETE_KEY);
+
 			BlogEntry commentEntryOpt = BlogUtils.getCommentBlogEntryOpt(signatureOfComment);
-			
+					
 			if(commentEntryOpt == null)
 			{
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_COMMENT_NOT_EXISTING);
 			}
 			
+			String creator = commentEntryOpt.getCreator();
+					
 			String blognameOpt = commentEntryOpt.getBlognameOpt();
 			
-
 
 			// CHECK ADDRESS
 			if (!Crypto.getInstance().isValidAddress(creator)) {
@@ -78,7 +72,7 @@ public class BlogPostResource {
 					ApiErrorFactory.ERROR_INVALID_ADDRESS);
 			}
 
-			APIUtils.askAPICallAllowed("POST blogpost/comment/delete" + "\n" +  x,
+			APIUtils.askAPICallAllowed("POST blogpost/comment/" + signatureOfComment,
 				request);
 
 			// CHECK IF WALLET EXISTS
@@ -91,19 +85,6 @@ public class BlogPostResource {
 			if (!Controller.getInstance().isWalletUnlocked()) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_WALLET_LOCKED);
-			}
-
-			if(authorOpt != null)
-			{
-			  Name	name = DBSet.getInstance().getNameMap().get(authorOpt);
-				
-			  	//Name is not owned by creator!
-				if(name == null || !name.getOwner().getAddress().equals(creator))
-				{
-					throw ApiErrorFactory.getInstance().createError(
-							ApiErrorFactory.ERROR_NAME_NOT_OWNER);
-				}
-				
 			}
 
 			// CHECK ACCOUNT IN WALLET
@@ -130,10 +111,6 @@ public class BlogPostResource {
 				dataStructure.put(BLOGNAME_KEY, blognameOpt);
 			}
 
-			if (authorOpt != null) {
-				dataStructure.put(AUTHOR, authorOpt);
-			}
-			
 			byte[] resultbyteArray = dataStructure.toJSONString()
 					.getBytes(StandardCharsets.UTF_8);
 			BigDecimal bdFee = Controller

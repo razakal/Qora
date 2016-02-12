@@ -1694,29 +1694,7 @@ public class WebResource {
 
 				String creator = blogEntryOpt.getCreator();
 
-				Account accountByAddress = Controller.getInstance()
-						.getAccountByAddress(creator);
-				String blognameOpt = blogEntryOpt.getBlognameOpt();
-				// Did I create that blogpost?
-				JSONObject jsonBlogPost = new JSONObject();
-				jsonBlogPost.put(BlogPostResource.DELETE_KEY, signature);
-				if (accountByAddress != null) {
-					// TODO create blogpost json in method --> move to BlogUtils
-					// (for every kind delete/share and so on)
-					jsonBlogPost.put("creator", creator);
-					Pair<BigDecimal, Integer> fee = Controller.getInstance()
-							.calcRecommendedFeeForArbitraryTransaction(
-									jsonBlogPost.toJSONString().getBytes(StandardCharsets.UTF_8), null);
-					jsonBlogPost.put("fee", fee.getA().toPlainString());
-					// I am not author, but am I the owner of the blog?
-				} else if (blognameOpt != null
-						&& Controller.getInstance().getNamesAsListAsString()
-								.contains(blognameOpt)) {
-					Name name = DBSet.getInstance().getNameMap()
-							.get(blognameOpt);
-					jsonBlogPost.put("creator", name.getOwner().getAddress());
-					jsonBlogPost.put(BlogPostResource.AUTHOR, blognameOpt);
-				} else {
+				if (Controller.getInstance().getAccountByAddress(creator) == null) {
 					jsonanswer.put("type", "deleteError");
 					jsonanswer
 							.put("errordetail",
@@ -1732,7 +1710,7 @@ public class WebResource {
 				try {
 
 					String result = new BlogPostResource().deleteCommentEntry(
-							jsonBlogPost.toJSONString());
+							signature);
 
 					jsonanswer.put("type", "deleteSuccessful");
 					jsonanswer.put("result", result);
