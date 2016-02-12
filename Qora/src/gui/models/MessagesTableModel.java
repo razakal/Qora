@@ -347,7 +347,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE
 				|| message.getType() == ObserverMessage.LIST_BLOCK_TYPE)
 		{
-			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
 			{
 				this.repaint();
 			}

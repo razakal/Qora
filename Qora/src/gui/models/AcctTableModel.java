@@ -146,7 +146,7 @@ public class AcctTableModel extends QoraTableModel<String, AT> implements Observ
 		{
 			
 			//CHECK IF LIST UPDATED
-			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
 			{
 				this.fireTableDataChanged();
 			}
@@ -156,7 +156,7 @@ public class AcctTableModel extends QoraTableModel<String, AT> implements Observ
 		//STATUS_OKE
 		if(message.getType() == ObserverMessage.NETWORK_STATUS )
 		{
-			if((int)message.getValue() == Controller.STATUS_OKE)
+			if((int)message.getValue() == Controller.STATUS_OK)
 			{
 				this.fireTableDataChanged();
 			}

@@ -901,7 +901,7 @@ public class WebResource {
 			{
 				statustext ="Synchronizing";
 			}
-			if(status == Controller.STATUS_OKE)
+			if(status == Controller.STATUS_OK)
 			{
 				statustext ="Oke";
 			}

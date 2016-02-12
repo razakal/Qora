@@ -127,7 +127,7 @@ public class ATTableModel extends QoraTableModel<Long, AT> implements Observer
 				this.ats.registerObserver();
 			}	
 			
-			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
 			{
 				this.fireTableDataChanged();
 			}
@@ -136,7 +136,7 @@ public class ATTableModel extends QoraTableModel<Long, AT> implements Observer
 		//CHECK IF LIST UPDATED
 		if(message.getType() == ObserverMessage.ADD_AT_TYPE )
 		{
-			if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
 			{
 				this.fireTableDataChanged();
 			}
@@ -145,7 +145,7 @@ public class ATTableModel extends QoraTableModel<Long, AT> implements Observer
 		//STATUS_OKE
 		if(message.getType() == ObserverMessage.NETWORK_STATUS )
 		{
-			if((int)message.getValue() == Controller.STATUS_OKE)
+			if((int)message.getValue() == Controller.STATUS_OK)
 			{
 				this.fireTableDataChanged();
 			}

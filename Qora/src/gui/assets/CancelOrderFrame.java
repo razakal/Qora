@@ -188,7 +188,7 @@ public class CancelOrderFrame extends JFrame
 		this.cancelOrderButton.setEnabled(false);
 		
 		//CHECK IF NETWORK OKE
-		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
+		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			//NETWORK NOT OKE
 			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);

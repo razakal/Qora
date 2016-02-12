@@ -137,7 +137,7 @@ public class NameStorageResource {
 			}
 
 			// CHECK WALLET IN SYNC
-			if (Controller.getInstance().getStatus() != Controller.STATUS_OKE) {
+			if (Controller.getInstance().getStatus() != Controller.STATUS_OK) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_WALLET_NOT_IN_SYNC);
 			}

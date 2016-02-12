@@ -157,7 +157,7 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 			this.fireTableDataChanged();
 		}	
 		
-		if(Controller.getInstance().getStatus() == Controller.STATUS_OKE && message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
+		if(Controller.getInstance().getStatus() == Controller.STATUS_OK && message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
 		{		
 			if(DBSet.getInstance().getTransactionMap().contains(((Transaction) message.getValue()).getSignature()))
 			{

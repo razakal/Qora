@@ -39,7 +39,7 @@ public class NetworkStatus extends JLabel implements Observer
 		
 		this.addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent mEvt) {
-				if(Controller.getInstance().getStatus() == Controller.STATUS_OKE || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
+				if(Controller.getInstance().getStatus() == Controller.STATUS_OK || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
 					setToolTipText("Block height: " + Controller.getInstance().getHeight());
 				} else if(currentHeight < Controller.getInstance().getHeight()) {
 					setToolTipText("Block height: " + currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight());
@@ -101,7 +101,7 @@ public class NetworkStatus extends JLabel implements Observer
 				this.setIcon(synchronizingIcon);
 				this.setText("Synchronizing");
 			}
-			if(status == Controller.STATUS_OKE)
+			if(status == Controller.STATUS_OK)
 			{
 				this.setIcon(okeIcon);
 				this.setText("Oke");

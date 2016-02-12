@@ -89,7 +89,7 @@ public class Controller extends Observable {
 //	TODO ENUM would be better here
 	public static final int STATUS_NO_CONNECTIONS = 0;
 	public static final int STATUS_SYNCHRONIZING = 1;
-	public static final int STATUS_OKE = 2;
+	public static final int STATUS_OK = 2;
 
 	public boolean isProcessSynchronize = false; 
 	private int status;
@@ -336,7 +336,7 @@ public class Controller extends Observable {
 		
 		TimerTask action = new TimerTask() {
 	        public void run() {
-	        	if(Controller.getInstance().getStatus() == STATUS_OKE)
+	        	if(Controller.getInstance().getStatus() == STATUS_OK)
 	        	{
 	        		if(Controller.getInstance().getActivePeers().size() > 0)
 	        		{
@@ -606,7 +606,7 @@ public class Controller extends Observable {
 		
 		if (this.status == STATUS_NO_CONNECTIONS) {
 			// UPDATE STATUS
-			this.status = STATUS_OKE;
+			this.status = STATUS_OK;
 
 			// NOTIFY
 			this.setChanged();
@@ -619,7 +619,7 @@ public class Controller extends Observable {
 			TimerTask action = new TimerTask() {
 		        public void run() {
 		        	
-		        	if(Controller.getInstance().getStatus() == STATUS_OKE)
+		        	if(Controller.getInstance().getStatus() == STATUS_OK)
 			        {
 			        	Logger.getGlobal().info("STATUS OKE");
 				       	
@@ -858,7 +858,7 @@ public class Controller extends Observable {
 
 	private void broadcastTransaction(Transaction transaction) {
 
-		if (Controller.getInstance().getStatus() == Controller.STATUS_OKE) {
+		if (Controller.getInstance().getStatus() == Controller.STATUS_OK) {
 			// CREATE MESSAGE
 			Message message = MessageFactory.getInstance()
 					.createTransactionMessage(transaction);
@@ -923,7 +923,7 @@ public class Controller extends Observable {
 					ObserverMessage.NETWORK_STATUS, this.status));
 		} else {
 			// UPDATE STATUS
-			this.status = STATUS_OKE;
+			this.status = STATUS_OK;
 
 			// NOTIFY
 			this.setChanged();

@@ -437,7 +437,7 @@ public class SendMessagePanel extends JPanel
 			return;
 		}
 		
-		if(Controller.getInstance().getStatus() != Controller.STATUS_OKE)
+		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			txtRecDetails.setText("Status must be OK to show receiver details.");
 			return;

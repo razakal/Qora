@@ -45,8 +45,8 @@ public class AssetsFavorites implements Observer{
 
 		ObserverMessage message = (ObserverMessage) arg;
 
-		if((message.getType() == ObserverMessage.NETWORK_STATUS && (int) message.getValue() == Controller.STATUS_OKE)
-			||((Controller.getInstance().getStatus() == Controller.STATUS_OKE) && 
+		if((message.getType() == ObserverMessage.NETWORK_STATUS && (int) message.getValue() == Controller.STATUS_OK)
+			||((Controller.getInstance().getStatus() == Controller.STATUS_OK) && 
 					(
 							message.getType() == ObserverMessage.ADD_ACCOUNT_TYPE
 							||

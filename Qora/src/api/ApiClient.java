@@ -35,7 +35,7 @@ public class ApiClient {
 			{
 				"GET qora/status", 
 				"Returns the status of the application.",
-				"0 - No connections. 1 - Synchronizing 2 - Oke"
+				"0 - No connections. 1 - Synchronizing 2 - OK"
 			},
 			{
 				"GET qora/status/forging",

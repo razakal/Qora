@@ -355,7 +355,7 @@ public class SysTray implements Observer{
 		{
 			this.networkStatus = "Synchronizing";
 		}
-		if(Controller.getInstance().getStatus() == Controller.STATUS_OKE)
+		if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
 		{
 			this.networkStatus = "Oke";
 			this.syncProcent = "";
@@ -388,7 +388,7 @@ public class SysTray implements Observer{
 		
 		this.toolTipText += this.networkStatus + " " + this.syncProcent;
 
-		if(Controller.getInstance().getStatus() == Controller.STATUS_OKE || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
+		if(Controller.getInstance().getStatus() == Controller.STATUS_OK || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
 			this.toolTipText += "\nHeight: " + Controller.getInstance().getHeight();
 		} else if(this.currentHeight == Controller.getInstance().getHeight()) {
 			this.toolTipText += "\nHeight: " + this.currentHeight;
