@@ -49,8 +49,8 @@ public class BlogPostResource {
 	
 	@SuppressWarnings("unchecked")
 	@DELETE
-	@Path("/comment/{commentid}")
-	public String deleteCommentEntry(@PathParam("commentid") String signatureOfComment) {
+	@Path("/comment/{signature}")
+	public String deleteCommentEntry(@PathParam("signature") String signatureOfComment) {
 		try {
 
 			BlogEntry commentEntryOpt = BlogUtils.getCommentBlogEntryOpt(signatureOfComment);
@@ -91,7 +91,7 @@ public class BlogPostResource {
 
 			if (Controller.getInstance().getAccountByAddress(creator) == null) {
 				throw ApiErrorFactory.getInstance().createError(
-						ApiErrorFactory.ERROR_WALLET_ADDRESS_NO_EXISTS);
+						ApiErrorFactory.ERROR_INVALID_COMMENT_OWNER);
 			}
 
 			// GET ACCOUNT

@@ -533,6 +533,16 @@ public class ApiClient {
 				"Errors: 901 - Body empty. 105 - Invalid fee. 201 - Wallet no exists. 203 - wallet locked. 903 - name not owner. 102 - invalid address. 202 - wallet adddress no exists. 902 - blog disabled."
 			},
 			{
+				"POST blogpost/comment {\"fee\": \"<fee>\", \"creator\": \"<creator>\", \"author\": \"<author>\", \"title\": \"<title>\", \"body\": \"<body>\", \"postid\": \"<signature>\"}",
+				"Leave a comment under the post with the given postid.  \"<title>\", \"author\", are optional.",
+				"Errors: 901 - Body empty. 105 - Invalid fee. 201 - Wallet no exists. 203 - wallet locked. 903 - name not owner. 102 - invalid address. 202 - wallet adddress no exists. 909 - commenting disabled."
+			},
+			{
+				"DELETE blogpost/comment/<signature>",
+				"Deletes the comment with given signature.",
+				"910 - comment not existing. 911 - invalid comment owner. 201 - Wallet no exists. 203 - wallet locked."
+			},
+			{
 				"GET blog",
 				"Equivalent to blog/posts/QORA",
 				""
