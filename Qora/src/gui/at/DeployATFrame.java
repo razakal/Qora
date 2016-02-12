@@ -507,7 +507,7 @@ public class DeployATFrame extends JFrame {
 			
 			switch(result.getB())
 			{
-			case Transaction.VALIDATE_OKE:
+			case Transaction.VALIDATE_OK:
 				JOptionPane.showMessageDialog(new JFrame(), "AT has been deployed!", "Success", JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;	

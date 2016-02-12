@@ -232,7 +232,7 @@ public class CancelSellNameFrame extends JFrame
 			//CHECK VALIDATE MESSAGE
 			switch(result.getB())
 			{
-			case Transaction.VALIDATE_OKE:
+			case Transaction.VALIDATE_OK:
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Cancel name sale has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();

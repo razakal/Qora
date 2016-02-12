@@ -602,7 +602,7 @@ public class UpdateNameFrame extends JFrame
 			//CHECK VALIDATE MESSAGE
 			switch(result.getB())
 			{
-			case Transaction.VALIDATE_OKE:
+			case Transaction.VALIDATE_OK:
 				
 				JOptionPane.showMessageDialog(new JFrame(), "Name update has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();

@@ -445,7 +445,7 @@ public class DeployATTransaction extends Transaction
 			return INVALID_CREATION_BYTES;
 		}
 
-		return VALIDATE_OKE;
+		return VALIDATE_OK;
 
 	}
 

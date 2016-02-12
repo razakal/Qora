@@ -263,7 +263,7 @@ public class CancelSellNameTransaction extends Transaction
 			return NEGATIVE_FEE;
 		}
 		
-		return VALIDATE_OKE;
+		return VALIDATE_OK;
 	}
 	
 	//PROCESS/ORPHAN

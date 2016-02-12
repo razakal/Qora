@@ -390,7 +390,7 @@ public class MessageTransactionV3 extends MessageTransaction {
 			return NEGATIVE_FEE;
 		}
 
-		return VALIDATE_OKE;
+		return VALIDATE_OK;
 	}
 
 	@Override

@@ -401,7 +401,7 @@ public class BlockGenerator extends Thread implements Observer
 				{
 					try{
 						//CHECK IF VALID
-						if(transaction.isValid(newBlockDb) == Transaction.VALIDATE_OKE)
+						if(transaction.isValid(newBlockDb) == Transaction.VALIDATE_OK)
 						{
 							//CHECK IF ENOUGH ROOM
 							if(totalBytes + transaction.getDataLength() <= Block.MAX_TRANSACTION_BYTES)

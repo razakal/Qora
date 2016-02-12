@@ -544,7 +544,7 @@ public class InitiateAcctFrame extends JFrame {
 
 			switch(result.getB())
 			{
-			case Transaction.VALIDATE_OKE:
+			case Transaction.VALIDATE_OK:
 				
 				JPanel successPanel = new JPanel();
 				successPanel.setLayout(new GridLayout(2,2));

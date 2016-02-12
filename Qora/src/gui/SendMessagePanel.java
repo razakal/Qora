@@ -721,7 +721,7 @@ public class SendMessagePanel extends JPanel
 			//CHECK VALIDATE MESSAGE
 			switch(result.getB())
 			{
-			case Transaction.VALIDATE_OKE:
+			case Transaction.VALIDATE_OK:
 				
 				//RESET FIELDS
 				

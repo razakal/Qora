@@ -351,7 +351,7 @@ public class MessageTransactionV1 extends MessageTransaction {
 			return NEGATIVE_FEE;
 		}
 
-		return VALIDATE_OKE;
+		return VALIDATE_OK;
 	}
 
 

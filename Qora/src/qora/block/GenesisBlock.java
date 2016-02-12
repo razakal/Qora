@@ -307,7 +307,7 @@ public class GenesisBlock extends Block{
 		//VALIDATE TRANSACTIONS
 		for(Transaction transaction: this.getTransactions())
 		{
-			if(transaction.isValid(db) != Transaction.VALIDATE_OKE)
+			if(transaction.isValid(db) != Transaction.VALIDATE_OK)
 			{
 				return false;
 			}

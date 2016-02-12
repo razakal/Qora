@@ -200,7 +200,7 @@ public class MessageResource {
 							isTextByte, encrypted);
 
 			switch (result.getB()) {
-			case Transaction.VALIDATE_OKE:
+			case Transaction.VALIDATE_OK:
 
 				return result.getA().toJson().toJSONString();
 

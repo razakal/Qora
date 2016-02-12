@@ -669,12 +669,12 @@ public class Block {
 			if ( transaction instanceof DeployATTransaction)
 			{
 				DeployATTransaction atTx = (DeployATTransaction)transaction;
-				if ( atTx.isValid(fork, min) != Transaction.VALIDATE_OKE )
+				if ( atTx.isValid(fork, min) != Transaction.VALIDATE_OK )
 				{
 					return false;
 				}
 			}
-			else if(transaction.isValid(fork) != Transaction.VALIDATE_OKE)
+			else if(transaction.isValid(fork) != Transaction.VALIDATE_OK)
 			{
 				return false;
 			}

@@ -18,7 +18,7 @@ import settings.Settings;
 public abstract class Transaction {
 	
 	//VALIDATION CODE
-	public static final int VALIDATE_OKE = 1;
+	public static final int VALIDATE_OK = 1;
 	public static final int INVALID_ADDRESS = 2;
 	public static final int NEGATIVE_AMOUNT = 3;
 	public static final int NEGATIVE_FEE = 4;

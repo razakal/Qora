@@ -64,15 +64,15 @@ public class TransactionTests {
 		
 		//CHECK NORMAL VALID
 		Transaction transaction = new GenesisTransaction(new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g"), BigDecimal.valueOf(1000).setScale(8), NTP.getTime());
-		assertEquals(Transaction.VALIDATE_OKE, transaction.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, transaction.isValid(databaseSet));
 		
 		//CHECK INVALID ADDRESS
 		transaction = new GenesisTransaction(new Account("test"), BigDecimal.valueOf(-1000).setScale(8), NTP.getTime());
-		assertNotEquals(Transaction.VALIDATE_OKE, transaction.isValid(databaseSet));
+		assertNotEquals(Transaction.VALIDATE_OK, transaction.isValid(databaseSet));
 		
 		//CHECK NEGATIVE AMOUNT
 		transaction = new GenesisTransaction(new Account("XUi2oga2pnGNcZ9es6pBqxydtRZKWdkL2g"), BigDecimal.valueOf(-1000).setScale(8), NTP.getTime());
-		assertNotEquals(Transaction.VALIDATE_OKE, transaction.isValid(databaseSet));
+		assertNotEquals(Transaction.VALIDATE_OK, transaction.isValid(databaseSet));
 	}
 	
 	@Test
@@ -226,31 +226,31 @@ public class TransactionTests {
 		Transaction payment = new PaymentTransaction(sender, recipient, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 
 		//CHECK IF PAYMENT IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, payment.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, payment.isValid(databaseSet));
 		
 		//CREATE INVALID PAYMENT INVALID RECIPIENT ADDRESS
 		payment = new PaymentTransaction(sender, new Account("test"), BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 	
 		//CHECK IF PAYMENT IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, payment.isValid(databaseSet));
+		assertNotEquals(Transaction.VALIDATE_OK, payment.isValid(databaseSet));
 		
 		//CREATE INVALID PAYMENT NEGATIVE AMOUNT
 		payment = new PaymentTransaction(sender, recipient, BigDecimal.valueOf(-100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 		
 		//CHECK IF PAYMENT IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, payment.isValid(databaseSet));	
+		assertNotEquals(Transaction.VALIDATE_OK, payment.isValid(databaseSet));	
 		
 		//CREATE INVALID PAYMENT NEGATIVE FEE
 		payment = new PaymentTransaction(sender, recipient, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(-1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 				
 		//CHECK IF PAYMENT IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, payment.isValid(databaseSet));	
+		assertNotEquals(Transaction.VALIDATE_OK, payment.isValid(databaseSet));	
 		
 		//CREATE INVALID PAYMENT WRONG REFERENCE
 		payment = new PaymentTransaction(sender, recipient, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, new byte[0], signature);
 						
 		//CHECK IF PAYMENT IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, payment.isValid(databaseSet));	
+		assertNotEquals(Transaction.VALIDATE_OK, payment.isValid(databaseSet));	
 	}
 	
 	@Test
@@ -508,7 +508,7 @@ public class TransactionTests {
 		Transaction nameRegistration = new RegisterNameTransaction(sender, name, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF NAME REGISTRATION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameRegistration.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameRegistration.isValid(databaseSet));
 		nameRegistration.process(databaseSet);
 		
 		//CREATE INVALID NAME REGISTRATION INVALID NAME LENGTH
@@ -783,7 +783,7 @@ public class TransactionTests {
 		Transaction nameRegistration = new RegisterNameTransaction(sender, name, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF NAME REGISTRATION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameRegistration.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameRegistration.isValid(databaseSet));
 		nameRegistration.process(databaseSet);
 		
 		//CREATE NAME UPDATE
@@ -791,7 +791,7 @@ public class TransactionTests {
 		Transaction nameUpdate = new UpdateNameTransaction(sender, name, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 	
 		//CHECK IF NAME UPDATE IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameUpdate.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameUpdate.isValid(databaseSet));
 		
 		//CREATE INVALID NAME UPDATE INVALID NAME LENGTH
 		String longName = "";
@@ -1088,7 +1088,7 @@ public class TransactionTests {
 		Transaction nameRegistration = new RegisterNameTransaction(sender, name, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF NAME REGISTRATION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameRegistration.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameRegistration.isValid(databaseSet));
 		nameRegistration.process(databaseSet);
 		
 		//CREATE NAME SALE
@@ -1096,7 +1096,7 @@ public class TransactionTests {
 		Transaction nameSaleTransaction = new SellNameTransaction(sender, nameSale, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 	
 		//CHECK IF NAME UPDATE IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameSaleTransaction.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameSaleTransaction.isValid(databaseSet));
 		
 		//CREATE INVALID NAME SALE INVALID NAME LENGTH
 		String longName = "";
@@ -1391,7 +1391,7 @@ public class TransactionTests {
 		Transaction nameRegistration = new RegisterNameTransaction(sender, name, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF NAME REGISTRATION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameRegistration.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameRegistration.isValid(databaseSet));
 		nameRegistration.process(databaseSet);
 		
 		//CREATE NAME SALE
@@ -1399,14 +1399,14 @@ public class TransactionTests {
 		Transaction nameSaleTransaction = new SellNameTransaction(sender, nameSale, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 	
 		//CHECK IF NAME UPDATE IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameSaleTransaction.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameSaleTransaction.isValid(databaseSet));
 		nameSaleTransaction.process(databaseSet);
 		
 		//CREATE CANCEL NAME SALE
 		CancelSellNameTransaction cancelNameSaleTransaction = new CancelSellNameTransaction(sender, nameSale.getKey(), BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);		
 
 		//CHECK IF CANCEL NAME UPDATE IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, cancelNameSaleTransaction.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, cancelNameSaleTransaction.isValid(databaseSet));
 		
 		//CREATE INVALID CANCEL NAME SALE INVALID NAME LENGTH
 		String longName = "";
@@ -1721,7 +1721,7 @@ public class TransactionTests {
 		Transaction nameRegistration = new RegisterNameTransaction(sender, name, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF NAME REGISTRATION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameRegistration.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameRegistration.isValid(databaseSet));
 		nameRegistration.process(databaseSet);
 		
 		//CREATE NAME SALE
@@ -1729,14 +1729,14 @@ public class TransactionTests {
 		Transaction nameSaleTransaction = new SellNameTransaction(sender, nameSale, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 	
 		//CHECK IF NAME UPDATE IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, nameSaleTransaction.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, nameSaleTransaction.isValid(databaseSet));
 		nameSaleTransaction.process(databaseSet);
 		
 		//CREATE NAME PURCHASE
 		BuyNameTransaction namePurchaseTransaction = new BuyNameTransaction(buyer, nameSale, nameSale.getName(databaseSet).getOwner(), BigDecimal.ONE.setScale(8), timestamp, buyer.getLastReference(databaseSet), signature);		
 
 		//CHECK IF NAME PURCHASE IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, namePurchaseTransaction.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, namePurchaseTransaction.isValid(databaseSet));
 		
 		//CREATE INVALID NAME PURCHASE INVALID NAME LENGTH
 		String longName = "";
@@ -2067,7 +2067,7 @@ public class TransactionTests {
 		Transaction pollCreation = new CreatePollTransaction(sender, poll, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF POLL CREATION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, pollCreation.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, pollCreation.isValid(databaseSet));
 		pollCreation.process(databaseSet);
 		
 		//CREATE INVALID POLL CREATION INVALID NAME LENGTH
@@ -2369,7 +2369,7 @@ public class TransactionTests {
 		Transaction pollCreation = new CreatePollTransaction(sender, poll, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF POLL CREATION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, pollCreation.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, pollCreation.isValid(databaseSet));
 		pollCreation.process(databaseSet);
 		
 		//CREATE POLL VOTE
@@ -2377,7 +2377,7 @@ public class TransactionTests {
 		Transaction pollVote = new VoteOnPollTransaction(sender, poll.getName(), 0, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF POLL VOTE IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, pollVote.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, pollVote.isValid(databaseSet));
 		pollVote.process(databaseSet);
 		
 		//CREATE INVALID POLL VOTE INVALID NAME LENGTH
@@ -2680,7 +2680,7 @@ public class TransactionTests {
 		Transaction arbitraryTransaction = new ArbitraryTransactionV1(sender, 4776, data, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF ARBITRARY TRANSACTION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, arbitraryTransaction.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, arbitraryTransaction.isValid(databaseSet));
 		arbitraryTransaction.process(databaseSet);
 		
 		//CREATE INVALID ARBITRARY TRANSACTION INVALID data LENGTH
@@ -2920,7 +2920,7 @@ public class TransactionTests {
 		Transaction arbitraryTransaction = new ArbitraryTransactionV1(sender, 4776, data, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(databaseSet), signature);	
 		
 		//CHECK IF ARBITRARY TRANSACTION IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, arbitraryTransaction.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, arbitraryTransaction.isValid(databaseSet));
 		arbitraryTransaction.process(databaseSet);
 		
 		//CREATE INVALID ARBITRARY TRANSACTION INVALID data LENGTH
@@ -3192,44 +3192,44 @@ public class TransactionTests {
 		Transaction assetTransfer = new TransferAssetTransaction(sender, recipient, 0, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 
 		//CHECK IF ASSET TRANSFER IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, assetTransfer.isValid(databaseSet));
+		assertEquals(Transaction.VALIDATE_OK, assetTransfer.isValid(databaseSet));
 		
 		//CREATE VALID ASSET TRANSFER
 		sender.setConfirmedBalance(1, BigDecimal.valueOf(100).setScale(8), databaseSet);
 		assetTransfer = new TransferAssetTransaction(sender, recipient, 0, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 
 		//CHECK IF ASSET TRANSFER IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, assetTransfer.isValid(databaseSet));			
+		assertEquals(Transaction.VALIDATE_OK, assetTransfer.isValid(databaseSet));			
 		
 		//CREATE INVALID ASSET TRANSFER INVALID RECIPIENT ADDRESS
 		assetTransfer = new TransferAssetTransaction(sender, new Account("test"), 0, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 	
 		//CHECK IF ASSET TRANSFER IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, assetTransfer.isValid(databaseSet));
+		assertNotEquals(Transaction.VALIDATE_OK, assetTransfer.isValid(databaseSet));
 		
 		//CREATE INVALID ASSET TRANSFER NEGATIVE AMOUNT
 		assetTransfer = new TransferAssetTransaction(sender, recipient, 0, BigDecimal.valueOf(-100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 		
 		//CHECK IF ASSET TRANSFER IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, assetTransfer.isValid(databaseSet));	
+		assertNotEquals(Transaction.VALIDATE_OK, assetTransfer.isValid(databaseSet));	
 		
 		//CREATE INVALID ASSET TRANSFER NOT ENOUGH ASSET BALANCE
 		assetTransfer = new TransferAssetTransaction(sender, recipient, 2, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 		
 		//CHECK IF ASSET TRANSFER IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, assetTransfer.isValid(databaseSet));	
+		assertNotEquals(Transaction.VALIDATE_OK, assetTransfer.isValid(databaseSet));	
 				
 		//CREATE INVALID ASSET TRANSFER NEGATIVE FEE
 		assetTransfer = new TransferAssetTransaction(sender, recipient, 0, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(-1).setScale(8), timestamp, sender.getLastReference(databaseSet), signature);
 				
 		//CHECK IF ASSET TRANSFER IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, assetTransfer.isValid(databaseSet));	
+		assertNotEquals(Transaction.VALIDATE_OK, assetTransfer.isValid(databaseSet));	
 		
 		//CREATE INVALID ASSET TRANSFER WRONG REFERENCE
 		assetTransfer = new TransferAssetTransaction(sender, recipient, 0, BigDecimal.valueOf(100).setScale(8), BigDecimal.valueOf(1).setScale(8), timestamp, new byte[0], signature);
 						
 		//CHECK IF ASSET TRANSFER IS INVALID
-		assertNotEquals(Transaction.VALIDATE_OKE, assetTransfer.isValid(databaseSet));	
+		assertNotEquals(Transaction.VALIDATE_OK, assetTransfer.isValid(databaseSet));	
 	}
 	
 	@Test
@@ -3458,7 +3458,7 @@ public class TransactionTests {
 		CancelOrderTransaction cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,6}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});		
 
 		//CHECK IF CANCEL ORDER IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, cancelOrderTransaction.isValid(dbSet));
+		assertEquals(Transaction.VALIDATE_OK, cancelOrderTransaction.isValid(dbSet));
 		
 		//CREATE INVALID CANCEL ORDER ORDER DOES NOT EXIST
 		cancelOrderTransaction = new CancelOrderTransaction(account, new BigInteger(new byte[]{5,7}), BigDecimal.ONE.setScale(8), System.currentTimeMillis(), account.getLastReference(dbSet), new byte[]{1,2});		
@@ -3726,7 +3726,7 @@ public class TransactionTests {
 		Transaction multiPayment = new MultiPaymentTransaction(sender, payments, BigDecimal.ONE.setScale(8), timestamp, sender.getLastReference(dbSet), signature);
 		
 		//CHECK IF ASSET TRANSFER IS VALID
-		assertEquals(Transaction.VALIDATE_OKE, multiPayment.isValid(dbSet));			
+		assertEquals(Transaction.VALIDATE_OK, multiPayment.isValid(dbSet));			
 		
 		//CREATE INVALID MULTI PAYMENT INVALID RECIPIENT ADDRESS
 		Payment invalidRecipientPayment = new Payment(new Account("test"), 0l, BigDecimal.ONE.setScale(8));

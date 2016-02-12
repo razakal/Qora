@@ -91,7 +91,7 @@ public class TransactionCreator
 		//VALIDATE AND PROCESS THOSE TRANSACTIONS IN FORK
 		for(Transaction transaction: accountTransactions)
 		{
-			if(transaction.isValid(this.fork) == Transaction.VALIDATE_OKE && transaction.isSignatureValid())
+			if(transaction.isValid(this.fork) == Transaction.VALIDATE_OK && transaction.isSignatureValid())
 			{
 				transaction.process(this.fork);
 			}
@@ -731,7 +731,7 @@ public class TransactionCreator
 		//CHECK IF PAYMENT VALID
 		int valid = transaction.isValid(this.fork);
 		
-		if(valid == Transaction.VALIDATE_OKE)
+		if(valid == Transaction.VALIDATE_OK)
 		{
 			//CHECK IF FEE BELOW MINIMUM
 			if(!Settings.getInstance().isAllowFeeLessRequired() && !transaction.hasMinimumFeePerByte())

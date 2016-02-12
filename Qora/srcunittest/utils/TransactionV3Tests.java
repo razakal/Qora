@@ -86,7 +86,7 @@ public class TransactionV3Tests {
 		}
 		else
 		{
-			assertEquals(messageTransactionV3.isValid(databaseSet), Transaction.VALIDATE_OKE);
+			assertEquals(messageTransactionV3.isValid(databaseSet), Transaction.VALIDATE_OK);
 		}
 		
 		messageTransactionV3.process(databaseSet);
@@ -177,7 +177,7 @@ public class TransactionV3Tests {
 		}
 		else
 		{
-			assertEquals(arbitraryTransactionV3.isValid(databaseSet), Transaction.VALIDATE_OKE);
+			assertEquals(arbitraryTransactionV3.isValid(databaseSet), Transaction.VALIDATE_OK);
 		}
 		
 		arbitraryTransactionV3.process(databaseSet);
@@ -267,7 +267,7 @@ public class TransactionV3Tests {
 		}
 		else
 		{
-			assertEquals(arbitraryTransactionV3.isValid(databaseSet), Transaction.VALIDATE_OKE);
+			assertEquals(arbitraryTransactionV3.isValid(databaseSet), Transaction.VALIDATE_OK);
 		}
 		
 		arbitraryTransactionV3.process(databaseSet);
