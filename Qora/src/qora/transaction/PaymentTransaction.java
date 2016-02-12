@@ -237,7 +237,7 @@ public class PaymentTransaction extends Transaction {
 			return NO_BALANCE;
 		}
 		
-		//CHECK IF REFERENCE IS OKE
+		//CHECK IF REFERENCE IS OK
 		if(!Arrays.equals(this.sender.getLastReference(db), this.reference))
 		{
 			return INVALID_REFERENCE;

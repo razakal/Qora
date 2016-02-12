@@ -142,7 +142,7 @@ public class ATTableModel extends QoraTableModel<Long, AT> implements Observer
 			}
 		}
 		
-		//STATUS_OKE
+		//STATUS_OK
 		if(message.getType() == ObserverMessage.NETWORK_STATUS )
 		{
 			if((int)message.getValue() == Controller.STATUS_OK)

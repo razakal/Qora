@@ -234,10 +234,10 @@ public class VoteFrame extends JFrame
 		//DISABLE
 		this.voteButton.setEnabled(false);
 	
-		//CHECK IF NETWORK OKE
+		//CHECK IF NETWORK OK
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
-			//NETWORK NOT OKE
+			//NETWORK NOT OK
 			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
 			
 			//ENABLE

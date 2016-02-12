@@ -278,7 +278,7 @@ public class TransferAssetTransaction extends Transaction {
 			}
 		}
 		
-		//CHECK IF REFERENCE IS OKE
+		//CHECK IF REFERENCE IS OK
 		if(!Arrays.equals(this.sender.getLastReference(db), this.reference))
 		{
 			return INVALID_REFERENCE;

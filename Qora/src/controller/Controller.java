@@ -621,7 +621,7 @@ public class Controller extends Observable {
 		        	
 		        	if(Controller.getInstance().getStatus() == STATUS_OK)
 			        {
-			        	Logger.getGlobal().info("STATUS OKE");
+			        	Logger.getGlobal().info("STATUS OK");
 				       	
 				       	if(needSync)
 				       	{

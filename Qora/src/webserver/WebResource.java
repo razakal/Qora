@@ -903,7 +903,7 @@ public class WebResource {
 			}
 			if(status == Controller.STATUS_OK)
 			{
-				statustext ="Oke";
+				statustext ="OK";
 			}
 			
 			pebbleHelper.getContextMap().put(

@@ -153,7 +153,7 @@ public class AcctTableModel extends QoraTableModel<String, AT> implements Observ
 			this.ats = Controller.getInstance().getAcctATs(type, initiators);
 		}
 		
-		//STATUS_OKE
+		//STATUS_OK
 		if(message.getType() == ObserverMessage.NETWORK_STATUS )
 		{
 			if((int)message.getValue() == Controller.STATUS_OK)

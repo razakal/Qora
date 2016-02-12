@@ -104,7 +104,7 @@ public class NetworkStatus extends JLabel implements Observer
 			if(status == Controller.STATUS_OK)
 			{
 				this.setIcon(okeIcon);
-				this.setText("Oke");
+				this.setText("OK");
 			}
 		}		
 	}

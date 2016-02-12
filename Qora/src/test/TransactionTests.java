@@ -120,7 +120,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 	
@@ -323,7 +323,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 	
@@ -644,7 +644,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 
@@ -925,7 +925,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 
@@ -1235,7 +1235,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 
@@ -1542,7 +1542,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 	
@@ -1867,7 +1867,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 	
@@ -2234,7 +2234,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 
@@ -2515,7 +2515,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 
@@ -2789,7 +2789,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 
@@ -3039,7 +3039,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 
@@ -3308,7 +3308,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 	
@@ -3572,7 +3572,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 	
@@ -3865,7 +3865,7 @@ public class TransactionTests {
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 	

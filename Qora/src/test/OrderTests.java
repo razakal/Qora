@@ -202,7 +202,7 @@ public class OrderTests
 		}
 		catch (Exception e) 
 		{
-			//EXCEPTION IS THROWN OKE
+			//EXCEPTION IS THROWN OK
 		}	
 	}
 	

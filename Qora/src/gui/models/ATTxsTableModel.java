@@ -168,7 +168,7 @@ public class ATTxsTableModel extends QoraTableModel<Tuple2<Integer, Integer>, AT
 			}
 		}
 		
-		//STATUS_OKE
+		//STATUS_OK
 		if(message.getType() == ObserverMessage.NETWORK_STATUS )
 		{
 			if((int)message.getValue() == Controller.STATUS_OK)

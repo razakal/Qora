@@ -357,7 +357,7 @@ public class SysTray implements Observer{
 		}
 		if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
 		{
-			this.networkStatus = "Oke";
+			this.networkStatus = "OK";
 			this.syncProcent = "";
 		}	
 

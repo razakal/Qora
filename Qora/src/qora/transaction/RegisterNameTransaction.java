@@ -226,7 +226,7 @@ public class RegisterNameTransaction extends Transaction
 			return NO_BALANCE;
 		}
 		
-		//CHECK IF REFERENCE IS OKE
+		//CHECK IF REFERENCE IS OK
 		if(!Arrays.equals(this.registrant.getLastReference(db), this.reference))
 		{
 			return INVALID_REFERENCE;
