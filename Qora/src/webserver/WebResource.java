@@ -1692,9 +1692,14 @@ public class WebResource {
 							.entity(jsonanswer.toJSONString()).build();
 				}
 
-				String creator = blogEntryOpt.getCreator();
+				String creator = BlogUtils.getCreatorOrBlogOwnerOpt(blogEntryOpt);
+				
+				
+//				if(profileOpt != null && )
+				
+				
 
-				if (Controller.getInstance().getAccountByAddress(creator) == null) {
+				if (creator == null) {
 					jsonanswer.put("type", "deleteError");
 					jsonanswer
 							.put("errordetail",
@@ -1755,6 +1760,7 @@ public class WebResource {
 		}
 
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@POST

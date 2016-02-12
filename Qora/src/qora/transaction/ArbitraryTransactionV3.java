@@ -570,9 +570,6 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 					BlogEntry commentEntryOpt = BlogUtils
 							.getCommentBlogEntryOpt(signatureOfCommentOpt);
 
-					String authorOpt = (String) jsonObject
-							.get(BlogPostResource.AUTHOR);
-
 					if (commentEntryOpt != null) {
 						String creatorOfDeleteTX = getCreator().getAddress();
 						String creatorOfEntryToDelete = commentEntryOpt
@@ -582,8 +579,8 @@ public class ArbitraryTransactionV3 extends ArbitraryTransaction {
 						if (creatorOfDeleteTX.equals(creatorOfEntryToDelete)) {
 							deleteCommentInternal(db, commentEntryOpt);
 							// BLOGOWNER IS DELETING POST
-						} else if (authorOpt != null
-								&& commentEntryOpt.getBlognameOpt() != null) {
+						} else if (
+								commentEntryOpt.getBlognameOpt() != null) {
 							Name name = db.getNameMap().get(
 									commentEntryOpt.getBlognameOpt());
 							if (name != null

@@ -40,40 +40,47 @@ public class BlogPostResource {
 	public static final String SHARE_KEY = "share";
 	public static final String DELETE_KEY = "delete";
 	public static final String POST_KEY = "post";
-	//THIS IS ONLY NEEDED FOR COMMENTS -> id of the post to comment!
+	// THIS IS ONLY NEEDED FOR COMMENTS -> id of the post to comment!
 	public static final String COMMENT_POSTID_KEY = "postid";
 
 	@Context
 	HttpServletRequest request;
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@DELETE
 	@Path("/comment/{signature}")
-	public String deleteCommentEntry(@PathParam("signature") String signatureOfComment) {
+	public String deleteCommentEntry(
+			@PathParam("signature") String signatureOfComment) {
 		try {
 
-			BlogEntry commentEntryOpt = BlogUtils.getCommentBlogEntryOpt(signatureOfComment);
-					
-			if(commentEntryOpt == null)
-			{
+			BlogEntry commentEntryOpt = BlogUtils
+					.getCommentBlogEntryOpt(signatureOfComment);
+
+			if (commentEntryOpt == null) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_COMMENT_NOT_EXISTING);
 			}
-			
-			String creator = commentEntryOpt.getCreator();
-					
+
+			String creator = BlogUtils
+					.getCreatorOrBlogOwnerOpt(commentEntryOpt);
+
+			// CHECK ACCOUNT IN WALLET
+
+			if (Controller.getInstance().getAccountByAddress(creator) == null) {
+				throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_INVALID_COMMENT_OWNER);
+			}
+
 			String blognameOpt = commentEntryOpt.getBlognameOpt();
-			
 
 			// CHECK ADDRESS
 			if (!Crypto.getInstance().isValidAddress(creator)) {
 				throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_INVALID_ADDRESS);
+						ApiErrorFactory.ERROR_INVALID_ADDRESS);
 			}
 
-			APIUtils.askAPICallAllowed("POST blogpost/comment/" + signatureOfComment,
-				request);
+			APIUtils.askAPICallAllowed("POST blogpost/comment/"
+					+ signatureOfComment, request);
 
 			// CHECK IF WALLET EXISTS
 			if (!Controller.getInstance().doesWalletExists()) {
@@ -87,13 +94,6 @@ public class BlogPostResource {
 						ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
 
-			// CHECK ACCOUNT IN WALLET
-
-			if (Controller.getInstance().getAccountByAddress(creator) == null) {
-				throw ApiErrorFactory.getInstance().createError(
-						ApiErrorFactory.ERROR_INVALID_COMMENT_OWNER);
-			}
-
 			// GET ACCOUNT
 			PrivateKeyAccount account = Controller.getInstance()
 					.getPrivateKeyAccountByAddress(creator);
@@ -105,23 +105,26 @@ public class BlogPostResource {
 			JSONObject dataStructure = new JSONObject();
 
 			dataStructure.put(DELETE_KEY, signatureOfComment);
-			
 
 			if (blognameOpt != null) {
 				dataStructure.put(BLOGNAME_KEY, blognameOpt);
 			}
 
-			byte[] resultbyteArray = dataStructure.toJSONString()
-					.getBytes(StandardCharsets.UTF_8);
+			byte[] resultbyteArray = dataStructure.toJSONString().getBytes(
+					StandardCharsets.UTF_8);
 			BigDecimal bdFee = Controller
 					.getInstance()
-					.calcRecommendedFeeForArbitraryTransaction(
-							resultbyteArray, null).getA();
+					.calcRecommendedFeeForArbitraryTransaction(resultbyteArray,
+							null).getA();
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
-					.createArbitraryTransaction(account, null, BlogUtils.COMMENT_SERVICE_ID,
-							dataStructure.toJSONString().getBytes(StandardCharsets.UTF_8), bdFee);
+					.createArbitraryTransaction(
+							account,
+							null,
+							BlogUtils.COMMENT_SERVICE_ID,
+							dataStructure.toJSONString().getBytes(
+									StandardCharsets.UTF_8), bdFee);
 
 			return ArbitraryTransactionsResource
 					.checkArbitraryTransaction(result);
@@ -132,14 +135,13 @@ public class BlogPostResource {
 					ApiErrorFactory.ERROR_JSON);
 		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/comment")
 	public String commentBlogEntry(String x) {
 		try {
-			
+
 			// READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
 			String fee = (String) jsonObject.get("fee");
@@ -147,29 +149,27 @@ public class BlogPostResource {
 			String authorOpt = (String) jsonObject.get(BlogPostResource.AUTHOR);
 			String title = (String) jsonObject.get("title");
 			String body = (String) jsonObject.get("body");
-			//this is the post we are commenting
+			// this is the post we are commenting
 			String postid = (String) jsonObject.get("postid");
 
 			if (StringUtil.isBlank(body)) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_BODY_EMPTY);
 			}
-			
+
 			if (StringUtil.isBlank(postid)) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_POSTID_EMPTY);
 			}
-			
+
 			BlogEntry blogEntryOpt = BlogUtils.getBlogEntryOpt(postid);
-			
-			if(blogEntryOpt == null)
-			{
+
+			if (blogEntryOpt == null) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_POST_NOT_EXISTING);
 			}
-			
+
 			String blognameOpt = blogEntryOpt.getBlognameOpt();
-			
 
 			// PARSE FEE
 			BigDecimal bdFee;
@@ -184,18 +184,17 @@ public class BlogPostResource {
 			// CHECK ADDRESS
 			if (!Crypto.getInstance().isValidAddress(creator)) {
 				throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_INVALID_ADDRESS);
+						ApiErrorFactory.ERROR_INVALID_ADDRESS);
 			}
 
 			Profile profileOpt = Profile.getProfileOpt(blognameOpt);
-			if(profileOpt != null && profileOpt.isCommentingDisabled())
-			{
+			if (profileOpt != null && profileOpt.isCommentingDisabled()) {
 				throw ApiErrorFactory.getInstance().createError(
 						ApiErrorFactory.ERROR_COMMENTING_DISABLED);
 			}
 
-			APIUtils.askAPICallAllowed("POST blogpost/comment" + "\n" +  x,
-				request);
+			APIUtils.askAPICallAllowed("POST blogpost/comment" + "\n" + x,
+					request);
 
 			// CHECK IF WALLET EXISTS
 			if (!Controller.getInstance().doesWalletExists()) {
@@ -209,17 +208,16 @@ public class BlogPostResource {
 						ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
 
-			if(authorOpt != null)
-			{
-			  Name	name = DBSet.getInstance().getNameMap().get(authorOpt);
-				
-			  	//Name is not owned by creator!
-				if(name == null || !name.getOwner().getAddress().equals(creator))
-				{
+			if (authorOpt != null) {
+				Name name = DBSet.getInstance().getNameMap().get(authorOpt);
+
+				// Name is not owned by creator!
+				if (name == null
+						|| !name.getOwner().getAddress().equals(creator)) {
 					throw ApiErrorFactory.getInstance().createError(
 							ApiErrorFactory.ERROR_NAME_NOT_OWNER);
 				}
-				
+
 			}
 
 			// CHECK ACCOUNT IN WALLET
@@ -242,7 +240,6 @@ public class BlogPostResource {
 			dataStructure.put(TITLE_KEY, title);
 			dataStructure.put(POST_KEY, body);
 			dataStructure.put(COMMENT_POSTID_KEY, postid);
-			
 
 			if (blognameOpt != null) {
 				dataStructure.put(BLOGNAME_KEY, blognameOpt);
@@ -254,8 +251,12 @@ public class BlogPostResource {
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
-					.createArbitraryTransaction(account, null, BlogUtils.COMMENT_SERVICE_ID,
-							dataStructure.toJSONString().getBytes(StandardCharsets.UTF_8), bdFee);
+					.createArbitraryTransaction(
+							account,
+							null,
+							BlogUtils.COMMENT_SERVICE_ID,
+							dataStructure.toJSONString().getBytes(
+									StandardCharsets.UTF_8), bdFee);
 
 			return ArbitraryTransactionsResource
 					.checkArbitraryTransaction(result);
@@ -281,7 +282,8 @@ public class BlogPostResource {
 			String title = (String) jsonObject.get("title");
 			String body = (String) jsonObject.get("body");
 			String share = (String) jsonObject.get(BlogPostResource.SHARE_KEY);
-			String delete = (String) jsonObject.get(BlogPostResource.DELETE_KEY);
+			String delete = (String) jsonObject
+					.get(BlogPostResource.DELETE_KEY);
 
 			if (StringUtil.isBlank(body)) {
 				throw ApiErrorFactory.getInstance().createError(
@@ -301,13 +303,13 @@ public class BlogPostResource {
 			// CHECK ADDRESS
 			if (!Crypto.getInstance().isValidAddress(creator)) {
 				throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_INVALID_ADDRESS);
+						ApiErrorFactory.ERROR_INVALID_ADDRESS);
 			}
 
 			isPostAllowed(blogname);
 
 			APIUtils.askAPICallAllowed("POST blogpost/" + blogname + "\n" + x,
-				request);
+					request);
 
 			// CHECK IF WALLET EXISTS
 			if (!Controller.getInstance().doesWalletExists()) {
@@ -321,17 +323,16 @@ public class BlogPostResource {
 						ApiErrorFactory.ERROR_WALLET_LOCKED);
 			}
 
-			if(authorOpt != null)
-			{
-			  Name	name = DBSet.getInstance().getNameMap().get(authorOpt);
-				
-			  	//Name is not owned by creator!
-				if(name == null || !name.getOwner().getAddress().equals(creator))
-				{
+			if (authorOpt != null) {
+				Name name = DBSet.getInstance().getNameMap().get(authorOpt);
+
+				// Name is not owned by creator!
+				if (name == null
+						|| !name.getOwner().getAddress().equals(creator)) {
 					throw ApiErrorFactory.getInstance().createError(
 							ApiErrorFactory.ERROR_NAME_NOT_OWNER);
 				}
-				
+
 			}
 
 			// CHECK ACCOUNT IN WALLET
@@ -353,14 +354,12 @@ public class BlogPostResource {
 
 			dataStructure.put(TITLE_KEY, title);
 			dataStructure.put(POST_KEY, body);
-			if(StringUtils.isNotBlank(share))
-			{
+			if (StringUtils.isNotBlank(share)) {
 				dataStructure.put(BlogPostResource.SHARE_KEY, share);
 			}
-			
-			//TODO add delete logic including errors here!
-			if(StringUtils.isNotBlank(delete))
-			{
+
+			// TODO add delete logic including errors here!
+			if (StringUtils.isNotBlank(delete)) {
 				dataStructure.put(BlogPostResource.DELETE_KEY, delete);
 			}
 
@@ -374,8 +373,12 @@ public class BlogPostResource {
 
 			// SEND PAYMENT
 			Pair<Transaction, Integer> result = Controller.getInstance()
-					.createArbitraryTransaction(account, null, 777,
-							dataStructure.toJSONString().getBytes(StandardCharsets.UTF_8), bdFee);
+					.createArbitraryTransaction(
+							account,
+							null,
+							777,
+							dataStructure.toJSONString().getBytes(
+									StandardCharsets.UTF_8), bdFee);
 
 			return ArbitraryTransactionsResource
 					.checkArbitraryTransaction(result);
@@ -388,22 +391,20 @@ public class BlogPostResource {
 	}
 
 	static void isPostAllowed(String blogname) {
-		
-		//MAINBLOG allows posting always
-		if(blogname == null)
-		{
+
+		// MAINBLOG allows posting always
+		if (blogname == null) {
 			return;
 		}
-		
-		String blogenable = DBSet.getInstance().getNameStorageMap().getOpt(blogname, Qorakeys.BLOGENABLE.toString());
-		
-		if(blogenable == null)
-		{
+
+		String blogenable = DBSet.getInstance().getNameStorageMap()
+				.getOpt(blogname, Qorakeys.BLOGENABLE.toString());
+
+		if (blogenable == null) {
 
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_BLOG_DISABLED);
 		}
-		
 
 	}
 

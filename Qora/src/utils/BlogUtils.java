@@ -434,5 +434,31 @@ public class BlogUtils {
 
 		return null;
 	}
+	
+	public static String getCreatorOrBlogOwnerOpt(BlogEntry blogEntryOpt) {
+		String creator = blogEntryOpt.getCreator();
+		
+		//WE don't have creator account
+		if(Controller.getInstance().getAccountByAddress(creator) == null)
+		{
+			creator = null;
+			String blognameOpt = blogEntryOpt.getBlognameOpt();
+			Profile profileOpt = Profile.getProfileOpt(blognameOpt);
+			
+			if(profileOpt != null)
+			{
+				String blogowner = profileOpt.getName().getOwner().getAddress();
+				//are we the owner of the blog?
+				if(Controller.getInstance().getAccountByAddress(blogowner) != null)
+				{
+					creator = blogowner;
+				}
+				
+			}
+			
+		}
+		return creator;
+	}
+
 
 }
