@@ -305,7 +305,7 @@ public class Controller extends Observable {
 		// CREATE WALLET
 		this.wallet = new Wallet();
 
-		if(Settings.getInstance().isTestnet() && this.wallet.getLastTransactions(1).size() > 0) {
+		if(Settings.getInstance().isTestnet() && this.wallet.isWalletDatabaseExisting() && this.wallet.getAccounts().size() > 0) {
 			this.wallet.synchronize();	
 		}
 		
