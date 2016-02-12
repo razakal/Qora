@@ -416,6 +416,16 @@
             return decodeURIComponent(name[1]);
     	}
 
+		function parseError(error) {
+			try {
+				var error = JSON.parse(error);
+				message = error.message;
+			} catch (e) {
+				message = error;
+			}
+			return message;
+		}
+					
     	function processfollow() {
 			var  blogname;
 			var follow = !profileisFollowing;
@@ -456,28 +466,15 @@
 					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You follow this blog now<br>"
 										+ "</div>");
 				} else if (data.type == 'BlogFollowNotSuccessful'){
-					try {
-						var error = JSON.parse(data.result);
-						message = error.message;
-					} catch (e) {
-						message = data.result;
-					}
-
 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
-										+ message
+										+ parseError(data.result)
 										+ "</div></center>");
 				} else if (data.type == 'unfollowSuccessful'){
 					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Unfollow successful<br>"
 										+ "</div>");
 				} else if (data.type == 'blogUnfollowNotSuccessful'){
-					try {
-						var error = JSON.parse(data.result);
-						message = error.message;
-					} catch (e) {
-						message = data.result;
-					}
 					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog unfollow not successful<br>"
-										+ message
+										+ parseError(data.result)
 										+ "</div></center>");
 				}
 
@@ -549,9 +546,10 @@
 
 
 			}).fail( function(xhr, textStatus, errorThrown) {
+			
 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete Error<br>'
 										+ 'Connection Error<br>'
-										+ xhr.responseText + '</div></center>');
+										+ parseError(xhr.responseText) + '</div></center>');
 			});
 
 			return 0;
@@ -565,7 +563,7 @@
 			}).done( function(data) {
 				if(data.type == 'deleteError'){
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete Error<br>'
-										+ data.errordetail + '</div></center>');
+										+ parseError(data.errordetail) + '</div></center>');
 				} else if (data.type == 'deleteSuccessful'){
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete successful<br>'
 										+ '</div></center>');
@@ -574,9 +572,10 @@
 
 
 			}).fail( function(xhr, textStatus, errorThrown) {
+				
 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Delete Error<br>'
 										+ 'Connection Error<br>'
-										+ xhr.responseText + '</div></center>');
+										+ parseError(xhr.responseText) + '</div></center>');
 			});
 
 			return 0;
@@ -609,15 +608,8 @@
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share successful<br>'
 										+ '</div></center>');
 				} else if (data.type == 'ShareNotSuccessful'){
-					try {
-						var error = JSON.parse(data.result);
-						message = error.message;
-					} catch (e) {
-						message = data.result;
-					}
-
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
-										+ message + '</div></center>');
+										+ parseError(data.result) + '</div></center>');
 				} else if (data.type == 'error'){
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share Error<br>'
 										+ data.error + '</div></center>');
@@ -631,7 +623,7 @@
 			}).fail( function(xhr, textStatus, errorThrown) {
 				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share Error<br>'
 										+ 'Connection Error<br>'
-										+ xhr.responseText + '</div></center>');
+										+ parseError(xhr.responseText) + '</div></center>');
 			});
 
 			return 0;
@@ -682,21 +674,14 @@
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like removed successful<br>'
 										+ '</div></center>');
 				} else if (data.type == 'LikeRemovedNotSuccessful'){
-					try {
-						var error = JSON.parse(data.result);
-						message = error.message;
-					} catch (e) {
-						message = data.result;
-					}
-
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
 										+ 'Like remove not successful<br>'
-										+ message
+										+ parseError(data.result)
 										+ '</div></center>');
 					$("#profLikes").html(data.newlikes);
 				} else if (data.type == 'error'){
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like Error<br>'
-										+ data.error + '</div></center>');
+										+ parseError(data.error) + '</div></center>');
 				}
 
 				if(data.hasOwnProperty('likes'))
