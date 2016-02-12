@@ -105,8 +105,9 @@ public class Controller extends Observable {
 	private Timer timer = new Timer();
 	private Timer timerPeerHeightUpdate = new Timer();
 	private Random random = new SecureRandom();
-	byte[] foundMyselfID = new byte[128];
+	private byte[] foundMyselfID = new byte[128];
 	private byte[] messageMagic;
+	private long offlineStartTime; 
 	
 	private Map<Peer, Integer> peerHeight;
 
@@ -201,6 +202,8 @@ public class Controller extends Observable {
 	}
 	
 	public void start() throws Exception {
+		
+		this.offlineStartTime = NTP.getTime();
 		
 		this.random.nextBytes(foundMyselfID);
 		
@@ -578,6 +581,13 @@ public class Controller extends Observable {
 				ObserverMessage.WALLET_SYNC_STATUS, height));
 	}
 		
+	public long getOfflineStartTime() {
+		return this.offlineStartTime;
+	}
+	
+	public void setOfflineStartTime(long time) {
+		this.offlineStartTime = time;
+	}
 		
 	public void onConnect(Peer peer) {
 
@@ -615,7 +625,7 @@ public class Controller extends Observable {
 			
 			this.timer.cancel();
 			this.timer = new Timer();
-			
+
 			TimerTask action = new TimerTask() {
 		        public void run() {
 		        	
@@ -623,6 +633,8 @@ public class Controller extends Observable {
 			        {
 			        	Logger.getGlobal().info("STATUS OK");
 				       	
+			        	Controller.getInstance().setOfflineStartTime(0L);
+			        	
 				       	if(needSync)
 				       	{
 				       		Controller.getInstance().synchronizeWallet();
@@ -651,6 +663,9 @@ public class Controller extends Observable {
 				// UPDATE STATUS
 				this.status = STATUS_NO_CONNECTIONS;
 
+				//SET OFFLINE START TIME
+				this.offlineStartTime = NTP.getTime();
+				
 				// NOTIFY
 				this.setChanged();
 				this.notifyObservers(new ObserverMessage(

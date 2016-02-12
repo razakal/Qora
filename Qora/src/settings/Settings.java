@@ -19,6 +19,7 @@ import org.json.simple.JSONValue;
 
 import controller.Controller;
 import network.Peer;
+import ntp.NTP;
 
 public class Settings {
 
@@ -83,6 +84,9 @@ public class Settings {
 	private JSONObject settingsJSON;
 	
 	private String currentSettingsPath;
+	
+	List<Peer> cacheInternetPeers;
+	long timeLoadInternetPeers;
 	
 	public static Settings getInstance()
 	{
@@ -172,11 +176,12 @@ public class Settings {
 	
 	public List<Peer> getKnownPeers()
 	{
-		return getKnownPeers(false);
-	}
-	
-	public List<Peer> getKnownPeers(boolean loadPeersFromInternet)
-	{
+		boolean loadPeersFromInternet =	(
+			Controller.getInstance().getOfflineStartTime() != 0L 
+			&& 
+			NTP.getTime() - Controller.getInstance().getOfflineStartTime() > 5*60*1000
+			);
+		
 		List<Peer> knownPeers = new ArrayList<Peer>();
 		JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
 		
@@ -193,17 +198,30 @@ public class Settings {
 	public List<Peer> getKnownPeersFromInternet() 
 	{
 		try {
-			URL u = new URL("https://raw.githubusercontent.com/Qoracoin/Qora/master/Qora/settings.json");
-			InputStream in = u.openStream();
-			String stringSettings = IOUtils.toString( in );
-			JSONObject internetSettingsJSON = (JSONObject) JSONValue.parse(stringSettings);
-			JSONArray peersArray = (JSONArray) internetSettingsJSON.get("knownpeers");
-
-			return getKnownPeersFromJSONArray(peersArray);
+			
+			if(this.cacheInternetPeers == null) {
+				
+				this.cacheInternetPeers = new ArrayList<Peer>();
+			}
+				
+			if(this.cacheInternetPeers.size() == 0 || NTP.getTime() - this.timeLoadInternetPeers > 24*60*60*1000 )
+			{
+				this.timeLoadInternetPeers = NTP.getTime();
+				URL u = new URL("https://raw.githubusercontent.com/Qoracoin/Qora/master/Qora/settings.json");
+				InputStream in = u.openStream();
+				String stringInternetSettings = IOUtils.toString( in );
+				JSONObject internetSettingsJSON = (JSONObject) JSONValue.parse(stringInternetSettings);
+				JSONArray peersArray = (JSONArray) internetSettingsJSON.get("knownpeers");
+				
+				this.cacheInternetPeers = getKnownPeersFromJSONArray(peersArray);
+			}
+			
+			return this.cacheInternetPeers;
 			
 		} catch (Exception e) {
 			//RETURN EMPTY LIST
-			return new ArrayList<Peer>();
+						
+			return this.cacheInternetPeers;
 		}
 	}
 	
