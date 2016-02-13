@@ -107,7 +107,7 @@ public class Controller extends Observable {
 	private Random random = new SecureRandom();
 	private byte[] foundMyselfID = new byte[128];
 	private byte[] messageMagic;
-	private long offlineStartTime; 
+	private long toOfflineTime; 
 	
 	private Map<Peer, Integer> peerHeight;
 
@@ -203,9 +203,10 @@ public class Controller extends Observable {
 	
 	public void start() throws Exception {
 		
-		this.offlineStartTime = NTP.getTime();
+		this.toOfflineTime = NTP.getTime();
 		
-		this.random.nextBytes(foundMyselfID);
+		this.foundMyselfID = new byte[128];
+		this.random.nextBytes(this.foundMyselfID);
 		
 		// CHECK NETWORK PORT AVAILABLE
 		if (!Network.isPortAvailable(Controller.getInstance().getNetworkPort())) {
@@ -581,12 +582,12 @@ public class Controller extends Observable {
 				ObserverMessage.WALLET_SYNC_STATUS, height));
 	}
 		
-	public long getOfflineStartTime() {
-		return this.offlineStartTime;
+	public long getToOfflineTime() {
+		return this.toOfflineTime;
 	}
 	
-	public void setOfflineStartTime(long time) {
-		this.offlineStartTime = time;
+	public void setToOfflineTime(long time) {
+		this.toOfflineTime = time;
 	}
 		
 	public void onConnect(Peer peer) {
@@ -633,7 +634,7 @@ public class Controller extends Observable {
 			        {
 			        	Logger.getGlobal().info("STATUS OK");
 				       	
-			        	Controller.getInstance().setOfflineStartTime(0L);
+			        	Controller.getInstance().setToOfflineTime(0L);
 			        	
 				       	if(needSync)
 				       	{
@@ -655,16 +656,21 @@ public class Controller extends Observable {
 
 	public void onDisconnect(Peer peer) {
 		synchronized (this.peerHeight) {
+			
 			this.peerHeight.remove(peer);
-
+			
 			this.peersVersions.remove(peer);
 			
 			if (this.peerHeight.size() == 0) {
+				
+				if(this.getToOfflineTime() == 0L) {
+					//SET START OFFLINE TIME
+					this.setToOfflineTime(NTP.getTime());
+				}
+				
 				// UPDATE STATUS
 				this.status = STATUS_NO_CONNECTIONS;
 
-				//SET OFFLINE START TIME
-				this.offlineStartTime = NTP.getTime();
 				
 				// NOTIFY
 				this.setChanged();

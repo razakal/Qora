@@ -177,9 +177,9 @@ public class Settings {
 	public List<Peer> getKnownPeers()
 	{
 		boolean loadPeersFromInternet =	(
-			Controller.getInstance().getOfflineStartTime() != 0L 
+			Controller.getInstance().getToOfflineTime() != 0L 
 			&& 
-			NTP.getTime() - Controller.getInstance().getOfflineStartTime() > 5*60*1000
+			NTP.getTime() - Controller.getInstance().getToOfflineTime() > 5*60*1000
 			);
 		
 		List<Peer> knownPeers = new ArrayList<Peer>();
