@@ -188,7 +188,7 @@ public class Settings {
 			JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
 		
 			knownPeers = getKnownPeersFromJSONArray(peersArray);
-		} finally {
+		} catch (Exception e) {
 			knownPeers = new ArrayList<Peer>();
 		}
 		
