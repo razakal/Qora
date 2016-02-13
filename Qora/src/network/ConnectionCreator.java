@@ -21,10 +21,11 @@ public class ConnectionCreator extends Thread {
 	public void run()
 	{
 		this.isRun = true;
-		try
-		{	
-			while(isRun)
-			{
+
+		while(isRun)
+		{
+			try
+			{	
 				int maxReceivePeers = Settings.getInstance().getMaxReceivePeers();
 				
 				//CHECK IF WE NEED NEW CONNECTIONS
@@ -39,7 +40,7 @@ public class ConnectionCreator extends Thread {
 					for(Peer peer: knownPeers)
 					{
 						knownPeersCounter ++;
-
+	
 						//CHECK IF WE ALREADY HAVE MAX CONNECTIONS
 						if(this.isRun && Settings.getInstance().getMaxConnections() > callback.getActiveConnections().size())
 						{
@@ -91,7 +92,7 @@ public class ConnectionCreator extends Thread {
 											if(foreignPeersCounter >= maxReceivePeers) {
 												break;
 											}
-
+	
 											foreignPeersCounter ++;
 											
 											//CHECK IF THAT PEER IS NOT BLACKLISTED
@@ -127,15 +128,15 @@ public class ConnectionCreator extends Thread {
 				}			
 				//SLEEP
 				Thread.sleep(60 * 1000);	
+	
 			}
-			
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				
+				Logger.getGlobal().info("Error creating new connection");			
+			}					
 		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			
-			Logger.getGlobal().info("Error creating new connection");			
-		}					
 	}
 	
 	public void halt()
