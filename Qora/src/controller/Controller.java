@@ -201,6 +201,10 @@ public class Controller extends Observable {
 		this.needSync = needSync;
 	}
 	
+	public boolean isNeedSync() {
+		return this.needSync;
+	}
+	
 	public void start() throws Exception {
 		
 		this.toOfflineTime = NTP.getTime();
@@ -636,7 +640,7 @@ public class Controller extends Observable {
 				       	
 			        	Controller.getInstance().setToOfflineTime(0L);
 			        	
-				       	if(needSync)
+				       	if(Controller.getInstance().isNeedSync())
 				       	{
 				       		Controller.getInstance().synchronizeWallet();
 				       	}
@@ -1023,7 +1027,7 @@ public class Controller extends Observable {
 		if(this.wallet.create(seed, password, amount, false))
 		{
 			Logger.getGlobal().info("The need to synchronize the wallet!");
-			needSync = true;
+			this.setNeedSync(true);
 
 			return true;
 		}
