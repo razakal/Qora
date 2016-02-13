@@ -2,11 +2,7 @@ package qora.transaction;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.List;
-
-import org.json.simple.JSONObject;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -19,7 +15,6 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
-import utils.Converter;
 
 
 
@@ -37,15 +32,6 @@ public class MessageTransactionV3 extends MessageTransaction {
 	protected static final int IS_TEXT_LENGTH = 1;
 	protected static final int BASE_LENGTH = TIMESTAMP_LENGTH + REFERENCE_LENGTH + IS_TEXT_LENGTH + ENCRYPTED_LENGTH + CREATOR_LENGTH + DATA_SIZE_LENGTH + FEE_LENGTH + SIGNATURE_LENGTH + RECIPIENT_LENGTH + AMOUNT_LENGTH + KEY_LENGTH;
 
-	private PublicKeyAccount creator;
-	private byte[] data;
-
-	private Account recipient;
-	private BigDecimal amount;
-	private long key;
-	private byte[] encrypted;
-	private byte[] isText;
-
 	public MessageTransactionV3(PublicKeyAccount creator, Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] data, byte[] isText, byte[] encrypted, long timestamp, byte[] reference, byte[] signature) {
 		super(fee, timestamp, reference, signature);
 
@@ -58,55 +44,6 @@ public class MessageTransactionV3 extends MessageTransaction {
 		this.isText = isText;
 	}
 
-	@Override
-	public Account getSender()
-	{
-		return this.creator;
-	}
-
-	@Override
-	public byte[] getData() 
-	{
-		return this.data;
-	}
-
-	@Override
-	public Account getRecipient()
-	{
-		return this.recipient;
-	}
-
-	@Override
-	public long getKey()
-	{
-		return this.key;
-	}
-	
-	@Override
-	public BigDecimal getAmount()
-	{
-		return this.amount;
-	}
-	
-	@Override
-	public byte[] getEncrypted()
-	{
-		byte[] enc = new byte[1];
-		enc[0] = (isEncrypted())?(byte)1:(byte)0;
-		return enc;
-	}
-	
-	@Override
-	public boolean isText()
-	{
-		return (Arrays.equals(this.isText,new byte[1]))?false:true;
-	}
-	
-	@Override
-	public boolean isEncrypted()
-	{
-		return (Arrays.equals(this.encrypted,new byte[1]))?false:true;
-	}
 
 	public static Transaction Parse(byte[] data) throws Exception
 	{
@@ -172,32 +109,6 @@ public class MessageTransactionV3 extends MessageTransaction {
 
 		return new MessageTransactionV3(creator, recipient, key, amount, fee, arbitraryData, isTextByte, encryptedByte, timestamp, reference, signatureBytes);
 
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public JSONObject toJson() 
-	{
-		//GET BASE
-		JSONObject transaction = this.getJsonBase();
-
-		//ADD CREATOR/SERVICE/DATA
-		transaction.put("creator", this.creator.getAddress());
-		transaction.put("recipient", this.recipient.getAddress());
-		transaction.put("asset", this.key);
-		transaction.put("amount", this.amount.toPlainString());
-		if ( this.isText() && !this.isEncrypted() )
-		{
-			transaction.put("data", new String(this.data, Charset.forName("UTF-8")));
-		}
-		else
-		{
-			transaction.put("data", Converter.toHex(this.data));
-		}
-		transaction.put("encrypted", this.isEncrypted());
-		transaction.put("isText", this.isText());
-		
-		return transaction;	
 	}
 
 	@Override
@@ -437,59 +348,6 @@ public class MessageTransactionV3 extends MessageTransaction {
 		}
 	}
 
-	@Override
-	public PublicKeyAccount getCreator() {
-		return this.creator;
-	}
-
-	@Override
-	public List<Account> getInvolvedAccounts() {
-		return Arrays.asList(this.creator, this.recipient);
-	}
-
-	@Override
-	public boolean isInvolved(Account account) {
-		String address = account.getAddress();
-		
-		if(address.equals(creator.getAddress()) || address.equals(recipient.getAddress()))
-		{
-			return true;
-		}
-		
-		return false;
-	}
-
-
-	@Override
-	public BigDecimal getAmount(Account account) {
-		BigDecimal amount = BigDecimal.ZERO.setScale(8);
-		String address = account.getAddress();
-		
-		//IF SENDER
-		if(address.equals(this.creator.getAddress()))
-		{
-			amount = amount.subtract(this.fee);
-		}
-
-		//IF QORA ASSET
-		if(this.key == BalanceMap.QORA_KEY)
-		{
-			//IF SENDER
-			if(address.equals(this.creator.getAddress()))
-			{
-				amount = amount.subtract(this.amount);
-			}
-			
-			//IF RECIPIENT
-			if(address.equals(this.recipient.getAddress()))
-			{
-				amount = amount.add(this.amount);
-			}
-		}
-		
-		return amount;
-	}
-	
 	public static byte[] generateSignature(PrivateKeyAccount creator, Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] arbitraryData, byte[] isText, byte[] encrypted, long timestamp) 
 	{
 		return generateSignature(DBSet.getInstance(), creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);
@@ -559,4 +417,3 @@ public class MessageTransactionV3 extends MessageTransaction {
 		return Crypto.getInstance().sign(creator, data);
 	}
 }
-
