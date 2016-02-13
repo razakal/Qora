@@ -1,6 +1,7 @@
 package api;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -10,16 +11,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import controller.Controller;
 import qora.account.PrivateKeyAccount;
+import qora.assets.Asset;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import qora.payment.Payment;
 import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.Pair;
-import controller.Controller;
 
 @Path("arbitrarytransactions")
 @Produces(MediaType.APPLICATION_JSON)
@@ -43,6 +47,21 @@ public class ArbitraryTransactionsResource
 			String data = (String) jsonObject.get("data");
 			String fee = (String) jsonObject.get("fee");
 			String creator = (String) jsonObject.get("creator");
+			String asset = (String) jsonObject.get("asset");
+
+			Asset defaultAsset;
+			if(asset != null) {
+				try {
+					defaultAsset = Controller.getInstance().getAsset(new Long(asset));
+				} catch (Exception e) {
+					throw ApiErrorFactory.getInstance().createError(
+						ApiErrorFactory.ERROR_INVALID_ASSET_ID);
+				}
+			} else {
+				defaultAsset = Controller.getInstance().getAsset(0L);
+			}
+			
+			List<Payment> payments = MultiPaymentResource.jsonPaymentParser((JSONArray)jsonObject.get("payments"), defaultAsset);
 			
 			//PARSE DATA
 			byte[] dataBytes;
@@ -56,17 +75,24 @@ public class ArbitraryTransactionsResource
 			}
 				
 			//PARSE FEE
+			
 			BigDecimal bdFee;
-			try
-			{
-				bdFee = new BigDecimal(fee);
-				bdFee = bdFee.setScale(8);
-			}
-			catch(Exception e)
-			{
-				throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
-			}	
+			if(fee != null) {
+				try
+				{
+					bdFee = new BigDecimal(fee);
+					bdFee = bdFee.setScale(8);
+				}
+				catch(Exception e)
+				{
+					throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				}	
+			} else {
+				Pair<BigDecimal, Integer> recommendedFee = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(dataBytes, payments);
 				
+				bdFee = recommendedFee.getA().setScale(0, BigDecimal.ROUND_CEILING).setScale(8);
+			}
+			
 			//CHECK ADDRESS
 			if(!Crypto.getInstance().isValidAddress(creator))
 			{
@@ -95,7 +121,7 @@ public class ArbitraryTransactionsResource
 			}
 				
 			//SEND PAYMENT
-			Pair<Transaction, Integer> result = Controller.getInstance().createArbitraryTransaction(account, null, service, dataBytes, bdFee);
+			Pair<Transaction, Integer> result = Controller.getInstance().createArbitraryTransaction(account, payments, service, dataBytes, bdFee);
 				
 			return checkArbitraryTransaction(result);
 		}
@@ -140,6 +166,11 @@ public class ArbitraryTransactionsResource
 				
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_NO_BALANCE);
 		
+		case Transaction.NEGATIVE_AMOUNT:	
+		case Transaction.INVALID_AMOUNT:
+			
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_AMOUNT);
+			
 		default:
 			
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_UNKNOWN);	

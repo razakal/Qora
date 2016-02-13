@@ -150,9 +150,13 @@ public class MultiPaymentResource
 		return jsonPaymentParser(jsonArray, Controller.getInstance().getAsset(0L));
 	}
 	
-	public List<Payment> jsonPaymentParser(JSONArray jsonArray, Asset defaultAsset)
+	public static List<Payment> jsonPaymentParser(JSONArray jsonArray, Asset defaultAsset)
 	{
 		List<Payment> payments = new ArrayList<Payment>();
+		
+		if(jsonArray == null) {
+			return payments;
+		}
 		
 		for(int i=0; i<jsonArray.size(); i++)
 		{
