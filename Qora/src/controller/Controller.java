@@ -113,8 +113,6 @@ public class Controller extends Observable {
 
 	private Map<Peer, Pair<String, Long>> peersVersions;
 
-	public AssetsFavorites assetsFavorites;
-
 	private static Controller instance;
 
 	public String getVersion() {
@@ -316,6 +314,10 @@ public class Controller extends Observable {
 		// CREATE WALLET
 		this.wallet = new Wallet();
 
+	    if(this.wallet.isWalletDatabaseExisting()){
+	    	this.wallet.initiateAssetsFavorites();
+	    }
+	    
 		if(Settings.getInstance().isTestnet() && this.wallet.isWalletDatabaseExisting() && this.wallet.getAccounts().size() > 0) {
 			this.wallet.synchronize();	
 		}

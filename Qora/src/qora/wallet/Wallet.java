@@ -78,6 +78,13 @@ public class Wallet extends Observable implements Observer
 	
 	//GETTERS/SETTERS
 	
+	public void initiateAssetsFavorites()
+	{
+		if(this.assetsFavorites == null){
+			this.assetsFavorites = new AssetsFavorites();
+		}
+	}
+	
 	public void setSecondsToUnlock(int seconds)
 	{
 		this.secondsToUnlock = seconds;
@@ -340,8 +347,8 @@ public class Wallet extends Observable implements Observer
 	    Controller.getInstance().addObserver(this);
 	    DBSet.getInstance().getCompletedOrderMap().addObserver(this);
 	    
-	    this.assetsFavorites = new AssetsFavorites();
-		
+	    this.initiateAssetsFavorites();
+	    
 	    return true;
 	}
 	
