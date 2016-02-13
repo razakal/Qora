@@ -105,9 +105,11 @@ public class ConnectionCreator extends Thread {
 													{
 														if(Settings.getInstance().isTryingConnectToBadPeers() || !newPeer.isBad())
 														{
+															int maxReceivePeersForPrint = (maxReceivePeers > peersMessage.getPeers().size()) ? peersMessage.getPeers().size() : maxReceivePeers;  
+															
 															Logger.getGlobal().info(
 																"Connecting to peer " + newPeer.getAddress().getHostAddress() + " proposed by " + peer.getAddress().getHostAddress() 
-																+ " :: " + foreignPeersCounter + " / " + maxReceivePeers + " / " + peersMessage.getPeers().size() 
+																+ " :: " + foreignPeersCounter + " / " + maxReceivePeersForPrint + " / " + peersMessage.getPeers().size() 
 																+ " :: Connections: " + callback.getActiveConnections().size());
 														
 															//CONNECT
