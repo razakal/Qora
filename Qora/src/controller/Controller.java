@@ -842,7 +842,7 @@ public class Controller extends Observable {
 				FindMyselfMessage findMyselfMessage = (FindMyselfMessage) message;
 				
 				if(Arrays.equals(findMyselfMessage.getFoundMyselfID(),Controller.getInstance().getFoundMyselfID())) {
-					message.getSender().close();
+					message.getSender().onPingFail();
 				}
 				
 				Logger.getGlobal().info("Connected myself. Disconnect.");
