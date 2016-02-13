@@ -130,5 +130,13 @@ public class ConsolePanel extends JPanel
 		//CONTEXT MENU
 		MenuPopupUtil.installContextMenu(this.areaConsole);
 		MenuPopupUtil.installContextMenu(this.txtCommand);
+		
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+				public void run() {
+					txtCommand.grabFocus();
+					txtCommand.requestFocus();
+				}
+			});
 	}
 }
