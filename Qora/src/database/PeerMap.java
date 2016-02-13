@@ -204,6 +204,8 @@ public class PeerMap extends DBMap<byte[], byte[]>
 				this.whiteConnectTime = 0;
 				this.grayConnectTime = 0;
 				this.whitePingCouner = 0;
+				
+				this.updateFindingTime();
 			}
 		} 
 		
