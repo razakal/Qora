@@ -102,8 +102,8 @@ public abstract class Transaction {
 	private static final int MESSAGE_BLOCK_HEIGHT_RELEASE = 99000;
 	//public static final long ASSETS_RELEASE = 1411308000000l;
 	private static final long ASSETS_RELEASE = 0l;
-	private static final long POWFIX_RELEASE = 1455562800000l; // Block Version 3 // 2016-02-15T19:00:00+00:00
-
+	private static final long POWFIX_RELEASE = 1455994800000L; // Block Version 3 // 2016-02-20T19:00:00+00:00
+											   
 	public static long getVOTING_RELEASE() {
 		if(Settings.getInstance().isTestnet()) {
 			return Settings.getInstance().getGenesisStamp();
