@@ -56,11 +56,7 @@ public class AccountsComboBoxModel extends DefaultComboBoxModel<Account> impleme
 			this.removeAllElements();
 				
 			//INSERT ALL ACCOUNTS
-			List<Account> accounts = Controller.getInstance().getAccounts();
-			synchronized(accounts)
-			{
-				sortAndAdd();
-			}
+			sortAndAdd();
 				
 			//RESET SELECTED ITEM
 			if(this.getIndexOf(selected) != -1)
