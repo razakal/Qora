@@ -40,6 +40,8 @@ public class ApiService {
 		s.add(NameStorageResource.class);
 		s.add(MessageResource.class);
 		s.add(AssetsResource.class);
+		s.add(MultiPaymentResource.class);
+		
 		ResourceConfig config = new ResourceConfig(s);
 		
         //CREATE CONTAINER

@@ -313,7 +313,7 @@ public class ApiClient {
 				"Errors: 201 - Wallet does not exist."
 			},
 			{
-				"POST payment {\"asset\":\"<assetId>\", \"amount\":\"<amount>\", \"fee\":\"<fee>, \"sender\":\"<senderAddress>\", \"recipient\":\"<recipient>\"}", 
+				"POST payment {\"asset\":\"<assetId>\", \"amount\":\"<amount>\", \"fee\":\"<fee>\", \"sender\":\"<senderAddress>\", \"recipient\":\"<recipient>\"}", 
 				"Send a new payment using the given data. Returns the transaction in JSON when successful. If \"asset\" is omitted, 0 is provided (default asset: QORA).",
 				"Errors: 1 - Json error. 104 - Invalid amount. 105 - Invalid fee. 106 - Invalid sender. 107 - Invalid recipient. 201 - Wallet does not exist. 203 - Wallet is locked."
 			},
@@ -576,6 +576,11 @@ public class ApiClient {
 				"GET blog/lastentry/<blogname>",
 				"Returns the content of the last entry of the blog.  If <blogname> is omitted, QORA is provided.",
 				"Errors: 401 - Name does not exist. 902 - Blog disabled. 906 - This blog is empty."
+			},
+			{
+				"POST multipayment {\"sender\":\"<sender>\", \"asset\":\"<defaultkey>\", \"payments\": [{\"recipient\":\"<recipient 1>\", \"amount\": \"<amount 1>\", \"asset\":\"<key>\"},{\"recipient\":\"<recipient 2>\", \"amount\": \"<amount 2>\"}]}",
+				"Send a new multipayment using the given data. Returns the transaction in JSON when successful. If \"asset\" is omitted, 0 is provided (default asset: QORA).",
+				"Errors: 1 - Json error. 104 - Invalid amount. 106 - Invalid sender. 107 - Invalid recipient. 201 - Wallet does not exist. 203 - Wallet is locked."
 			},
 		};
 	

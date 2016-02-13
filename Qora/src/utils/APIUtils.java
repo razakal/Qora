@@ -127,6 +127,12 @@ public class APIUtils {
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_NAME_ALREADY_EXISTS);
 
+		case Transaction.NEGATIVE_AMOUNT:
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_INVALID_AMOUNT);
+		
+		
+			
 		case Transaction.NEGATIVE_FEE:
 
 			throw ApiErrorFactory.getInstance().createError(
