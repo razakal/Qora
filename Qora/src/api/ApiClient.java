@@ -578,7 +578,7 @@ public class ApiClient {
 				"Errors: 401 - Name does not exist. 902 - Blog disabled. 906 - This blog is empty."
 			},
 			{
-				"POST multipayment {\"sender\":\"<sender>\", \"asset\":\"<defaultkey>\", \"payments\": [{\"recipient\":\"<recipient 1>\", \"amount\": \"<amount 1>\", \"asset\":\"<key>\"},{\"recipient\":\"<recipient 2>\", \"amount\": \"<amount 2>\"}]}",
+				"POST multipayment {\"sender\":\"<sender>\", \"asset\":<defaultkey>, \"payments\": [{\"recipient\":\"<recipient 1>\", \"amount\": \"<amount 1>\", \"asset\":<key>},{\"recipient\":\"<recipient 2>\", \"amount\": \"<amount 2>\"}]}",
 				"Send a new multipayment using the given data. Returns the transaction in JSON when successful. If \"asset\" is omitted, 0 is provided (default asset: QORA).",
 				"Errors: 1 - Json error. 104 - Invalid amount. 106 - Invalid sender. 107 - Invalid recipient. 201 - Wallet does not exist. 203 - Wallet is locked."
 			},

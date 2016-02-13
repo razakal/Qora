@@ -45,18 +45,19 @@ public class MultiPaymentResource
 			//READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
 			String sender = (String) jsonObject.get("sender");
-			String asset = (String) jsonObject.get("asset");
+			
+			long lgAsset = 0L;
+			if(jsonObject.containsKey("asset")) {
+				lgAsset = ((Long) jsonObject.get("asset")).intValue();
+			}
 			
 			Asset defaultAsset;
-			if(asset != null) {
-				try {
-					defaultAsset = Controller.getInstance().getAsset(new Long(asset));
-				} catch (Exception e) {
-					throw ApiErrorFactory.getInstance().createError(
-						ApiErrorFactory.ERROR_INVALID_ASSET_ID);
-				}
-			} else {
-				defaultAsset = Controller.getInstance().getAsset(0L);
+
+			try {
+				defaultAsset = Controller.getInstance().getAsset(new Long(lgAsset));
+			} catch (Exception e) {
+				throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_INVALID_ASSET_ID);
 			}
 			
 			List<Payment> payments = jsonPaymentParser((JSONArray)jsonObject.get("payments"), defaultAsset);
