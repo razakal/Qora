@@ -595,6 +595,11 @@ function asset(data)
 {
 	var output = "";
 	
+	if(data.hasOwnProperty('error'))
+	{
+		return '<h2>' + data.error + '</h2>';
+	}
+		
 	output += lastBlock(data.lastBlock);
 	
 	output += '<table width="1280" border=0><tr><td align=left><br>';
@@ -2219,7 +2224,13 @@ function mainQuery(data) {
 						
 						output += '<b>Action</b></td><td width="290"><b>Creator</b></td>';
 						output += '<td width="100"><b>Fee</b></td><td><b>Name:</b> ';
-						output += '<a href=?asset='+data[i].transaction.asset+'>'+htmlFilter(data[i].transaction.assetName)+'</a>'
+						
+						if(data[i].transaction.asset!='-1') {
+							output += '<a href=?asset='+data[i].transaction.asset+'>'+htmlFilter(data[i].transaction.assetName)+'</a>'
+						} else {
+							output += htmlFilter(data[i].transaction.assetName);
+						}
+						
 						output += '</td><td><b>Key</b><td align=center><b>Quantity</b><td><b>Divisible</b>';
 						if(data[i].hasOwnProperty('balance'))
 						{

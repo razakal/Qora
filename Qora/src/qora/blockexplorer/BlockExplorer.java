@@ -172,7 +172,13 @@ public class BlockExplorer
 
 				if(info.getQueryParameters().get("asset").size() == 1)
 				{
-					output.put("asset", jsonQueryAsset(Long.valueOf((info.getQueryParameters().getFirst("asset")))));
+					try 
+					{
+						output.put("asset", jsonQueryAsset(Long.valueOf((info.getQueryParameters().getFirst("asset")))));
+					} catch (Exception e) {
+						output.put("error", "Asset with given key is missing!");
+						return output;
+					}
 				}
 
 				if(info.getQueryParameters().get("asset").size() == 2)
@@ -1504,9 +1510,11 @@ public class BlockExplorer
 
 			if(transaction.getType() == Transaction.ISSUE_ASSET_TRANSACTION) 
 			{
-				long assetkey = DBSet.getInstance().getAssetMap().get(DBSet.getInstance().getIssueAssetMap().get(((IssueAssetTransaction)unit).getSignature())).getKey();
+				long assetkey = ((IssueAssetTransaction) transaction).getAsset().getKey();
+				
 				transactionDataJSON.put("asset", assetkey);
-				transactionDataJSON.put("assetName", assetNamesByKey.getNameByKey(assetkey));
+				
+				transactionDataJSON.put("assetName", ((IssueAssetTransaction) transaction).getAsset().getName());
 			}
 
 			if(transaction.getType() == Transaction.TRANSFER_ASSET_TRANSACTION) 
