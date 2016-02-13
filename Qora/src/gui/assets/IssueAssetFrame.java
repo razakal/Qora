@@ -156,9 +156,10 @@ public class IssueAssetFrame extends JFrame
       	JLabel divisibleLabel = new JLabel("Divisible:");
       	this.add(divisibleLabel, labelGBC);
       		
-      	//TXT QUANTITY
+      	//CHECKBOX DIVISIBLE
       	txtGBC.gridy = 4;
       	this.chkDivisible = new JCheckBox();
+      	this.chkDivisible.setSelected(true);
       	this.add(this.chkDivisible, txtGBC);
       	
         //LABEL FEE
