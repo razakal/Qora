@@ -36,7 +36,7 @@ public class MultiPaymentResource
 	
 	@POST
 	@Consumes(MediaType.WILDCARD)
-	public String createPayment(String x)
+	public String createMultiPayment(String x)
 	{
 		try
 		{
@@ -45,21 +45,20 @@ public class MultiPaymentResource
 			//READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);
 			String sender = (String) jsonObject.get("sender");
-			
 			long lgAsset = 0L;
 			if(jsonObject.containsKey("asset")) {
 				lgAsset = ((Long) jsonObject.get("asset")).intValue();
 			}
+			String fee = (String) jsonObject.get("fee");
 			
 			Asset defaultAsset;
-
 			try {
 				defaultAsset = Controller.getInstance().getAsset(new Long(lgAsset));
 			} catch (Exception e) {
 				throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_INVALID_ASSET_ID);
 			}
-			
+
 			List<Payment> payments = jsonPaymentParser((JSONArray)jsonObject.get("payments"), defaultAsset);
 			
 			// CHECK ADDRESS
@@ -88,9 +87,21 @@ public class MultiPaymentResource
 						ApiErrorFactory.ERROR_INVALID_SENDER);
 			}
 			
-			Pair<BigDecimal, Integer> recommendedFee = Controller.getInstance().calcRecommendedFeeForMultiPayment(payments);
-			
-			BigDecimal bdFee = recommendedFee.getA().setScale(0, BigDecimal.ROUND_CEILING).setScale(8);
+			BigDecimal bdFee;
+			if(fee != null) {
+				try
+				{
+					bdFee = new BigDecimal(fee);
+					bdFee = bdFee.setScale(8);
+				}
+				catch(Exception e)
+				{
+					throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_INVALID_FEE);
+				}	
+			} else {
+				Pair<BigDecimal, Integer> recommendedFee = Controller.getInstance().calcRecommendedFeeForMultiPayment(payments);
+				bdFee = recommendedFee.getA().setScale(0, BigDecimal.ROUND_CEILING).setScale(8);
+			}
 			
 			Pair<Transaction, Integer> result = Controller.getInstance().sendMultiPayment(account, payments, bdFee);
 			
