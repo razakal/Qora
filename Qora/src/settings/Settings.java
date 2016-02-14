@@ -284,7 +284,7 @@ public class Settings {
 			if(this.cacheInternetPeers.size() == 0 || NTP.getTime() - this.timeLoadInternetPeers > 24*60*60*1000 )
 			{
 				this.timeLoadInternetPeers = NTP.getTime();
-				URL u = new URL("https://raw.githubusercontent.com/Qoracoin/Qora/master/Qora/settings.json");
+				URL u = new URL("https://raw.githubusercontent.com/Qoracoin/Qora/master/Qora/peers.json");
 				InputStream in = u.openStream();
 				String stringInternetSettings = IOUtils.toString( in );
 				JSONObject internetSettingsJSON = (JSONObject) JSONValue.parse(stringInternetSettings);
