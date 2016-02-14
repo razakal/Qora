@@ -363,6 +363,11 @@ function blocks(data)
 {
 	var output = '';
 	
+	if(data.hasOwnProperty('error'))
+	{
+		return '<h2>' + data.error + '</h2>';
+	}
+	
 	output += lastBlock(data.lastBlock);
 
 	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="">';
@@ -372,7 +377,8 @@ function blocks(data)
 	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="1180"  class="table table-striped" style="border: 1px solid #ddd;">';
 	output += '<tr><td><b>Height<td><b>Time<td><b>Generator<td><b>Gen.balance<td><b>TXs<td><b>Fee<td><b>AT Amount<td><b>Amount'; 
 
-	for(var i = data.maxHeight; i >= data.maxHeight-20; i--)
+	minHeight = (data.maxHeight <= 20) ? 1 : data.maxHeight - 20;
+	for(var i = data.maxHeight; i >= minHeight; i--)
 	{
 		output += '<tr>';
 		output += '<td><a href=?block='+i+'>'+i+'</a><td>'+data[i].dateTime+'<td>'+'<a href=?addr='+data[i].generator+'>'+data[i].generator;
@@ -393,7 +399,10 @@ function blocks(data)
 		}
 	}
 	
-	output += '<td colspan=4 align=right><a href=?startBlock='+(data.maxHeight-21)+'>Previous';
+	output += '<td colspan=4 align=right>';
+	if(minHeight > 1) {
+		output += '<a href=?startBlock='+(data.maxHeight-21)+'>Previous'
+	}
 	
 	return output;
 }
