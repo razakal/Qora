@@ -63,6 +63,7 @@ import qora.assets.Asset;
 import qora.assets.Order;
 import qora.assets.Trade;
 import qora.block.Block;
+import qora.crypto.Base58;
 import qora.crypto.Crypto;
 import qora.naming.Name;
 import qora.naming.NameSale;
@@ -72,8 +73,8 @@ import qora.voting.Poll;
 import qora.voting.PollOption;
 import qora.wallet.Wallet;
 import settings.Settings;
-import utils.AssetsFavorites;
 import utils.BuildTime;
+import utils.DateTimeFormat;
 import utils.ObserverMessage;
 import utils.Pair;
 import utils.SimpleFileVisitorForRecursiveFolderDeletion;
@@ -138,6 +139,17 @@ public class Controller extends Observable {
 			}
 		}
 		return this.messageMagic;
+	}
+	
+	public void statusInfo()
+	{
+		Logger.getGlobal().info(
+			"STATUS OK\n" 
+			+ "| Last Block Signature: " + Base58.encode(this.blockChain.getLastBlock().getSignature()) + "\n"
+			+ "| Last Block Height: " + this.blockChain.getLastBlock().getHeight() + "\n"
+			+ "| Last Block Time: " + DateTimeFormat.timestamptoString(this.blockChain.getLastBlock().getTimestamp()) + "\n"
+			+ "| Last Block Found " + DateTimeFormat.timeAgo(this.blockChain.getLastBlock().getTimestamp()) + " ago."
+			);
 	}
 	
 	public byte[] getFoundMyselfID() {
@@ -638,8 +650,8 @@ public class Controller extends Observable {
 		        	
 		        	if(Controller.getInstance().getStatus() == STATUS_OK)
 			        {
-			        	Logger.getGlobal().info("STATUS OK");
-				       	
+		    			Controller.getInstance().statusInfo();
+
 			        	Controller.getInstance().setToOfflineTime(0L);
 			        	
 				       	if(Controller.getInstance().isNeedSync())
@@ -955,6 +967,8 @@ public class Controller extends Observable {
 			this.setChanged();
 			this.notifyObservers(new ObserverMessage(
 					ObserverMessage.NETWORK_STATUS, this.status));
+			
+			Controller.getInstance().statusInfo();
 		}
 	}
 
