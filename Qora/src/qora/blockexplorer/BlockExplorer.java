@@ -665,6 +665,12 @@ public class BlockExplorer
 
 		List<Poll> pools = new ArrayList< Poll > (DBSet.getInstance().getPollMap().getValues());
 
+		if(pools.size() == 0)
+		{
+			output.put("error", "There is no pools.");
+			return output;
+		}
+			
 		//SCAN
 		int back = 815; // 3*24*60*60/318 = 815 // 3 days
 		//back = 40815;
