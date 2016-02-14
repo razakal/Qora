@@ -157,7 +157,7 @@ public class MultiPaymentResource
 		}
 	}
 
-	public List<Payment> jsonPaymentParser(JSONArray jsonArray)
+	public static List<Payment> jsonPaymentParser(JSONArray jsonArray)
 	{
 		return jsonPaymentParser(jsonArray, Controller.getInstance().getAsset(0L));
 	}
