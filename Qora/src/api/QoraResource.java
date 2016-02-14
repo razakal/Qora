@@ -71,8 +71,8 @@ public class QoraResource
 		JSONObject jsonObject = new JSONObject();
 		
 		jsonObject.put("version", Controller.getInstance().getVersion());
-		jsonObject.put("buildDateTime", BuildTime.getBuildDateTimeString());
-		jsonObject.put("buildTimeStamp", BuildTime.getBuildTimestamp());
+		jsonObject.put("buildDateTime", BuildTime.getInstance().getBuildDateTimeString());
+		jsonObject.put("buildTimeStamp", BuildTime.getInstance().getBuildTimestamp());
 	
 
 		return jsonObject.toJSONString();

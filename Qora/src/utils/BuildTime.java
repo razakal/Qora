@@ -8,62 +8,68 @@ import java.util.Date;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import controller.Controller;
-
 public class BuildTime
 {
-	private static long bufgetBuildDateTime = 0;
+	private static BuildTime instance;
+	
+	private long bufgetBuildDateTime = 0;
 
-	public static String getBuildDateTimeString(){
-		return DateTimeFormat.timestamptoString(getBuildTimestamp(), "yyyy-MM-dd HH:mm:ss z", "UTC");
+	public static BuildTime getInstance()
+	{
+		if(instance == null)
+		{
+			instance = new BuildTime();
+		}
+		
+		return instance;
 	}
 	
-	public static long getBuildTimestamp(){
+	public BuildTime()
+	{
+		this.getBuildTimestamp();
+	}
+	
+	public String getBuildDateTimeString(){
+		return DateTimeFormat.timestamptoString(this.getBuildTimestamp(), "yyyy-MM-dd HH:mm:ss z", "UTC");
+	}
+	
+	public long getBuildTimestamp(){
 		if(bufgetBuildDateTime == 0)
 	    {
-			bufgetBuildDateTime = getClassBuildTime(); 
-	    }
+			bufgetBuildDateTime =  getClassBuildTime().getTime(); 
+	    } 
 	    return bufgetBuildDateTime;
 	}
-	
-	private static long getClassBuildTime() {
-		Date d = null;
-		
-		long buildDateTimeStamp = 0;
-		
-		//GET BUILD DATE FOR COMPILED VERSION
-		File file = new File("Qora.jar");
-    	if(file.exists())
-    	{
-	    	try {
-				@SuppressWarnings("resource")
-				JarFile jf = new JarFile(file);
-				ZipEntry ze = jf.getEntry("META-INF/MANIFEST.MF");
-				d = new Date(ze.getTime ());
-				buildDateTimeStamp = d.getTime();
-	    	} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+	/**
+	 * Handles files, jar entries, and deployed jar entries in a zip file (EAR).
+	 * @return The date if it can be determined, or null if not.
+	 */
+	private static Date getClassBuildTime() {
+	    Date d = null;
+	    Class<?> currentClass = new Object() {}.getClass().getEnclosingClass();
+	    URL resource = currentClass.getResource(currentClass.getSimpleName() + ".class");
+	    if (resource != null) {
+	        if (resource.getProtocol().equals("file")) {
+	            try {
+	                d = new Date(new File(resource.toURI()).lastModified());
+	            } catch (URISyntaxException ignored) { }
+	        } else if (resource.getProtocol().equals("jar")) {
+	            String path = resource.getPath();
+	            d = new Date( new File(path.substring(5, path.indexOf("!"))).lastModified() );    
+	        } else if (resource.getProtocol().equals("zip")) {
+	            String path = resource.getPath();
+	            File jarFileOnDisk = new File(path.substring(0, path.indexOf("!")));
+	            //long jfodLastModifiedLong = jarFileOnDisk.lastModified ();
+	            //Date jfodLasModifiedDate = new Date(jfodLastModifiedLong);
+	            try(JarFile jf = new JarFile (jarFileOnDisk)) {
+	                ZipEntry ze = jf.getEntry (path.substring(path.indexOf("!") + 2));//Skip the ! and the /
+	                long zeTimeLong = ze.getTime ();
+	                Date zeTimeDate = new Date(zeTimeLong);
+	                d = zeTimeDate;
+	            } catch (IOException|RuntimeException ignored) { }
+	        }
 	    }
-    	else
-    	{
-    		//GET BUILD DATE FOR DEBUG VERSION
-    		
-    		URL resource = Controller.class.getResource(Controller.class.getSimpleName() + ".class");
-    		
-    		if (resource != null) 
-    		{
-    			if (resource.getProtocol().equals("file")) 
-    			{
-    				try 
-    				{
-    					d = new Date(new File(resource.toURI()).lastModified());
-    					buildDateTimeStamp = d.getTime();
-    		        } catch (URISyntaxException ignored) { }
-    			}  
-    		}
-    	}
-	    
-	    return buildDateTimeStamp;
+	    return d;
 	}
 }

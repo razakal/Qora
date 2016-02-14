@@ -43,7 +43,7 @@ public class Start {
 					throw new Exception("Both gui and rpc cannot be disabled!");
 				}
 				
-				System.out.println("Starting Qora / version: "+ Controller.getInstance().getVersion() + " / buildtime: " + BuildTime.getBuildDateTimeString() + " / ...");
+				System.out.println("Starting Qora / version: "+ Controller.getInstance().getVersion() + " / buildtime: " + BuildTime.getInstance().getBuildDateTimeString() + " / ...");
 				
 				//STARTING NETWORK/BLOCKCHAIN/RPC
 				Controller.getInstance().start();

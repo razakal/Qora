@@ -625,7 +625,7 @@ public class Controller extends Observable {
 			// SEND VERSION MESSAGE
 			peer.sendMessage( MessageFactory.getInstance().createVersionMessage( 
 				Controller.getInstance().getVersion(),
-				BuildTime.getBuildTimestamp() ));
+				BuildTime.getInstance().getBuildTimestamp() ));
 		}
 		
 		// SEND HEIGTH MESSAGE
