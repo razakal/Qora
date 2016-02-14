@@ -100,6 +100,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/pebble-1.6.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/bcprov-jdk15on-153.jar"/>
+	<classpathentry kind="lib" path="libs/bcprov-jdk15on-154.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
