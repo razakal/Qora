@@ -31,12 +31,13 @@ import qora.crypto.Base58;
 import qora.transaction.MessageTransaction;
 import utils.Converter;
 import utils.DateTimeFormat;
+import utils.MenuPopupUtil;
 import controller.Controller;
 
 @SuppressWarnings("serial")
 public class MessageTransactionDetailsFrame extends JFrame
 {
-	private JTextField service;
+	private JTextField messageText;
 	
 	public MessageTransactionDetailsFrame(final MessageTransaction messageTransaction)
 	{
@@ -100,6 +101,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField signature = new JTextField(Base58.encode(messageTransaction.getSignature()));
 		signature.setEditable(false);
+		MenuPopupUtil.installContextMenu(signature);
 		this.add(signature, detailGBC);
 		
 		//LABEL REFERENCE
@@ -112,6 +114,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField reference = new JTextField(Base58.encode(messageTransaction.getReference()));
 		reference.setEditable(false);
+		MenuPopupUtil.installContextMenu(reference);
 		this.add(reference, detailGBC);
 		
 		//LABEL TIMESTAMP
@@ -122,7 +125,9 @@ public class MessageTransactionDetailsFrame extends JFrame
 						
 		//TIMESTAMP
 		detailGBC.gridy = componentLevel;
-		JLabel timestamp = new JLabel(DateTimeFormat.timestamptoString(messageTransaction.getTimestamp()));
+		JTextField timestamp = new JTextField(DateTimeFormat.timestamptoString(messageTransaction.getTimestamp()));
+		timestamp.setEditable(false);
+		MenuPopupUtil.installContextMenu(timestamp);
 		this.add(timestamp, detailGBC);
 		
 		//LABEL SENDER
@@ -135,6 +140,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField sender = new JTextField(messageTransaction.getCreator().getAddress());
 		sender.setEditable(false);
+		MenuPopupUtil.installContextMenu(sender);
 		this.add(sender, detailGBC);
 		
 		//LABEL RECIPIENT
@@ -147,6 +153,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField recipient = new JTextField(messageTransaction.getRecipient().getAddress());
 		recipient.setEditable(false);
+		MenuPopupUtil.installContextMenu(recipient);
 		this.add(recipient, detailGBC);		
 		
 		//LABEL SERVICE
@@ -155,13 +162,15 @@ public class MessageTransactionDetailsFrame extends JFrame
 		JLabel serviceLabel = new JLabel("Message:");
 		this.add(serviceLabel, labelGBC);
 		
-		//SERVICE
+		//ISTEXT
 		detailGBC.gridy = componentLevel;
 		detailGBC.gridwidth = 2;
-		service = new JTextField( ( messageTransaction.isText() ) ? new String(messageTransaction.getData(), Charset.forName("UTF-8")) : Converter.toHex(messageTransaction.getData()));
-		service.setEditable(false);
-		this.add(service, detailGBC);			
+		messageText = new JTextField( ( messageTransaction.isText() ) ? new String(messageTransaction.getData(), Charset.forName("UTF-8")) : Converter.toHex(messageTransaction.getData()));
+		messageText.setEditable(false);
+		MenuPopupUtil.installContextMenu(messageText);
+		this.add(messageText, detailGBC);			
 		detailGBC.gridwidth = 3;
+		
 		//ENCRYPTED CHECKBOX
 		
 		//ENCRYPTED
@@ -221,7 +230,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 	        		}
 	        		
 	        		try {
-						service.setText(new String(AEScrypto.dataDecrypt(messageTransaction.getData(), privateKey, publicKey), "UTF-8"));
+	        			messageText.setText(new String(AEScrypto.dataDecrypt(messageTransaction.getData(), privateKey, publicKey), "UTF-8"));
 					} catch (UnsupportedEncodingException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -233,7 +242,7 @@ public class MessageTransactionDetailsFrame extends JFrame
         		else
         		{
         			try {
-						service.setText(new String(messageTransaction.getData(), "UTF-8"));
+        				messageText.setText(new String(messageTransaction.getData(), "UTF-8"));
 					} catch (UnsupportedEncodingException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -255,6 +264,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridwidth = 2;
 		JTextField amount = new JTextField(messageTransaction.getAmount().toPlainString());
 		amount.setEditable(false);
+		MenuPopupUtil.installContextMenu(amount);
 		this.add(amount, detailGBC);	
 		
 		//ASSET
@@ -263,6 +273,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridwidth = 1;
 		JTextField asset = new JTextField(Controller.getInstance().getAsset( messageTransaction.getKey()).toString());
 		asset.setEditable(false);
+		MenuPopupUtil.installContextMenu(asset);
 		this.add(asset, detailGBC);	
 		detailGBC.gridx = 1;
 		detailGBC.gridwidth = 3;
@@ -277,6 +288,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField fee = new JTextField(messageTransaction.getFee().toPlainString());
 		fee.setEditable(false);
+		MenuPopupUtil.installContextMenu(fee);
 		this.add(fee, detailGBC);	
 		
 		//LABEL CONFIRMATIONS

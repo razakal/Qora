@@ -26,6 +26,7 @@ import qora.crypto.Base58;
 import qora.transaction.ArbitraryTransaction;
 import utils.BigDecimalStringComparator;
 import utils.DateTimeFormat;
+import utils.MenuPopupUtil;
 
 @SuppressWarnings("serial")
 public class ArbitraryTransactionDetailsFrame extends JFrame
@@ -91,6 +92,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField signature = new JTextField(Base58.encode(arbitraryTransaction.getSignature()));
 		signature.setEditable(false);
+		MenuPopupUtil.installContextMenu(signature);
 		this.add(signature, detailGBC);
 		
 		componentLevel ++;
@@ -104,6 +106,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField reference = new JTextField(Base58.encode(arbitraryTransaction.getReference()));
 		reference.setEditable(false);
+		MenuPopupUtil.installContextMenu(reference);
 		this.add(reference, detailGBC);
 		
 		componentLevel ++;
@@ -115,7 +118,9 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 						
 		//TIMESTAMP
 		detailGBC.gridy = componentLevel;
-		JLabel timestamp = new JLabel(DateTimeFormat.timestamptoString(arbitraryTransaction.getTimestamp()));
+		JTextField timestamp = new JTextField(DateTimeFormat.timestamptoString(arbitraryTransaction.getTimestamp()));
+		reference.setEditable(false);
+		MenuPopupUtil.installContextMenu(timestamp);
 		this.add(timestamp, detailGBC);
 		
 		componentLevel ++;
@@ -129,6 +134,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField sender = new JTextField(arbitraryTransaction.getCreator().getAddress());
 		sender.setEditable(false);
+		MenuPopupUtil.installContextMenu(sender);
 		this.add(sender, detailGBC);
 		
 		componentLevel ++;
@@ -142,6 +148,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField service = new JTextField(String.valueOf(arbitraryTransaction.getService()));
 		service.setEditable(false);
+		MenuPopupUtil.installContextMenu(service);
 		this.add(service, detailGBC);			
 		
 		componentLevel ++;
@@ -159,7 +166,8 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		txtAreaData.setBorder(sender.getBorder());
 		txtAreaData.setEditable(false);
 		txtAreaData.setLineWrap(true);
-		
+		MenuPopupUtil.installContextMenu(txtAreaData);
+
 		JScrollPane AreaDataScroll = new JScrollPane(txtAreaData);
 		AreaDataScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		AreaDataScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -180,6 +188,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		txtAreaDataText.setBorder(sender.getBorder());
 		txtAreaDataText.setEditable(false);
 		txtAreaDataText.setLineWrap(true);
+		MenuPopupUtil.installContextMenu(txtAreaDataText);
 
 		JScrollPane AreaDataTextScroll = new JScrollPane(txtAreaDataText);
 		AreaDataTextScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -218,6 +227,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		detailGBC.gridy = componentLevel;
 		JTextField fee = new JTextField(arbitraryTransaction.getFee().toPlainString());
 		fee.setEditable(false);
+		MenuPopupUtil.installContextMenu(fee);
 		this.add(fee, detailGBC);	
 		
 		componentLevel ++;
