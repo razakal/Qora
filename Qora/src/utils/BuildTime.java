@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import controller.Controller;
+
 public class BuildTime
 {
 	private static BuildTime instance;
@@ -47,7 +49,7 @@ public class BuildTime
 	 */
 	private static Date getClassBuildTime() {
 	    Date d = null;
-	    Class<?> currentClass = new Object() {}.getClass().getEnclosingClass();
+	    Class<?> currentClass = Controller.class;
 	    URL resource = currentClass.getResource(currentClass.getSimpleName() + ".class");
 	    if (resource != null) {
 	        if (resource.getProtocol().equals("file")) {
