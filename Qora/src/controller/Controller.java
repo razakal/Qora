@@ -43,7 +43,6 @@ import gui.Gui;
 import network.Network;
 import network.Peer;
 import network.message.BlockMessage;
-import network.message.FindMyselfMessage;
 import network.message.GetBlockMessage;
 import network.message.GetSignaturesMessage;
 import network.message.HeightMessage;
@@ -859,17 +858,6 @@ public class Controller extends Observable {
 							new Pair<String, Long>(versionMessage.getStrVersion(), versionMessage.getBuildDateTime()) );
 				}
 
-				break;
-				
-			case Message.FIND_MYSELF_TYPE:
-
-				FindMyselfMessage findMyselfMessage = (FindMyselfMessage) message;
-				
-				if(Arrays.equals(findMyselfMessage.getFoundMyselfID(),Controller.getInstance().getFoundMyselfID())) {
-					Logger.getGlobal().info("Connected to self. Disconnection.");
-					message.getSender().close();
-				}
-				
 				break;
 			}
 		}
