@@ -387,6 +387,7 @@ public class UpdateNameFrame extends JFrame
         
       	//CONTEXT MENU
       	MenuPopupUtil.installContextMenu(txtOwner);
+		MenuPopupUtil.installContextMenu(txtKey);
       	MenuPopupUtil.installContextMenu(txtareaValue);
       	MenuPopupUtil.installContextMenu(txtFee);
       	

@@ -345,6 +345,8 @@ public class RegisterNameFrame extends JFrame
       	//CONTEXT MENU
       	MenuPopupUtil.installContextMenu(this.txtName);
       	MenuPopupUtil.installContextMenu(this.txtareaValue);
+      	MenuPopupUtil.installContextMenu(this.txtareaValue);
+		MenuPopupUtil.installContextMenu(this.txtKey);
       	MenuPopupUtil.installContextMenu(this.txtRecDetails);
       	MenuPopupUtil.installContextMenu(this.txtFee);
       	
