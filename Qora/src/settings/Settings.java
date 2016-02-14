@@ -17,6 +17,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
 import controller.Controller;
 import network.Peer;
 import ntp.NTP;
@@ -82,7 +85,8 @@ public class Settings {
 	private static Settings instance;
 	
 	private JSONObject settingsJSON;
-	
+	private JSONObject peersJSON;
+
 	private String currentSettingsPath;
 	
 	List<Peer> cacheInternetPeers;
@@ -126,20 +130,13 @@ public class Settings {
 					file.createNewFile();
 				}
 				
-				//READ SETTINGS FILE
-				reader = new BufferedReader(new FileReader(file));
+				//READ SETTINS JSON FILE
+				List<String> lines = Files.readLines(file, Charsets.UTF_8);
 				
-				String line;
 				String jsonString = "";
-				
-				//READ LINE
-				while ((line = reader.readLine()) != null)
-				{
+				for(String line : lines){
 					jsonString += line;
-			    }
-				
-				//CLOSE
-				reader.close();
+				}
 				
 				//CREATE JSON OBJECT
 				this.settingsJSON = (JSONObject) JSONValue.parse(jsonString);
