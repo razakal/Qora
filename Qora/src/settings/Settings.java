@@ -1,8 +1,6 @@
 package settings;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -112,7 +110,6 @@ public class Settings {
 	
 	private Settings()
 	{
-		BufferedReader reader;
 		int alreadyPassed = 0;
 		String settingsFilePath = "settings.json";
 		
@@ -159,6 +156,37 @@ public class Settings {
 			System.out.println("ERROR reading settings.json. closing");
 			System.exit(0);
 		}
+		
+		//TRY READ PEERS.JSON
+		try
+		{
+			//OPEN FILE
+			File file = new File(this.getCurrentPeersPath());
+			
+			//CREATE FILE IF IT DOESNT EXIST
+			if(file.exists())
+			{
+				//READ PEERS FILE
+				List<String> lines = Files.readLines(file, Charsets.UTF_8);
+				
+				String jsonString = "";
+				for(String line : lines){
+					jsonString += line;
+				}
+				
+				//CREATE JSON OBJECT
+				this.peersJSON = (JSONObject) JSONValue.parse(jsonString);
+			} else {
+				this.peersJSON = new JSONObject();
+			}
+			
+		}
+		catch(Exception e)
+		{
+			//STOP
+			System.out.println("ERROR reading peers.json.");
+			System.exit(0);
+		}
 	}
 	
 	public JSONObject Dump()
@@ -171,6 +199,25 @@ public class Settings {
 		return currentSettingsPath;
 	}
 	
+	public String getCurrentPeersPath()
+	{
+		if(this.currentSettingsPath == "settings.json" || this.currentSettingsPath == "") {
+			return "peers.json";
+		} else {
+			File file = new File(this.currentSettingsPath);
+		    if(file.exists()){
+		    	return file.getAbsoluteFile().getParent() + "/peers.json";
+		    }		
+		}
+		return currentSettingsPath;
+	}
+	
+	public JSONArray getPeersJson()
+	{
+		return (JSONArray) this.peersJSON.get("knownpeers");
+	}
+		
+	@SuppressWarnings("unchecked")
 	public List<Peer> getKnownPeers()
 	{
 		boolean loadPeersFromInternet =	(
@@ -182,9 +229,37 @@ public class Settings {
 		List<Peer> knownPeers = new ArrayList<Peer>();
 		
 		try {
-			JSONArray peersArray = (JSONArray) this.settingsJSON.get("knownpeers");
-		
+			JSONArray peersArray = new JSONArray();
+
+			JSONArray peersArraySettings = (JSONArray) this.settingsJSON.get("knownpeers");
+
+			if(peersArraySettings != null)
+			{
+				for (Object peer : peersArraySettings) {
+					if(!peersArray.contains(peer)) {
+						peersArray.add(peer);
+					}
+				}
+			}
+			
+			JSONArray peersArrayPeers = (JSONArray) this.peersJSON.get("knownpeers");
+			
+			if(peersArrayPeers != null)
+			{
+				for (Object peer : peersArrayPeers) {
+					if(!peersArray.contains(peer)) {
+						peersArray.add(peer);
+					}
+				}
+			}
 			knownPeers = getKnownPeersFromJSONArray(peersArray);
+		} catch (Exception e) {
+			knownPeers = new ArrayList<Peer>();
+		}
+		
+		try {
+			
+			
 		} catch (Exception e) {
 			knownPeers = new ArrayList<Peer>();
 		}
@@ -214,8 +289,9 @@ public class Settings {
 				String stringInternetSettings = IOUtils.toString( in );
 				JSONObject internetSettingsJSON = (JSONObject) JSONValue.parse(stringInternetSettings);
 				JSONArray peersArray = (JSONArray) internetSettingsJSON.get("knownpeers");
-				
-				this.cacheInternetPeers = getKnownPeersFromJSONArray(peersArray);
+				if(peersArray != null) {
+					this.cacheInternetPeers = getKnownPeersFromJSONArray(peersArray);
+				}
 			}
 			
 			return this.cacheInternetPeers;

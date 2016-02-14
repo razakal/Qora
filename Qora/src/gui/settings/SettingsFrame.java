@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import controller.Controller;
@@ -278,7 +279,21 @@ public class SettingsFrame extends JFrame{
 			changeDataDir = true;
 		}
 		
-		settingsJSONbuf.put("knownpeers",settingsTabPane.settingsKnownPeersPanel.knownPeersTableModel.getPeers());
+		List<String> peersToSave = settingsTabPane.settingsKnownPeersPanel.knownPeersTableModel.getPeers();
+		
+		JSONArray peersJson = Settings.getInstance().getPeersJson();
+		JSONArray peersToSaveApproved = new JSONArray();
+		
+		if(peersJson != null)
+		{
+			for (String peer : peersToSave) {
+				if(!peersJson.contains(peer)) {
+					peersToSaveApproved.add(peer);
+				}
+			}
+		}
+		
+		settingsJSONbuf.put("knownpeers", peersToSaveApproved);
 		
 		if(settingsTabPane.settingsAllowedPanel.chckbxWebAllowForAll.isSelected())
 		{
