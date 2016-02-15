@@ -43,7 +43,7 @@ public class BuildTime
 	    return bufgetBuildDateTime;
 	}
 
-	private static Date getClassBuildTime() {
+	private Date getClassBuildTime() {
 	    Date d = null;
 	    URL resource = Controller.class.getResource(Controller.class.getSimpleName() + ".class");
 	    if (resource != null) {
