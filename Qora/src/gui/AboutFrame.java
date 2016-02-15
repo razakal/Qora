@@ -80,7 +80,7 @@ public class AboutFrame extends JFrame{
         gbc_lbllversionLabel.gridy = 1;
         aboutPanel.add(lblversionLabel, gbc_lbllversionLabel);
         
-        JLabel label = new JLabel("Build date: " + Controller.getInstance().getBuildDateTimeString());
+        JLabel label = new JLabel("Build date: " + Controller.getInstance().getBuildDateString());
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setForeground(Color.WHITE);
         label.setFont(new Font("Tahoma", Font.PLAIN, 13));

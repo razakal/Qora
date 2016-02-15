@@ -138,6 +138,10 @@ public class Controller extends Observable {
 		return DateTimeFormat.timestamptoString(this.getBuildTimestamp(), "yyyy-MM-dd HH:mm:ss z", "UTC");
 	}
 	
+	public String getBuildDateString(){
+		return DateTimeFormat.timestamptoString(this.getBuildTimestamp(), "yyyy-MM-dd", "UTC");
+	}
+	
 	public long getBuildTimestamp() {
 	    if(this.buildTimestamp == 0) {
 		    Date date = new Date();
