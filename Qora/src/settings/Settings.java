@@ -227,10 +227,9 @@ public class Settings {
 			);
 		
 		List<Peer> knownPeers = new ArrayList<Peer>();
-		
-		try {
-			JSONArray peersArray = new JSONArray();
+		JSONArray peersArray = new JSONArray();
 
+		try {
 			JSONArray peersArraySettings = (JSONArray) this.settingsJSON.get("knownpeers");
 
 			if(peersArraySettings != null)
@@ -241,7 +240,11 @@ public class Settings {
 					}
 				}
 			}
-			
+		} catch (Exception e) {
+			Logger.getGlobal().info("Error with loading knownpeers from settings.json.");
+		}
+		
+		try {
 			JSONArray peersArrayPeers = (JSONArray) this.peersJSON.get("knownpeers");
 			
 			if(peersArrayPeers != null)
@@ -252,17 +255,12 @@ public class Settings {
 					}
 				}
 			}
-			knownPeers = getKnownPeersFromJSONArray(peersArray);
+			
 		} catch (Exception e) {
-			knownPeers = new ArrayList<Peer>();
+			Logger.getGlobal().info("Error with loading knownpeers from peers.json.");
 		}
 		
-		try {
-			
-			
-		} catch (Exception e) {
-			knownPeers = new ArrayList<Peer>();
-		}
+		knownPeers = getKnownPeersFromJSONArray(peersArray);
 		
 		if(knownPeers.size() == 0 || loadPeersFromInternet)
 		{
