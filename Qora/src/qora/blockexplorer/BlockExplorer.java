@@ -398,7 +398,7 @@ public class BlockExplorer
 
 		help.put("Unconfirmed Transactions", "blockexplorer.json?unconfirmed");
 		help.put("Block", "blockexplorer.json?block={block}");
-		help.put("Blocks List", "blockexplorer.json?blocks");
+		help.put("Blocks List", "blockexplorer.json?blocks[&start={height}]");
 		help.put("Assets List", "blockexplorer.json?assets");
 		help.put("Assets List Lite", "blockexplorer.json?assetsLite");
 		help.put("Asset", "blockexplorer.json?asset={asset}");
@@ -406,14 +406,14 @@ public class BlockExplorer
 		help.put("Polls List", "blockexplorer.json?polls");
 		help.put("Poll", "blockexplorer.json?poll={poll}");
 		help.put("AT TX", "blockexplorer.json?atTx={atTx}");
-		help.put("Trade", "blockexplorer.json?trade={initiatorSignature/targetSignature}");
+		help.put("Trade", "blockexplorer.json?trade={initiatorSignature}/{targetSignature}");
 		help.put("Transaction", "blockexplorer.json?tx={txSignature}");
 		help.put("Name", "blockexplorer.json?name={name}");
 		help.put("Name (additional)", "blockexplorer.json?name={name}&start={offset}&allOnOnePage");
 		help.put("Address", "blockexplorer.json?addr={address}");
-		help.put("Address (additional)", "blockexplorer.json?addr={address}&start={offset}&allOnOnePage&withoutBlocks");
-		help.put("Address", "blockexplorer.json?top");
-		help.put("Address", "blockexplorer.json?top={limit}&asset={asset}");
+		help.put("Address (additional)", "blockexplorer.json?addr={address}&start={offset}&allOnOnePage&withoutBlocks&showWithout={1,2,blocks}&showOnly={type}");
+		help.put("Top Richest", "blockexplorer.json?top");
+		help.put("Top Richest", "blockexplorer.json?top={limit}&asset={asset}");
 		help.put("Address All Not Zero", "blockexplorer.json?top=allnotzero");
 		help.put("Address All Addresses", "blockexplorer.json?top=all");
 		help.put("Assets List", "blockexplorer.json?assets");
@@ -421,6 +421,8 @@ public class BlockExplorer
 		help.put("AT List", "blockexplorer.json?aTs");
 		help.put("Names List", "blockexplorer.json?names");
 		help.put("BlogPosts of Address", "blockexplorer.json?blogposts={addr}");
+		help.put("Search", "blockexplorer.json?q={text}");
+		
 
 		return help;
 	}
