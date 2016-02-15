@@ -757,11 +757,11 @@ public class MessagesTableModel extends JTable implements Observer{
 			
 			String fontSize = "";
 			
-			if(this.amount.compareTo(new BigDecimal(100000)) >= 0)
+			if(this.amount.compareTo(new BigDecimal(10)) >= 0)
 			{
 				fontSize = " size='2'";
 			} else {
-				fontSize = " size='2.5'";
+				fontSize = " size='2'";
 			}
 			
 
@@ -774,7 +774,7 @@ public class MessagesTableModel extends JTable implements Observer{
 					+ "\n<br>\nTo:"
 					+ this.recipient + "\n</font></td>\n"
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
-					+ "<font size='2.5' color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
+					+ "<font size='2' color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
 					+ DateTimeFormat.timestamptoString(this.timestamp) + "\n<br></font>\n"
 					+ "<font" + fontSize + " color='" + colorTextHeader + "'>Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . Fee: "
 					+ NumberAsString.getInstance().numberAsString(fee)+"</font>"
