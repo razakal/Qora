@@ -11,6 +11,7 @@ import org.mapdb.Fun.Tuple2;
 import controller.Controller;
 import database.DBSet;
 import database.SortableList;
+import gui.Gui;
 import qora.account.Account;
 import qora.assets.Asset;
 
@@ -43,6 +44,10 @@ public class AssetsFavorites implements Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 
+		if(!Gui.isGuiStarted()){
+			return;
+		}
+		
 		ObserverMessage message = (ObserverMessage) arg;
 
 		if((message.getType() == ObserverMessage.NETWORK_STATUS && (int) message.getValue() == Controller.STATUS_OK)
