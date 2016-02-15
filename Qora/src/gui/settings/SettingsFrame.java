@@ -282,6 +282,38 @@ public class SettingsFrame extends JFrame{
 		List<String> peersToSave = settingsTabPane.settingsKnownPeersPanel.knownPeersTableModel.getPeers();
 		
 		JSONArray peersJson = Settings.getInstance().getPeersJson();
+		JSONArray newPeersJson = new JSONArray();
+		
+		for (Object peer : peersJson) {
+			if(peersToSave.contains((String) peer)){
+				newPeersJson.add(peer);
+			}
+		}
+		
+		if(newPeersJson.size() != peersJson.size())
+		{
+			try {
+		        Writer writer = new JSonWriter();
+		        
+		        JSONObject jsonObject = new JSONObject();
+		        jsonObject.put("knownpeers", newPeersJson);
+		        
+		        jsonObject.writeJSONString(writer);
+					
+				FileWriter file = new FileWriter(Settings.getInstance().getCurrentPeersPath());
+				file.write(writer.toString());
+				file.flush();
+				file.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(
+						new JFrame(), "Error writing to the file: " + Settings.getInstance().getCurrentPeersPath()
+								+ "\nProbably there is no access.",
+		                "Error!",
+		                JOptionPane.ERROR_MESSAGE);
+			}	
+		}
+			
 		JSONArray peersToSaveApproved = new JSONArray();
 		
 		if(peersJson != null)
@@ -322,7 +354,6 @@ public class SettingsFrame extends JFrame{
 			file.flush();
 			file.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(
 					new JFrame(), "Error writing to the file: " + Settings.getInstance().getCurrentSettingsPath()
