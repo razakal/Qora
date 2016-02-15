@@ -7,11 +7,16 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.nio.file.Files;
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,7 +77,6 @@ import qora.voting.Poll;
 import qora.voting.PollOption;
 import qora.wallet.Wallet;
 import settings.Settings;
-import utils.BuildTime;
 import utils.DateTimeFormat;
 import utils.ObserverMessage;
 import utils.Pair;
@@ -84,6 +88,9 @@ import webserver.WebService;
 public class Controller extends Observable {
 
 	private String version = "0.25.0";
+	private String buildTime = "2016-02-16 00:00:00 UTC";
+	private long buildTimestamp;
+	
 	public static final String releaseVersion = "0.25.0";
 
 //	TODO ENUM would be better here
@@ -125,6 +132,29 @@ public class Controller extends Observable {
 		} else {
 			return Network.MAINNET_PORT;
 		}
+	}
+	
+	public String getBuildDateTimeString(){
+		return DateTimeFormat.timestamptoString(this.getBuildTimestamp(), "yyyy-MM-dd HH:mm:ss z", "UTC");
+	}
+	
+	public long getBuildTimestamp() {
+	    if(this.buildTimestamp == 0) {
+		    Date date = new Date();
+		    URL resource = getClass().getResource(getClass().getSimpleName() + ".class");
+		    if (resource != null) {
+		        if (!resource.getProtocol().equals("file")) {
+		        	DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+		        	try {
+						date = (Date)formatter.parse(this.buildTime);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+		        }
+		    }
+		    this.buildTimestamp = date.getTime();
+	    }
+	    return this.buildTimestamp;
 	}
 	
 	public byte[] getMessageMagic() {
@@ -630,7 +660,7 @@ public class Controller extends Observable {
 			// SEND VERSION MESSAGE
 			peer.sendMessage( MessageFactory.getInstance().createVersionMessage( 
 				Controller.getInstance().getVersion(),
-				BuildTime.getInstance().getBuildTimestamp() ));
+				this.getBuildTimestamp() ));
 		}
 		
 		// SEND HEIGTH MESSAGE

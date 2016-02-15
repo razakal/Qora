@@ -12,7 +12,6 @@ import org.json.simple.JSONObject;
 import controller.Controller;
 import settings.Settings;
 import utils.APIUtils;
-import utils.BuildTime;
 
 @Path("qora")
 @Produces(MediaType.APPLICATION_JSON)
@@ -71,8 +70,8 @@ public class QoraResource
 		JSONObject jsonObject = new JSONObject();
 		
 		jsonObject.put("version", Controller.getInstance().getVersion());
-		jsonObject.put("buildDateTime", BuildTime.getInstance().getBuildDateTimeString());
-		jsonObject.put("buildTimeStamp", BuildTime.getInstance().getBuildTimestamp());
+		jsonObject.put("buildDateTime", Controller.getInstance().getBuildDateTimeString());
+		jsonObject.put("buildTimeStamp", Controller.getInstance().getBuildTimestamp());
 	
 
 		return jsonObject.toJSONString();
