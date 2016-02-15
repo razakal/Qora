@@ -155,6 +155,11 @@ public class Controller extends Observable {
 		return this.foundMyselfID;
 	}
 	
+	public int getWalletSyncHeight()
+	{
+		return this.wallet.getSyncHeight();
+	}
+	
 	public void getSendMyHeightToPeer (Peer peer) {
 	
 		// GET HEIGHT

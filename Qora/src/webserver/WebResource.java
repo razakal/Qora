@@ -54,6 +54,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.common.base.Charsets;
+import com.mitchellbosecke.pebble.error.PebbleException;
+
+import api.BlogPostResource;
+import api.NameStorageResource;
+import controller.Controller;
+import database.DBSet;
+import database.NameMap;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.blockexplorer.BlockExplorer;
@@ -76,25 +84,16 @@ import qora.web.blog.BlogEntry;
 import settings.Settings;
 import utils.AccountBalanceComparator;
 import utils.BlogUtils;
+import utils.DiffHelper;
 import utils.JSonWriter;
 import utils.NameUtils;
 import utils.NameUtils.NameResult;
-import utils.DiffHelper;
 import utils.Pair;
 import utils.PebbleHelper;
 import utils.Qorakeys;
 import utils.StorageUtils;
 import utils.StrJSonFine;
 import utils.UpdateUtil;
-import api.BlogPostResource;
-import api.NameStorageResource;
-
-import com.google.common.base.Charsets;
-import com.mitchellbosecke.pebble.error.PebbleException;
-
-import controller.Controller;
-import database.DBSet;
-import database.NameMap;
 
 @Path("/")
 public class WebResource {
@@ -889,29 +888,34 @@ public class WebResource {
 			pebbleHelper.getContextMap().put(
 					"forgestatus",
 					Controller.getInstance().getForgingStatus().getName());
+			pebbleHelper.getContextMap().put(
+					"version",
+					"Qora " + Controller.getInstance().getVersion());
 			
 			int status = Controller.getInstance().getStatus();
 			String statustext = "";
 			//TODO this needs to be moved to another place
-			if(status == Controller.STATUS_NO_CONNECTIONS)
-			{
-				statustext ="No connections";
-			}
-			if(status == Controller.STATUS_SYNCHRONIZING)
-			{
-				statustext ="Synchronizing";
-			}
-			if(status == Controller.STATUS_OK)
-			{
-				statustext ="OK";
-			}
 			
+			if(Controller.getInstance().getWalletSyncHeight() > 0) {
+				statustext = "Wallet Synchronizing ";
+				statustext += 100 * Controller.getInstance().getWalletSyncHeight()/Controller.getInstance().getHeight() + "%<br>";
+				statustext += "Height: " + Controller.getInstance().getWalletSyncHeight() + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
+			} else if(status == Controller.STATUS_OK) {
+				statustext = "OK<br>";
+				statustext += "Height: " + Controller.getInstance().getHeight();
+			} else if(status == Controller.STATUS_NO_CONNECTIONS) {
+				statustext = "No connections<br>";
+				statustext += "Height: " + Controller.getInstance().getHeight();
+			} else if(status == Controller.STATUS_SYNCHRONIZING) {
+				statustext = "Synchronizing ";
+				statustext += 100 * Controller.getInstance().getHeight()/Controller.getInstance().getMaxPeerHeight() + "%<br>";
+				statustext += "Height: " + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
+			} 
+						
 			pebbleHelper.getContextMap().put(
 					"status",
 					statustext);
 			
-			
-
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (PebbleException e) {

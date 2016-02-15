@@ -58,12 +58,15 @@ public class Wallet extends Observable implements Observer
 	private int secondsToUnlock = -1;
 	private Timer lockTimer = new Timer();
 	
+	private int syncHeight;
+	
 	AssetsFavorites assetsFavorites; 
 	
 	//CONSTRUCTORS
 	
 	public Wallet()
 	{
+		this.syncHeight = -1;
 		//CHECK IF EXISTS
 		if(this.exists())
 		{
@@ -77,6 +80,11 @@ public class Wallet extends Observable implements Observer
 	}
 	
 	//GETTERS/SETTERS
+	
+	public int getSyncHeight()
+	{
+		return this.syncHeight;
+	}
 	
 	public void initiateAssetsFavorites()
 	{
@@ -441,7 +449,7 @@ public class Wallet extends Observable implements Observer
 		try{
 			Controller.getInstance().setNeedSync(false);
 			Controller.getInstance().isProcessSynchronize = true;
-		
+			this.syncHeight = 1;
 			do
 			{
 				//UPDATE
@@ -453,7 +461,8 @@ public class Wallet extends Observable implements Observer
 					
 					//Gui.getInstance().
 					
-					Logger.getGlobal().info("Synchronize wallet: " + block.getHeight());
+					this.syncHeight = block.getHeight();
+					Logger.getGlobal().info("Synchronize wallet: " + this.syncHeight);
 					this.database.commit();
 				}
 				
@@ -465,6 +474,7 @@ public class Wallet extends Observable implements Observer
 		}finally{
 			Controller.getInstance().isProcessSynchronize = false;
 			this.database.commit();
+			this.syncHeight = -1;
 		}
 		
 		
