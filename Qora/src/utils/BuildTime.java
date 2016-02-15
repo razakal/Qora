@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import controller.Controller;
 import ntp.NTP;
 
 public class BuildTime
@@ -44,8 +45,7 @@ public class BuildTime
 
 	private static Date getClassBuildTime() {
 	    Date d = null;
-	    Class<?> currentClass = new Object() {}.getClass().getEnclosingClass();
-	    URL resource = currentClass.getResource(currentClass.getSimpleName() + ".class");
+	    URL resource = Controller.class.getResource(Controller.class.getSimpleName() + ".class");
 	    if (resource != null) {
 	        if (resource.getProtocol().equals("file")) {
 	        	d = new Date(NTP.getTime());
