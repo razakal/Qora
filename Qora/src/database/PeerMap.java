@@ -184,22 +184,18 @@ public class PeerMap extends DBMap<byte[], byte[]>
 				this.whiteConnectTime = longWhiteConnectTime;
 				this.grayConnectTime = longGrayConnectTime;
 				this.whitePingCouner = longWhitePingCouner;
-			}
-			else if (data == null)
-			{				
+			} else if (Arrays.equals(data, BYTE_NOTFOUND)) {
 				this.address = address;
-				this.status = BYTE_WHITELISTED;
+				this.status = BYTE_NOTFOUND;
 				this.findingTime = 0;
 				this.whiteConnectTime = 0;
 				this.grayConnectTime = 0;
 				this.whitePingCouner = 0;
 				
 				this.updateFindingTime();
-			}
-			else if (Arrays.equals(data, BYTE_NOTFOUND))
-			{
+			} else {				
 				this.address = address;
-				this.status = BYTE_NOTFOUND;
+				this.status = BYTE_WHITELISTED;
 				this.findingTime = 0;
 				this.whiteConnectTime = 0;
 				this.grayConnectTime = 0;
