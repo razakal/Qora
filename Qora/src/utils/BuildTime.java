@@ -9,6 +9,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import controller.Controller;
+import ntp.NTP;
 
 public class BuildTime
 {
@@ -43,19 +44,13 @@ public class BuildTime
 	    return bufgetBuildDateTime;
 	}
 
-	/**
-	 * Handles files, jar entries, and deployed jar entries in a zip file (EAR).
-	 * @return The date if it can be determined, or null if not.
-	 */
 	private static Date getClassBuildTime() {
 	    Date d = null;
-	    Class<?> currentClass = Controller.class;
+	    Class<?> currentClass = new Object() {}.getClass().getEnclosingClass();
 	    URL resource = currentClass.getResource(currentClass.getSimpleName() + ".class");
 	    if (resource != null) {
 	        if (resource.getProtocol().equals("file")) {
-	            try {
-	                d = new Date(new File(resource.toURI()).lastModified());
-	            } catch (URISyntaxException ignored) { }
+	        	d = new Date(NTP.getTime());
 	        } else if (resource.getProtocol().equals("jar")) {
 	            String path = resource.getPath();
 	            d = new Date( new File(path.substring(5, path.indexOf("!"))).lastModified() );    
