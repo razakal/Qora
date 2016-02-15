@@ -83,7 +83,7 @@ import webserver.WebService;
 
 public class Controller extends Observable {
 
-	private String version = "0.25.0 beta";
+	private String version = "0.25.0";
 	public static final String releaseVersion = "0.25.0";
 
 //	TODO ENUM would be better here
