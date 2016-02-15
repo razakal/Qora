@@ -207,9 +207,10 @@ public class Settings {
 			File file = new File(this.currentSettingsPath);
 		    if(file.exists()){
 		    	return file.getAbsoluteFile().getParent() + "/peers.json";
-		    }		
+		    } else {
+		    	return "peers.json";
+		    }
 		}
-		return currentSettingsPath;
 	}
 	
 	public JSONArray getPeersJson()
