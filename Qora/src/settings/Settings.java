@@ -86,6 +86,7 @@ public class Settings {
 	private JSONObject peersJSON;
 
 	private String currentSettingsPath;
+	private String currentPeersPath;
 	
 	List<Peer> cacheInternetPeers;
 	long timeLoadInternetPeers;
@@ -201,16 +202,19 @@ public class Settings {
 	
 	public String getCurrentPeersPath()
 	{
-		if(this.currentSettingsPath == "settings.json" || this.currentSettingsPath == "") {
-			return "peers.json";
-		} else {
-			File file = new File(this.currentSettingsPath);
-		    if(file.exists()){
-		    	return file.getAbsoluteFile().getParent() + "/peers.json";
-		    } else {
-		    	return "peers.json";
-		    }
+		if(this.currentPeersPath == null) {
+			if(this.currentSettingsPath == "settings.json" || this.currentSettingsPath == "") {
+				this.currentPeersPath = "peers.json";
+			} else {
+				File file = new File(this.currentSettingsPath);
+			    if(file.exists()){
+			    	this.currentPeersPath = file.getAbsoluteFile().getParent() + "/peers.json";
+			    } else {
+			    	this.currentPeersPath = "peers.json";
+			    }
+			}
 		}
+		return this.currentPeersPath;
 	}
 	
 	public JSONArray getPeersJson()
