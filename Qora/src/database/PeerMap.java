@@ -96,7 +96,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 					InetAddress address = InetAddress.getByAddress(addressBI);
 					
 					//CHECK IF SOCKET IS NOT LOCALHOST
-					if(!address.equals(InetAddress.getLocalHost()))
+					if(!Settings.getInstance().isLocalAddress(address))
 					{
 						//CREATE PEER
 						Peer peer = new Peer(address);	
@@ -286,7 +286,7 @@ public class PeerMap extends DBMap<byte[], byte[]>
 				InetAddress address = InetAddress.getByAddress(peer.getAddress());
 
 				//CHECK IF SOCKET IS NOT LOCALHOST
-				if(!address.equals(InetAddress.getLocalHost()))
+				if(!Settings.getInstance().isLocalAddress(address))
 				{
 					if(peers.size() >= amount)
 					{

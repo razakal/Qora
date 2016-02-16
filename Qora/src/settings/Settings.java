@@ -3,10 +3,14 @@ package settings;
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -88,6 +92,8 @@ public class Settings {
 	private String currentSettingsPath;
 	private String currentPeersPath;
 	
+	private InetAddress localAddress;
+	
 	List<Peer> cacheInternetPeers;
 	long timeLoadInternetPeers;
 	
@@ -111,6 +117,7 @@ public class Settings {
 	
 	private Settings()
 	{
+		this.localAddress = this.getCurrentIp();
 		int alreadyPassed = 0;
 		String settingsFilePath = "settings.json";
 		
@@ -340,8 +347,7 @@ public class Settings {
 				{
 					InetAddress address = InetAddress.getByName((String) peersArray.get(i));
 					
-					//CHECK IF SOCKET IS NOT LOCALHOST
-					if(!address.equals(InetAddress.getLocalHost()))
+					if(!this.isLocalAddress(address))
 					{
 						//CREATE PEER
 						Peer peer = new Peer(address);
@@ -736,4 +742,40 @@ public class Settings {
 		}
 		return true;
 	}
+
+	public boolean isLocalAddress(InetAddress address) {
+		try {
+			if(this.localAddress == null) {
+				return false;
+			} else {
+				return address.equals(this.localAddress);
+			}
+		} catch (Exception e) {
+            return false;
+        }
+	}
+	
+	public InetAddress getCurrentIp() {
+        try {
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface
+                    .getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface ni = (NetworkInterface) networkInterfaces
+                        .nextElement();
+                Enumeration<InetAddress> nias = ni.getInetAddresses();
+                while(nias.hasMoreElements()) {
+                    InetAddress ia= (InetAddress) nias.nextElement();
+                    if (!ia.isLinkLocalAddress() 
+                     && !ia.isLoopbackAddress()
+                     && ia instanceof Inet4Address) {
+                        return ia;
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            System.out.println("unable to get current IP " + e.getMessage());
+        }
+		return null;
+    }
+
 }
