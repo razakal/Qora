@@ -1082,7 +1082,7 @@ public class Controller extends Observable {
 	public boolean recoverWallet(byte[] seed, String password, int amount) {
 		if(this.wallet.create(seed, password, amount, false))
 		{
-			Logger.getGlobal().info("The need to synchronize the wallet!");
+			Logger.getGlobal().info("Wallet needs to synchronize!");
 			this.actionAfterConnect();
 			this.setNeedSync(true);
 
