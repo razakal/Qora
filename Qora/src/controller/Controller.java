@@ -88,7 +88,7 @@ import webserver.WebService;
 public class Controller extends Observable {
 
 	private String version = "0.25.1";
-	private String buildTime = "2016-02-16 00:00:00 UTC";
+	private String buildTime = "2016-02-17 00:00:00 UTC";
 	private long buildTimestamp;
 	
 	public static final String releaseVersion = "0.25.1";
@@ -869,8 +869,6 @@ public class Controller extends Observable {
 					 * this.peerHeight.keySet()) { this.peerHeight.put(peer,
 					 * this.blockChain.getHeight()); } }
 					 */
-					
-					
 				} 
 
 				break;
