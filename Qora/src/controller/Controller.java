@@ -321,25 +321,32 @@ public class Controller extends Observable {
 		
 		//CHECK IF DB NEEDS UPDATE
 
-		//CHECK IF NAME STORAGE NEEDS UPDATE
-		if (DBSet.getInstance().getLocalDataMap().get("nsupdate") == null )
+		if(DBSet.getInstance().getBlockMap().getLastBlockSignature() != null)
 		{
-			//FIRST NAME STORAGE UPDATE
-			UpdateUtil.repopulateNameStorage( 70000 );
+			//CHECK IF NAME STORAGE NEEDS UPDATE
+			if (DBSet.getInstance().getLocalDataMap().get("nsupdate") == null )
+			{
+				//FIRST NAME STORAGE UPDATE
+				UpdateUtil.repopulateNameStorage( 70000 );
+				DBSet.getInstance().getLocalDataMap().set("nsupdate", "1");
+			}
+			//CREATE TRANSACTIONS FINAL MAP
+			if (DBSet.getInstance().getLocalDataMap().get("txfinalmap") == null )
+			{
+				//FIRST NAME STORAGE UPDATE
+				UpdateUtil.repopulateTransactionFinalMap(  );
+				DBSet.getInstance().getLocalDataMap().set("txfinalmap", "1");
+			}
+			
+			if (DBSet.getInstance().getLocalDataMap().get("blogpostmap") == null ||  !DBSet.getInstance().getLocalDataMap().get("blogpostmap").equals("2"))
+			{
+				//recreate comment postmap
+				UpdateUtil.repopulateCommentPostMap();
+				DBSet.getInstance().getLocalDataMap().set("blogpostmap", "2");
+			}
+		} else {
 			DBSet.getInstance().getLocalDataMap().set("nsupdate", "1");
-		}
-		//CREATE TRANSACTIONS FINAL MAP
-		if (DBSet.getInstance().getLocalDataMap().get("txfinalmap") == null )
-		{
-			//FIRST NAME STORAGE UPDATE
-			UpdateUtil.repopulateTransactionFinalMap(  );
 			DBSet.getInstance().getLocalDataMap().set("txfinalmap", "1");
-		}
-		
-		if (DBSet.getInstance().getLocalDataMap().get("blogpostmap") == null ||  !DBSet.getInstance().getLocalDataMap().get("blogpostmap").equals("2"))
-		{
-			//recreate comment postmap
-			UpdateUtil.repopulateCommentPostMap();
 			DBSet.getInstance().getLocalDataMap().set("blogpostmap", "2");
 		}
 		
@@ -348,6 +355,8 @@ public class Controller extends Observable {
 
 		// CREATE BLOCKCHAIN
 		this.blockChain = new BlockChain();
+		
+		
 
 		// START API SERVICE
 		if (Settings.getInstance().isRpcEnabled()) {

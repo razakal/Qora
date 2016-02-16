@@ -33,15 +33,17 @@ public class BlockChain
 			||
 			DBSet.getInstance().getBlockMap().get(genesisBlock.getSignature()).getTimestamp() != genesisBlock.getTimestamp()) 
 		{
-			Logger.getGlobal().info("reCreate Database...");	
-	
-        	try {
-        		DBSet.getInstance().close();
-				Controller.getInstance().reCreateDB(false);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if(DBSet.getInstance().getBlockMap().getLastBlockSignature() != null)
+			{
+				Logger.getGlobal().info("reCreate Database...");	
+		
+	        	try {
+	        		DBSet.getInstance().close();
+					Controller.getInstance().reCreateDB(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-        	
         	//PROCESS
         	genesisBlock.process();
         	
@@ -49,7 +51,6 @@ public class BlockChain
         	Asset qoraAsset = new Asset(genesisBlock.getGenerator(), "Qora", "This is the simulated Qora asset.", 10000000000L, true, genesisBlock.getGeneratorSignature());
         	DBSet.getInstance().getIssueAssetMap().set(genesisBlock.getGeneratorSignature(), 0l);
         	DBSet.getInstance().getAssetMap().set(0l, qoraAsset);
-	        	
         }
 	}
 	
