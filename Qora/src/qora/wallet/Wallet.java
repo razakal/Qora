@@ -430,6 +430,10 @@ public class Wallet extends Observable implements Observer
 	
 	public void synchronize()
 	{
+		if(Controller.getInstance().isProcessingWalletSynchronize()) {
+			return;
+		}
+		
 		List<Account> accounts = this.getAccounts();
 		
 		//RESET MAPS

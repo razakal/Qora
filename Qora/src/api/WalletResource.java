@@ -72,8 +72,14 @@ public class WalletResource {
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_NO_EXISTS);
 		}
 				
-		Controller.getInstance().synchronizeWallet();
-		return String.valueOf(true);
+		if(!Controller.getInstance().isProcessingWalletSynchronize()) {
+			
+			Controller.getInstance().synchronizeWallet();
+			
+			return String.valueOf(true);
+		} else {
+			return String.valueOf(false);
+		}
 	}
 	
 	@GET

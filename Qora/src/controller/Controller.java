@@ -713,7 +713,7 @@ public class Controller extends Observable {
 
 		        	Controller.getInstance().setToOfflineTime(0L);
 		        	
-			       	if(Controller.getInstance().isNeedSync())
+			       	if(Controller.getInstance().isNeedSync() && !Controller.getInstance().isProcessingWalletSynchronize())
 			       	{
 			       		Controller.getInstance().synchronizeWallet();
 			       	}
@@ -831,17 +831,27 @@ public class Controller extends Observable {
 
 			case Message.BLOCK_TYPE:
 
-				if(this.isProcessingWalletSynchronize()) {
-					break;
-				}
-				
 				BlockMessage blockMessage = (BlockMessage) message;
 
 				// ASK BLOCK FROM BLOCKCHAIN
 				block = blockMessage.getBlock();
 
+				boolean isNewBlockValid = this.blockChain.isNewBlockValid(block);
+				
+				if(isNewBlockValid)	{
+					synchronized (this.peerHeight) {
+						this.peerHeight.put(message.getSender(),
+								blockMessage.getHeight());
+					}
+				}
+					
+				if(this.isProcessingWalletSynchronize()) {
+					
+					break;
+				}
+				
 				// CHECK IF VALID
-				if (this.blockChain.isNewBlockValid(block)
+				if (isNewBlockValid
 						&& this.synchronizer.process(block)) {
 					Logger.getGlobal().info("received new valid block");
 
@@ -859,13 +869,9 @@ public class Controller extends Observable {
 					 * this.peerHeight.keySet()) { this.peerHeight.put(peer,
 					 * this.blockChain.getHeight()); } }
 					 */
-				} else {
-					synchronized (this.peerHeight) {
-						// UPDATE SENDER HEIGHT + 1
-						this.peerHeight.put(message.getSender(),
-								blockMessage.getHeight());
-					}
-				}
+					
+					
+				} 
 
 				break;
 
