@@ -448,7 +448,7 @@ public class Wallet extends Observable implements Observer
 		
 		try{
 			Controller.getInstance().setNeedSync(false);
-			Controller.getInstance().isProcessSynchronize = true;
+			Controller.getInstance().setProcessingWalletSynchronize(true);
 			this.syncHeight = 1;
 			do
 			{
@@ -472,7 +472,7 @@ public class Wallet extends Observable implements Observer
 			while(block != null);
 			
 		}finally{
-			Controller.getInstance().isProcessSynchronize = false;
+			Controller.getInstance().setProcessingWalletSynchronize(false);
 			this.database.commit();
 			this.syncHeight = -1;
 		}
@@ -489,6 +489,15 @@ public class Wallet extends Observable implements Observer
 		Logger.getGlobal().info("Resetted balances");
 
 		Controller.getInstance().walletStatusUpdate(-1);
+		
+		//NOW IF NOT SYNCHRONIZED SET STATUS
+		//CHECK IF WE ARE UPTODATE
+		if(!Controller.getInstance().isUpToDate())
+		{
+			// NOTIFY
+			Controller.getInstance().notifyObservers(new ObserverMessage(
+					ObserverMessage.NETWORK_STATUS, Controller.STATUS_SYNCHRONIZING));
+		}
 		
 		//SET LAST BLOCK
 		

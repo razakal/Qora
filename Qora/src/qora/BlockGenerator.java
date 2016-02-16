@@ -169,7 +169,7 @@ public class BlockGenerator extends Thread implements Observer
 				continue;
 			
 			//CHECK IF WE ARE UPTODATE
-			if(!Controller.getInstance().isUpToDate())
+			if(!Controller.getInstance().isUpToDate() && !Controller.getInstance().isProcessingWalletSynchronize())
 			{
 				Controller.getInstance().update();
 			}

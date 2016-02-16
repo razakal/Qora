@@ -98,7 +98,7 @@ public class Controller extends Observable {
 	public static final int STATUS_SYNCHRONIZING = 1;
 	public static final int STATUS_OK = 2;
 
-	public boolean isProcessSynchronize = false; 
+	private boolean processingWalletSynchronize = false; 
 	private int status;
 	private Network network;
 	private ApiService rpcService;
@@ -122,6 +122,14 @@ public class Controller extends Observable {
 
 	private static Controller instance;
 
+	public boolean isProcessingWalletSynchronize() {
+		return processingWalletSynchronize;
+	}
+	
+	public void setProcessingWalletSynchronize(boolean isPocessing) {
+		this.processingWalletSynchronize = isPocessing;
+	}
+	
 	public String getVersion() {
 		return version;
 	}
@@ -823,6 +831,10 @@ public class Controller extends Observable {
 
 			case Message.BLOCK_TYPE:
 
+				if(this.isProcessingWalletSynchronize()) {
+					break;
+				}
+				
 				BlockMessage blockMessage = (BlockMessage) message;
 
 				// ASK BLOCK FROM BLOCKCHAIN
