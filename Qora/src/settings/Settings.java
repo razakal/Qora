@@ -302,10 +302,14 @@ public class Settings {
 				}
 			}
 			
+			Logger.getGlobal().info("Peers loaded from Internet : " + this.cacheInternetPeers.size());
+
 			return this.cacheInternetPeers;
 			
 		} catch (Exception e) {
 			//RETURN EMPTY LIST
+
+			Logger.getGlobal().info("Peers loaded from Internet with errors : " + this.cacheInternetPeers.size());
 						
 			return this.cacheInternetPeers;
 		}
