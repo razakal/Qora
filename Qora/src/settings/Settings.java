@@ -219,7 +219,12 @@ public class Settings {
 	
 	public JSONArray getPeersJson()
 	{
-		return (JSONArray) this.peersJSON.get("knownpeers");
+		if(this.peersJSON != null && this.peersJSON.containsKey("knownpeers")) {
+			return (JSONArray) this.peersJSON.get("knownpeers");
+		} else {
+			return new JSONArray();
+		}
+		
 	}
 		
 	@SuppressWarnings("unchecked")
