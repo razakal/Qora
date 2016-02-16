@@ -87,11 +87,11 @@ import webserver.WebService;
 
 public class Controller extends Observable {
 
-	private String version = "0.25.0";
+	private String version = "0.25.1";
 	private String buildTime = "2016-02-16 00:00:00 UTC";
 	private long buildTimestamp;
 	
-	public static final String releaseVersion = "0.25.0";
+	public static final String releaseVersion = "0.25.1";
 
 //	TODO ENUM would be better here
 	public static final int STATUS_NO_CONNECTIONS = 0;
@@ -356,8 +356,6 @@ public class Controller extends Observable {
 		// CREATE BLOCKCHAIN
 		this.blockChain = new BlockChain();
 		
-		
-
 		// START API SERVICE
 		if (Settings.getInstance().isRpcEnabled()) {
 			this.rpcService = new ApiService();
