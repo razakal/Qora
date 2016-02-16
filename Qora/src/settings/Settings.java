@@ -230,54 +230,60 @@ public class Settings {
 	@SuppressWarnings("unchecked")
 	public List<Peer> getKnownPeers()
 	{
-		boolean loadPeersFromInternet =	(
-			Controller.getInstance().getToOfflineTime() != 0L 
-			&& 
-			NTP.getTime() - Controller.getInstance().getToOfflineTime() > 5*60*1000
-			);
-		
-		List<Peer> knownPeers = new ArrayList<Peer>();
-		JSONArray peersArray = new JSONArray();
-
 		try {
-			JSONArray peersArraySettings = (JSONArray) this.settingsJSON.get("knownpeers");
-
-			if(peersArraySettings != null)
-			{
-				for (Object peer : peersArraySettings) {
-					if(!peersArray.contains(peer)) {
-						peersArray.add(peer);
+			boolean loadPeersFromInternet =	(
+				Controller.getInstance().getToOfflineTime() != 0L 
+				&& 
+				NTP.getTime() - Controller.getInstance().getToOfflineTime() > 5*60*1000
+				);
+			
+			List<Peer> knownPeers = new ArrayList<Peer>();
+			JSONArray peersArray = new JSONArray();
+	
+			try {
+				JSONArray peersArraySettings = (JSONArray) this.settingsJSON.get("knownpeers");
+	
+				if(peersArraySettings != null)
+				{
+					for (Object peer : peersArraySettings) {
+						if(!peersArray.contains(peer)) {
+							peersArray.add(peer);
+						}
 					}
 				}
+			} catch (Exception e) {
+				Logger.getGlobal().info("Error with loading knownpeers from settings.json.");
 			}
-		} catch (Exception e) {
-			Logger.getGlobal().info("Error with loading knownpeers from settings.json.");
-		}
-		
-		try {
-			JSONArray peersArrayPeers = (JSONArray) this.peersJSON.get("knownpeers");
 			
-			if(peersArrayPeers != null)
-			{
-				for (Object peer : peersArrayPeers) {
-					if(!peersArray.contains(peer)) {
-						peersArray.add(peer);
+			try {
+				JSONArray peersArrayPeers = (JSONArray) this.peersJSON.get("knownpeers");
+				
+				if(peersArrayPeers != null)
+				{
+					for (Object peer : peersArrayPeers) {
+						if(!peersArray.contains(peer)) {
+							peersArray.add(peer);
+						}
 					}
 				}
+				
+			} catch (Exception e) {
+				Logger.getGlobal().info("Error with loading knownpeers from peers.json.");
 			}
 			
-		} catch (Exception e) {
-			Logger.getGlobal().info("Error with loading knownpeers from peers.json.");
-		}
-		
-		knownPeers = getKnownPeersFromJSONArray(peersArray);
-		
-		if(knownPeers.size() == 0 || loadPeersFromInternet)
-		{
-			knownPeers = getKnownPeersFromInternet();
-		}
+			knownPeers = getKnownPeersFromJSONArray(peersArray);
 			
-		return knownPeers;
+			if(knownPeers.size() == 0 || loadPeersFromInternet)
+			{
+				knownPeers = getKnownPeersFromInternet();
+			}
+				
+			return knownPeers;
+		
+		} catch (Exception e) {
+			Logger.getGlobal().info("Error in getKnownPeers().");
+			return new ArrayList<Peer>();
+		}
 	}
 	
 	public List<Peer> getKnownPeersFromInternet() 

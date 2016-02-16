@@ -243,33 +243,44 @@ public class PeerMap extends DBMap<byte[], byte[]>
 	{
 		try
 		{
-			//GET ITERATOR
-			Iterator<byte[]> iterator = this.getKeys().iterator();
-			
 			//PEERS
 			List<Peer> peers = new ArrayList<Peer>();
 			List<PeerInfo> listPeerInfo = new ArrayList<PeerInfo>();
-			//ITERATE AS LONG AS:
-			// 1. we have not reached the amount of peers
-			// 2. we have read all records
-			while(iterator.hasNext() && peers.size() < amount)
-			{
-				//GET ADDRESS
-				byte[] addressBI = iterator.next();
-				
-				//CHECK IF ADDRESS IS WHITELISTED
-				
-				byte[] data = this.get(addressBI);
-				
-				PeerInfo peerInfo = new PeerInfo(addressBI, data);
-				
-				if(Arrays.equals(peerInfo.getStatus(), BYTE_WHITELISTED))
-				{
-					listPeerInfo.add(peerInfo);
-				}
-			}
 			
-			Collections.sort(listPeerInfo, new ReverseComparator<PeerInfo>(new PeerInfoComparator())); 
+			try
+			{
+				//GET ITERATOR
+				Iterator<byte[]> iterator = this.getKeys().iterator();
+				
+				//ITERATE AS LONG AS:
+				// 1. we have not reached the amount of peers
+				// 2. we have read all records
+				while(iterator.hasNext() && peers.size() < amount)
+				{
+					//GET ADDRESS
+					byte[] addressBI = iterator.next();
+					
+					//CHECK IF ADDRESS IS WHITELISTED
+					
+					byte[] data = this.get(addressBI);
+					
+					try
+					{
+						PeerInfo peerInfo = new PeerInfo(addressBI, data);
+						
+						if(Arrays.equals(peerInfo.getStatus(), BYTE_WHITELISTED))
+						{
+							listPeerInfo.add(peerInfo);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				Collections.sort(listPeerInfo, new ReverseComparator<PeerInfo>(new PeerInfoComparator())); 
+					
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 			for (PeerInfo peer : listPeerInfo) {
 				InetAddress address = InetAddress.getByAddress(peer.getAddress());
@@ -301,22 +312,28 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			}
 				
 			for (Peer knownPeer : knownPeers) {
-				if(!allFromSettings && peers.size() >= amount)
-					break;
-				
-				boolean found = false;
-				for (Peer peer : peers) {
-					if(peer.getAddress().equals(knownPeer.getAddress()))
-					{
-						found = true;
+				try
+				{
+					if(!allFromSettings && peers.size() >= amount)
 						break;
+					
+					boolean found = false;
+					for (Peer peer : peers) {
+						if(peer.getAddress().equals(knownPeer.getAddress()))
+						{
+							found = true;
+							break;
+						}
 					}
+					
+					if (!found){
+						//ADD TO LIST
+						peers.add(knownPeer);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 				
-				if (!found){
-					//ADD TO LIST
-					peers.add(knownPeer);
-				}
 			}
 			
 			//RETURN
