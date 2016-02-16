@@ -97,7 +97,7 @@ public class WalletResource {
 	{
 		try
 		{
-			APIUtils.askAPICallAllowed("POST wallet/create " + x, request);
+			APIUtils.askAPICallAllowed("POST wallet " + x, request);
 
 			//READ JSON
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(x);

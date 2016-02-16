@@ -687,30 +687,36 @@ public class Controller extends Observable {
 			this.notifyObservers(new ObserverMessage(
 					ObserverMessage.NETWORK_STATUS, this.status));
 			
-			this.timer.cancel();
-			this.timer = new Timer();
-
-			TimerTask action = new TimerTask() {
-		        public void run() {
-		        	
-		        	if(Controller.getInstance().getStatus() == STATUS_OK)
-			        {
-		    			Controller.getInstance().statusInfo();
-
-			        	Controller.getInstance().setToOfflineTime(0L);
-			        	
-				       	if(Controller.getInstance().isNeedSync())
-				       	{
-				       		Controller.getInstance().synchronizeWallet();
-				       	}
-			        }
-		        }
-			};
-				
-			this.timer.schedule(action, 10000);
+			this.actionAfterConnect();
 		}
 	}
 
+	public void actionAfterConnect() 
+	{
+		this.timer.cancel();
+		this.timer = new Timer();
+
+		TimerTask action = new TimerTask() {
+	        public void run() {
+	        	
+	        	if(Controller.getInstance().getStatus() == STATUS_OK)
+		        {
+	    			Controller.getInstance().statusInfo();
+
+		        	Controller.getInstance().setToOfflineTime(0L);
+		        	
+			       	if(Controller.getInstance().isNeedSync())
+			       	{
+			       		Controller.getInstance().synchronizeWallet();
+			       	}
+		        }
+	        }
+		};
+			
+		this.timer.schedule(action, Settings.getInstance().getConnectionTimeout());
+	}
+	
+	
 	public void forgingStatusChanged(ForgingStatus status) {
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(
@@ -1077,6 +1083,7 @@ public class Controller extends Observable {
 		if(this.wallet.create(seed, password, amount, false))
 		{
 			Logger.getGlobal().info("The need to synchronize the wallet!");
+			this.actionAfterConnect();
 			this.setNeedSync(true);
 
 			return true;
