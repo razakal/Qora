@@ -1100,11 +1100,19 @@ public class Controller extends Observable {
 	}
 
 	public PrivateKeyAccount getPrivateKeyAccountByAddress(String address) {
-		return this.wallet.getPrivateKeyAccount(address);
+		if(this.doesWalletExists()) {
+			return this.wallet.getPrivateKeyAccount(address);
+		} else {
+			return null;
+		}
 	}
 
 	public Account getAccountByAddress(String address) {
-		return this.wallet.getAccount(address);
+		if(this.doesWalletExists()) {
+			return this.wallet.getAccount(address);
+		} else {
+			return null;
+		}
 	}
 
 	public BigDecimal getUnconfirmedBalance(String address) {
