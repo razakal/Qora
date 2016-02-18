@@ -284,10 +284,9 @@ public class ApiClient {
 			},
 			{
 				"GET addresses/lastreference/{address}", 
-				"Returns the 64-byte long base58-encoded signature of last transaction of the given address, where the address is delivered as creator. Or the first incoming transaction.",
+				"Returns the 64-byte long base58-encoded signature of last transaction of the given address, where the address is delivered as creator. Or the first incoming transaction. Returns \"false\" if there is no transactions.",
 				"Errors: 102 - Invalid address."
 			},
-			
 			{
 				"GET wallet", 
 				"Returns general information about the wallet.",

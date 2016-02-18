@@ -75,8 +75,15 @@ public class AddressesResource {
 		// GET ACCOUNT
 		Account account = new Account(address);
 
+		byte[] lastReference = account.getLastReference();
+		
 		// RETURN
-		return Base58.encode(account.getLastReference());
+		
+		if(lastReference == null || lastReference.length == 0) {
+			return "false"; 
+		} else {
+			return Base58.encode(lastReference);
+		}
 	}
 	
 	@GET
