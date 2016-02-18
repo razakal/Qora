@@ -455,6 +455,7 @@ public class WebResource {
 
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
+					.header("Access-Control-Allow-Origin", "*")
 					.entity(jsonanswer.toJSONString()).build();
 		}
 
@@ -465,6 +466,7 @@ public class WebResource {
 
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
+					.header("Access-Control-Allow-Origin", "*")
 					.entity(jsonanswer.toJSONString()).build();
 		}
 
@@ -506,12 +508,14 @@ public class WebResource {
 			jsonanswer.put("errordetail", result);
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
+					.header("Access-Control-Allow-Origin", "*")
 					.entity(jsonanswer.toJSONString()).build();
 		} else {
 			jsonanswer.put("type", "success");
 			jsonanswer.put("result", result);
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
+					.header("Access-Control-Allow-Origin", "*")
 					.entity(jsonanswer.toJSONString()).build();
 		}
 
