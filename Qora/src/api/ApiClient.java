@@ -283,6 +283,12 @@ public class ApiClient {
 				"Errors: 102 - Invalid address."
 			},
 			{
+				"GET addresses/lastreference/{address}", 
+				"Returns the 64-byte long base58-encoded signature of last transaction of the given address, where the address is delivered as creator. Or the first incoming transaction.",
+				"Errors: 102 - Invalid address."
+			},
+			
+			{
 				"GET wallet", 
 				"Returns general information about the wallet.",
 				"{\"exists\":true,\"isunlocked\":false}" 
@@ -303,7 +309,7 @@ public class ApiClient {
 				"Errors: 201 - Wallet does not exist."
 			},
 			{
-				"POST wallet {\"seed\":\"/<seed>\", \"password\":\"<password>\", \"recover\":<false/true>,  \"amount\":<amount>} ", 
+				"POST wallet {\"seed\":\"<seed>\", \"password\":\"<password>\", \"recover\":<false/true>,  \"amount\":<amount>} ", 
 				"Creates a wallet using the given 32-byte long base58-encoded seed, password,recover flag and amount.",
 				"Errors: 1 - Json error. 103 - Invalid seed. 104 - Invalid amount. 204 - Wallet already exists."
 			},

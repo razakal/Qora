@@ -63,6 +63,23 @@ public class AddressesResource {
 	}
 
 	@GET
+	@Path("/lastreference/{address}")
+	public String getLastReference(@PathParam("address") String address) {
+		
+		// CHECK IF VALID ADDRESS
+		if (!Crypto.getInstance().isValidAddress(address)) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_INVALID_ADDRESS);
+		}
+		
+		// GET ACCOUNT
+		Account account = new Account(address);
+
+		// RETURN
+		return Base58.encode(account.getLastReference());
+	}
+	
+	@GET
 	@Path("/validate/{address}")
 	public String validate(@PathParam("address") String address) {
 		// CHECK IF VALID ADDRESS
