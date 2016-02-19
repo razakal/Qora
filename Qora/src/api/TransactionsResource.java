@@ -41,6 +41,20 @@ public class TransactionsResource {
 		return this.getTransactionsLimited(50);
 	}
 	
+	@POST
+	@Path("/process")
+	public String processTransactionFromRaw(String rawDataBase58)
+	{
+		byte[] transactionBytes = Base58.decode(rawDataBase58);
+		
+		Pair<Transaction, Integer> result = Controller.getInstance().createTransactionFromRaw(transactionBytes);
+		if(result.getB() == Transaction.VALIDATE_OK) {
+			return result.getA().toJson().toJSONString();
+		} else {
+			return result.getB().toString();
+		}
+	}
+	
 	@GET
 	@Path("/{address}")
 	public String getTransactions(@PathParam("address") String address)

@@ -438,12 +438,8 @@ public class WebResource {
 		String apiurl = form.getFirst("apiurl");
 
 		String jsonContent = form.getFirst("json");
-		JSONObject json = new JSONObject();
 		JSONObject jsonanswer = new JSONObject();
-		if (StringUtils.isNotBlank(jsonContent)) {
-			json = (JSONObject) JSONValue.parse(jsonContent);
-		}
-
+		
 		if (StringUtils.isBlank(type)
 				|| (!type.equalsIgnoreCase("get")
 						&& !type.equalsIgnoreCase("post") && !type
@@ -486,7 +482,7 @@ public class WebResource {
 		if (type.equalsIgnoreCase("POST")) {
 			connection.setDoOutput(true);
 			connection.getOutputStream().write(
-					json.toJSONString().getBytes(StandardCharsets.UTF_8));
+					jsonContent.getBytes(StandardCharsets.UTF_8));
 			connection.getOutputStream().flush();
 			connection.getOutputStream().close();
 		}

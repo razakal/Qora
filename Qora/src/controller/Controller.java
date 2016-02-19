@@ -1693,6 +1693,14 @@ public class Controller extends Observable {
 		}
 	}
 
+	public Pair<Transaction, Integer> createTransactionFromRaw(
+			byte[] rawData) {
+		
+		synchronized (this.transactionCreator) {
+			return this.transactionCreator.createTransactionFromRaw(rawData);
+		}
+	}
+	
 	public Pair<Transaction, Integer> issueAsset(PrivateKeyAccount creator,
 			String name, String description, long quantity, boolean divisible,
 			BigDecimal fee) {
