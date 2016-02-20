@@ -422,11 +422,11 @@ public class TransactionsResource {
 			return String.valueOf(DBSet.getInstance().getTransactionFinalMap().getTransactionsByRecipientCount(address));
 		}
 		
-		boolean reverse = false;
-		if (jsonObject.containsKey("reverse")) {
+		boolean desc = false;
+		if (jsonObject.containsKey("desc")) {
 			try
 			{
-				reverse = (boolean) jsonObject.get("reverse");
+				desc = (boolean) jsonObject.get("desc");
 			} catch (Exception e) {
 				throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_JSON);
@@ -456,7 +456,7 @@ public class TransactionsResource {
 		}
 		
 		JSONArray array = new JSONArray();
-		List<Transaction> txs = DBSet.getInstance().getTransactionFinalMap().getTransactionsByRecipient(address, reverse, offset, limit);
+		List<Transaction> txs = DBSet.getInstance().getTransactionFinalMap().getTransactionsByRecipient(address, desc, offset, limit);
 		for(Transaction transaction: txs)
 		{
 			array.add(transaction.toJson());
@@ -503,11 +503,11 @@ public class TransactionsResource {
 			return String.valueOf(DBSet.getInstance().getTransactionFinalMap().getTransactionsBySenderCount(address));
 		}
 		
-		boolean reverse = false;
-		if (jsonObject.containsKey("reverse")) {
+		boolean desc = false;
+		if (jsonObject.containsKey("desc")) {
 			try
 			{
-				reverse = (boolean) jsonObject.get("reverse");
+				desc = (boolean) jsonObject.get("desc");
 			} catch (Exception e) {
 				throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_JSON);
@@ -537,7 +537,7 @@ public class TransactionsResource {
 		}
 		
 		JSONArray array = new JSONArray();
-		List<Transaction> txs = DBSet.getInstance().getTransactionFinalMap().getTransactionsBySender(address, reverse, offset, limit);
+		List<Transaction> txs = DBSet.getInstance().getTransactionFinalMap().getTransactionsBySender(address, desc, offset, limit);
 		for(Transaction transaction: txs)
 		{
 			array.add(transaction.toJson());

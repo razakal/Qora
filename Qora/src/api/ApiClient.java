@@ -138,8 +138,18 @@ public class ApiClient {
 				""
 			},
 			{
+				"POST transactions/recipient {\"address\":\"<address>\", \"limit\":<limit>, \"offset\":<offset>, \"desc\":<true/false>, \"count\":<true/false>}",
+				"Returns an array of the <limit> transactions from given offset with a specific recipient. Set param \"count\" to true to find out the number of transactions.",
+				""
+			},
+			{
 				"GET transactions/sender/<address>/limit/<limit>",
-				"Returns an array of the last <limit> transactions with a specific sender.",
+				"Returns an array of the <limit> transactions with a specific sender.",
+				""
+			},
+			{
+				"POST transactions/sender {\"address\":\"<address>\", \"limit\":<limit>, \"offset\":<offset>, \"desc\":<true/false>, \"count\":<true/false>}",
+				"Returns an array of the <limit> transactions from given offset with a specific sender. Set param \"count\" to true to find out the number of transactions.",
 				""
 			},
 			{
