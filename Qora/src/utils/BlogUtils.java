@@ -262,15 +262,18 @@ public class BlogUtils {
 			BlogEntry blogEntry = getBlogEntryOpt(transaction);
 
 			String nameOpt;
-			if (blogEntry.getShareAuthorOpt() != null)
-				nameOpt = blogEntry.getShareAuthorOpt();
-			else
-				nameOpt = blogEntry.getNameOpt();
-
-			if (blogBlackWhiteList.isAllowedPost(nameOpt != null ? nameOpt
-					: creator, creator)) {
-				results.add(blogEntry);
-				i++;
+			if(blogEntry != null)
+			{
+				if (blogEntry.getShareAuthorOpt() != null)
+					nameOpt = blogEntry.getShareAuthorOpt();
+				else
+					nameOpt = blogEntry.getNameOpt();
+				
+				if (blogBlackWhiteList.isAllowedPost(nameOpt != null ? nameOpt
+						: creator, creator)) {
+					results.add(blogEntry);
+					i++;
+				}
 			}
 
 			if (i == limit)
