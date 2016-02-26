@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
 
+import lang.Lang;
+
 public final class NTP
 {
 	private static final long TIME_TILL_UPDATE = 1000*60*10;
@@ -23,7 +25,7 @@ public final class NTP
 			lastUpdate = System.currentTimeMillis();
 			
 			//LOG OFFSET
-			Logger.getGlobal().info("Adjusting time with " + offset + " milliseconds.");
+			Logger.getGlobal().info(Lang.getInstance().translate("Adjusting time with %offset% milliseconds.").replace("%offset%", String.valueOf(offset)));
 		}
 	   
 		//CALCULATE CORRECTED TIME

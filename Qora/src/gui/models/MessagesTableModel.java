@@ -38,6 +38,7 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import controller.Controller;
 import database.DBSet;
 import gui.PasswordPane;
+import lang.Lang;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.block.Block;
@@ -120,7 +121,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
 
-		JMenuItem copyMessage = new JMenuItem("Copy Message");
+		JMenuItem copyMessage = new JMenuItem(Lang.getInstance().translate("Copy Message"));
 		copyMessage.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -140,7 +141,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		});
 		menu.add(copyMessage);
 		
-		JMenuItem copyAllMessages = new JMenuItem("Copy All Messages");
+		JMenuItem copyAllMessages = new JMenuItem(Lang.getInstance().translate("Copy All Messages"));
 		copyAllMessages.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -159,7 +160,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		});
 		menu.add(copyAllMessages);
 
-		JMenuItem copySender = new JMenuItem("Copy Sender Address");
+		JMenuItem copySender = new JMenuItem(Lang.getInstance().translate("Copy Sender Address"));
 		copySender.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -179,7 +180,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		});
 		menu.add(copySender);
 				
-		JMenuItem copyRecipient = new JMenuItem("Copy Recipient Address");
+		JMenuItem copyRecipient = new JMenuItem(Lang.getInstance().translate("Copy Recipient Address"));
 		copyRecipient.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -260,11 +261,11 @@ public class MessagesTableModel extends JTable implements Observer{
 					}	
 					if(messageBufs.get(row).getOpend())
 					{
-						menuDecrypt.setText("Hide decrypted");
+						menuDecrypt.setText(Lang.getInstance().translate("Hide decrypted"));
 					}
 					else
 					{
-						menuDecrypt.setText("Decrypt");
+						menuDecrypt.setText(Lang.getInstance().translate("Decrypt"));
 					}
 				}
 			}
@@ -419,7 +420,7 @@ public class MessagesTableModel extends JTable implements Observer{
 			CryptoOpenBox(i, 2);
 		}
 		
-		menuDecrypt.setText("Decrypt");
+		menuDecrypt.setText(Lang.getInstance().translate("Decrypt"));
 		this.repaint();
 	}
 	
@@ -460,7 +461,7 @@ public class MessagesTableModel extends JTable implements Observer{
 					if( !Controller.getInstance().unlockWallet(password) )
 					{
 						//WRONG PASSWORD
-						JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 						
 						return;
 					}
@@ -496,18 +497,18 @@ public class MessagesTableModel extends JTable implements Observer{
 				try {
 					decrypt = AEScrypto.dataDecrypt(messageBufs.get(row).getMessage(), privateKey, publicKey);
 				} catch ( InvalidCipherTextException | NullPointerException e1 ) {
-					messageBufs.get(row).setDecryptedMessage("Decrypt Error!");
+					messageBufs.get(row).setDecryptedMessage(Lang.getInstance().translate("Decrypt Error!"));
 				} 
 		
 				if(decrypt == null)
 				{
-					messageBufs.get(row).setDecryptedMessage("Decrypt Error!");			        			
+					messageBufs.get(row).setDecryptedMessage(Lang.getInstance().translate("Decrypt Error!"));			        			
 				}
 				else
 				{
 					messageBufs.get(row).setDecryptedMessage(( messageBufs.get(row).isText() ) ? new String(decrypt, Charset.forName("UTF-8")) : Converter.toHex(decrypt));
 					messageBufs.get(row).setOpend(true);
-					menuDecrypt.setText("Hide decrypted");
+					menuDecrypt.setText(Lang.getInstance().translate("Hide decrypted"));
 				}
 			}
 			else
@@ -516,7 +517,7 @@ public class MessagesTableModel extends JTable implements Observer{
 				{
 					messageBufs.get(row).setDecryptedMessage("");
 					messageBufs.get(row).setOpend(false);
-					menuDecrypt.setText("Decrypt");
+					menuDecrypt.setText(Lang.getInstance().translate("Decrypt"));
 				}
 			}
 	
@@ -770,13 +771,13 @@ public class MessagesTableModel extends JTable implements Observer{
 			return	  "<html>\n"
 					+ "<body width='" + width + "'>\n"
 					+ "<table border='0' cellpadding='3' cellspacing='0'><tr>\n<td bgcolor='" + colorHeader + "' width='" + (width/2-1) + "'>\n"
-					+ "<font size='2' color='" + colorTextHeader + "'>\nFrom:" + this.sender
+					+ "<font size='2' color='" + colorTextHeader + "'>\n"+Lang.getInstance().translate("From:") + this.sender
 					+ "\n<br>\nTo:"
 					+ this.recipient + "\n</font></td>\n"
 					+ "<td bgcolor='" + colorHeader + "' align='right' width='" + (width/2-1) + "'>\n"
 					+ "<font size='2' color='" + colorTextHeader + "'>\n" + strconfirmations + " . "
 					+ DateTimeFormat.timestamptoString(this.timestamp) + "\n<br></font>\n"
-					+ "<font" + fontSize + " color='" + colorTextHeader + "'>Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . Fee: "
+					+ "<font" + fontSize + " color='" + colorTextHeader + "'>"+Lang.getInstance().translate("Amount:") + " " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . " + Lang.getInstance().translate("Fee:") + " "
 					+ NumberAsString.getInstance().numberAsString(fee)+"</font>"
 					+ "</td></tr></table>"
 					+ "<table border='0' cellpadding='3' cellspacing='0'>\n<tr bgcolor='"+colorTextBackground+"'><td width='25'>"+imginout
@@ -809,16 +810,16 @@ public class MessagesTableModel extends JTable implements Observer{
 			{	
 				if( this.opened )
 				{
-					imgLock = "Decrypted";
+					imgLock = Lang.getInstance().translate("Decrypted");
 				}
 				else
 				{
-					imgLock = "Encrypted";
+					imgLock = Lang.getInstance().translate("Encrypted");
 				}
 			}
 			else
 			{
-				imgLock = "Unencrypted";
+				imgLock = Lang.getInstance().translate("Unencrypted");
 			}
 			
 			int confirmations = this.getConfirmations();
@@ -832,15 +833,15 @@ public class MessagesTableModel extends JTable implements Observer{
 			
 			String strAsset = Controller.getInstance().getAsset(this.getAssetKey()).getShort();
 			
-			return 	  "Date: " + DateTimeFormat.timestamptoString(this.timestamp) + "\n"
-					+ "Sender: " + this.sender + "\n"
-					+ "Recipient: " + this.recipient + "\n"
-					+ "Amount: " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . Fee: " + NumberAsString.getInstance().numberAsString(this.fee) + "\n"
-					+ "Type: " + imginout + ". " + imgLock + "\n"
-					+ "Confirmations: " + strConfirmations + "\n"
-					+ "[MESSAGE START]\n"
+			return 	  Lang.getInstance().translate("Date:" + " " + DateTimeFormat.timestamptoString(this.timestamp) + "\n"
+					+ Lang.getInstance().translate("Sender:") + " " + this.sender + "\n"
+					+ Lang.getInstance().translate("Recipient:") + " " + this.recipient + "\n"
+					+ Lang.getInstance().translate("Amount:") + " " +  NumberAsString.getInstance().numberAsString(this.amount) + " " + strAsset + " . "+Lang.getInstance().translate("Fee:")+" " + NumberAsString.getInstance().numberAsString(this.fee) + "\n"
+					+ Lang.getInstance().translate("Type:") + " " + imginout + ". " + imgLock + "\n"
+					+ Lang.getInstance().translate("Confirmations:") + " " + strConfirmations + "\n"
+					+ Lang.getInstance().translate("[MESSAGE START]\n")
 					+ getDecrMessage() + "\n"
-					+ "[MESSAGE END]\n";
+					+ Lang.getInstance().translate("[MESSAGE END]\n"));
 		}
 	}
 

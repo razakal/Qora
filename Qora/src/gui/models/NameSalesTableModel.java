@@ -11,6 +11,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import database.DBSet;
 import database.SortableList;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class NameSalesTableModel extends QoraTableModel<String, BigDecimal> implements Observer
@@ -19,7 +20,7 @@ public class NameSalesTableModel extends QoraTableModel<String, BigDecimal> impl
 	private static final int COLUMN_OWNER = 1;
 	public static final int COLUMN_PRICE = 2;
 	
-	private String[] columnNames = {"Name", "Seller", "Price"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Name", "Seller", "Price"});
 	private SortableList<String, BigDecimal> nameSales;
 	
 	public NameSalesTableModel()

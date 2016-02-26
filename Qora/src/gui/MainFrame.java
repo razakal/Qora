@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import gui.status.StatusPanel;
+import lang.Lang;
 import settings.Settings;
 
 @SuppressWarnings("serial")
@@ -19,10 +20,10 @@ public class MainFrame extends JFrame{
 	public MainFrame()
 	{
 		//CREATE FRAME
-		super("Qora");
+		super(Lang.getInstance().translate("Qora"));
 		
 		if(Settings.getInstance().isTestnet()) {
-			setTitle("Qora TestNet " + Settings.getInstance().getGenesisStamp());
+			setTitle(Lang.getInstance().translate("Qora TestNet ") + Settings.getInstance().getGenesisStamp());
 		}
 		
 		//ICON

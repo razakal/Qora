@@ -2,6 +2,8 @@ package gui.at;
 
 import gui.QoraRowSorter;
 import gui.models.ATTxsTableModel;
+import lang.Lang;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -52,7 +54,7 @@ public class ATTransactionsPanel extends JPanel
 		JPopupMenu menu = new JPopupMenu();	
 
 		
-		JMenuItem copySender = new JMenuItem("Copy Sender");
+		JMenuItem copySender = new JMenuItem(Lang.getInstance().translate("Copy Sender"));
 		copySender.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -68,7 +70,7 @@ public class ATTransactionsPanel extends JPanel
 			}
 		});
 		menu.add(copySender);
-		JMenuItem copyRecipient = new JMenuItem("Copy Recipient");
+		JMenuItem copyRecipient = new JMenuItem(Lang.getInstance().translate("Copy Recipient"));
 		copyRecipient.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -84,7 +86,7 @@ public class ATTransactionsPanel extends JPanel
 			}
 		});
 		menu.add(copyRecipient);
-		JMenuItem copyAmount = new JMenuItem("Copy Amount");
+		JMenuItem copyAmount = new JMenuItem(Lang.getInstance().translate("Copy Amount"));
 		copyAmount.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -99,7 +101,7 @@ public class ATTransactionsPanel extends JPanel
 		});
 		menu.add(copyAmount);
 		
-		JMenuItem copyMessage = new JMenuItem("Copy Message");
+		JMenuItem copyMessage = new JMenuItem(Lang.getInstance().translate("Copy Message"));
 		copyMessage.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 

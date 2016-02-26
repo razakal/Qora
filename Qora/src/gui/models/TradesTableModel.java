@@ -17,6 +17,7 @@ import utils.Pair;
 import controller.Controller;
 import database.DBSet;
 import database.SortableList;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class TradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteger>, Trade> implements Observer
@@ -33,7 +34,7 @@ public class TradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteg
 	BigDecimal sumAsset1;
 	BigDecimal sumAsset2;
 	
-	private String[] columnNames = {"Timestamp", "Type", "Asset 1", "Price", "Asset 2"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Timestamp", "Type", "Asset 1", "Price", "Asset 2"});
 	
 	private void totalCalc()
 	{
@@ -125,7 +126,7 @@ public class TradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteg
 			case COLUMN_TIMESTAMP:
 				
 				if(row == this.trades.size())
-					return "<html>Total:</html>";
+					return "<html>"+Lang.getInstance().translate("Total:")+"</html>";
 				
 				return DateTimeFormat.timestamptoString(trade.getTimestamp());
 				

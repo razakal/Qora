@@ -2,6 +2,7 @@ package gui.voting;
 
 import gui.Gui;
 import gui.models.VotesTableModel;
+import lang.Lang;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -28,7 +29,7 @@ public class PollTabPane extends JTabbedPane{
 			
 		//POLL DETAILS
 		this.pollDetailsPanel = new PollDetailsPanel(poll, asset);
-		this.addTab("Poll Details", this.pollDetailsPanel);
+		this.addTab(Lang.getInstance().translate("Poll Details"), this.pollDetailsPanel);
 		
 		//ALL VOTES
 		allVotesTableModel = new VotesTableModel(poll.getVotes(), asset);
@@ -37,7 +38,7 @@ public class PollTabPane extends JTabbedPane{
 		TableRowSorter<VotesTableModel> sorter =  (TableRowSorter<VotesTableModel>) allVotesTable.getRowSorter();
 		sorter.setComparator(VotesTableModel.COLUMN_VOTES, new BigDecimalStringComparator());
 		
-		this.addTab("All Votes", new JScrollPane(allVotesTable));
+		this.addTab(Lang.getInstance().translate("All Votes"), new JScrollPane(allVotesTable));
 		
 		//MY VOTES
 		myVotesTableModel = new VotesTableModel(poll.getVotes(Controller.getInstance().getAccounts()), asset);
@@ -46,7 +47,7 @@ public class PollTabPane extends JTabbedPane{
 		sorter = (TableRowSorter<VotesTableModel>) myVotesTable.getRowSorter();
 		sorter.setComparator(VotesTableModel.COLUMN_VOTES, new BigDecimalStringComparator());
 		
-		this.addTab("My Votes", new JScrollPane(myVotesTable));
+		this.addTab(Lang.getInstance().translate("My Votes"), new JScrollPane(myVotesTable));
 	}
 
 	public void setAsset(Asset asset)

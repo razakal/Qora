@@ -6,9 +6,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -17,7 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import lang.Lang;
 import settings.Settings;
+import utils.Pair;
 
 
 @SuppressWarnings("serial")
@@ -37,6 +41,8 @@ public class SettingsParametersPanel extends JPanel
 	public JTextField textMinConnections;
 	public JTextField textMaxConnections;
 	public JDialog waitDialog;
+	public List<Pair<String, String>> listOfAvailableLangs;
+	public JComboBox<String> cbxListOfAvailableLangs;
 	
 	public SettingsParametersPanel()
 	{
@@ -45,13 +51,13 @@ public class SettingsParametersPanel extends JPanel
 		this.setBorder(new EmptyBorder(10, 5, 5, 10));
         
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.rowHeights = new int[] {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30};
+        gridBagLayout.rowHeights = new int[] {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 0, 30, 40};
         gridBagLayout.columnWidths = new int[] {40, 70, 92, 88, 92, 30, 0};
         gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         setLayout(gridBagLayout);
         
-        chckbxGuiEnabled = new JCheckBox("GUI enabled");
+        chckbxGuiEnabled = new JCheckBox(Lang.getInstance().translate("GUI enabled"));
         chckbxGuiEnabled.setHorizontalAlignment(SwingConstants.LEFT);
         chckbxGuiEnabled.setSelected(Settings.getInstance().isGuiEnabled());
         GridBagConstraints gbc_chckbxGuiEnabled = new GridBagConstraints();
@@ -62,7 +68,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxGuiEnabled.gridy = 0;
         add(chckbxGuiEnabled, gbc_chckbxGuiEnabled);
         
-        JLabel lblGUIExplanatoryText = new JLabel("Enable/Disable the Graphical User Interface.");
+        JLabel lblGUIExplanatoryText = new JLabel(Lang.getInstance().translate("Enable/Disable the Graphical User Interface."));
         lblGUIExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblGUIExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblExplanatoryText = new GridBagConstraints();
@@ -73,7 +79,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_lblExplanatoryText.gridy = 1;
         add(lblGUIExplanatoryText, gbc_lblExplanatoryText);
         
-        chckbxRpcEnabled = new JCheckBox("RPC enabled");
+        chckbxRpcEnabled = new JCheckBox(Lang.getInstance().translate("RPC enabled"));
         chckbxRpcEnabled.setHorizontalAlignment(SwingConstants.LEFT);
         chckbxRpcEnabled.setSelected(Settings.getInstance().isRpcEnabled());
         GridBagConstraints gbc_chckbxRpcEnabled = new GridBagConstraints();
@@ -84,7 +90,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxRpcEnabled.gridy = 2;
         add(chckbxRpcEnabled, gbc_chckbxRpcEnabled);
         
-        JLabel lblRpcPort = new JLabel("RPC port:");
+        JLabel lblRpcPort = new JLabel(Lang.getInstance().translate("RPC port:"));
         GridBagConstraints gbc_lblRpcPort = new GridBagConstraints();
         gbc_lblRpcPort.anchor = GridBagConstraints.EAST;
         gbc_lblRpcPort.insets = new Insets(0, 0, 5, 5);
@@ -104,7 +110,7 @@ public class SettingsParametersPanel extends JPanel
         add(txtRpcPort, gbc_txtRpcPort);
         txtRpcPort.setColumns(10);
         
-        JLabel lblRPCExplanatoryText = new JLabel("Enable/Disable API calls using the given port.");
+        JLabel lblRPCExplanatoryText = new JLabel(Lang.getInstance().translate("Enable/Disable API calls using the given port."));
         lblRPCExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblRPCExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblAnExplanatoryText_1 = new GridBagConstraints();
@@ -115,7 +121,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_lblAnExplanatoryText_1.gridy = 3;
         add(lblRPCExplanatoryText, gbc_lblAnExplanatoryText_1);
         
-        chckbxWebEnabled = new JCheckBox("WEB enabled");
+        chckbxWebEnabled = new JCheckBox(Lang.getInstance().translate("WEB enabled"));
         chckbxWebEnabled.setHorizontalAlignment(SwingConstants.LEFT);
         chckbxWebEnabled.setSelected(Settings.getInstance().isWebEnabled());
         GridBagConstraints gbc_chckbxWebEnabled = new GridBagConstraints();
@@ -126,7 +132,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxWebEnabled.gridy = 4;
         add(chckbxWebEnabled, gbc_chckbxWebEnabled);
         
-        JLabel lblWebPort = new JLabel("WEB port:");
+        JLabel lblWebPort = new JLabel(Lang.getInstance().translate("WEB port:"));
         GridBagConstraints gbc_lblWebPort = new GridBagConstraints();
         gbc_lblWebPort.anchor = GridBagConstraints.EAST;
         gbc_lblWebPort.insets = new Insets(0, 0, 5, 5);
@@ -146,7 +152,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_txtWebport.gridy = 4;
         add(txtWebport, gbc_txtWebport);
         
-        JLabel lblWEBExplanatoryText = new JLabel("Enable/Disable decentralized web server. Use \"Access permission\" tab for additional options.");
+        JLabel lblWEBExplanatoryText = new JLabel(Lang.getInstance().translate("Enable/Disable decentralized web server. Use \"Access permission\" tab for additional options."));
         lblWEBExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblWEBExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblAnExplanatoryText_2 = new GridBagConstraints();
@@ -157,7 +163,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_lblAnExplanatoryText_2.gridy = 5;
         add(lblWEBExplanatoryText, gbc_lblAnExplanatoryText_2);
         
-        chckbxKeyCaching = new JCheckBox("Generator Key Caching");
+        chckbxKeyCaching = new JCheckBox(Lang.getInstance().translate("Generator Key Caching"));
         chckbxKeyCaching.setHorizontalAlignment(SwingConstants.LEFT);
         chckbxKeyCaching.setSelected(Settings.getInstance().isGeneratorKeyCachingEnabled());
         GridBagConstraints gbc_chckbxKeyCaching = new GridBagConstraints();
@@ -168,7 +174,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxKeyCaching.gridy = 6;
         add(chckbxKeyCaching, gbc_chckbxKeyCaching);
         
-        JLabel lblKeyCachingExplanatoryText = new JLabel("Allows forging even when your wallet is locked. You need to unlock it once.");
+        JLabel lblKeyCachingExplanatoryText = new JLabel(Lang.getInstance().translate("Allows forging even when your wallet is locked. You need to unlock it once."));
         lblKeyCachingExplanatoryText.setVerticalAlignment(SwingConstants.TOP);
         lblKeyCachingExplanatoryText.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblAnExplanatoryText_3 = new GridBagConstraints();
@@ -179,7 +185,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_lblAnExplanatoryText_3.gridy = 7;
         add(lblKeyCachingExplanatoryText, gbc_lblAnExplanatoryText_3);
         
-        JLabel lblDataDir = new JLabel("Data dir:");
+        JLabel lblDataDir = new JLabel(Lang.getInstance().translate("Data dir:"));
         GridBagConstraints gbc_lblDataDir = new GridBagConstraints();
         gbc_lblDataDir.anchor = GridBagConstraints.WEST;
         gbc_lblDataDir.insets = new Insets(0, 0, 5, 5);
@@ -199,7 +205,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_textDataFolder.gridy = 8;
         add(textDataFolder, gbc_textDataFolder);
         
-        JButton btnBrowseDataFolder = new JButton("Browse...");
+        JButton btnBrowseDataFolder = new JButton(Lang.getInstance().translate("Browse..."));
         GridBagConstraints gbc_btnBrowseDataFolder = new GridBagConstraints();
         gbc_btnBrowseDataFolder.anchor = GridBagConstraints.WEST;
         gbc_btnBrowseDataFolder.insets = new Insets(0, 0, 5, 5);
@@ -210,7 +216,7 @@ public class SettingsParametersPanel extends JPanel
                 JFileChooser fileopen = new JFileChooser();  
                 fileopen.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 fileopen.setCurrentDirectory(new File(textDataFolder.getText()));
-                int ret = fileopen.showDialog(null, "Set data dir");                
+                int ret = fileopen.showDialog(null, Lang.getInstance().translate("Set data dir"));                
                 if (ret == JFileChooser.APPROVE_OPTION) {
                 	textDataFolder.setText(fileopen.getSelectedFile().toString());
                 }
@@ -218,7 +224,7 @@ public class SettingsParametersPanel extends JPanel
         });
         add(btnBrowseDataFolder, gbc_btnBrowseDataFolder);
         
-        JLabel lblWelletDir = new JLabel("Wallet dir:");
+        JLabel lblWelletDir = new JLabel(Lang.getInstance().translate("Wallet dir:"));
         GridBagConstraints gbc_lblWelletDir = new GridBagConstraints();
         gbc_lblWelletDir.anchor = GridBagConstraints.WEST;
         gbc_lblWelletDir.insets = new Insets(0, 0, 5, 5);
@@ -238,7 +244,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_textWallet.gridy = 9;
         add(textWallet, gbc_textWallet);
         
-        JButton btnBrowseWallet = new JButton("Browse...");
+        JButton btnBrowseWallet = new JButton(Lang.getInstance().translate("Browse..."));
         GridBagConstraints gbc_BrowseWalletbutton = new GridBagConstraints();
         gbc_BrowseWalletbutton.anchor = GridBagConstraints.WEST;
         gbc_BrowseWalletbutton.insets = new Insets(0, 0, 5, 5);
@@ -250,7 +256,7 @@ public class SettingsParametersPanel extends JPanel
                 JFileChooser fileopen = new JFileChooser();             
                 fileopen.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 fileopen.setCurrentDirectory(new File(textWallet.getText()));
-                int ret = fileopen.showDialog(null, "Set wallet dir");                
+                int ret = fileopen.showDialog(null, Lang.getInstance().translate("Set wallet dir"));                
                 if (ret == JFileChooser.APPROVE_OPTION) {   
                     textWallet.setText(fileopen.getSelectedFile().toString());
                 }
@@ -259,7 +265,7 @@ public class SettingsParametersPanel extends JPanel
         
         add(btnBrowseWallet, gbc_BrowseWalletbutton);
         
-        JLabel lblAnExplanatoryText_4 = new JLabel("The data folder contains blockchain data. The wallet dir contains user specific data.");
+        JLabel lblAnExplanatoryText_4 = new JLabel(Lang.getInstance().translate("The data folder contains blockchain data. The wallet dir contains user specific data."));
         lblAnExplanatoryText_4.setVerticalAlignment(SwingConstants.TOP);
         GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
         gbc_lblNewLabel_1.fill = GridBagConstraints.BOTH;
@@ -269,7 +275,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_lblNewLabel_1.gridy = 10;
         add(lblAnExplanatoryText_4, gbc_lblNewLabel_1);
         
-        JLabel lblMinConnections = new JLabel("Min connections:");
+        JLabel lblMinConnections = new JLabel(Lang.getInstance().translate("Min connections:"));
         GridBagConstraints gbc_lblMinConnections = new GridBagConstraints();
         gbc_lblMinConnections.anchor = GridBagConstraints.EAST;
         gbc_lblMinConnections.insets = new Insets(0, 0, 5, 5);
@@ -289,7 +295,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_textMinConnections.gridy = 11;
         add(textMinConnections, gbc_textMinConnections);
         
-        JLabel lblMaxConnections = new JLabel("Max connections:");
+        JLabel lblMaxConnections = new JLabel(Lang.getInstance().translate("Max connections:"));
         GridBagConstraints gbc_lblMaxConnections = new GridBagConstraints();
         gbc_lblMaxConnections.anchor = GridBagConstraints.EAST;
         gbc_lblMaxConnections.insets = new Insets(0, 0, 5, 5);
@@ -309,7 +315,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_textMaxConnections.gridy = 11;
         add(textMaxConnections, gbc_textMaxConnections);
         
-        JLabel lbllimitConnections = new JLabel("Allows you to change the amount of simultaneous connections to the server.");
+        JLabel lbllimitConnections = new JLabel(Lang.getInstance().translate("Allows you to change the amount of simultaneous connections to the server."));
         lbllimitConnections.setVerticalAlignment(SwingConstants.TOP);
         GridBagConstraints gbc_lbllimitConnections = new GridBagConstraints();
         gbc_lbllimitConnections.fill = GridBagConstraints.BOTH;
@@ -320,7 +326,7 @@ public class SettingsParametersPanel extends JPanel
         add(lbllimitConnections, gbc_lbllimitConnections);
      
         
-        JLabel lblSounds = new JLabel("Sounds:");
+        JLabel lblSounds = new JLabel(Lang.getInstance().translate("Sounds:"));
         lblSounds.setVerticalAlignment(SwingConstants.TOP);
         GridBagConstraints gbc_lblSounds = new GridBagConstraints();
         gbc_lblSounds.fill = GridBagConstraints.BOTH;
@@ -330,7 +336,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_lblSounds.gridy = 13;
         add(lblSounds, gbc_lblSounds);
          
-        chckbxSoundReceivePayment = new JCheckBox("Receive payment");
+        chckbxSoundReceivePayment = new JCheckBox(Lang.getInstance().translate("Receive payment"));
         chckbxSoundReceivePayment.setHorizontalAlignment(SwingConstants.LEFT);
         chckbxSoundReceivePayment.setSelected(Settings.getInstance().isSoundReceivePaymentEnabled());
         GridBagConstraints gbc_chckbxSoundReceivePayment = new GridBagConstraints();
@@ -341,7 +347,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxSoundReceivePayment.gridy = 14;
         add(chckbxSoundReceivePayment, gbc_chckbxSoundReceivePayment);
         
-        chckbxSoundReceiveMessage = new JCheckBox("Receive message");
+        chckbxSoundReceiveMessage = new JCheckBox(Lang.getInstance().translate("Receive message"));
         chckbxSoundReceiveMessage.setHorizontalAlignment(SwingConstants.LEFT);
         chckbxSoundReceiveMessage.setSelected(Settings.getInstance().isSoundReceiveMessageEnabled());
         GridBagConstraints gbc_chckbxSoundReceiveMessage = new GridBagConstraints();
@@ -352,7 +358,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxSoundReceiveMessage.gridy = 14;
         add(chckbxSoundReceiveMessage, gbc_chckbxSoundReceiveMessage);
 
-        chckbxSoundNewTransaction = new JCheckBox("Other transactions");
+        chckbxSoundNewTransaction = new JCheckBox(Lang.getInstance().translate("Other transactions"));
         chckbxSoundNewTransaction.setHorizontalAlignment(SwingConstants.LEFT);
         chckbxSoundNewTransaction.setSelected(Settings.getInstance().isSoundNewTransactionEnabled());
         GridBagConstraints gbc_chckbxSoundNewTransaction = new GridBagConstraints();
@@ -363,6 +369,35 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxSoundNewTransaction.gridy = 14;
         add(chckbxSoundNewTransaction, gbc_chckbxSoundNewTransaction);
   
+        JLabel lblLang = new JLabel("Language:");
+        GridBagConstraints gbc_lblLang = new GridBagConstraints();
+        gbc_lblLang.anchor = GridBagConstraints.WEST;
+        gbc_lblLang.insets = new Insets(0, 0, 5, 5);
+        gbc_lblLang.gridx = 1;
+        gbc_lblLang.gridy = 15;
+        add(lblLang, gbc_lblLang);
+        
+        cbxListOfAvailableLangs = new JComboBox<String>();
+        
+        listOfAvailableLangs = Lang.getInstance().getListOfAvailable();
+        
+        for (Pair<String, String> availableLang : listOfAvailableLangs) {
+        	
+        	cbxListOfAvailableLangs.addItem(availableLang.getB());
+        	if(availableLang.getA().equals(Settings.getInstance().getLang())) {
+        		cbxListOfAvailableLangs.setSelectedIndex(cbxListOfAvailableLangs.getItemCount() - 1);
+        	}
+		}
+        
+        GridBagConstraints gbc_cbxListOfAvailableLangs = new GridBagConstraints();
+        gbc_cbxListOfAvailableLangs.gridwidth = 5;
+        gbc_cbxListOfAvailableLangs.insets = new Insets(0, 0, 5, 5);
+        gbc_cbxListOfAvailableLangs.fill = GridBagConstraints.HORIZONTAL;
+        gbc_cbxListOfAvailableLangs.gridx = 2;
+        gbc_cbxListOfAvailableLangs.gridy = 15;
+        add(cbxListOfAvailableLangs, gbc_cbxListOfAvailableLangs);
+        
+        
         GridBagConstraints gbc_bottom = new GridBagConstraints();
         gbc_bottom.gridy = 18;
         gbc_bottom.weighty = 1;

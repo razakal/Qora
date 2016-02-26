@@ -14,6 +14,7 @@ import gui.models.WalletTransactionsTableModel;
 import gui.naming.NamingServicePanel;
 import gui.transaction.TransactionDetailsFactory;
 import gui.voting.VotingPanel;
+import lang.Lang;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -35,13 +36,13 @@ public class GeneralTabPane extends JTabbedPane{
 		super();
 		
 		//ACCOUNTS
-		this.addTab("Accounts", new AccountsPanel());
+		this.addTab(Lang.getInstance().translate("Accounts"), new AccountsPanel());
         
 		//SEND
-		this.addTab("Send money", new SendMoneyPanel());
+		this.addTab(Lang.getInstance().translate("Send money"), new SendMoneyPanel());
 
 		//MESSAGE
-		this.addTab("Messages", new SendMessagePanel());
+		this.addTab(Lang.getInstance().translate("Messages"), new SendMessagePanel());
 		
 		//TRANSACTIONS
 		this.transactionsModel = new WalletTransactionsTableModel();
@@ -75,7 +76,7 @@ public class GeneralTabPane extends JTabbedPane{
 			    }
 			}
 		});			
-		this.addTab("Transactions", new JScrollPane(this.transactionsTable));       
+		this.addTab(Lang.getInstance().translate("Transactions"), new JScrollPane(this.transactionsTable));       
 		
 		//TRANSACTIONS
 		WalletBlocksTableModel blocksModel = new WalletBlocksTableModel();
@@ -92,25 +93,25 @@ public class GeneralTabPane extends JTabbedPane{
 		sorter = new QoraRowSorter(blocksModel, indexes);
 		blocksTable.setRowSorter(sorter);
 		
-        this.addTab("Generated Blocks", new JScrollPane(blocksTable));
+        this.addTab(Lang.getInstance().translate("Generated Blocks"), new JScrollPane(blocksTable));
         
         //NAMING
-        this.addTab("Naming service", new NamingServicePanel());      
+        this.addTab(Lang.getInstance().translate("Naming service"), new NamingServicePanel());      
         
         //VOTING
-        this.addTab("Voting", new VotingPanel());       
+        this.addTab(Lang.getInstance().translate("Voting"), new VotingPanel());       
         
         //ASSETS
-        this.addTab("Assets", new AssetsPanel());
+        this.addTab(Lang.getInstance().translate("Assets"), new AssetsPanel());
 
 		//ATs
-		this.addTab("AT", new ATPanel());
+		this.addTab(Lang.getInstance().translate("AT"), new ATPanel());
 
 		//AT TXs
-		this.addTab("AT Transactions", new ATTransactionsPanel());
+		this.addTab(Lang.getInstance().translate("AT Transactions"), new ATTransactionsPanel());
 
 		//AT Acct
-		this.addTab("ACCT", new AcctPanel());
+		this.addTab(Lang.getInstance().translate("ACCT"), new AcctPanel());
 	}
 	
 }

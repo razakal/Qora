@@ -30,6 +30,7 @@ import com.google.common.primitives.Longs;
 
 import controller.Controller;
 import database.DBSet;
+import lang.Lang;
 
 public class BlockGenerator extends Thread implements Observer
 {	
@@ -42,9 +43,9 @@ public class BlockGenerator extends Thread implements Observer
 	
 	public enum ForgingStatus {
 	    
-		FORGING_DISABLED(0,"Forging disabled" ),
-		FORGING_ENABLED(1,"Forging enabled"),
-		FORGING(2,"Forging");
+		FORGING_DISABLED(0, Lang.getInstance().translate("Forging disabled") ),
+		FORGING_ENABLED(1, Lang.getInstance().translate("Forging enabled")),
+		FORGING(2, Lang.getInstance().translate("Forging"));
 		
 		 private final int statuscode;
 		private String name;

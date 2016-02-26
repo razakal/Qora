@@ -13,6 +13,7 @@ import utils.Converter;
 import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.SortableList;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class AcctTableModel extends QoraTableModel<String, AT> implements Observer
@@ -31,7 +32,7 @@ public class AcctTableModel extends QoraTableModel<String, AT> implements Observ
 	private String type;
 	private boolean initiators;
 	
-	private String[] columnNames = {"Name", "Description", "Address", "Creator", "Amount", "Lock", "Recipient", "Expiration Block"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Name", "Description", "Address", "Creator", "Amount", "Lock", "Recipient", "Expiration Block"});
 	
 	public AcctTableModel(String type, boolean initiators)
 	{
@@ -110,7 +111,7 @@ public class AcctTableModel extends QoraTableModel<String, AT> implements Observ
 		
 		case COLUMN_AT_RECIPIENT:
 			
-			return Arrays.equals(Arrays.copyOfRange(at.getAp_data().array(), 32 + 8, 32+8+25), new byte[25]) ? "No recipient defined" : Base58.encode(Arrays.copyOfRange(at.getAp_data().array(), 32 + 8, 32+8+25));
+			return Arrays.equals(Arrays.copyOfRange(at.getAp_data().array(), 32 + 8, 32+8+25), new byte[25]) ? Lang.getInstance().translate("No recipient defined") : Base58.encode(Arrays.copyOfRange(at.getAp_data().array(), 32 + 8, 32+8+25));
 			
 		case COLUMN_AT_EXPIRATION:
 			

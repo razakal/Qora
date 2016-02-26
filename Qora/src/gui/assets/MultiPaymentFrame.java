@@ -3,6 +3,7 @@ package gui.assets;
 import gui.Gui;
 import gui.PasswordPane;
 import gui.models.PaymentsTableModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -40,7 +41,7 @@ public class MultiPaymentFrame extends JFrame
 	@SuppressWarnings("unchecked")
 	public MultiPaymentFrame(Asset asset, List<Payment> payments)
 	{
-		super("Qora - Pay Dividend");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Pay Dividend"));
 		
 		this.asset = asset;
 		this.payments = payments;
@@ -98,7 +99,7 @@ public class MultiPaymentFrame extends JFrame
         
         //LABEL ACCOUNT
       	labelGBC.gridy = 0;
-      	JLabel accountLabel = new JLabel("Account:");
+      	JLabel accountLabel = new JLabel(Lang.getInstance().translate("Account:"));
       	this.add(accountLabel, labelGBC);
       		
       	//TXT ACCOUNT
@@ -109,7 +110,7 @@ public class MultiPaymentFrame extends JFrame
         
 		//LABEL PAYMENTS
 		labelGBC.gridy = 1;
-		JLabel paymentsLabel = new JLabel("Payments:");
+		JLabel paymentsLabel = new JLabel(Lang.getInstance().translate("Payments:"));
 		this.add(paymentsLabel, labelGBC);
 		
 		//OPTIONS
@@ -124,7 +125,7 @@ public class MultiPaymentFrame extends JFrame
 		 
 		//LABEL FEE
       	labelGBC.gridy = 2;
-      	JLabel feeLabel = new JLabel("Fee:");
+      	JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee:"));
       	this.add(feeLabel, labelGBC);
       		
       	//TXT AMOUNT
@@ -139,7 +140,7 @@ public class MultiPaymentFrame extends JFrame
 		
         //BUTTON GENERATE
         buttonGBC.gridy = 3;
-        this.sendButton = new JButton("Send");
+        this.sendButton = new JButton(Lang.getInstance().translate("Send"));
         this.sendButton.setPreferredSize(new Dimension(160, 25));
         this.sendButton.addActionListener(new ActionListener()
 		{
@@ -166,7 +167,7 @@ public class MultiPaymentFrame extends JFrame
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			//NETWORK NOT OK
-			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, Lang.getInstance().translate("You are unable to send a transaction while synchronizing or while having no connections!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 			
 			//ENABLE
 			this.sendButton.setEnabled(true);
@@ -182,7 +183,7 @@ public class MultiPaymentFrame extends JFrame
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
-				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.sendButton.setEnabled(true);
@@ -201,7 +202,7 @@ public class MultiPaymentFrame extends JFrame
 			//CHECK MIMIMUM FEE
 			if(fee.compareTo(Transaction.MINIMUM_FEE) == -1)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.sendButton.setEnabled(true);
@@ -217,42 +218,42 @@ public class MultiPaymentFrame extends JFrame
 			{
 			case Transaction.VALIDATE_OK:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Payment has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Payment has been sent!"), Lang.getInstance().translate("Success"), JOptionPane.INFORMATION_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_PAYMENTS_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "The amount of payments must be between (1-400)!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("The amount of payments must be between (1-400)!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 			
 			case Transaction.INVALID_ADDRESS:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Invalid address!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid address!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.NEGATIVE_AMOUNT:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Amount must be positive!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Amount must be positive!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.NEGATIVE_FEE:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.FEE_LESS_REQUIRED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee below the minimum for this size of a transaction!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.NO_BALANCE:
 			
-				JOptionPane.showMessageDialog(new JFrame(), "Not enough balance!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Not enough balance!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			default:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Unknown error!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown error!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;		
 				
 			}
@@ -265,7 +266,7 @@ public class MultiPaymentFrame extends JFrame
 				
 			case 2:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Invalid fee!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid fee!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 			}
 		}

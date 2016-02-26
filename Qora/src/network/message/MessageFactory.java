@@ -11,6 +11,7 @@ import qora.transaction.Transaction;
 
 import com.google.common.primitives.Ints;
 
+import lang.Lang;
 import network.Peer;
 
 public class MessageFactory {
@@ -146,7 +147,7 @@ public class MessageFactory {
 			//CHECK IF CHECKSUM MATCHES
 			if(!Arrays.equals(checksum, digest))
 			{
-				throw new Exception("Invalid data checksum length="+length);
+				throw new Exception(Lang.getInstance().translate("Invalid data checksum length=")+length);
 			}
 		}
 		
@@ -232,7 +233,7 @@ public class MessageFactory {
 		default:
 			
 			//UNKNOWN MESSAGE
-			Logger.getGlobal().info("Received unknown type message!");
+			Logger.getGlobal().info(Lang.getInstance().translate("Received unknown type message!"));
 			return new Message(type);
 			
 		}

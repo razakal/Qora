@@ -10,6 +10,7 @@ import utils.ObserverMessage;
 import controller.Controller;
 import database.SortableList;
 import database.TransactionMap;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> implements Observer {
@@ -20,8 +21,8 @@ public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> 
 	
 	private SortableList<byte[], Transaction> transactions;
 	
-	private String[] columnNames = {"Timestamp", "Type", "Fee"};
-	private String[] transactionTypes = {"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name Purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction", "Asset Issue", "Asset Transfer", "Order Creation", "Cancel Order", "Multi Payment", "Deploy AT", "Message Transaction"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Timestamp", "Type", "Fee"});
+	private String[] transactionTypes = Lang.getInstance().translate(new String[]{"", "Genesis", "Payment", "Name Registration", "Name Update", "Name Sale", "Cancel Name Sale", "Name Purchase", "Poll Creation", "Poll Vote", "Arbitrary Transaction", "Asset Issue", "Asset Transfer", "Order Creation", "Cancel Order", "Multi Payment", "Deploy AT", "Message Transaction"});
 
 	public TransactionsTableModel()
 	{

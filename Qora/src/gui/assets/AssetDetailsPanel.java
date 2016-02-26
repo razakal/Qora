@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import qora.assets.Asset;
 import controller.Controller;
+import lang.Lang;
 
 public class AssetDetailsPanel extends JPanel {
 
@@ -55,7 +56,7 @@ public class AssetDetailsPanel extends JPanel {
 		
 		//LABEL KEY
 		labelGBC.gridy = 1;
-		JLabel keyLabel = new JLabel("Key:");
+		JLabel keyLabel = new JLabel(Lang.getInstance().translate("Key:"));
 		this.add(keyLabel, labelGBC);
 				
 		//KEY
@@ -66,7 +67,7 @@ public class AssetDetailsPanel extends JPanel {
 		
 		//LABEL NAME
 		labelGBC.gridy = 2;
-		JLabel nameLabel = new JLabel("Name:");
+		JLabel nameLabel = new JLabel(Lang.getInstance().translate("Name:"));
 		this.add(nameLabel, labelGBC);
 		
 		//NAME
@@ -77,7 +78,7 @@ public class AssetDetailsPanel extends JPanel {
 		
 		//LABEL DESCRIPTION
 		labelGBC.gridy = 3;
-		JLabel descriptionLabel = new JLabel("Description:");
+		JLabel descriptionLabel = new JLabel(Lang.getInstance().translate("Description:"));
 		this.add(descriptionLabel, labelGBC);
 		           
 		//DESCRIPTION
@@ -90,7 +91,7 @@ public class AssetDetailsPanel extends JPanel {
 		
 		//LABEL OWNER
 		labelGBC.gridy = 4;
-		JLabel ownerLabel = new JLabel("Owner:");
+		JLabel ownerLabel = new JLabel(Lang.getInstance().translate("Owner:"));
 		this.add(ownerLabel, labelGBC);
 				
 		//OWNER
@@ -101,7 +102,7 @@ public class AssetDetailsPanel extends JPanel {
 		
 		//LABEL QUANTITY
 		labelGBC.gridy = 5;
-		JLabel quantityLabel = new JLabel("Quantity:");
+		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity:"));
 		this.add(quantityLabel, labelGBC);
 		           
 		//QUANTITY
@@ -112,7 +113,7 @@ public class AssetDetailsPanel extends JPanel {
 		
 		//LABEL DIVISIBLE
 		labelGBC.gridy = 6;
-		JLabel divisibleLabel = new JLabel("Divisible:");
+		JLabel divisibleLabel = new JLabel(Lang.getInstance().translate("Divisible:"));
 		this.add(divisibleLabel, labelGBC);
 		           
 		//DIVISIBLE
@@ -128,7 +129,7 @@ public class AssetDetailsPanel extends JPanel {
 			//ADD QORA PAIR BUTTON
 			labelGBC.gridy++;
 			labelGBC.gridwidth = 2;
-			JButton openQoraPairButton = new JButton("Open Qora pair");
+			JButton openQoraPairButton = new JButton(Lang.getInstance().translate("Open Qora pair"));
 			openQoraPairButton.setPreferredSize(new Dimension(200, 25));
 			openQoraPairButton.addActionListener(new ActionListener()
 			{
@@ -146,7 +147,7 @@ public class AssetDetailsPanel extends JPanel {
 			//ADD QORA PAIR BUTTON
 			labelGBC.gridy++;
 			labelGBC.gridwidth = 2;
-			JButton openPairButton = new JButton("Open pair");
+			JButton openPairButton = new JButton(Lang.getInstance().translate("Open pair"));
 			openPairButton.setPreferredSize(new Dimension(200, 25));
 			openPairButton.addActionListener(new ActionListener()
 			{
@@ -169,11 +170,11 @@ public class AssetDetailsPanel extends JPanel {
 			//CHECK IF FAVORITES
 			if(Controller.getInstance().isAssetFavorite(asset))
 			{
-				this.favoritesButton.setText("Remove Favorite");
+				this.favoritesButton.setText(Lang.getInstance().translate("Remove Favorite"));
 			}
 			else
 			{
-				this.favoritesButton.setText("Add Favorite");
+				this.favoritesButton.setText(Lang.getInstance().translate("Add Favorite"));
 			}
 				
 			this.favoritesButton.setPreferredSize(new Dimension(200, 25));
@@ -211,12 +212,12 @@ public class AssetDetailsPanel extends JPanel {
 		//CHECK IF FAVORITES
 		if(Controller.getInstance().isAssetFavorite(asset))
 		{
-			this.favoritesButton.setText("Add Favorite");
+			this.favoritesButton.setText(Lang.getInstance().translate("Add Favorite"));
 			Controller.getInstance().removeAssetFavorite(this.asset);
 		}
 		else
 		{
-			this.favoritesButton.setText("Remove Favorite");
+			this.favoritesButton.setText(Lang.getInstance().translate("Remove Favorite"));
 			Controller.getInstance().addAssetFavorite(this.asset);
 		}
 			

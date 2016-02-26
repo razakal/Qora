@@ -10,6 +10,7 @@ import utils.ObserverMessage;
 import controller.Controller;
 import database.SortableList;
 import database.wallet.PollMap;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class WalletPollsTableModel extends QoraTableModel<Tuple2<String, String>, Poll> implements Observer
@@ -21,7 +22,7 @@ public class WalletPollsTableModel extends QoraTableModel<Tuple2<String, String>
 	
 	private SortableList<Tuple2<String, String>, Poll> polls;
 	
-	private String[] columnNames = {"Name", "Creator", "Total Votes", "Confirmed"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Name", "Creator", "Total Votes", "Confirmed"});
 	
 	public WalletPollsTableModel()
 	{

@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.ToolTipManager;
 
 import controller.Controller;
+import lang.Lang;
 import qora.block.Block;
 import utils.GUIUtils;
 import utils.ObserverMessage;
@@ -40,11 +41,11 @@ public class NetworkStatus extends JLabel implements Observer
 		this.addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent mEvt) {
 				if(Controller.getInstance().getStatus() == Controller.STATUS_OK || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
-					setToolTipText("Block height: " + Controller.getInstance().getHeight());
+					setToolTipText(Lang.getInstance().translate("Block height: ") + Controller.getInstance().getHeight());
 				} else if(currentHeight < Controller.getInstance().getHeight()) {
-					setToolTipText("Block height: " + currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight());
+					setToolTipText(Lang.getInstance().translate("Block height: ") + currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight());
 				} else {
-					setToolTipText("Block height: " + currentHeight + "/" + Controller.getInstance().getMaxPeerHeight());
+					setToolTipText(Lang.getInstance().translate("Block height: ") + currentHeight + "/" + Controller.getInstance().getMaxPeerHeight());
 				}
 		}});
 		//LISTEN ON STATUS
@@ -74,7 +75,7 @@ public class NetworkStatus extends JLabel implements Observer
 			}
 			
 			this.setIcon(walletSynchronizingIcon);
-			this.setText("Wallet Synchronizing " + 100 * currentHeight/Controller.getInstance().getHeight() + "%");
+			this.setText(Lang.getInstance().translate("Wallet Synchronizing ") + 100 * currentHeight/Controller.getInstance().getHeight() + "%");
 		}
 		
 		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE)
@@ -83,7 +84,7 @@ public class NetworkStatus extends JLabel implements Observer
 
 			if(Controller.getInstance().getStatus() == Controller.STATUS_SYNCHRONIZING)
 			{
-				this.setText("Synchronizing " + 100 * currentHeight/Controller.getInstance().getMaxPeerHeight() + "%");	
+				this.setText(Lang.getInstance().translate("Synchronizing") + " " + 100 * currentHeight/Controller.getInstance().getMaxPeerHeight() + "%");	
 			}	
 		}
 		
@@ -94,17 +95,17 @@ public class NetworkStatus extends JLabel implements Observer
 			if(status == Controller.STATUS_NO_CONNECTIONS)
 			{
 				this.setIcon(noConnectionsIcon);
-				this.setText("No connections");
+				this.setText(Lang.getInstance().translate("No connections"));
 			}
 			if(status == Controller.STATUS_SYNCHRONIZING)
 			{
 				this.setIcon(synchronizingIcon);
-				this.setText("Synchronizing");
+				this.setText(Lang.getInstance().translate("Synchronizing"));
 			}
 			if(status == Controller.STATUS_OK)
 			{
 				this.setIcon(okeIcon);
-				this.setText("OK");
+				this.setText(Lang.getInstance().translate("OK"));
 			}
 		}		
 	}

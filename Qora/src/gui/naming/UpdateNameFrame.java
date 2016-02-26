@@ -3,6 +3,7 @@ package gui.naming;
 import gui.PasswordPane;
 import gui.models.KeyValueTableModel;
 import gui.models.NameComboBoxModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -74,7 +75,7 @@ public class UpdateNameFrame extends JFrame
 
 	public UpdateNameFrame(Name name)
 	{
-		super("Qora - Update Name");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Update Name"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -128,7 +129,7 @@ public class UpdateNameFrame extends JFrame
 		
 		//LABEL NAME
       	labelGBC.gridy = 1;
-      	JLabel nameLabel = new JLabel("Name:");
+      	JLabel nameLabel = new JLabel(Lang.getInstance().translate("Name:"));
       	this.add(nameLabel, labelGBC);
       	
       		
@@ -140,7 +141,7 @@ public class UpdateNameFrame extends JFrame
         
         //LABEL OWNER
       	labelGBC.gridy = 2;
-      	JLabel ownerLabel = new JLabel("Owner:");
+      	JLabel ownerLabel = new JLabel(Lang.getInstance().translate("Owner:"));
       	this.add(ownerLabel, labelGBC);
       	
       		
@@ -151,7 +152,7 @@ public class UpdateNameFrame extends JFrame
       	
       	 //LABEL KEY
       	labelGBC.gridy = 3;
-      	JLabel keyLabel = new JLabel("Key:");
+      	JLabel keyLabel = new JLabel(Lang.getInstance().translate("Key:"));
       	this.add(keyLabel, labelGBC);
       	
       	//TXT KEY
@@ -162,7 +163,7 @@ public class UpdateNameFrame extends JFrame
       	
         //LABEL VALUE
       	labelGBC.gridy = 5;
-      	JLabel valueLabel = new JLabel("Value:");
+      	JLabel valueLabel = new JLabel(Lang.getInstance().translate("Value:"));
       	this.add(valueLabel, labelGBC);
       		
       	//TXTAREA VALUE
@@ -182,7 +183,7 @@ public class UpdateNameFrame extends JFrame
 		labelGBC.gridy = 6;
 		//labelGBC.gridwidth = ;
 		labelGBC.gridx = 1;
-		countLabel = new JLabel("Character count: 0/4000");
+		countLabel = new JLabel(Lang.getInstance().translate("Character count: 0/4000"));
 		this.add(countLabel, labelGBC);
 		
 		//TABLE GBC
@@ -302,7 +303,7 @@ public class UpdateNameFrame extends JFrame
       	//LABEL FEE
 		labelGBC.gridx = 0;
 		labelGBC.gridy = 9;
-      	JLabel feeLabel = new JLabel("Fee:");
+      	JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee:"));
       	this.add(feeLabel, labelGBC);
       		
       	//TXT FEE
@@ -313,7 +314,7 @@ public class UpdateNameFrame extends JFrame
 		           
         //BUTTON Register
         buttonGBC.gridy = 10;
-        updateButton = new JButton("Update");
+        updateButton = new JButton(Lang.getInstance().translate("Update"));
         updateButton.setPreferredSize(new Dimension(80, 25));
         updateButton.addActionListener(new ActionListener()
 		{
@@ -330,14 +331,14 @@ public class UpdateNameFrame extends JFrame
         buttonGBC.fill = GridBagConstraints.EAST;
         buttonGBC.anchor = GridBagConstraints.EAST;
         
-        removeButton = new JButton("Remove");
+        removeButton = new JButton(Lang.getInstance().translate("Remove"));
         removeButton.setPreferredSize(new Dimension(150, 25));
         this.add(removeButton, buttonGBC);
         
         buttonGBC.gridx = 0;
         buttonGBC.fill = GridBagConstraints.WEST;
         buttonGBC.anchor = GridBagConstraints.WEST;
-        addButton = new JButton("Add");
+        addButton = new JButton(Lang.getInstance().translate("Add"));
         addButton.setPreferredSize(new Dimension(150, 25));
         this.add(addButton, buttonGBC);
     
@@ -459,7 +460,7 @@ public class UpdateNameFrame extends JFrame
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			//NETWORK NOT OK
-			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, Lang.getInstance().translate("You are unable to send a transaction while synchronizing or while having no connections!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 			
 			//ENABLE
 			this.updateButton.setEnabled(true);
@@ -475,7 +476,7 @@ public class UpdateNameFrame extends JFrame
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
-				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.updateButton.setEnabled(true);
@@ -496,7 +497,7 @@ public class UpdateNameFrame extends JFrame
 			//CHECK MIMIMUM FEE
 			if(fee.compareTo(Transaction.MINIMUM_FEE) == -1)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.updateButton.setEnabled(true);
@@ -508,8 +509,8 @@ public class UpdateNameFrame extends JFrame
 			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
 			{
 				int n = JOptionPane.showConfirmDialog(
-						new JFrame(), Settings.getInstance().getBigFeeMessage(),
-		                "Confirmation",
+						new JFrame(), Lang.getInstance().translate("Do you really want to set such a large fee?\nThese coins will go to the forgers."),
+						Lang.getInstance().translate("Confirmation"),
 		                JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION) {
 					
@@ -530,7 +531,7 @@ public class UpdateNameFrame extends JFrame
 			if(!isUpdatable.getA())
 			{
 				
-				JOptionPane.showMessageDialog(new JFrame(), isUpdatable.getB(), "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), isUpdatable.getB(), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.updateButton.setEnabled(true);
@@ -543,7 +544,7 @@ public class UpdateNameFrame extends JFrame
 			String currentValueAsJsonStringOpt = namesModel.getCurrentValueAsJsonStringOpt();
 			if(currentValueAsJsonStringOpt == null)
 			{
-					JOptionPane.showMessageDialog(new JFrame(), "Bad Json value", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Bad Json value"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.updateButton.setEnabled(true);
@@ -562,18 +563,18 @@ public class UpdateNameFrame extends JFrame
 				if(Settings.getInstance().isAllowFeeLessRequired())
 				{
 					n = JOptionPane.showConfirmDialog(
-						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
-									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
-									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
-		                "Confirmation",
+						new JFrame(), Lang.getInstance().translate("Fee less than the recommended values!\nChange to recommended?\n"
+									+ "Press Yes to turn on recommended %fee%"
+									+ ",\nor No to leave, but then the transaction may be difficult to confirm.").replace("%fee%", recommendedFee.toPlainString()),
+						Lang.getInstance().translate("Confirmation"),
 		                JOptionPane.YES_NO_CANCEL_OPTION);
 				}
 				else
 				{
 					n = JOptionPane.showConfirmDialog(
-							new JFrame(), "Fee less required!\n"
-										+ "Press OK to turn on required "+recommendedFee.toPlainString() + ".",
-			                "Confirmation",
+							new JFrame(), Lang.getInstance().translate("Fee less required!\n"
+										+ "Press OK to turn on required %fee%.").replace("%fee%", recommendedFee.toPlainString()),
+							Lang.getInstance().translate("Confirmation"),
 			                JOptionPane.OK_CANCEL_OPTION);
 				}
 				if (n == JOptionPane.YES_OPTION || n == JOptionPane.OK_OPTION) {
@@ -605,65 +606,65 @@ public class UpdateNameFrame extends JFrame
 			{
 			case Transaction.VALIDATE_OK:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Name update has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Name update has been sent!"), Lang.getInstance().translate("Success"), JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;	
 			
 			case Transaction.NEGATIVE_FEE:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.FEE_LESS_REQUIRED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee below the minimum for this size of a transaction!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.NO_BALANCE:
 			
-				JOptionPane.showMessageDialog(new JFrame(), "Not enough balance!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Not enough balance!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_NAME_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Name must be between 1 and 400 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Name must be between 1 and 400 characters!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_VALUE_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Value must be between 1 and 4000 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Value must be between 1 and 4000 characters!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.NAME_DOES_NOT_EXIST:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "That name does not exist!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("That name does not exist!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.NAME_ALREADY_FOR_SALE:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "That name is already for sale!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("That name is already for sale!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.INVALID_ADDRESS:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Invalid owner!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid owner!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_NAME_OWNER:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "You are no longer the owner this name!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("You are no longer the owner this name!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			default:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Unknown error!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown error!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			}
 		}
 		catch(Exception e)
 		{
-			JOptionPane.showMessageDialog(new JFrame(), "Invalid fee!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid fee!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 		}
 		
 		//ENABLE

@@ -25,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 
 import gui.models.KnownPeersTableModel;
+import lang.Lang;
 import utils.IPAddressFormatValidator;
 import utils.TableMenuPopupUtil;
 
@@ -64,7 +65,7 @@ public class SettingsKnownPeersPanel extends JPanel
         TableColumn confirmedColumn = knownPeersTable.getColumnModel().getColumn(1);
         confirmedColumn.setCellRenderer(knownPeersTable.getDefaultRenderer(Boolean.class));
         
-        JLabel lblAddNewAddress = new JLabel("Add new address:");
+        JLabel lblAddNewAddress = new JLabel(Lang.getInstance().translate("Add new address:"));
         GridBagConstraints gbc_lblAddNewAddress = new GridBagConstraints();
         gbc_lblAddNewAddress.anchor = GridBagConstraints.NORTHEAST;
         gbc_lblAddNewAddress.insets = new Insets(4, 0, 0, 5);
@@ -85,7 +86,7 @@ public class SettingsKnownPeersPanel extends JPanel
         textAddress.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         textAddress.setPreferredSize( new Dimension( 150, 24 ));
         
-        JButton btnAdd = new JButton("Add");
+        JButton btnAdd = new JButton(Lang.getInstance().translate("Add"));
         GridBagConstraints gbc_btnAdd = new GridBagConstraints();
         gbc_btnAdd.fill = GridBagConstraints.BOTH;
         gbc_btnAdd.gridwidth = 2;
@@ -103,7 +104,7 @@ public class SettingsKnownPeersPanel extends JPanel
         
         JPopupMenu menu = new JPopupMenu();	
         
-		JMenuItem deleteaddressmenu = new JMenuItem("Delete address");
+		JMenuItem deleteaddressmenu = new JMenuItem(Lang.getInstance().translate("Delete address"));
 		deleteaddressmenu.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -144,7 +145,7 @@ public class SettingsKnownPeersPanel extends JPanel
 		IPAddressFormatValidator iPAddressFormatValidator = new IPAddressFormatValidator();
 		if(!iPAddressFormatValidator.validate(addip))
 		{
-			JOptionPane.showMessageDialog(new JFrame(), " IP Address is not correct!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("IP Address is not correct!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 		}
 		else
 		{

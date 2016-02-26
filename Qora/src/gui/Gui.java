@@ -12,6 +12,7 @@ import javax.swing.table.TableRowSorter;
 
 import controller.Controller;
 import gui.create.NoWalletFrame;
+import lang.Lang;
 import settings.Settings;
 import utils.SysTray;
 
@@ -63,8 +64,8 @@ public class Gui extends JFrame{
 	public void onWalletCreated()
 	{
 
-		SysTray.getInstance().sendMessage("Wallet Initialized",
-				"Your wallet is initialized", MessageType.INFO);
+		SysTray.getInstance().sendMessage(Lang.getInstance().translate("Wallet Initialized"),
+				Lang.getInstance().translate("Your wallet is initialized"), MessageType.INFO);
 		if (Settings.getInstance().isGuiEnabled())
 			mainframe = new MainFrame();
 	}

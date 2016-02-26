@@ -6,6 +6,7 @@ import javax.swing.UIManager;
 import api.ApiClient;
 import controller.Controller;
 import gui.Gui;
+import lang.Lang;
 import settings.Settings;
 import utils.SysTray;
 
@@ -39,10 +40,14 @@ public class Start {
 				//ONE MUST BE ENABLED
 				if(!Settings.getInstance().isGuiEnabled() && !Settings.getInstance().isRpcEnabled())
 				{
-					throw new Exception("Both gui and rpc cannot be disabled!");
+					throw new Exception(Lang.getInstance().translate("Both gui and rpc cannot be disabled!"));
 				}
 				
-				System.out.println("Starting Qora / version: "+ Controller.getInstance().getVersion() + " / build date: " + Controller.getInstance().getBuildDateString() + " / ...");
+				System.out.println(Lang.getInstance().translate("Starting %qora% / version: %version% / build date: %builddate% / ...")
+						.replace("%version%", Controller.getInstance().getVersion())
+						.replace("%builddate%", Controller.getInstance().getBuildDateString())
+						.replace("%qora%", Lang.getInstance().translate("Qora"))
+						);
 				
 				//STARTING NETWORK/BLOCKCHAIN/RPC
 				Controller.getInstance().start();
@@ -55,7 +60,7 @@ public class Start {
 							SysTray.getInstance().createTrayIcon();
 						}
 				} catch(Exception e) {
-					System.out.println("GUI ERROR: " + e.getMessage());
+					System.out.println(Lang.getInstance().translate("GUI ERROR") + ": " + e.getMessage());
 				}
 				
 			} catch(Exception e) {
@@ -70,11 +75,11 @@ public class Start {
 				}
 				
 				//ERROR STARTING
-				System.out.println("STARTUP ERROR: " + e.getMessage());
+				System.out.println(Lang.getInstance().translate("STARTUP ERROR") + ": " + e.getMessage());
 				
 				if(Gui.isGuiStarted())
 				{
-					JOptionPane.showMessageDialog(null, e.getMessage(), "Startup Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, e.getMessage(), Lang.getInstance().translate("Startup Error"), JOptionPane.ERROR_MESSAGE);
 				}
 				
 				//FORCE SHUTDOWN

@@ -3,6 +3,7 @@ package gui.at;
 
 import gui.Gui;
 import gui.models.ATTableModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -105,7 +106,7 @@ public class ATPanel extends JPanel
 
 
 		//ADD REGISTER BUTTON
-		JButton registerButton = new JButton("Deploy AT");
+		JButton registerButton = new JButton(Lang.getInstance().translate("Deploy AT"));
 		registerButton.setPreferredSize(new Dimension(100, 25));
 		registerButton.addActionListener(new ActionListener()
 		{
@@ -149,7 +150,7 @@ public class ATPanel extends JPanel
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
 
-		JMenuItem copyAddress = new JMenuItem("Copy Address");
+		JMenuItem copyAddress = new JMenuItem(Lang.getInstance().translate("Copy Address"));
 		copyAddress.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -187,7 +188,7 @@ public class ATPanel extends JPanel
 		});
 
 
-		this.add(new JLabel("search:"), searchLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("search:")), searchLabelGBC);
 		this.add(txtSearch, searchGBC);
 		this.add(new JScrollPane(atsTable), tableGBC);
 

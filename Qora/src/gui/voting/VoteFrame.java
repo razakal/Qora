@@ -5,6 +5,7 @@ import gui.PasswordPane;
 import gui.models.AccountsComboBoxModel;
 import gui.models.AssetsAllComboBoxModel;
 import gui.models.OptionsComboBoxModel;
+import lang.Lang;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -53,7 +54,7 @@ public class VoteFrame extends JFrame
 	
 	public VoteFrame(Poll poll, int option, Asset asset)
 	{
-		super("Qora - Vote");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Vote"));
 		
 		this.poll = poll;
 		
@@ -94,7 +95,7 @@ public class VoteFrame extends JFrame
 		
 		//LABEL NAME
 		labelGBC.gridy = 1;
-		JLabel nameLabel = new JLabel("Poll:");
+		JLabel nameLabel = new JLabel(Lang.getInstance().translate("Poll:"));
 		this.add(nameLabel, labelGBC);
 		
 		//NAME
@@ -105,7 +106,7 @@ public class VoteFrame extends JFrame
 		
 		//LABEL DESCRIPTION
 		labelGBC.gridy = 2;
-		JLabel descriptionLabel = new JLabel("Description:");
+		JLabel descriptionLabel = new JLabel(Lang.getInstance().translate("Description:"));
 		this.add(descriptionLabel, labelGBC);
 				
 		//DESCRIPTION
@@ -136,7 +137,7 @@ public class VoteFrame extends JFrame
 		assetsGBC.gridx = 1;
 		assetsGBC.gridy = 3;
 		
-		this.add(new JLabel("Asset:"), assetLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("Asset:"))), assetLabelGBC);
 		
 		cbxAssets = new JComboBox<Asset>(new AssetsAllComboBoxModel());
 		cbxAssets.setSelectedItem(asset);
@@ -159,7 +160,7 @@ public class VoteFrame extends JFrame
 		
         //LABEL ACCOUNT
       	labelGBC.gridy = 4;
-      	JLabel ownerLabel = new JLabel("Account:");
+      	JLabel ownerLabel = new JLabel(Lang.getInstance().translate("Account:"));
       	this.add(ownerLabel, labelGBC);
       		
       	//CBX ACCOUNT
@@ -171,7 +172,7 @@ public class VoteFrame extends JFrame
 		
       	//LABEL OPTIONS
       	labelGBC.gridy = 5;
-      	JLabel optionsLabel = new JLabel("Option:");
+      	JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Option:"));
       	this.add(optionsLabel, labelGBC);
       		
       	//CBX ACCOUNT
@@ -200,7 +201,7 @@ public class VoteFrame extends JFrame
       	
       	 //LABEL FEE
       	labelGBC.gridy = 6;
-      	JLabel feeLabel = new JLabel("Fee(Qora):");
+      	JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee(Qora):"));
       	this.add(feeLabel, labelGBC);
       		
       	//TXT FEE
@@ -211,7 +212,7 @@ public class VoteFrame extends JFrame
 		
 		//ADD EXCHANGE BUTTON
 		detailGBC.gridy = 7;
-		voteButton = new JButton("Vote");
+		voteButton = new JButton(Lang.getInstance().translate("Vote"));
 		voteButton.setPreferredSize(new Dimension(100, 25));
 		voteButton.addActionListener(new ActionListener()
 		{
@@ -238,7 +239,7 @@ public class VoteFrame extends JFrame
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			//NETWORK NOT OK
-			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, Lang.getInstance().translate("You are unable to send a transaction while synchronizing or while having no connections!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 			
 			//ENABLE
 			this.voteButton.setEnabled(true);
@@ -254,7 +255,7 @@ public class VoteFrame extends JFrame
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
-				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.voteButton.setEnabled(true);
@@ -274,7 +275,7 @@ public class VoteFrame extends JFrame
 			//CHECK MIMIMUM FEE
 			if(fee.compareTo(Transaction.MINIMUM_FEE) == -1)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.voteButton.setEnabled(true);
@@ -293,45 +294,45 @@ public class VoteFrame extends JFrame
 			{
 			case Transaction.VALIDATE_OK:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Poll vote has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Poll vote has been sent!"), Lang.getInstance().translate("Success"), JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;	
 				
 			case Transaction.NOT_YET_RELEASED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + DateTimeFormat.timestamptoString(Transaction.getVOTING_RELEASE()) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Voting will be enabled at ") + DateTimeFormat.timestamptoString(Transaction.getVOTING_RELEASE()) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 			
 			case Transaction.ALREADY_VOTED_FOR_THAT_OPTION:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "You have already voted for that option!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("You have already voted for that option!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.NEGATIVE_FEE:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.FEE_LESS_REQUIRED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee below the minimum for this size of a transaction!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.NO_BALANCE:
 			
-				JOptionPane.showMessageDialog(new JFrame(), "Not enough balance!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Not enough balance!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 						
 			default:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Unknown error!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown error!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;		
 				
 			}
 		}
 		catch(Exception e)
 		{
-			JOptionPane.showMessageDialog(new JFrame(), "Invalid fee!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid fee!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 		}
 		
 		//ENABLE

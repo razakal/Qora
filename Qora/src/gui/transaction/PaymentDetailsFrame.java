@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import lang.Lang;
 import qora.crypto.Base58;
 import qora.transaction.PaymentTransaction;
 import utils.DateTimeFormat;
@@ -24,7 +25,7 @@ public class PaymentDetailsFrame extends JFrame
 {
 	public PaymentDetailsFrame(PaymentTransaction payment)
 	{
-		super("Qora - Transaction Details");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Transaction Details"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -62,17 +63,17 @@ public class PaymentDetailsFrame extends JFrame
 		
 		//LABEL TYPE
 		labelGBC.gridy = 0;
-		JLabel typeLabel = new JLabel("Type:");
+		JLabel typeLabel = new JLabel(Lang.getInstance().translate("Type:"));
 		this.add(typeLabel, labelGBC);
 						
 		//TYPE
 		detailGBC.gridy = 0;
-		JLabel type = new JLabel("Payment Transaction");
+		JLabel type = new JLabel(Lang.getInstance().translate("Payment Transaction"));
 		this.add(type, detailGBC);
 		
 		//LABEL SIGNATURE
 		labelGBC.gridy = 1;
-		JLabel signatureLabel = new JLabel("Signature:");
+		JLabel signatureLabel = new JLabel(Lang.getInstance().translate("Signature:"));
 		this.add(signatureLabel, labelGBC);
 				
 		//SIGNATURE
@@ -84,7 +85,7 @@ public class PaymentDetailsFrame extends JFrame
 		
 		//LABEL REFERENCE
 		labelGBC.gridy = 2;
-		JLabel referenceLabel = new JLabel("Reference:");
+		JLabel referenceLabel = new JLabel(Lang.getInstance().translate("Reference:"));
 		this.add(referenceLabel, labelGBC);
 						
 		//REFERENCE
@@ -96,7 +97,7 @@ public class PaymentDetailsFrame extends JFrame
 		
 		//LABEL TIMESTAMP
 		labelGBC.gridy = 3;
-		JLabel timestampLabel = new JLabel("Timestamp:");
+		JLabel timestampLabel = new JLabel(Lang.getInstance().translate("Timestamp:"));
 		this.add(timestampLabel, labelGBC);
 						
 		//TIMESTAMP
@@ -108,7 +109,7 @@ public class PaymentDetailsFrame extends JFrame
 		
 		//LABEL SENDER
 		labelGBC.gridy = 4;
-		JLabel senderLabel = new JLabel("Sender:");
+		JLabel senderLabel = new JLabel(Lang.getInstance().translate("Sender:"));
 		this.add(senderLabel, labelGBC);
 		
 		//SENDER
@@ -120,7 +121,7 @@ public class PaymentDetailsFrame extends JFrame
 		
 		//LABEL RECIPIENT
 		labelGBC.gridy = 5;
-		JLabel recipientLabel = new JLabel("Recipient:");
+		JLabel recipientLabel = new JLabel(Lang.getInstance().translate("Recipient:"));
 		this.add(recipientLabel, labelGBC);
 		
 		//RECIPIENT
@@ -132,7 +133,7 @@ public class PaymentDetailsFrame extends JFrame
 		
 		//LABEL AMOUNT
 		labelGBC.gridy = 6;
-		JLabel amountLabel = new JLabel("Amount:");
+		JLabel amountLabel = new JLabel(Lang.getInstance().translate("Amount:"));
 		this.add(amountLabel, labelGBC);
 				
 		//AMOUNT
@@ -144,7 +145,7 @@ public class PaymentDetailsFrame extends JFrame
 		
 		//LABEL FEE
 		labelGBC.gridy = 7;
-		JLabel feeLabel = new JLabel("Fee:");
+		JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee:"));
 		this.add(feeLabel, labelGBC);
 						
 		//FEE
@@ -156,7 +157,7 @@ public class PaymentDetailsFrame extends JFrame
 		
 		//LABEL CONFIRMATIONS
 		labelGBC.gridy = 8;
-		JLabel confirmationsLabel = new JLabel("Confirmations:");
+		JLabel confirmationsLabel = new JLabel(Lang.getInstance().translate("Confirmations:"));
 		this.add(confirmationsLabel, labelGBC);
 								
 		//CONFIRMATIONS

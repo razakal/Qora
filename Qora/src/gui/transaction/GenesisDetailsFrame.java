@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import lang.Lang;
 import qora.crypto.Base58;
 import qora.transaction.GenesisTransaction;
 import utils.DateTimeFormat;
@@ -24,7 +25,7 @@ public class GenesisDetailsFrame extends JFrame
 {
 	public GenesisDetailsFrame(GenesisTransaction genesis)
 	{
-		super("Qora - Transaction Details");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Transaction Details"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -62,17 +63,17 @@ public class GenesisDetailsFrame extends JFrame
 		
 		//LABEL TYPE
 		labelGBC.gridy = 0;
-		JLabel typeLabel = new JLabel("Type:");
+		JLabel typeLabel = new JLabel(Lang.getInstance().translate("Type:"));
 		this.add(typeLabel, labelGBC);
 						
 		//TYPE
 		detailGBC.gridy = 0;
-		JLabel type = new JLabel("Genesis Transaction");
+		JLabel type = new JLabel(Lang.getInstance().translate("Genesis Transaction"));
 		this.add(type, detailGBC);
 		
 		//LABEL SIGNATURE
 		labelGBC.gridy = 1;
-		JLabel signatureLabel = new JLabel("Signature:");
+		JLabel signatureLabel = new JLabel(Lang.getInstance().translate("Signature:"));
 		this.add(signatureLabel, labelGBC);
 				
 		//SIGNATURE
@@ -84,7 +85,7 @@ public class GenesisDetailsFrame extends JFrame
 		
 		//LABEL TIMESTAMP
 		labelGBC.gridy = 3;
-		JLabel timestampLabel = new JLabel("Timestamp:");
+		JLabel timestampLabel = new JLabel(Lang.getInstance().translate("Timestamp:"));
 		this.add(timestampLabel, labelGBC);
 						
 		//TIMESTAMP
@@ -96,7 +97,7 @@ public class GenesisDetailsFrame extends JFrame
 		
 		//LABEL RECIPIENT
 		labelGBC.gridy = 5;
-		JLabel recipientLabel = new JLabel("Recipient:");
+		JLabel recipientLabel = new JLabel(Lang.getInstance().translate("Recipient:"));
 		this.add(recipientLabel, labelGBC);
 		
 		//RECIPIENT
@@ -108,7 +109,7 @@ public class GenesisDetailsFrame extends JFrame
 		
 		//LABEL AMOUNT
 		labelGBC.gridy = 6;
-		JLabel amountLabel = new JLabel("Amount:");
+		JLabel amountLabel = new JLabel(Lang.getInstance().translate("Amount:"));
 		this.add(amountLabel, labelGBC);
 				
 		//AMOUNT
@@ -120,7 +121,7 @@ public class GenesisDetailsFrame extends JFrame
 		
 		//LABEL CONFIRMATIONS
 		labelGBC.gridy = 8;
-		JLabel confirmationsLabel = new JLabel("Confirmations:");
+		JLabel confirmationsLabel = new JLabel(Lang.getInstance().translate("Confirmations:"));
 		this.add(confirmationsLabel, labelGBC);
 								
 		//CONFIRMATIONS

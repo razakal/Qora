@@ -8,6 +8,7 @@ import org.mapdb.Fun.Tuple2;
 import controller.Controller;
 import database.SortableList;
 import database.wallet.NameSaleMap;
+import lang.Lang;
 import qora.account.Account;
 import qora.naming.NameSale;
 import utils.ObserverMessage;
@@ -20,7 +21,7 @@ public class WalletNameSalesTableModel extends QoraTableModel<Tuple2<String, Str
 	public static final int COLUMN_OWNER = 1;
 	public static final int COLUMN_PRICE = 2;
 	
-	private String[] columnNames = {"Name", "Seller", "Price"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Name", "Seller", "Price"});
 	
 	private SortableList<Tuple2<String, String>, BigDecimal> nameSales;
 	

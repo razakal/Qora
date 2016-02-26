@@ -2,6 +2,7 @@ package gui.transaction;
 
 import gui.Gui;
 import gui.models.PollOptionsTableModel;
+import lang.Lang;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,7 +35,7 @@ public class CreatePollDetailsFrame extends JFrame
 	@SuppressWarnings("unchecked")
 	public CreatePollDetailsFrame(CreatePollTransaction pollCreation)
 	{
-		super("Qora - Transaction Details");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Transaction Details"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -72,17 +73,17 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL TYPE
 		labelGBC.gridy = 0;
-		JLabel typeLabel = new JLabel("Type:");
+		JLabel typeLabel = new JLabel(Lang.getInstance().translate("Type:"));
 		this.add(typeLabel, labelGBC);
 						
 		//TYPE
 		detailGBC.gridy = 0;
-		JLabel type = new JLabel("Create Poll Transaction");
+		JLabel type = new JLabel(Lang.getInstance().translate("Create Poll Transaction"));
 		this.add(type, detailGBC);
 		
 		//LABEL SIGNATURE
 		labelGBC.gridy = 1;
-		JLabel signatureLabel = new JLabel("Signature:");
+		JLabel signatureLabel = new JLabel(Lang.getInstance().translate("Signature:"));
 		this.add(signatureLabel, labelGBC);
 				
 		//SIGNATURE
@@ -94,7 +95,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL REFERENCE
 		labelGBC.gridy = 2;
-		JLabel referenceLabel = new JLabel("Reference:");
+		JLabel referenceLabel = new JLabel(Lang.getInstance().translate("Reference:"));
 		this.add(referenceLabel, labelGBC);
 						
 		//REFERENCE
@@ -106,7 +107,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL TIMESTAMP
 		labelGBC.gridy = 3;
-		JLabel timestampLabel = new JLabel("Timestamp:");
+		JLabel timestampLabel = new JLabel(Lang.getInstance().translate("Timestamp:"));
 		this.add(timestampLabel, labelGBC);
 						
 		//TIMESTAMP
@@ -118,7 +119,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL CREATOR
 		labelGBC.gridy = 4;
-		JLabel creatorLabel = new JLabel("Creator:");
+		JLabel creatorLabel = new JLabel(Lang.getInstance().translate("Creator:"));
 		this.add(creatorLabel, labelGBC);
 		
 		//CREATOR
@@ -130,7 +131,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL NAME
 		labelGBC.gridy = 5;
-		JLabel nameLabel = new JLabel("Name:");
+		JLabel nameLabel = new JLabel(Lang.getInstance().translate("Name:"));
 		this.add(nameLabel, labelGBC);
 		
 		//NAME
@@ -142,7 +143,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL DESCRIPTION
 		labelGBC.gridy = 6;
-		JLabel descriptionLabel = new JLabel("Description:");
+		JLabel descriptionLabel = new JLabel(Lang.getInstance().translate("Description:"));
 		this.add(descriptionLabel, labelGBC);
 				
 		//DESCRIPTION
@@ -156,7 +157,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL OPTIONS
 		labelGBC.gridy = 7;
-		JLabel optionsLabel = new JLabel("Options:");
+		JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Options:"));
 		this.add(optionsLabel, labelGBC);
 		
 		//OPTIONS
@@ -171,7 +172,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL FEE
 		labelGBC.gridy = 8;
-		JLabel feeLabel = new JLabel("Fee:");
+		JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee:"));
 		this.add(feeLabel, labelGBC);
 						
 		//FEE
@@ -183,7 +184,7 @@ public class CreatePollDetailsFrame extends JFrame
 		
 		//LABEL CONFIRMATIONS
 		labelGBC.gridy = 9;
-		JLabel confirmationsLabel = new JLabel("Confirmations:");
+		JLabel confirmationsLabel = new JLabel(Lang.getInstance().translate("Confirmations:"));
 		this.add(confirmationsLabel, labelGBC);
 								
 		//CONFIRMATIONS

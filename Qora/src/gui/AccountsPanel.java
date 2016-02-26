@@ -2,6 +2,7 @@ package gui;
 
 import gui.models.AccountsTableModel;
 import gui.models.AssetsComboBoxModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -98,7 +99,7 @@ public class AccountsPanel extends JPanel implements ItemListener
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
 		
-		JMenuItem copyAddress = new JMenuItem("Copy Address");
+		JMenuItem copyAddress = new JMenuItem(Lang.getInstance().translate("Copy Address"));
 		copyAddress.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -115,7 +116,7 @@ public class AccountsPanel extends JPanel implements ItemListener
 		});
 		menu.add(copyAddress);
 				
-		JMenuItem copyBalance = new JMenuItem("Copy Balance");
+		JMenuItem copyBalance = new JMenuItem(Lang.getInstance().translate("Copy Balance"));
 		copyBalance.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -133,7 +134,7 @@ public class AccountsPanel extends JPanel implements ItemListener
 		
 		menu.add(copyBalance);
 		
-		JMenuItem copyConfirmedBalance = new JMenuItem("Copy Confirmed Balance");
+		JMenuItem copyConfirmedBalance = new JMenuItem(Lang.getInstance().translate("Copy Confirmed Balance"));
 		copyConfirmedBalance.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -150,7 +151,7 @@ public class AccountsPanel extends JPanel implements ItemListener
 		});
 		menu.add(copyConfirmedBalance);
 		
-		JMenuItem copyGeneratingBalance = new JMenuItem("Copy Generating Balance");
+		JMenuItem copyGeneratingBalance = new JMenuItem(Lang.getInstance().translate("Copy Generating Balance"));
 		copyGeneratingBalance.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -184,20 +185,20 @@ public class AccountsPanel extends JPanel implements ItemListener
 		this.add(new JScrollPane(table), tableGBC);
 		
 		//ADD TOTAL BALANCE
-		final JLabel totalBalance = new JLabel("Confirmed Balance: " + tableModel.getTotalBalance().toPlainString());
+		final JLabel totalBalance = new JLabel(Lang.getInstance().translate("Confirmed Balance") + ": " + tableModel.getTotalBalance().toPlainString());
 		this.add(totalBalance, buttonGBC);
 		
 		//ON TABLE CHANGE
 		table.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent arg0) {
-				totalBalance.setText("Confirmed Balance: " + NumberAsString.getInstance().numberAsString(tableModel.getTotalBalance()));				
+				totalBalance.setText(Lang.getInstance().translate("Confirmed Balance") + ": " + NumberAsString.getInstance().numberAsString(tableModel.getTotalBalance()));				
 			}		
 		});
 		
 		//ADD NEW ACCOUNT BUTTON
 		buttonGBC.gridy++;
-		JButton newButton = new JButton("New account");
+		JButton newButton = new JButton(Lang.getInstance().translate("New account"));
 		newButton.setPreferredSize(new Dimension(150, 25));
 		newButton.addActionListener(new ActionListener()
 		{
@@ -224,7 +225,7 @@ public class AccountsPanel extends JPanel implements ItemListener
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
-				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}

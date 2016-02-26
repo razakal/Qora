@@ -2,6 +2,7 @@ package gui.voting;
 
 import gui.QoraRowSorter;
 import gui.models.WalletPollsTableModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -102,7 +103,7 @@ public class VotingPanel extends JPanel
 		this.add(new JScrollPane(table), tableGBC);
 		
 		//ADD REGISTER BUTTON
-		JButton createButton = new JButton("Create Poll");
+		JButton createButton = new JButton(Lang.getInstance().translate("Create Poll"));
 		createButton.setPreferredSize(new Dimension(100, 25));
 		createButton.addActionListener(new ActionListener()
 		{
@@ -115,7 +116,7 @@ public class VotingPanel extends JPanel
 		
 		//ADD EXCHANGE BUTTON
 		buttonGBC.gridx = 1;
-		JButton allButton = new JButton("All Polls");
+		JButton allButton = new JButton(Lang.getInstance().translate("All Polls"));
 		allButton.setPreferredSize(new Dimension(100, 25));
 		allButton.addActionListener(new ActionListener()
 		{

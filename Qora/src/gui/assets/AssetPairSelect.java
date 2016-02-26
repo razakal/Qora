@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gui.models.AssetPairSelectTableModel;
+import lang.Lang;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -32,7 +33,7 @@ public class AssetPairSelect extends JFrame{
 
 	public AssetPairSelect(long key) {
 		
-		super("Qora - " + Controller.getInstance().getAsset(key).toString() + " - Select pair");
+		super(Lang.getInstance().translate("Qora") + " - " + Controller.getInstance().getAsset(key).toString() + " - " + Lang.getInstance().translate("Select pair"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();

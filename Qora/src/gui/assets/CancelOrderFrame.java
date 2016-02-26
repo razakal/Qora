@@ -1,6 +1,7 @@
 package gui.assets;
 
 import gui.PasswordPane;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -38,7 +39,7 @@ public class CancelOrderFrame extends JFrame
 	
 	public CancelOrderFrame(Order order)
 	{
-		super("Qora - Cancel Order");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Cancel Order"));
 		
 		this.order = order;
 		
@@ -86,7 +87,7 @@ public class CancelOrderFrame extends JFrame
 		
 		//LABEL TIMESTAMP
       	labelGBC.gridy = 1;
-      	JLabel nameLabel = new JLabel("Timestamp:");
+      	JLabel nameLabel = new JLabel(Lang.getInstance().translate("Timestamp:"));
       	this.add(nameLabel, labelGBC);
       		
       	//TXT TIMESTAMP
@@ -98,7 +99,7 @@ public class CancelOrderFrame extends JFrame
         
         //LABEL HAVE
       	labelGBC.gridy = 2;
-      	JLabel haveLabel = new JLabel("Have:");
+      	JLabel haveLabel = new JLabel(Lang.getInstance().translate("Have:"));
       	this.add(haveLabel, labelGBC);
       		
       	//TXT HAVE
@@ -109,7 +110,7 @@ public class CancelOrderFrame extends JFrame
       	
         //LABEL WANT
       	labelGBC.gridy = 3;
-      	JLabel wantLabel = new JLabel("Want:");
+      	JLabel wantLabel = new JLabel(Lang.getInstance().translate("Want:"));
       	this.add(wantLabel, labelGBC);
       		
       	//TXT WANT
@@ -120,7 +121,7 @@ public class CancelOrderFrame extends JFrame
       	
         //LABEL AMOUNT
       	labelGBC.gridy = 4;
-      	JLabel amountLabel = new JLabel("Amount:");
+      	JLabel amountLabel = new JLabel(Lang.getInstance().translate("Amount:"));
       	this.add(amountLabel, labelGBC);
       		
       	//TXT WANT
@@ -131,7 +132,7 @@ public class CancelOrderFrame extends JFrame
         
         //LABEL PRICE
       	labelGBC.gridy = 5;
-      	JLabel priceLabel = new JLabel("Price:");
+      	JLabel priceLabel = new JLabel(Lang.getInstance().translate("Price:"));
       	this.add(priceLabel, labelGBC);
       		
       	//TXT PRICE
@@ -142,7 +143,7 @@ public class CancelOrderFrame extends JFrame
       	
         //LABEL FULFILLED
       	labelGBC.gridy = 6;
-      	JLabel fulfilledLabel = new JLabel("Fulfilled:");
+      	JLabel fulfilledLabel = new JLabel(Lang.getInstance().translate("Fulfilled:"));
       	this.add(fulfilledLabel, labelGBC);
       		
       	//TXT FULFILLED
@@ -153,7 +154,7 @@ public class CancelOrderFrame extends JFrame
       	
       	//LABEL FEE
       	labelGBC.gridy = 7;
-      	JLabel feeLabel = new JLabel("Fee:");
+      	JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee:"));
       	this.add(feeLabel, labelGBC);
       		
       	//TXT FEE
@@ -164,7 +165,7 @@ public class CancelOrderFrame extends JFrame
 		           
         //BUTTON CANCEL SALE
         buttonGBC.gridy = 8;
-        cancelOrderButton = new JButton("Cancel Order");
+        cancelOrderButton = new JButton(Lang.getInstance().translate("Cancel Order"));
         cancelOrderButton.setPreferredSize(new Dimension(120, 25));
         cancelOrderButton.addActionListener(new ActionListener()
 		{
@@ -191,7 +192,7 @@ public class CancelOrderFrame extends JFrame
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			//NETWORK NOT OK
-			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, Lang.getInstance().translate("You are unable to send a transaction while synchronizing or while having no connections!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 			
 			//ENABLE
 			this.cancelOrderButton.setEnabled(true);
@@ -207,7 +208,7 @@ public class CancelOrderFrame extends JFrame
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
-				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.cancelOrderButton.setEnabled(true);
@@ -223,7 +224,7 @@ public class CancelOrderFrame extends JFrame
 			//CHECK MIMIMUM FEE
 			if(fee.compareTo(Transaction.MINIMUM_FEE) == -1)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.cancelOrderButton.setEnabled(true);
@@ -240,50 +241,50 @@ public class CancelOrderFrame extends JFrame
 			{
 			case Transaction.VALIDATE_OK:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Cancel order has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Cancel order has been sent!"), Lang.getInstance().translate("Success"), JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;		
 				
 			case Transaction.ORDER_DOES_NOT_EXIST:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "That order does not exist or has already been completed!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("That order does not exist or has already been completed!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 			
 			case Transaction.INVALID_ADDRESS:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Invalid creator!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid creator!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_ORDER_CREATOR:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "You are not the creator this order!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("You are not the creator this order!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.NEGATIVE_FEE:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.FEE_LESS_REQUIRED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee below the minimum for this size of a transaction!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.NO_BALANCE:
 			
-				JOptionPane.showMessageDialog(new JFrame(), "Not enough balance!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Not enough balance!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			default:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Unknown error!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown error!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			}
 		}
 		catch(Exception e)
 		{
-			JOptionPane.showMessageDialog(new JFrame(), "Invalid fee!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid fee!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 		}
 		
 		//ENABLE

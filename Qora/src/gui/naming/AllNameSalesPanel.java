@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import gui.QoraRowSorter;
 import gui.models.NameSalesTableModel;
+import lang.Lang;
 
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -112,7 +113,7 @@ public class AllNameSalesPanel extends JPanel {
 
 		// MENU
 		JPopupMenu nameSalesMenu = new JPopupMenu();
-		JMenuItem buy = new JMenuItem("Buy");
+		JMenuItem buy = new JMenuItem(Lang.getInstance().translate("Buy"));
 		buy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int row = nameSalesTable.getSelectedRow();
@@ -141,7 +142,7 @@ public class AllNameSalesPanel extends JPanel {
 			}
 		});
 
-		this.add(new JLabel("search:"), searchLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("search:")), searchLabelGBC);
 		this.add(txtSearch, searchGBC);
 		this.add(new JScrollPane(nameSalesTable), tableGBC);
 	}

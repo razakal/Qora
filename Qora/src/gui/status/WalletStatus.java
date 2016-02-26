@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import qora.wallet.Wallet;
 import utils.ObserverMessage;
 import controller.Controller;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class WalletStatus extends JLabel implements Observer
@@ -54,12 +55,12 @@ public class WalletStatus extends JLabel implements Observer
 			if(status == Wallet.STATUS_UNLOCKED)
 			{
 				this.setIcon(this.unlockedIcon);
-				this.setText("Wallet is unlocked");
+				this.setText(Lang.getInstance().translate("Wallet is unlocked"));
 			}
 			else
 			{
 				this.setIcon(this.lockedIcon);
-				this.setText("Wallet is locked");
+				this.setText(Lang.getInstance().translate("Wallet is locked"));
 			}
 		}		
 	}

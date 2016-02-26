@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import gui.QoraRowSorter;
 import gui.models.WalletNameSalesTableModel;
+import lang.Lang;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -34,7 +35,7 @@ public class NameExchangeTabPane extends JTabbedPane{
 			
 		//ALL NAME SALES
 		this.allNameSalesPanel = new AllNameSalesPanel();
-		this.addTab("All Names", this.allNameSalesPanel);
+		this.addTab(Lang.getInstance().translate("All Names"), this.allNameSalesPanel);
 		
 		//NAME SALES
 		this.walletNameSalesTableModel = new WalletNameSalesTableModel();
@@ -50,7 +51,7 @@ public class NameExchangeTabPane extends JTabbedPane{
 			
 		//MENU
 		JPopupMenu walletNameSalesMenu = new JPopupMenu();	
-		JMenuItem cancel = new JMenuItem("Cancel");
+		JMenuItem cancel = new JMenuItem(Lang.getInstance().translate("Cancel"));
 		cancel.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -84,7 +85,7 @@ public class NameExchangeTabPane extends JTabbedPane{
 		});
 		
 		
-		this.add("My Names", new JScrollPane(walletNameSalesTable));
+		this.add(Lang.getInstance().translate("My Names"), new JScrollPane(walletNameSalesTable));
 		
 	}
 

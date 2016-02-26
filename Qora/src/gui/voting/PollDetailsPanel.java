@@ -21,6 +21,7 @@ import javax.swing.table.TableRowSorter;
 import database.DBSet;
 import gui.Gui;
 import gui.models.PollOptionsTableModel;
+import lang.Lang;
 import qora.assets.Asset;
 import qora.transaction.CreatePollTransaction;
 import qora.transaction.Transaction;
@@ -67,7 +68,7 @@ public class PollDetailsPanel extends JPanel
 		
 		//LABEL CREATOR
 		labelGBC.gridy = 1;
-		JLabel creatorLabel = new JLabel("Creator:");
+		JLabel creatorLabel = new JLabel(Lang.getInstance().translate("Creator:"));
 		this.add(creatorLabel, labelGBC);
 		
 		//CREATOR
@@ -78,7 +79,7 @@ public class PollDetailsPanel extends JPanel
 		
 		//LABEL NAME
 		labelGBC.gridy = 2;
-		JLabel nameLabel = new JLabel("Name:");
+		JLabel nameLabel = new JLabel(Lang.getInstance().translate("Name:"));
 		this.add(nameLabel, labelGBC);
 		
 		//NAME
@@ -89,7 +90,7 @@ public class PollDetailsPanel extends JPanel
 		
 		//LABEL DATE
 		labelGBC.gridy = 3;
-		JLabel dateLabel = new JLabel("Creation date:");
+		JLabel dateLabel = new JLabel(Lang.getInstance().translate("Creation date:"));
 		this.add(dateLabel, labelGBC);
 		
 		String dateTime = "";
@@ -112,7 +113,7 @@ public class PollDetailsPanel extends JPanel
 
 		//LABEL DESCRIPTION
 		labelGBC.gridy = 4;
-		JLabel descriptionLabel = new JLabel("Description:");
+		JLabel descriptionLabel = new JLabel(Lang.getInstance().translate("Description:"));
 		this.add(descriptionLabel, labelGBC);
 				
 		//DESCRIPTION
@@ -125,7 +126,7 @@ public class PollDetailsPanel extends JPanel
 		
 		//LABEL OPTIONS
 		labelGBC.gridy = 5;
-		JLabel optionsLabel = new JLabel("Options:");
+		JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Options:"));
 		this.add(optionsLabel, labelGBC);
 		
 		//OPTIONS
@@ -140,7 +141,7 @@ public class PollDetailsPanel extends JPanel
 		
 		//ADD EXCHANGE BUTTON
 		detailGBC.gridy = 6;
-		JButton allButton = new JButton("Vote");
+		JButton allButton = new JButton(Lang.getInstance().translate("Vote"));
 		allButton.setPreferredSize(new Dimension(100, 25));
 		allButton.addActionListener(new ActionListener()
 		{

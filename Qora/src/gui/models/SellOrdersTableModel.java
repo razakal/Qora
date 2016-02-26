@@ -14,6 +14,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import database.DBSet;
 import database.SortableList;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class SellOrdersTableModel extends QoraTableModel<BigInteger, Order> implements Observer
@@ -24,7 +25,7 @@ public class SellOrdersTableModel extends QoraTableModel<BigInteger, Order> impl
 
 	public SortableList<BigInteger, Order> orders;
 	
-	private String[] columnNames = {"Price", "Amount", "Buying Amount"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Price", "Amount", "Buying Amount"});
 	
 	BigDecimal sumAmount;
 	BigDecimal sumTotal;
@@ -102,7 +103,7 @@ public class SellOrdersTableModel extends QoraTableModel<BigInteger, Order> impl
 			case COLUMN_PRICE:
 				
 				if(row == this.orders.size())
-					return "<html>Total:</html>";
+					return "<html>"+Lang.getInstance().translate("Total:")+"</html>";
 				
 				return NumberAsString.getInstance().numberAsString(order.getPrice());
 			

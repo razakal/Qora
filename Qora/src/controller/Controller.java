@@ -45,6 +45,7 @@ import database.DBSet;
 import database.LocalDataMap;
 import database.SortableList;
 import gui.Gui;
+import lang.Lang;
 import network.Network;
 import network.Peer;
 import network.message.BlockMessage;
@@ -270,25 +271,23 @@ public class Controller extends Observable {
 		
 		// CHECK NETWORK PORT AVAILABLE
 		if (!Network.isPortAvailable(Controller.getInstance().getNetworkPort())) {
-			throw new Exception("Network port " + Controller.getInstance().getNetworkPort()
-					+ " already in use!");
+			throw new Exception(Lang.getInstance().translate("Network port %port% already in use!").
+					replace("%port%", String.valueOf(Controller.getInstance().getNetworkPort())));
 		}
 
 		// CHECK RPC PORT AVAILABLE
 		if (Settings.getInstance().isRpcEnabled()) {
 			if (!Network.isPortAvailable(Settings.getInstance().getRpcPort())) {
-				throw new Exception("Rpc port "
-						+ Settings.getInstance().getRpcPort()
-						+ " already in use!");
+				throw new Exception(Lang.getInstance().translate("Rpc port %port% already in use!").
+						replace("%port%", String.valueOf(Settings.getInstance().getRpcPort())));
 			}
 		}
 
 		// CHECK WEB PORT AVAILABLE
 		if (Settings.getInstance().isWebEnabled()) {
-			if (!Network.isPortAvailable(Settings.getInstance().getWebPort())) {
-				System.out.println("Web port "
-						+ Settings.getInstance().getWebPort()
-						+ " already in use!");
+			if (!Network.isPortAvailable(Settings.getInstance().getWebPort())) {	
+				System.out.println(Lang.getInstance().translate("Web port %port% already in use!").
+						replace("%port%", String.valueOf(Settings.getInstance().getWebPort())));
 			}
 		}
 
@@ -312,7 +311,7 @@ public class Controller extends Observable {
 			DBSet.getInstance();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			System.out.println("Error during startup detected trying to restore backup database...");
+			System.out.println(Lang.getInstance().translate("Error during startup detected trying to restore backup database..."));
 			reCreateDB();
 		}
 
@@ -455,7 +454,7 @@ public class Controller extends Observable {
 			if (useDataBak && dataBak.exists()
 					&& Settings.getInstance().isCheckpointingEnabled()) {
 				FileUtils.copyDirectory(dataBak, dataDir);
-				System.out.println("restoring backup database");
+				System.out.println(Lang.getInstance().translate("restoring backup database"));
 				DBSet.reCreateDatabase();
 				
 			} else {
@@ -466,9 +465,9 @@ public class Controller extends Observable {
 
 		if (DBSet.getInstance().getBlockMap().isProcessing()) {
 			throw new Exception(
-					"The application was not closed correctly! Delete the folder "
+					Lang.getInstance().translate("The application was not closed correctly! Delete the folder ")
 							+ dataDir.getAbsolutePath()
-							+ " and start the application again.");
+							+ Lang.getInstance().translate(" and start the application again."));
 		}
 	}
 
@@ -586,24 +585,24 @@ public class Controller extends Observable {
 			this.isStopping = true;
 
 			// STOP MESSAGE PROCESSOR
-			Logger.getGlobal().info("Stopping message processor");
+			Logger.getGlobal().info(Lang.getInstance().translate("Stopping message processor"));
 			this.network.stop();
 
 			// STOP BLOCK PROCESSOR
-			Logger.getGlobal().info("Stopping block processor");
+			Logger.getGlobal().info(Lang.getInstance().translate("Stopping block processor"));
 			this.synchronizer.stop();
 
 			// CLOSE DATABABASE
-			Logger.getGlobal().info("Closing database");
+			Logger.getGlobal().info(Lang.getInstance().translate("Closing database"));
 			DBSet.getInstance().close();
 
 			// CLOSE WALLET
-			Logger.getGlobal().info("Closing wallet");
+			Logger.getGlobal().info(Lang.getInstance().translate("Closing wallet"));
 			this.wallet.close();
 
 			createDataCheckpoint();
 
-			Logger.getGlobal().info("Closed.");
+			Logger.getGlobal().info(Lang.getInstance().translate("Closed."));
 			// FORCE CLOSE
 			System.exit(0);
 		}
@@ -853,7 +852,7 @@ public class Controller extends Observable {
 				// CHECK IF VALID
 				if (isNewBlockValid
 						&& this.synchronizer.process(block)) {
-					Logger.getGlobal().info("received new valid block");
+					Logger.getGlobal().info(Lang.getInstance().translate("received new valid block"));
 
 					// PROCESS
 					// this.synchronizer.process(block);
@@ -884,7 +883,7 @@ public class Controller extends Observable {
 				if (!transaction.isSignatureValid()
 						|| transaction.getType() == Transaction.GENESIS_TRANSACTION) {
 					// DISHONEST PEER
-					this.network.onError(message.getSender(), "invalid transaction signature");
+					this.network.onError(message.getSender(), Lang.getInstance().translate("invalid transaction signature"));
 
 					return;
 				}
@@ -1098,7 +1097,7 @@ public class Controller extends Observable {
 	public boolean recoverWallet(byte[] seed, String password, int amount) {
 		if(this.wallet.create(seed, password, amount, false))
 		{
-			Logger.getGlobal().info("Wallet needs to synchronize!");
+			Logger.getGlobal().info(Lang.getInstance().translate("Wallet needs to synchronize!"));
 			this.actionAfterConnect();
 			this.setNeedSync(true);
 
@@ -1188,12 +1187,12 @@ public class Controller extends Observable {
 
 		if (!GraphicsEnvironment.isHeadless() &&  (Settings.getInstance().isGuiEnabled() || Settings.getInstance().isSysTrayEnabled()) ) {
 			Gui gui = Gui.getInstance();
-			SysTray.getInstance().sendMessage("INCOMING API CALL",
-					"An API call needs authorization!", MessageType.WARNING);
-			Object[] options = { "Yes", "No" };
+			SysTray.getInstance().sendMessage(Lang.getInstance().translate("INCOMING API CALL"),
+					Lang.getInstance().translate("An API call needs authorization!"), MessageType.WARNING);
+			Object[] options = { Lang.getInstance().translate("Yes"), Lang.getInstance().translate("No") };
 
-			 StringBuilder sb = new StringBuilder("Permission Request: ");
-	            sb.append("Do you want to authorize the following API call?\n\n"
+			 StringBuilder sb = new StringBuilder(Lang.getInstance().translate("Permission Request: "));
+	            sb.append(Lang.getInstance().translate("Do you want to authorize the following API call?\n\n")
 						+ json);
 	            JTextArea jta = new JTextArea(sb.toString());
 	            jta.setLineWrap(true);
@@ -1214,7 +1213,7 @@ public class Controller extends Observable {
 			
 			result = JOptionPane
 					.showOptionDialog(gui,
-							jsp, "INCOMING API CALL",
+							jsp, Lang.getInstance().translate("INCOMING API CALL"),
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options,
 							options[1]);

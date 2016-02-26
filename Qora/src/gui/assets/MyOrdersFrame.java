@@ -17,6 +17,7 @@ import java.util.TreeMap;
 
 import gui.QoraRowSorter;
 import gui.models.WalletOrdersTableModel;
+import lang.Lang;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -36,7 +37,7 @@ public class MyOrdersFrame extends JFrame{
 
 	public MyOrdersFrame() {
 		
-		super("Qora - My Orders");
+		super(Lang.getInstance().translate("Qora")+ " - " + Lang.getInstance().translate("My Orders"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -102,7 +103,7 @@ public class MyOrdersFrame extends JFrame{
 
 		// MENU
 		JPopupMenu ordersMenu = new JPopupMenu();
-		JMenuItem trades = new JMenuItem("Trades");
+		JMenuItem trades = new JMenuItem(Lang.getInstance().translate("Trades"));
 		trades.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int row = ordersTable.getSelectedRow();
@@ -113,7 +114,7 @@ public class MyOrdersFrame extends JFrame{
 			}
 		});
 		ordersMenu.add(trades);
-		JMenuItem cancel = new JMenuItem("Cancel");
+		JMenuItem cancel = new JMenuItem(Lang.getInstance().translate("Cancel"));
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int row = ordersTable.getSelectedRow();

@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import gui.models.OrderTradesTableModel;
+import lang.Lang;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -24,7 +25,7 @@ public class TradesFrame extends JFrame{
 
 	public TradesFrame(Order order) {
 		
-		super("Qora - Trades");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Trades"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();

@@ -12,6 +12,7 @@ import utils.Pair;
 import controller.Controller;
 import database.SortableList;
 import database.wallet.NameMap;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class WalletNamesTableModel extends QoraTableModel<Tuple2<String, String>, Name> implements Observer
@@ -22,7 +23,7 @@ public class WalletNamesTableModel extends QoraTableModel<Tuple2<String, String>
 	
 	private SortableList<Tuple2<String, String>, Name> names;
 	
-	private String[] columnNames = {"Name", "Owner", "Confirmed"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Name", "Owner", "Confirmed"});
 	
 	public WalletNamesTableModel()
 	{

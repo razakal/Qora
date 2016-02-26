@@ -2,6 +2,7 @@ package gui.naming;
 
 import gui.QoraRowSorter;
 import gui.models.WalletNamesTableModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -72,7 +73,7 @@ public class NamingServicePanel extends JPanel
 		
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
-		JMenuItem update = new JMenuItem("Update");
+		JMenuItem update = new JMenuItem(Lang.getInstance().translate("Update"));
 		update.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -86,7 +87,7 @@ public class NamingServicePanel extends JPanel
 		});
 		menu.add(update);
 		
-		JMenuItem sell = new JMenuItem("Sell");
+		JMenuItem sell = new JMenuItem(Lang.getInstance().translate("Sell"));
 		sell.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -100,7 +101,7 @@ public class NamingServicePanel extends JPanel
 		});
 		menu.add(sell);
 		
-		JMenuItem details = new JMenuItem("Details");
+		JMenuItem details = new JMenuItem(Lang.getInstance().translate("Details"));
 		details.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -130,7 +131,7 @@ public class NamingServicePanel extends JPanel
 		this.add(new JScrollPane(namesTable), tableGBC);
 			
 		//ADD REGISTER BUTTON
-		JButton registerButton = new JButton("Register");
+		JButton registerButton = new JButton(Lang.getInstance().translate("Register"));
 		registerButton.setPreferredSize(new Dimension(100, 25));
 		registerButton.addActionListener(new ActionListener()
 		{
@@ -143,7 +144,7 @@ public class NamingServicePanel extends JPanel
 		
 		//ADD EXCHANGE BUTTON
 		buttonGBC.gridx = 1;
-		JButton exchangeButton = new JButton("Exchange");
+		JButton exchangeButton = new JButton(Lang.getInstance().translate("Exchange"));
 		exchangeButton.setPreferredSize(new Dimension(100, 25));
 		exchangeButton.addActionListener(new ActionListener()
 		{

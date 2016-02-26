@@ -18,6 +18,7 @@ import utils.NumberAsString;
 import utils.ObserverMessage;
 import controller.Controller;
 import database.DBSet;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class AssetPairSelectTableModel extends AbstractTableModel implements Observer
@@ -30,7 +31,7 @@ public class AssetPairSelectTableModel extends AbstractTableModel implements Obs
 	private static final int COLUMN_TRADES_VOLUME = 5;
 	
 	public long key;
-	private String[] columnNames = {"Key", "Name", "<html>Orders<br>Count</html>", "Orders Volume", "<html>Trades<br>Count</html>", "Trades Volume"};
+	private String[] columnNames = {Lang.getInstance().translate("Key"), Lang.getInstance().translate("Name"), Lang.getInstance().translate("<html>Orders<br>Count</html>"), Lang.getInstance().translate("Orders Volume"), Lang.getInstance().translate("<html>Trades<br>Count</html>"), Lang.getInstance().translate("Trades Volume")};
 	public List<Asset> assets;
 	Map<Long, Tuple6<Integer, Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> all; 
 	

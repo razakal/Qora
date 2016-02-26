@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import lang.Lang;
 import qora.account.Account;
 import qora.assets.Asset;
 import qora.voting.PollOption;
@@ -17,7 +18,7 @@ public class VotesTableModel extends AbstractTableModel
 	private static final int COLUMN_OPTION = 1;
 	public static final int COLUMN_VOTES = 2;
 	
-	private String[] columnNames = {"Address", "Option", "Votes"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Address", "Option", "Votes"});
 	private List<Pair<Account, PollOption>> votes;
 	private Asset asset;
 	

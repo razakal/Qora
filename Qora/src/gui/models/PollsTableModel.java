@@ -10,6 +10,7 @@ import utils.NumberAsString;
 import utils.ObserverMessage;
 import database.DBSet;
 import database.SortableList;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class PollsTableModel extends QoraTableModel<String, Poll> implements Observer
@@ -19,7 +20,7 @@ public class PollsTableModel extends QoraTableModel<String, Poll> implements Obs
 	public static final int COLUMN_VOTES = 2;
 	private Asset asset;
 	
-	private String[] columnNames = {"Name", "Creator", "Total Votes"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Name", "Creator", "Total Votes"});
 	private SortableList<String, Poll> polls;
 	
 	public PollsTableModel()

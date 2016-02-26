@@ -3,6 +3,7 @@ package gui.voting;
 import gui.PasswordPane;
 import gui.models.AccountsComboBoxModel;
 import gui.models.CreateOptionsTableModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -49,7 +50,7 @@ public class CreatePollFrame extends JFrame
 
 	public CreatePollFrame()
 	{
-		super("Qora - Create Poll");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Create Poll"));
 		
 		//CLOSE
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -103,7 +104,7 @@ public class CreatePollFrame extends JFrame
 		
 		//LABEL FROM
 		labelGBC.gridy = 0;
-		JLabel fromLabel = new JLabel("Account:");
+		JLabel fromLabel = new JLabel(Lang.getInstance().translate("Account:"));
 		this.add(fromLabel, labelGBC);
 		
 		//COMBOBOX FROM
@@ -113,7 +114,7 @@ public class CreatePollFrame extends JFrame
         
         //LABEL NAME
       	labelGBC.gridy = 1;
-      	JLabel nameLabel = new JLabel("Name:");
+      	JLabel nameLabel = new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("Name:")));
       	this.add(nameLabel, labelGBC);
       		
       	//TXT NAME
@@ -123,7 +124,7 @@ public class CreatePollFrame extends JFrame
         
         //LABEL NAME
       	labelGBC.gridy = 2;
-      	JLabel descriptionLabel = new JLabel("Description:");
+      	JLabel descriptionLabel = new JLabel(Lang.getInstance().translate("Description:"));
       	this.add(descriptionLabel, labelGBC);
       		
       	//TXTAREA NAME
@@ -135,19 +136,19 @@ public class CreatePollFrame extends JFrame
         
       	//LABEL OPTIONS
       	labelGBC.gridy = 3;
-      	JLabel optionsLabel = new JLabel("Options:");
+      	JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Options:"));
       	this.add(optionsLabel, labelGBC);
       	
       	//TABLE OPTIONS
       	txtGBC.gridy = 3;
-      	this.optionsTableModel = new CreateOptionsTableModel(new Object[] { "Name" }, 0);
+      	this.optionsTableModel = new CreateOptionsTableModel(new Object[] { Lang.getInstance().translate("Name") }, 0);
       	final JTable table = new JTable(optionsTableModel);
       	
       	this.add(new JScrollPane(table), txtGBC);
       	
       	//TABLE OPTIONS DELETE
       	txtGBC.gridy = 4;
-      	JButton deleteButton = new JButton("Delete");
+      	JButton deleteButton = new JButton(Lang.getInstance().translate("Delete"));
         deleteButton.addActionListener(new ActionListener() {
 
             @Override
@@ -167,7 +168,7 @@ public class CreatePollFrame extends JFrame
       	
         //LABEL FEE
       	labelGBC.gridy = 5;
-      	JLabel feeLabel = new JLabel("Fee:");
+      	JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee:"));
       	this.add(feeLabel, labelGBC);
       		
       	//TXT FEE
@@ -178,7 +179,7 @@ public class CreatePollFrame extends JFrame
 		           
         //BUTTON Register
         buttonGBC.gridy = 6;
-        createButton = new JButton("Create");
+        createButton = new JButton(Lang.getInstance().translate("Create"));
         createButton.setPreferredSize(new Dimension(80, 25));
         createButton.addActionListener(new ActionListener()
 		{
@@ -205,7 +206,7 @@ public class CreatePollFrame extends JFrame
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			//NETWORK NOT OK
-			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, Lang.getInstance().translate("You are unable to send a transaction while synchronizing or while having no connections!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 			
 			//ENABLE
 			this.createButton.setEnabled(true);
@@ -221,7 +222,7 @@ public class CreatePollFrame extends JFrame
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
-				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.createButton.setEnabled(true);
@@ -241,7 +242,7 @@ public class CreatePollFrame extends JFrame
 			//CHECK MIMIMUM FEE
 			if(fee.compareTo(Transaction.MINIMUM_FEE) == -1)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.createButton.setEnabled(true);
@@ -253,8 +254,8 @@ public class CreatePollFrame extends JFrame
 			if(fee.compareTo(Settings.getInstance().getBigFee()) >= 0)
 			{
 				int n = JOptionPane.showConfirmDialog(
-						new JFrame(), Settings.getInstance().getBigFeeMessage(),
-		                "Confirmation",
+						new JFrame(), Lang.getInstance().translate("Do you really want to set such a large fee?\nThese coins will go to the forgers."),
+						Lang.getInstance().translate("Confirmation"),
 		                JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION) {
 					
@@ -278,18 +279,18 @@ public class CreatePollFrame extends JFrame
 				if(Settings.getInstance().isAllowFeeLessRequired())
 				{
 					n = JOptionPane.showConfirmDialog(
-						new JFrame(), "Fee less than the recommended values!\nChange to recommended?\n"
-									+ "Press Yes to turn on recommended "+recommendedFee.toPlainString()
-									+ ",\nor No to leave, but then the transaction may be difficult to confirm.",
-		                "Confirmation",
+						new JFrame(), Lang.getInstance().translate("Fee less than the recommended values!\nChange to recommended?\n"
+									+ "Press Yes to turn on recommended %fee%"
+									+ ",\nor No to leave, but then the transaction may be difficult to confirm.").replace("%fee%", recommendedFee.toPlainString()),
+						Lang.getInstance().translate("Confirmation"),
 		                JOptionPane.YES_NO_CANCEL_OPTION);
 				}
 				else
 				{
 					n = JOptionPane.showConfirmDialog(
-							new JFrame(), "Fee less required!\n"
-										+ "Press OK to turn on required "+recommendedFee.toPlainString() + ".",
-			                "Confirmation",
+							new JFrame(), Lang.getInstance().translate("Fee less required!\n"
+										+ "Press OK to turn on required %fee%.").replace("%fee%", recommendedFee.toPlainString()),
+							Lang.getInstance().translate("Confirmation"),
 			                JOptionPane.OK_CANCEL_OPTION);
 				}
 				if (n == JOptionPane.YES_OPTION || n == JOptionPane.OK_OPTION) {
@@ -323,76 +324,76 @@ public class CreatePollFrame extends JFrame
 			{
 			case Transaction.VALIDATE_OK:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Poll creation has been sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Poll creation has been sent!"), Lang.getInstance().translate("Success"), JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;	
 				
 			case Transaction.NOT_YET_RELEASED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Voting will be enabled at " + DateTimeFormat.timestamptoString(Transaction.getVOTING_RELEASE()) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Voting will be enabled at ") + DateTimeFormat.timestamptoString(Transaction.getVOTING_RELEASE()) + "!",  "Error", JOptionPane.ERROR_MESSAGE);
 				break;
 			
 			case Transaction.NAME_NOT_LOWER_CASE:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Name must be lower case!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Name must be lower case!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.txtName.setText(this.txtName.getText().toLowerCase());
 				break;	
 				
 			case Transaction.NEGATIVE_FEE:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;
 				
 			case Transaction.FEE_LESS_REQUIRED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Fee below the minimum for this size of a transaction!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee below the minimum for this size of a transaction!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;				
 				
 			case Transaction.NO_BALANCE:
 			
-				JOptionPane.showMessageDialog(new JFrame(), "Not enough balance!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Not enough balance!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_NAME_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Name must be between 1 and 100 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Name must be between 1 and 100 characters!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_DESCRIPTION_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Description must be between 1 and 1000 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Description must be between 1 and 1000 characters!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.POLL_ALREADY_CREATED:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "A poll with that name already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("A poll with that name already exists!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;	
 				
 			case Transaction.INVALID_OPTIONS_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "The amount of options must be between 1 and 100!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("The amount of options must be between 1 and 100!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;		
 				
 			case Transaction.INVALID_OPTION_LENGTH:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "All options must be between 1 and 100 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("All options must be between 1 and 100 characters!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;		
 				
 			case Transaction.DUPLICATE_OPTION:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "All options must be unique!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("All options must be unique!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;				
 				
 			default:
 				
-				JOptionPane.showMessageDialog(new JFrame(), "Unknown error!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown error!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				break;		
 				
 			}
 		}
 		catch(Exception e)
 		{
-			JOptionPane.showMessageDialog(new JFrame(), "Invalid fee!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid fee!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 		}
 		
 		//ENABLE

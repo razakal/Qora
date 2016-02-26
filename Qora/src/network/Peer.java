@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import controller.Controller;
 import database.DBSet;
+import lang.Lang;
 import network.message.Message;
 import network.message.MessageFactory;
 import ntp.NTP;
@@ -138,7 +139,7 @@ public class Peer extends Thread{
 		catch(Exception e)
 		{
 			//FAILED TO CONNECT NO NEED TO BLACKLIST
-			Logger.getGlobal().info("Failed to connect to : " + address);
+			Logger.getGlobal().info(Lang.getInstance().translate("Failed to connect to : ") + address);
 		}
 	}
 	
@@ -176,7 +177,7 @@ public class Peer extends Thread{
 				else
 				{
 					//ERROR
-					callback.onError(this, "received message with wrong magic");
+					callback.onError(this, Lang.getInstance().translate("received message with wrong magic"));
 					return;
 				}
 			}
@@ -199,7 +200,7 @@ public class Peer extends Thread{
 			if(!this.socket.isConnected())
 			{
 				//ERROR
-				callback.onError(this, "socket not still alive");
+				callback.onError(this, Lang.getInstance().translate("socket not still alive"));
 				
 				return false;
 			}

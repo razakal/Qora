@@ -14,6 +14,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import database.DBSet;
 import database.SortableList;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class BuyOrdersTableModel extends QoraTableModel<BigInteger, Order> implements Observer
@@ -25,7 +26,7 @@ public class BuyOrdersTableModel extends QoraTableModel<BigInteger, Order> imple
 
 	public SortableList<BigInteger, Order> orders;
 	
-	private String[] columnNames = {"Buying Price", "Buying Amount", "Price", "Amount"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Buying Price", "Buying Amount", "Price", "Amount"});
 	
 	BigDecimal sumAmount;
 	BigDecimal sumTotal;

@@ -15,6 +15,7 @@ import utils.ObserverMessage;
 import controller.Controller;
 import database.DBSet;
 import database.SortableList;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class OrderTradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteger>, Trade> implements Observer
@@ -28,7 +29,7 @@ public class OrderTradesTableModel extends QoraTableModel<Tuple2<BigInteger, Big
 	private SortableList<Tuple2<BigInteger, BigInteger>, Trade> trades;
 	private Order order;
 	
-	private String[] columnNames = {"Timestamp", "Type", "Price", "Amount", "Total"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Timestamp", "Type", "Price", "Amount", "Total"});
 	
 	public OrderTradesTableModel(Order order)
 	{
@@ -85,7 +86,7 @@ public class OrderTradesTableModel extends QoraTableModel<Tuple2<BigInteger, Big
 			
 		case COLUMN_TYPE:
 			
-			return trade.getInitiatorOrder(DBSet.getInstance()).getHave() == this.order.getHave() ? "Buy" : "Sell";
+			return trade.getInitiatorOrder(DBSet.getInstance()).getHave() == this.order.getHave() ? Lang.getInstance().translate("Buy") : Lang.getInstance().translate("Sell");
 		
 		case COLUMN_PRICE:
 			

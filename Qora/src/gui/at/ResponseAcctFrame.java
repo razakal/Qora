@@ -2,6 +2,7 @@ package gui.at;
 
 import gui.PasswordPane;
 import gui.models.AccountsComboBoxModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -59,7 +60,7 @@ public class ResponseAcctFrame extends JFrame {
 
 	public ResponseAcctFrame()
 	{
-		super("Qora - Response ACCT");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Response ACCT"));
 
 		//CLOSE
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -113,7 +114,7 @@ public class ResponseAcctFrame extends JFrame {
 
 		//LABEL FROM
 		labelGBC.gridy = 0;
-		JLabel fromLabel = new JLabel("Account:");
+		JLabel fromLabel = new JLabel(Lang.getInstance().translate("Account:"));
 		this.add(fromLabel, labelGBC);
 
 		//COMBOBOX FROM
@@ -123,7 +124,7 @@ public class ResponseAcctFrame extends JFrame {
 
 		//SWAP LABEP
 		labelGBC.gridy = 1;
-		JLabel swapLabel = new JLabel("Trade:");
+		JLabel swapLabel = new JLabel(Lang.getInstance().translate("Trade:"));
 		this.add(swapLabel, labelGBC);
 
 		//TXT AMOUNT
@@ -134,7 +135,7 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL NAME
 		labelGBC.gridy = 1;
 		labelGBC.gridx = 2;
-		JLabel qoraLabel = new JLabel("QORA for");
+		JLabel qoraLabel = new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("QORA for")));
 		this.add(qoraLabel, labelGBC);
 
 		//TXT AMOUNT
@@ -152,7 +153,7 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL NAME
 		labelGBC.gridy = 2;
 		labelGBC.gridx = 0;
-		JLabel csPagesLabel = new JLabel("Recipient:");
+		JLabel csPagesLabel = new JLabel(Lang.getInstance().translate("Recipient:"));
 		this.add(csPagesLabel, labelGBC);
 
 		//TXT NAME
@@ -165,13 +166,13 @@ public class ResponseAcctFrame extends JFrame {
 		
 		//LABEL RECIPIENT
 		labelGBC.gridx = 3;
-		JLabel recipientAlert = new JLabel(" ( * optional field )");
+		JLabel recipientAlert = new JLabel(Lang.getInstance().translate(" ( * optional field )"));
 		this.add(recipientAlert, labelGBC);
 
 		//LABEL BURST ADDRESS
 		labelGBC.gridy = 3;
 		labelGBC.gridx = 0;
-		JLabel burstAddressLabel = new JLabel("My BURST address:");
+		JLabel burstAddressLabel = new JLabel(Lang.getInstance().translate("My BURST address:"));
 		this.add(burstAddressLabel, labelGBC);
 
 		//TXT LABEL ADDRESS
@@ -186,7 +187,7 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL DATA
 		labelGBC.gridy = 4;
 		labelGBC.gridx = 0;
-		JLabel dataBytesLabel = new JLabel("Lock:");
+		JLabel dataBytesLabel = new JLabel(Lang.getInstance().translate("Lock:"));
 		this.add(dataBytesLabel, labelGBC);
 
 		//TXTAREA DESCRIPTION
@@ -202,13 +203,13 @@ public class ResponseAcctFrame extends JFrame {
 		labelGBC.gridy = 5;
 		labelGBC.gridx = 0;
 		labelGBC.gridwidth = 4;
-		JLabel passAlert = new JLabel("( Use the lock of the matching counterparty )");
+		JLabel passAlert = new JLabel(Lang.getInstance().translate("( Use the lock of the matching counterparty )"));
 		this.add(passAlert, labelGBC);
 
 		//LABEL FEE
 		labelGBC.gridy = 6;
 		labelGBC.gridx = 0;
-		JLabel feeLabel = new JLabel("Fee:");
+		JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee:"));
 		this.add(feeLabel, labelGBC);
 
 		//TXT FEE
@@ -221,13 +222,13 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL FEES ALERT
 		labelGBC.gridx = 2;
 		labelGBC.gridwidth = 3;
-		JLabel feesAlertLabel = new JLabel("( fees should be at least 20 )");
+		JLabel feesAlertLabel = new JLabel(Lang.getInstance().translate("( fees should be at least 20 )"));
 		this.add(feesAlertLabel, labelGBC);
 
 		//LABEL NAME
 		labelGBC.gridy = 7;
 		labelGBC.gridx = 0;
-		final JLabel dPagesLabel = new JLabel("Expire after:");
+		final JLabel dPagesLabel = new JLabel(Lang.getInstance().translate("Expire after:"));
 		this.add(dPagesLabel, labelGBC);
 
 		//TXT NAME
@@ -239,14 +240,14 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL BLOCKS
 		labelGBC.gridx = 2;
 		labelGBC.gridwidth = 3;
-		JLabel blocksLabel = new JLabel("blocks ( 1 block approx. " + + AT_Constants.getInstance().AVERAGE_BLOCK_MINUTES(DBSet.getInstance().getBlockMap().getLastBlock().getHeight()) +" min )");
+		JLabel blocksLabel = new JLabel(Lang.getInstance().translate("blocks ( 1 block approx. %min% min )").replace("%min%", String.valueOf((AT_Constants.getInstance().AVERAGE_BLOCK_MINUTES(DBSet.getInstance().getBlockMap().getLastBlock().getHeight())))));
 		this.add(blocksLabel, labelGBC);
 		labelGBC.gridwidth = 1;
 
 		//LABEL NAME
 		labelGBC.gridy = 8;
 		labelGBC.gridx = 0;
-		JLabel minActivationAmountLabel = new JLabel("Min activation amount:");
+		JLabel minActivationAmountLabel = new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("Min activation amount:")));
 		this.add(minActivationAmountLabel, labelGBC);
 
 		//TXT NAME
@@ -257,7 +258,7 @@ public class ResponseAcctFrame extends JFrame {
 
 		//BUTTON Register
 		buttonGBC.gridy = 9;
-		this.deployButton = new JButton("Respond");
+		this.deployButton = new JButton(Lang.getInstance().translate("Respond"));
 		this.deployButton.setPreferredSize(new Dimension(80, 25));
 		this.deployButton.addActionListener(new ActionListener()
 		{
@@ -285,7 +286,7 @@ public class ResponseAcctFrame extends JFrame {
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			//NETWORK NOT OK
-			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, Lang.getInstance().translate("You are unable to send a transaction while synchronizing or while having no connections!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 
 			//ENABLE
 			this.deployButton.setEnabled(true);
@@ -301,7 +302,7 @@ public class ResponseAcctFrame extends JFrame {
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
-				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 
 				//ENABLE
 				this.deployButton.setEnabled(true);
@@ -328,7 +329,7 @@ public class ResponseAcctFrame extends JFrame {
 			//CHECK MIMIMUM FEE
 			if(fee.compareTo(Transaction.MINIMUM_FEE) == -1)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 
 				//ENABLE
 				this.deployButton.setEnabled(true);
@@ -343,7 +344,7 @@ public class ResponseAcctFrame extends JFrame {
 			String code = "3501030900000006040000000900000029302009000000040000000f1ab4000000330403090000003525010a000000260a000000320903350703090000003526010a0000001b0a000000cd322801331601000000003317010100000033180102000000331901030000003505020a0000001b0a000000a1320b033205041e050000001833000509000000320a033203041ab400000033160105000000331701060000003318010700000033190108000000320304320b033203041ab7000000";
 			if (code.length()==0)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Code is empty!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Code is empty!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				return;
 			}
@@ -369,14 +370,14 @@ public class ResponseAcctFrame extends JFrame {
 			}
 			catch (Exception e)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Expiration error", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Expiration error"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				return;
 			}
 			
 			if ( blocksToEnd < 20 )
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Expiration should be at least 20", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Expiration should be at least 20"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				return;
 			}
@@ -396,7 +397,7 @@ public class ResponseAcctFrame extends JFrame {
 
 			if((data.length() & 1) != 0)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Data error!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Data error!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				return;
 			}
@@ -410,7 +411,7 @@ public class ResponseAcctFrame extends JFrame {
 
 			if ( dpages < 0 || cspages < 0 || uspages < 0 )
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Error in data or cs or us pages!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Error in data or cs or us pages!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -422,7 +423,7 @@ public class ResponseAcctFrame extends JFrame {
 
 			if ( (cpages + dpages + cspages + uspages) * AT_Constants.getInstance().COST_PER_PAGE( DBSet.getInstance().getBlockMap().getLastBlock().getHeight()) > lFee )
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Fees should be at least " + (cpages + dpages + cspages + uspages) * AT_Constants.getInstance().COST_PER_PAGE( DBSet.getInstance().getBlockMap().getLastBlock().getHeight()) + " !", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fees should be at least ") + (cpages + dpages + cspages + uspages) * AT_Constants.getInstance().COST_PER_PAGE( DBSet.getInstance().getBlockMap().getLastBlock().getHeight()) + " !", Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				return;
 			}
@@ -476,7 +477,7 @@ public class ResponseAcctFrame extends JFrame {
 			creationBytes = creation.array();
 
 			String name = "BURSTQORA @ " + burstQuantity.divide(quantity, 2, RoundingMode.HALF_UP);
-			String desc = "Responders BURST address: " + this.txtBurstAddress.getText();
+			String desc = Lang.getInstance().translate("Responders BURST address: ") + this.txtBurstAddress.getText();
 			String type = "acct";
 			String tags = "acct,atomic cross chain tx,respond,responder";
 
@@ -494,43 +495,43 @@ public class ResponseAcctFrame extends JFrame {
 			switch(result.getB())
 			{
 			case Transaction.VALIDATE_OK:
-				JOptionPane.showMessageDialog(new JFrame(), "AT has been deployed!", "Success", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("AT has been deployed!"), Lang.getInstance().translate("Success"), JOptionPane.INFORMATION_MESSAGE);
 				this.dispose();
 				break;	
 			case Transaction.NOT_YET_RELEASED:
-				JOptionPane.showMessageDialog(new JFrame(), "AT will be enabled at !",  "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("AT will be enabled at !"),  Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;
 			case Transaction.NEGATIVE_FEE:
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;	
 			case Transaction.NEGATIVE_AMOUNT:
-				JOptionPane.showMessageDialog(new JFrame(), "Quantity must be at least 0!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Quantity must be at least 0!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;
 			case Transaction.NO_BALANCE:
-				JOptionPane.showMessageDialog(new JFrame(), "Not enough balance!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Not enough balance!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;
 			case Transaction.INVALID_NAME_LENGTH:
-				JOptionPane.showMessageDialog(new JFrame(), "Name must be between 1 and 100 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Name must be between 1 and 100 characters!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;
 			case Transaction.INVALID_TAGS_LENGTH:
-				JOptionPane.showMessageDialog(new JFrame(), "Tags length exceeded!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Tags length exceeded!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;
 			case Transaction.INVALID_TYPE_LENGTH:
-				JOptionPane.showMessageDialog(new JFrame(), "Type length exceeded!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Type length exceeded!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;
 			case Transaction.INVALID_DESCRIPTION_LENGTH:
-				JOptionPane.showMessageDialog(new JFrame(), "Description must be between 1 and 1000 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Description must be between 1 and 1000 characters!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;
 			default:
-				JOptionPane.showMessageDialog(new JFrame(), "Unknown error!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown error!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				break;	
 			}
@@ -539,12 +540,12 @@ public class ResponseAcctFrame extends JFrame {
 		{
 			if(parse == 0)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Invalid fee!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid fee!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Unknown exception!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown exception!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 			}
 			e.printStackTrace();

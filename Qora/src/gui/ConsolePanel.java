@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import api.ApiClient;
+import lang.Lang;
 import utils.MenuPopupUtil;
 
 @SuppressWarnings("serial")
@@ -122,8 +123,8 @@ public class ConsolePanel extends JPanel
 		
 		buttonGBC.fill = GridBagConstraints.HORIZONTAL;  
 		buttonGBC.anchor = GridBagConstraints.CENTER;
-		JButton sendButton = new JButton("Run");
-        sendButton.setPreferredSize(new Dimension(80, 25));
+		JButton sendButton = new JButton(Lang.getInstance().translate("Run"));
+        sendButton.setPreferredSize(new Dimension(100, 25));
     	sendButton.addActionListener(new ActionListener()
 		{
 		    public void actionPerformed(ActionEvent e)

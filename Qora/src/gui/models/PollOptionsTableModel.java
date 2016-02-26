@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.swing.table.AbstractTableModel;
 
+import lang.Lang;
 import qora.assets.Asset;
 import qora.voting.Poll;
 import qora.voting.PollOption;
@@ -16,7 +17,7 @@ public class PollOptionsTableModel extends AbstractTableModel
 	public static final int COLUMN_VOTES = 1;
 	public static final int COLUMN_PERCENTAGE = 2;
 	
-	private String[] columnNames = {"Name", "Votes", "% of Total"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Name", "Votes", "% of Total"});
 	private Poll poll;
 	private Asset asset;
 	

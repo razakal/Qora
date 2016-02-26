@@ -3,6 +3,7 @@ package network;
 import java.util.List;
 import java.util.logging.Logger;
 
+import lang.Lang;
 import network.message.Message;
 import network.message.MessageFactory;
 import network.message.PeersMessage;
@@ -53,9 +54,9 @@ public class ConnectionCreator extends Thread {
 								{
 									//CONNECT
 									Logger.getGlobal().info(
-											"Connecting to known peer " + peer.getAddress().getHostAddress() 
+											Lang.getInstance().translate("Connecting to known peer ") + peer.getAddress().getHostAddress() 
 											+ " :: " + knownPeersCounter + " / " + knownPeers.size() 
-											+ " :: Connections: " + callback.getActiveConnections().size());
+											+ " :: "+Lang.getInstance().translate("Connections: ") + callback.getActiveConnections().size());
 								
 									peer.connect(callback);
 								}
@@ -109,9 +110,9 @@ public class ConnectionCreator extends Thread {
 															int maxReceivePeersForPrint = (maxReceivePeers > peersMessage.getPeers().size()) ? peersMessage.getPeers().size() : maxReceivePeers;  
 															
 															Logger.getGlobal().info(
-																"Connecting to peer " + newPeer.getAddress().getHostAddress() + " proposed by " + peer.getAddress().getHostAddress() 
+																Lang.getInstance().translate("Connecting to peer ") + newPeer.getAddress().getHostAddress() + " proposed by " + peer.getAddress().getHostAddress() 
 																+ " :: " + foreignPeersCounter + " / " + maxReceivePeersForPrint + " / " + peersMessage.getPeers().size() 
-																+ " :: Connections: " + callback.getActiveConnections().size());
+																+ " :: " + Lang.getInstance().translate("Connections: ") + callback.getActiveConnections().size());
 														
 															//CONNECT
 															newPeer.connect(callback);
@@ -134,7 +135,7 @@ public class ConnectionCreator extends Thread {
 			{
 				e.printStackTrace();
 				
-				Logger.getGlobal().info("Error creating new connection");			
+				Logger.getGlobal().info(Lang.getInstance().translate("Error creating new connection"));			
 			}					
 		}
 	}

@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import lang.Lang;
 import qora.crypto.Base58;
 import qora.transaction.CancelSellNameTransaction;
 import utils.DateTimeFormat;
@@ -24,7 +25,7 @@ public class CancelSellNameDetailsFrame extends JFrame
 {
 	public CancelSellNameDetailsFrame(CancelSellNameTransaction cancelNameSale)
 	{
-		super("Qora - Transaction Details");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Transaction Details"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -62,17 +63,17 @@ public class CancelSellNameDetailsFrame extends JFrame
 		
 		//LABEL TYPE
 		labelGBC.gridy = 0;
-		JLabel typeLabel = new JLabel("Type:");
+		JLabel typeLabel = new JLabel(Lang.getInstance().translate("Type:"));
 		this.add(typeLabel, labelGBC);
 						
 		//TYPE
 		detailGBC.gridy = 0;
-		JLabel type = new JLabel("Cancel Sell Name Transaction");
+		JLabel type = new JLabel(Lang.getInstance().translate("Cancel Sell Name Transaction"));
 		this.add(type, detailGBC);
 		
 		//LABEL SIGNATURE
 		labelGBC.gridy = 1;
-		JLabel signatureLabel = new JLabel("Signature:");
+		JLabel signatureLabel = new JLabel(Lang.getInstance().translate("Signature:"));
 		this.add(signatureLabel, labelGBC);
 				
 		//SIGNATURE
@@ -84,7 +85,7 @@ public class CancelSellNameDetailsFrame extends JFrame
 		
 		//LABEL REFERENCE
 		labelGBC.gridy = 2;
-		JLabel referenceLabel = new JLabel("Reference:");
+		JLabel referenceLabel = new JLabel(Lang.getInstance().translate("Reference:"));
 		this.add(referenceLabel, labelGBC);
 						
 		//REFERENCE
@@ -96,7 +97,7 @@ public class CancelSellNameDetailsFrame extends JFrame
 		
 		//LABEL TIMESTAMP
 		labelGBC.gridy = 3;
-		JLabel timestampLabel = new JLabel("Timestamp:");
+		JLabel timestampLabel = new JLabel(Lang.getInstance().translate("Timestamp:"));
 		this.add(timestampLabel, labelGBC);
 						
 		//TIMESTAMP
@@ -107,7 +108,7 @@ public class CancelSellNameDetailsFrame extends JFrame
 		
 		//LABEL REGISTRANT
 		labelGBC.gridy = 4;
-		JLabel registrantLabel = new JLabel("Seller:");
+		JLabel registrantLabel = new JLabel(Lang.getInstance().translate("Seller:"));
 		this.add(registrantLabel, labelGBC);
 		
 		//REGISTRANT
@@ -119,7 +120,7 @@ public class CancelSellNameDetailsFrame extends JFrame
 		
 		//LABEL NAME
 		labelGBC.gridy = 5;
-		JLabel nameLabel = new JLabel("Name:");
+		JLabel nameLabel = new JLabel(Lang.getInstance().translate("Name:"));
 		this.add(nameLabel, labelGBC);
 		
 		//NAME
@@ -131,7 +132,7 @@ public class CancelSellNameDetailsFrame extends JFrame
 		
 		//LABEL FEE
 		labelGBC.gridy = 6;
-		JLabel feeLabel = new JLabel("Fee:");
+		JLabel feeLabel = new JLabel(Lang.getInstance().translate("Fee:"));
 		this.add(feeLabel, labelGBC);
 						
 		//FEE
@@ -143,7 +144,7 @@ public class CancelSellNameDetailsFrame extends JFrame
 		
 		//LABEL CONFIRMATIONS
 		labelGBC.gridy = 7;
-		JLabel confirmationsLabel = new JLabel("Confirmations:");
+		JLabel confirmationsLabel = new JLabel(Lang.getInstance().translate("Confirmations:"));
 		this.add(confirmationsLabel, labelGBC);
 								
 		//CONFIRMATIONS

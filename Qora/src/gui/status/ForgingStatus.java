@@ -17,6 +17,7 @@ import qora.account.Account;
 import utils.GUIUtils;
 import utils.ObserverMessage;
 import controller.Controller;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class ForgingStatus extends JLabel implements Observer {
@@ -55,18 +56,18 @@ public class ForgingStatus extends JLabel implements Observer {
 			        }
 			        else
 			        {
-			        	timeForge = "infinity";
+			        	timeForge = Lang.getInstance().translate("infinity");
 			        }
 			        
-		            setToolTipText("Approx time to find the block: " + timeForge + ".");
+		            setToolTipText(Lang.getInstance().translate("Approx time to find the block: ") + timeForge + ".");
 				}
 				else if (Controller.getInstance().getForgingStatus() == BlockGenerator.ForgingStatus.FORGING_DISABLED && Controller.getInstance().getStatus() == Controller.STATUS_OK) 
 				{
-					setToolTipText("To start forging you need to unlock the wallet.");
+					setToolTipText(Lang.getInstance().translate("To start forging you need to unlock the wallet."));
 				}
 				else
 				{
-					setToolTipText("For forging wallet must be online and fully synchronized.");
+					setToolTipText(Lang.getInstance().translate("For forging wallet must be online and fully synchronized."));
 				}
 				
 	    }});
@@ -98,22 +99,22 @@ public class ForgingStatus extends JLabel implements Observer {
 		
 		if(d>0)
 		{
-			result += d > 1 ? d + " days " : d + " day ";	
+			result += d > 1 ? d + Lang.getInstance().translate(" days ") : d + Lang.getInstance().translate(" day ");	
 		}
 		
 		if(h>0 && d<5)
 		{
-			result += h > 1 ? h + " hours " : h + " hour ";	
+			result += h > 1 ? h + Lang.getInstance().translate(" hours ") : h + Lang.getInstance().translate(" hour ");	
 		}	
 		
 		if(m>0 && d == 0 && h<10 )
 		{
-			result += m > 1 ? m + " mins " : m + " min ";	
+			result += m > 1 ? m + Lang.getInstance().translate(" mins ") : m + Lang.getInstance().translate(" min ");	
 		}
 		
 		if(s>0 && d == 0 && h == 0 && m<15)
 		{
-			result += s > 1 ? s + " seconds " : s + " second ";
+			result += s > 1 ? s + Lang.getInstance().translate(" seconds ") : s + Lang.getInstance().translate(" second ");
 		}
 		
 		return result.substring(0, result.length() - 1);

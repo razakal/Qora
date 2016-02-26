@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import gui.models.AssetsAllComboBoxModel;
+import lang.Lang;
 import qora.assets.Asset;
 import qora.voting.Poll;
 
@@ -29,7 +30,7 @@ public class PollFrame extends JFrame{
 	public PollFrame(Poll poll, Asset asset) 
 	{
 		//CREATE FRAME
-		super("Qora - Poll Details");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Poll Details"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -73,7 +74,7 @@ public class PollFrame extends JFrame{
 		pollTabPaneGBC.gridx = 0;
 		pollTabPaneGBC.gridy = 2;
 		
-		this.add(new JLabel("Asset:"), assetLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("Asset:")), assetLabelGBC);
 		
 		cbxAssets = new JComboBox<Asset>(new AssetsAllComboBoxModel());
 		cbxAssets.setSelectedItem(asset);

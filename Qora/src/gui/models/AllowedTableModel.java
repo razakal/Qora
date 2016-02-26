@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
+import lang.Lang;
 import network.Peer;
 
 @SuppressWarnings("serial")
@@ -47,8 +48,8 @@ public class AllowedTableModel extends AbstractTableModel implements Observer{
 	{
 		String address = this.getValueAt(row, 0).toString();
 		int n = JOptionPane.showConfirmDialog(
-				new JFrame(), "Do you want to remove address "+ address +"?",
-                "Confirmation",
+				new JFrame(), Lang.getInstance().translate("Do you want to remove address %address%?").replace("%address%", address),
+				Lang.getInstance().translate("Confirmation"),
                 JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
 			peers.remove(row);

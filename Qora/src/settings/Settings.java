@@ -76,13 +76,14 @@ public class Settings {
 	private static final boolean ALLOW_FEE_LESS_REQUIRED = false;
 	
 	private static final BigDecimal DEFAULT_BIG_FEE = new BigDecimal(1000);
-	private static final String DEFAULT_BIG_FEE_MESSAGE = "Do you really want to set such a large fee?\nThese coins will go to the forgers.";
-	
+
 	//DATE FORMAT
 	private static final String DEFAULT_TIME_ZONE = "";
 	private static final String DEFAULT_TIME_FORMAT = "";
 	
 	private static final boolean DEFAULT_NS_UPDATE = false;
+	
+	private static String DEFAULT_LANGUAGE = "eng.lng";
 	
 	private static Settings instance;
 	
@@ -91,7 +92,7 @@ public class Settings {
 
 	private String currentSettingsPath;
 	private String currentPeersPath;
-	
+
 	private InetAddress localAddress;
 	
 	List<Peer> cacheInternetPeers;
@@ -692,11 +693,6 @@ public class Settings {
 		return DEFAULT_BIG_FEE;
 	}
 	
-	public String getBigFeeMessage() 
-	{
-		return DEFAULT_BIG_FEE_MESSAGE;
-	}
-
 	public boolean isGuiEnabled() 
 	{
 		
@@ -778,4 +774,14 @@ public class Settings {
 		return null;
     }
 
+	public String getLang()
+	{
+		if(this.settingsJSON.containsKey("lang"))
+		{
+			return ((String) this.settingsJSON.get("lang").toString());
+		}
+		
+		return DEFAULT_LANGUAGE;
+	}
+	
 }

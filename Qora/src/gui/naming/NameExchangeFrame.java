@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import lang.Lang;
+
 @SuppressWarnings("serial")
 public class NameExchangeFrame extends JFrame{
 
@@ -17,7 +19,7 @@ public class NameExchangeFrame extends JFrame{
 	public NameExchangeFrame() 
 	{
 		//CREATE FRAME
-		super("Qora - Name Exchange");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Name Exchange"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();

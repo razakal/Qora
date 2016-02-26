@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import at.AT;
+import lang.Lang;
 import qora.account.Account;
 import qora.crypto.Base58;
 import utils.Converter;
@@ -28,7 +29,7 @@ public class ATDetailsFrame extends JFrame {
 
 	public ATDetailsFrame(AT at)
 	{	
-		super("Qora - AT Details");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("AT Details"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -66,7 +67,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//LABEL ADDRESS
 		labelGBC.gridy = 0;
-		JLabel addressLabel = new JLabel("Address:");
+		JLabel addressLabel = new JLabel(Lang.getInstance().translate("Address:"));
 		this.add(addressLabel, labelGBC);
 
 		//OWNER
@@ -78,7 +79,7 @@ public class ATDetailsFrame extends JFrame {
 		
 		//LABEL AT TYPE
 		labelGBC.gridy = 1;
-		JLabel keyLabel = new JLabel("Type:");
+		JLabel keyLabel = new JLabel(Lang.getInstance().translate("Type:"));
 		this.add(keyLabel, labelGBC);
 
 		//TYPE
@@ -89,7 +90,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//LABEL NAME
 		labelGBC.gridy = 2;
-		JLabel nameLabel = new JLabel("Name:");
+		JLabel nameLabel = new JLabel(Lang.getInstance().translate("Name:"));
 		this.add(nameLabel, labelGBC);
 
 		//NAME
@@ -100,7 +101,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//LABEL DESCRIPTION
 		labelGBC.gridy = 3;
-		JLabel descriptionLabel = new JLabel("Description:");
+		JLabel descriptionLabel = new JLabel(Lang.getInstance().translate("Description:"));
 		this.add(descriptionLabel, labelGBC);
 
 		//DESCRIPTION
@@ -113,7 +114,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//LABEL OWNER
 		labelGBC.gridy = 4;
-		JLabel ownerLabel = new JLabel("Creator:");
+		JLabel ownerLabel = new JLabel(Lang.getInstance().translate("Creator:"));
 		this.add(ownerLabel, labelGBC);
 
 		//OWNER
@@ -124,7 +125,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//LABEL QUANTITY
 		labelGBC.gridy = 5;
-		JLabel quantityLabel = new JLabel("Quantity:");
+		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity:"));
 		this.add(quantityLabel, labelGBC);
 
 		//QUANTITY
@@ -135,7 +136,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//LABEL DIVISIBLE
 		labelGBC.gridy = 6;
-		JLabel divisibleLabel = new JLabel("Dead:");
+		JLabel divisibleLabel = new JLabel(Lang.getInstance().translate("Dead:"));
 		this.add(divisibleLabel, labelGBC);
 
 		//DIVISIBLE
@@ -147,7 +148,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//CODE LABEL - TEXT
 		labelGBC.gridy = 7;
-		JLabel atCodeLabel = new JLabel("Code:");
+		JLabel atCodeLabel = new JLabel(Lang.getInstance().translate("Code:"));
 		this.add(atCodeLabel, labelGBC);
 		detailGBC.gridy = 7;
 		JTextArea txtAreaCode = new JTextArea(Converter.toHex(at.getAp_Code()));
@@ -160,7 +161,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//DATA LABEL - TEXT
 		labelGBC.gridy = 8;
-		JLabel atDataLabel = new JLabel("Data:");
+		JLabel atDataLabel = new JLabel(Lang.getInstance().translate("Data:"));
 		this.add(atDataLabel, labelGBC);
 		detailGBC.gridy = 8;
 		JTextArea txtAreaData = new JTextArea(Converter.toHex(at.getAp_data().array()));
@@ -175,7 +176,7 @@ public class ATDetailsFrame extends JFrame {
 		
 		//CODE LABEL - TEXT
 		labelGBC.gridy = 9;
-		JLabel minActivationLabel = new JLabel("Min Activation Amount:");
+		JLabel minActivationLabel = new JLabel(Lang.getInstance().translate("Min Activation Amount:"));
 		this.add(minActivationLabel, labelGBC);
 		detailGBC.gridy = 9;
 		JTextField txtMinActiv = new JTextField( BigDecimal.valueOf(at.minActivationAmount() , 8).toPlainString());

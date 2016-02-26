@@ -10,6 +10,7 @@ import utils.ObserverMessage;
 import controller.Controller;
 import database.SortableList;
 import database.wallet.BlockMap;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class WalletBlocksTableModel extends QoraTableModel<Tuple2<String, String>, Block> implements Observer{
@@ -23,7 +24,7 @@ public class WalletBlocksTableModel extends QoraTableModel<Tuple2<String, String
 	
 	private SortableList<Tuple2<String, String>, Block> blocks;
 	
-	private String[] columnNames = {"Height", "Timestamp", "Generator", "Generating Balance", "Transactions", "Fee"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Height", "Timestamp", "Generator", "Generating Balance", "Transactions", "Fee"});
 	
 	public WalletBlocksTableModel()
 	{

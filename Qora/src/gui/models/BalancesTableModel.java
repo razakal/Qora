@@ -14,6 +14,7 @@ import utils.ObserverMessage;
 import utils.Pair;
 import controller.Controller;
 import database.SortableList;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class BalancesTableModel extends AbstractTableModel implements Observer
@@ -22,7 +23,7 @@ public class BalancesTableModel extends AbstractTableModel implements Observer
 	public static final int COLUMN_BALANCE = 1;
 	
 	private long key;
-	private String[] columnNames = {"Address", "Balance"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Address", "Balance"});
 	private SortableList<Tuple2<String, Long>, BigDecimal> balances;
 	
 	public BalancesTableModel(long key)

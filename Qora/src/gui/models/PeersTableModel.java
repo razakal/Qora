@@ -10,6 +10,7 @@ import javax.swing.table.AbstractTableModel;
 import controller.Controller;
 import database.DBSet;
 import database.PeerMap.PeerInfo;
+import lang.Lang;
 import network.Peer;
 import settings.Settings;
 import utils.DateTimeFormat;
@@ -31,7 +32,7 @@ public class PeersTableModel extends AbstractTableModel implements Observer{
 	
 	private List<Peer> peers;
 	
-	private String[] columnNames = {"IP", "Height", "Ping mc", "Reliable", "Initiator", "Finding ago", "Online Time", "Version"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"IP", "Height", "Ping mc", "Reliable", "Initiator", "Finding ago", "Online Time", "Version"});
 	
 	public PeersTableModel()
 	{
@@ -99,7 +100,7 @@ public class PeersTableModel extends AbstractTableModel implements Observer{
 			
 			case COLUMN_PINGMC:
 				if(peer.getPing() > 1000000) {
-					return "Waiting...";
+					return Lang.getInstance().translate("Waiting...");
 				} else {
 					return peer.getPing();
 				}
@@ -109,9 +110,9 @@ public class PeersTableModel extends AbstractTableModel implements Observer{
 			
 			case COLUMN_INITIATOR:
 				if(peer.isWhite()) {
-					return "You";
+					return Lang.getInstance().translate("You");
 				} else {
-					return "Remote";
+					return Lang.getInstance().translate("Remote");
 				}
 			
 			case COLUMN_FINDING_AGO:

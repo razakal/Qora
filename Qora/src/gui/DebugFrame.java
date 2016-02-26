@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import lang.Lang;
+
 @SuppressWarnings("serial")
 public class DebugFrame extends JFrame{
 
@@ -17,7 +19,7 @@ public class DebugFrame extends JFrame{
 	public DebugFrame() 
 	{
 		//CREATE FRAME
-		super("Qora - Debug");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Debug"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();

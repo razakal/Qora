@@ -5,6 +5,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import controller.Controller;
+import lang.Lang;
 import qora.assets.Asset;
 import qora.payment.Payment;
 import utils.NumberAsString;
@@ -16,7 +17,7 @@ public class PaymentsTableModel extends AbstractTableModel
 	public static final int COLUMN_ASSET = 1;
 	public static final int COLUMN_AMOUNT = 2;
 	
-	private String[] columnNames = {"Account", "Asset", "Amount"};
+	private String[] columnNames = Lang.getInstance().translate(new String[]{"Account", "Asset", "Amount"});
 	private List<Payment> payments;
 	
 	public PaymentsTableModel(List<Payment> payments)

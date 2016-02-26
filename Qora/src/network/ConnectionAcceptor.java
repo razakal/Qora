@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.logging.Logger;
 
 import controller.Controller;
+import lang.Lang;
 import ntp.NTP;
 import qora.transaction.Transaction;
 import settings.Settings;
@@ -85,7 +86,7 @@ public class ConnectionAcceptor extends Thread{
 			catch(Exception e)
 			{
 				e.printStackTrace();
-				Logger.getGlobal().warning("Error accepting new connection");			
+				Logger.getGlobal().warning(Lang.getInstance().translate("Error accepting new connection"));			
 			}
 		}
 	}

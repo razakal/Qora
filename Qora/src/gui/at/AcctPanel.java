@@ -4,6 +4,7 @@ package gui.at;
 import gui.Gui;
 import gui.models.ATTableModel;
 import gui.models.AcctTableModel;
+import lang.Lang;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -106,7 +107,7 @@ public class AcctPanel extends JPanel
 
 
 		//CREATE SEARCH LABEL
-		this.add(new JLabel("search:"), searchLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("search:")), searchLabelGBC);
 		
 		//CREATE SEARCH FIELD
 		final JTextField txtSearch = new JTextField();
@@ -142,7 +143,7 @@ public class AcctPanel extends JPanel
 		this.add(txtSearch,searchGBC);
 
 		//ADD REGISTER BUTTON
-		JButton initiateButton = new JButton("Initiate ACCT");
+		JButton initiateButton = new JButton(Lang.getInstance().translate("Initiate ACCT"));
 		initiateButton.setPreferredSize(new Dimension(100, 25));
 		initiateButton.addActionListener(new ActionListener()
 		{
@@ -154,7 +155,7 @@ public class AcctPanel extends JPanel
 		this.add(initiateButton, buttonGBC);
 		
 		buttonGBC.gridx = 1;
-		JButton responseButton = new JButton("Response ACCT");
+		JButton responseButton = new JButton(Lang.getInstance().translate("Response ACCT"));
 		responseButton.setPreferredSize(new Dimension(100, 25));
 		responseButton.addActionListener(new ActionListener()
 		{
@@ -170,7 +171,7 @@ public class AcctPanel extends JPanel
 		//MENU
 		JPopupMenu menu = new JPopupMenu();	
 
-		JMenuItem copyAddress = new JMenuItem("Copy Address");
+		JMenuItem copyAddress = new JMenuItem(Lang.getInstance().translate("Copy Address"));
 		copyAddress.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -187,7 +188,7 @@ public class AcctPanel extends JPanel
 		});
 		menu.add(copyAddress);
 		
-		JMenuItem copyHash = new JMenuItem("Copy Secret Hash");
+		JMenuItem copyHash = new JMenuItem(Lang.getInstance().translate("Copy Secret Hash"));
 		copyHash.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 

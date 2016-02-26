@@ -17,6 +17,7 @@ import gui.models.BlocksTableModel;
 import gui.models.PeersTableModel;
 import gui.models.TransactionsTableModel;
 import gui.transaction.TransactionDetailsFactory;
+import lang.Lang;
 import qora.transaction.Transaction;
 import settings.Settings;
 
@@ -37,7 +38,7 @@ public class DebugTabPane extends JTabbedPane{
 		//ADD TABS
         if(Settings.getInstance().isGuiConsoleEnabled())
         {
-        	this.addTab("Console", new ConsolePanel());
+        	this.addTab(Lang.getInstance().translate("Console"), new ConsolePanel());
         }
         
         this.peersTableModel = new PeersTableModel();
@@ -74,7 +75,7 @@ public class DebugTabPane extends JTabbedPane{
 		});
 		
 		//ADD TRANSACTIONS TABLE
-		this.addTab("Transactions", new JScrollPane(this.transactionsTable)); 
+		this.addTab(Lang.getInstance().translate("Transactions"), new JScrollPane(this.transactionsTable)); 
 	           
 		//BLOCKS TABLE MODEL
 		this.blocksTableModel = new BlocksTableModel();
@@ -87,7 +88,7 @@ public class DebugTabPane extends JTabbedPane{
 		blocksTable.setRowSorter(sorter);
 		
 		//ADD BLOCK TABLE
-		this.addTab("Blocks", new JScrollPane(blocksTable));
+		this.addTab(Lang.getInstance().translate("Blocks"), new JScrollPane(blocksTable));
 		
         this.loggerTextArea = new LoggerTextArea(Logger.getGlobal());
         JScrollPane scrollPane = new JScrollPane(this.loggerTextArea);

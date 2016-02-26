@@ -25,6 +25,7 @@ import org.json.simple.JSONObject;
 
 import controller.Controller;
 import gui.Menu;
+import lang.Lang;
 import network.Network;
 import settings.Settings;
 import utils.JSonWriter;
@@ -168,7 +169,8 @@ public class SettingsFrame extends JFrame{
 		boolean changeWallet = false;
 		boolean changeDataDir = false;
 		boolean limitConnections = false;
-
+		boolean changeLang = false;
+		
 		if(Settings.getInstance().isGeneratorKeyCachingEnabled() != settingsTabPane.settingsParametersPanel.chckbxKeyCaching.isSelected())
 		{
 			settingsJSONbuf.put("generatorkeycaching", settingsTabPane.settingsParametersPanel.chckbxKeyCaching.isSelected());
@@ -279,6 +281,15 @@ public class SettingsFrame extends JFrame{
 			changeDataDir = true;
 		}
 		
+		if(!Settings.getInstance().getLang().equals(
+				settingsTabPane.settingsParametersPanel.listOfAvailableLangs.get(
+						settingsTabPane.settingsParametersPanel.cbxListOfAvailableLangs.getSelectedIndex()).getA()))
+		{
+			settingsJSONbuf.put("lang", settingsTabPane.settingsParametersPanel.listOfAvailableLangs.get(
+					settingsTabPane.settingsParametersPanel.cbxListOfAvailableLangs.getSelectedIndex()).getA());
+			changeLang = true;
+		}
+		
 		List<String> peersToSave = settingsTabPane.settingsKnownPeersPanel.knownPeersTableModel.getPeers();
 		
 		JSONArray peersJson = Settings.getInstance().getPeersJson();
@@ -376,28 +387,37 @@ public class SettingsFrame extends JFrame{
 			Menu.webServerItem.setVisible(Settings.getInstance().isWebEnabled());
 			Menu.blockExplorerItem.setVisible(Settings.getInstance().isWebEnabled());
 		}
+		Lang.getInstance().loadLang();
 		
 		if(changeDataDir || changeWallet)
 		{
 			JOptionPane.showMessageDialog(
-				new JFrame(), "You changed WalletDir or DataDir. You need to restart the wallet for the changes to take effect.",
-                "Attention!",
+				new JFrame(), Lang.getInstance().translate("You changed WalletDir or DataDir. You need to restart the wallet for the changes to take effect."),
+				Lang.getInstance().translate("Attention!"),
                 JOptionPane.WARNING_MESSAGE);
 		}
 		if(changeKeyCaching)
 		{
 			JOptionPane.showMessageDialog(
-				new JFrame(), "You changed Generator Key Caching option.You need to restart the wallet for the changes to take effect.",
-                "Attention!",
+				new JFrame(), Lang.getInstance().translate("You changed Generator Key Caching option.You need to restart the wallet for the changes to take effect."),
+				Lang.getInstance().translate("Attention!"),
                 JOptionPane.WARNING_MESSAGE);
 		}
 		if(limitConnections)
 		{
 			JOptionPane.showMessageDialog(
-				new JFrame(), "You changed max connections or min connections. You need to restart the wallet for the changes to take effect.",
-                "Attention!",
+				new JFrame(), Lang.getInstance().translate("You changed max connections or min connections. You need to restart the wallet for the changes to take effect."),
+				Lang.getInstance().translate("Attention!"),
                 JOptionPane.WARNING_MESSAGE);
 		}
+		if(changeLang)
+		{
+			JOptionPane.showMessageDialog(
+				new JFrame(), Lang.getInstance().translate("You changed language. You need to restart the wallet for the changes to take effect."),
+				Lang.getInstance().translate("Attention!"),
+                JOptionPane.WARNING_MESSAGE);
+		}
+	
 		return true;
 	}
 }

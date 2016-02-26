@@ -32,6 +32,7 @@ import database.PollMap;
 import gui.QoraRowSorter;
 import gui.models.AssetsAllComboBoxModel;
 import gui.models.PollsTableModel;
+import lang.Lang;
 import qora.assets.Asset;
 import qora.voting.Poll;
 
@@ -44,7 +45,7 @@ public class AllPollsFrame extends JFrame{
 	public AllPollsFrame() 
 	{
 		//CREATE FRAME
-		super("Qora - All Polls");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("All Polls"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -179,11 +180,11 @@ public class AllPollsFrame extends JFrame{
 			}
 		});
 
-		this.add(new JLabel("Search:"), searchLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("Search:")), searchLabelGBC);
 		this.add(txtSearch, searchGBC);
 		this.add(new JScrollPane(pollsTable), tableGBC);
 
-		this.add(new JLabel("Asset:"), assetLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("Asset:")), assetLabelGBC);
 		
 		cbxAssets = new JComboBox<Asset>(new AssetsAllComboBoxModel());
 		this.add(cbxAssets, assetsGBC);

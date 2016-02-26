@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import controller.Controller;
+import lang.Lang;
 
 @SuppressWarnings("serial")
 public class AboutFrame extends JFrame{
@@ -29,7 +30,7 @@ public class AboutFrame extends JFrame{
 	public AboutFrame() 
 	{
 		//CREATE FRAME
-		super("Qora - Debug");
+		super(Lang.getInstance().translate("Qora")+ " - " + Lang.getInstance().translate("Debug"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -68,7 +69,7 @@ public class AboutFrame extends JFrame{
         gbl_aboutPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         aboutPanel.setLayout(gbl_aboutPanel);
         
-        JLabel lblversionLabel = new JLabel("Version: " + Controller.getInstance().getVersion());
+        JLabel lblversionLabel = new JLabel(Lang.getInstance().translate("Version: ") + Controller.getInstance().getVersion());
         lblversionLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
         lblversionLabel.setForeground(Color.WHITE);
         lblversionLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -80,7 +81,7 @@ public class AboutFrame extends JFrame{
         gbc_lbllversionLabel.gridy = 1;
         aboutPanel.add(lblversionLabel, gbc_lbllversionLabel);
         
-        JLabel label = new JLabel("Build date: " + Controller.getInstance().getBuildDateString());
+        JLabel label = new JLabel(Lang.getInstance().translate("Build date: ") + Controller.getInstance().getBuildDateString());
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setForeground(Color.WHITE);
         label.setFont(new Font("Tahoma", Font.PLAIN, 13));
