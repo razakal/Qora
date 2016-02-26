@@ -418,6 +418,10 @@ public class Wallet extends Observable implements Observer
 		this.database.delete(account);
 		this.secureDatabase.delete(account);
 		
+		// SAVE TO DISK
+	    this.database.commit();
+		this.secureDatabase.commit();
+	    
 		//NOTIFY
 	    this.setChanged();
 	    this.notifyObservers(new ObserverMessage(ObserverMessage.REMOVE_ACCOUNT_TYPE, account));
@@ -697,6 +701,10 @@ public class Wallet extends Observable implements Observer
 		    this.secureDatabase.getAccountSeedMap().add(account);
 		    this.database.getAccountMap().add(account);
 		    
+		    // SAVE TO DISK
+		    this.secureDatabase.commit();
+		    this.database.commit();
+			
 		    //SYNCHRONIZE
 		    this.synchronize();
 		    
