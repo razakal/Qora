@@ -3,9 +3,8 @@
 "lang_name":"Русский",
 "Starting %qora% / version: %version% / build date: %builddate% / ...": "Запуск %qora% / версия: %version% / дата сборки: %builddate% / ...",
 "Qora":"Qora",
-"Yes":"\\Да112",
-"No":"\/Нет112",
-"No":"\/Нет112",
+"Yes":"Да",
+"No":"Нет",
 "No connections": "Нет соединения",
 "Synchronizing": "Синхронизация",
 "Block height: ": "Высота блока: "
