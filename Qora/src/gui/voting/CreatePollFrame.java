@@ -114,7 +114,7 @@ public class CreatePollFrame extends JFrame
         
         //LABEL NAME
       	labelGBC.gridy = 1;
-      	JLabel nameLabel = new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("Name:")));
+      	JLabel nameLabel = new JLabel(Lang.getInstance().translate("Name:"));
       	this.add(nameLabel, labelGBC);
       		
       	//TXT NAME

@@ -137,7 +137,7 @@ public class VoteFrame extends JFrame
 		assetsGBC.gridx = 1;
 		assetsGBC.gridy = 3;
 		
-		this.add(new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("Asset:"))), assetLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("Asset:")), assetLabelGBC);
 		
 		cbxAssets = new JComboBox<Asset>(new AssetsAllComboBoxModel());
 		cbxAssets.setSelectedItem(asset);

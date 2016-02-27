@@ -135,7 +135,7 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL NAME
 		labelGBC.gridy = 1;
 		labelGBC.gridx = 2;
-		JLabel qoraLabel = new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("QORA for")));
+		JLabel qoraLabel = new JLabel(Lang.getInstance().translate("QORA for"));
 		this.add(qoraLabel, labelGBC);
 
 		//TXT AMOUNT
@@ -247,7 +247,7 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL NAME
 		labelGBC.gridy = 8;
 		labelGBC.gridx = 0;
-		JLabel minActivationAmountLabel = new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("Min activation amount:")));
+		JLabel minActivationAmountLabel = new JLabel(Lang.getInstance().translate("Min activation amount:"));
 		this.add(minActivationAmountLabel, labelGBC);
 
 		//TXT NAME

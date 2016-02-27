@@ -81,7 +81,7 @@ public class MultiPaymentDetailsFrame extends JFrame
 		
 		//LABEL SIGNATURE
 		labelGBC.gridy = 1;
-		JLabel signatureLabel = new JLabel(Lang.getInstance().translate(Lang.getInstance().translate("Signature:")));
+		JLabel signatureLabel = new JLabel(Lang.getInstance().translate("Signature:"));
 		this.add(signatureLabel, labelGBC);
 				
 		//SIGNATURE
