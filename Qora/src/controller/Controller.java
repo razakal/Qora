@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.TrayIcon.MessageType;
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -444,7 +445,6 @@ public class Controller extends Observable {
 	
 	public void reCreateDB(boolean useDataBak) throws IOException, Exception {
 		
-
 		File dataDir = new File(Settings.getInstance().getDataDir());
 		if (dataDir.exists()) {
 			// delete data folder
@@ -455,7 +455,23 @@ public class Controller extends Observable {
 					&& Settings.getInstance().isCheckpointingEnabled()) {
 				FileUtils.copyDirectory(dataBak, dataDir);
 				System.out.println(Lang.getInstance().translate("restoring backup database"));
-				DBSet.reCreateDatabase();
+				try {
+					DBSet.reCreateDatabase();
+				} catch (IOError e) {
+					e.printStackTrace();
+					//backupdb is buggy too starting from scratch
+					if(dataDir.exists())
+					{
+						java.nio.file.Files.walkFileTree(dataDir.toPath(),
+								new SimpleFileVisitorForRecursiveFolderDeletion());
+					}
+					if(dataBak.exists())
+					{
+						java.nio.file.Files.walkFileTree(dataDir.toPath(),
+								new SimpleFileVisitorForRecursiveFolderDeletion());
+					}
+					DBSet.reCreateDatabase();
+				}
 				
 			} else {
 				DBSet.reCreateDatabase();
