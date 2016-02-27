@@ -100,7 +100,7 @@ public class MultiPaymentResource
 				}	
 			} else {
 				Pair<BigDecimal, Integer> recommendedFee = Controller.getInstance().calcRecommendedFeeForMultiPayment(payments);
-				bdFee = recommendedFee.getA().setScale(0, BigDecimal.ROUND_CEILING).setScale(8);
+				bdFee = recommendedFee.getA();
 			}
 			
 			Pair<Transaction, Integer> result = Controller.getInstance().sendMultiPayment(account, payments, bdFee);

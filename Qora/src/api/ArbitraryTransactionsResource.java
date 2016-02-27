@@ -91,7 +91,7 @@ public class ArbitraryTransactionsResource
 			} else {
 				Pair<BigDecimal, Integer> recommendedFee = Controller.getInstance().calcRecommendedFeeForArbitraryTransaction(dataBytes, payments);
 				
-				bdFee = recommendedFee.getA().setScale(0, BigDecimal.ROUND_CEILING).setScale(8);
+				bdFee = recommendedFee.getA();
 			}
 			
 			//CHECK ADDRESS
