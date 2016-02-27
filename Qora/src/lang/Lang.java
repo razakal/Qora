@@ -48,23 +48,27 @@ public class Lang {
 		return translateMessages; 
 	}
 	
-	public String translate(String Message) 
+	public String translate(String message) 
 	{
-		if (langObj == null ) {
-			return Message; 
+		//COMMENT AFTER # FOR TRANSLATE THAT WOULD BE THE SAME TEXT IN DIFFERENT WAYS TO TRANSLATE
+		String messageWithoutComment = message.replaceFirst("(?<!\\\\)#.*$", ""); 
+		messageWithoutComment = messageWithoutComment.replace("\\#", "#");
+		
+		if (langObj == null) { 
+			return messageWithoutComment;
 		}
-		
-		if (!langObj.containsKey(Message)) {
-			return Message;
+
+		if(!langObj.containsKey(message)) {
+
+			//IF NO SUITABLE TRANSLATION WITH THE COMMENT THEN RETURN WITHOUT COMMENT
+			if(!langObj.containsKey(messageWithoutComment)) {
+				return messageWithoutComment;
+			} else {
+				return langObj.get(messageWithoutComment).toString();
+			}
 		}
-		
-		String res = langObj.get(Message).toString();
-		
-		if (res.isEmpty()) {
-			return Message;
-		}
-		
-		return res;		
+			
+		return langObj.get(message).toString();		
 	}
 	
 	private JSONObject OpenLangFile(String filename)
