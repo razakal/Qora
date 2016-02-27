@@ -18,5 +18,5 @@
 	"checkpoint":true,
 	"soundreceivepayment":true,
 	"soundnewtransaction":true,
-	"soundreceivemessage":true
+	"soundreceivemessage":true 
 }
