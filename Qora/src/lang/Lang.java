@@ -3,7 +3,9 @@ package lang;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -18,7 +20,8 @@ import utils.Pair;
 public class Lang {
 
 	private static Lang instance;
-
+	private Map<String, String> noTranslateMap;
+	
 	private JSONObject langObj;	
 	
 	public static Lang getInstance()
@@ -37,6 +40,7 @@ public class Lang {
 	
 	public void loadLang() {
 		langObj = OpenLangFile( Settings.getInstance().getLang());
+		noTranslateMap = new LinkedHashMap<String, String>();
 	}
 	
 	public String[] translate(String[] Messages) 
@@ -55,11 +59,12 @@ public class Lang {
 		messageWithoutComment = messageWithoutComment.replace("\\#", "#");
 		
 		if (langObj == null) { 
+			noTranslate(message);
 			return messageWithoutComment;
 		}
 
 		if(!langObj.containsKey(message)) {
-
+			noTranslate(message);
 			//IF NO SUITABLE TRANSLATION WITH THE COMMENT THEN RETURN WITHOUT COMMENT
 			if(!langObj.containsKey(messageWithoutComment)) {
 				return messageWithoutComment;
@@ -69,6 +74,17 @@ public class Lang {
 		}
 			
 		return langObj.get(message).toString();		
+	}
+	
+	private void noTranslate(String message) 
+	{
+		if(!noTranslateMap.containsKey(message)) {
+			noTranslateMap.put(message, message);
+		}
+	}
+	
+	public Map<String, String> getNoTranslate() {
+		return noTranslateMap;
 	}
 	
 	private JSONObject OpenLangFile(String filename)

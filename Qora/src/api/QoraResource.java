@@ -8,8 +8,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import controller.Controller;
+import lang.Lang;
 import settings.Settings;
 import utils.APIUtils;
 
@@ -89,4 +91,12 @@ public class QoraResource
 
 		return jsonObject.toJSONString();
 	}
+	
+	@GET
+	@Path("/notranslate")
+	public String getNoTranslate()
+	{
+		return JSONValue.toJSONString(Lang.getInstance().getNoTranslate());
+	}
+	
 }
