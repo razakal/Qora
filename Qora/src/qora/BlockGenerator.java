@@ -192,7 +192,7 @@ public class BlockGenerator extends Thread implements Observer
 				}
 				
 				//GENERATE NEW BLOCKS
-				if(Controller.getInstance().doesWalletExists() /*&& Controller.getInstance().isWalletUnlocked()*/)
+				if(Controller.getInstance().doesWalletExists() && Settings.getInstance().isForgingEnabled() /*&& Controller.getInstance().isWalletUnlocked()*/)
 				{
 					//PREVENT CONCURRENT MODIFY EXCEPTION
 					List<PrivateKeyAccount> knownAccounts = this.getKnownAccounts();
@@ -530,20 +530,26 @@ public class BlockGenerator extends Thread implements Observer
 	
 	public void syncForgingStatus()
 	{
-		if(getKnownAccounts().size() > 0)
-		{
-			//CONNECTIONS OKE? -> FORGING
-			if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
-			{
-				setForgingStatus(ForgingStatus.FORGING);
-			}else
-			{
-				setForgingStatus(ForgingStatus.FORGING_ENABLED);
-			}
-		}else
+		
+		if(!Settings.getInstance().isForgingEnabled())
 		{
 			setForgingStatus(ForgingStatus.FORGING_DISABLED);
+			return;
 		}
+			if(getKnownAccounts().size() > 0)
+			{
+				//CONNECTIONS OKE? -> FORGING
+				if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
+				{
+					setForgingStatus(ForgingStatus.FORGING);
+				}else
+				{
+					setForgingStatus(ForgingStatus.FORGING_ENABLED);
+				}
+			}else
+			{
+				setForgingStatus(ForgingStatus.FORGING_DISABLED);
+			}
 	}
 	
 }

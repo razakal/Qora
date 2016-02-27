@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -82,6 +83,7 @@ public class Settings {
 	private static final String DEFAULT_TIME_FORMAT = "";
 	
 	private static final boolean DEFAULT_NS_UPDATE = false;
+	private static final boolean DEFAULT_FORGING_ENABLED = true;
 	
 	private static String DEFAULT_LANGUAGE = "eng.lng";
 	
@@ -576,6 +578,20 @@ public class Settings {
 		}
 		
 		return DEFAULT_NS_UPDATE;
+	}
+	
+	public boolean isForgingEnabled() 
+	{
+		try {
+			if(this.settingsJSON.containsKey("forging"))
+			{
+				return ((Boolean) this.settingsJSON.get("forging")).booleanValue();
+			}
+		} catch (Exception e) {
+			System.err.println("Bad Settings.json content for parameter forging " + ExceptionUtils.getStackTrace(e));
+		}
+		
+		return DEFAULT_FORGING_ENABLED;
 	}
 	
 	public String getWalletDir()
