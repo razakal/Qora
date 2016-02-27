@@ -89,6 +89,15 @@ public class BlockExplorer
 
 		try {
 
+			if(info.getQueryParameters().containsKey("balance"))
+			{
+				output.put("lastBlock", jsonQueryLastBlock());
+				for (String address : info.getQueryParameters().get("balance")) {
+					output.put(address, jsonQueryBalance(address));
+				}
+				return output;
+			}
+				
 			if(info.getQueryParameters().containsKey("q"))
 			{
 				output.put("lastBlock", jsonQueryLastBlock());
@@ -422,6 +431,7 @@ public class BlockExplorer
 		help.put("Names List", "blockexplorer.json?names");
 		help.put("BlogPosts of Address", "blockexplorer.json?blogposts={addr}");
 		help.put("Search", "blockexplorer.json?q={text}");
+		help.put("Balance", "blockexplorer.json?balance={address}[&balance=address2...]");
 		
 
 		return help;
@@ -1795,6 +1805,31 @@ public class BlockExplorer
 		return output;
 	}
 
+	public Map jsonQueryBalance(String address)
+	{
+		Map output = new LinkedHashMap();
+
+		if(!Crypto.getInstance().isValidAddress(address))
+		{
+			output.put("error", "Address is not valid!");
+			return output; 
+		}
+
+		SortableList<Tuple2<String, Long>, BigDecimal> assetsBalances = DBSet.getInstance().getBalanceMap().getBalancesSortableList(new Account(address));
+
+		for (Pair<Tuple2<String, Long>, BigDecimal> assetsBalance : assetsBalances) 	
+		{
+			Map assetBalance = new LinkedHashMap();
+
+			assetBalance.put("name", Controller.getInstance().getAsset(assetsBalance.getA().b).getName());
+			assetBalance.put("amount", assetsBalance.getB().toPlainString());
+			
+			output.put(assetsBalance.getA().b, assetBalance);
+		}
+		
+		return output; 
+	}
+	
 	public Map jsonQueryAddress(String query, int start, int txOnPage, String filter, boolean allOnOnePage, boolean withoutBlocks, String showOnly, String showWithout)
 	{
 		List<Object> all = new ArrayList<Object>();
