@@ -469,7 +469,7 @@ public class Controller extends Observable {
 					{
 						java.nio.file.Files.walkFileTree(dataBak.toPath(),
 								new SimpleFileVisitorForRecursiveFolderDeletion());
-					}
+					} 
 					DBSet.reCreateDatabase();
 				}
 				
