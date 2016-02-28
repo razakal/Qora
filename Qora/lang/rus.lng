@@ -483,6 +483,7 @@
 "user denied api call":"",
 "Value must be between 1 and 4000 characters!":"Значение должно быть между 1 и 4000 символов!",
 "Value:":"Значение:",
+"Value":"Значение",
 "Version: ":"Версия:",
 "Vote On Poll Transaction":"",
 "Vote":"Голосование",
