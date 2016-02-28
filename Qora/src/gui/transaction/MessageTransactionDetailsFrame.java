@@ -181,7 +181,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		chcGBC.gridy = componentLevel;
 		chcGBC.gridx = 3;
 		chcGBC.gridwidth = 1;
-        final JCheckBox encrypted = new JCheckBox("Encrypted");
+        final JCheckBox encrypted = new JCheckBox(Lang.getInstance().translate("Encrypted"));
         
         encrypted.setSelected(messageTransaction.isEncrypted());
         encrypted.setEnabled(messageTransaction.isEncrypted());
@@ -201,7 +201,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 	        			if(!Controller.getInstance().unlockWallet(password))
 	        			{
 	        				//WRONG PASSWORD
-	        				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+	        				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 	        				
 	        				encrypted.setSelected(!encrypted.isSelected());
 	        				

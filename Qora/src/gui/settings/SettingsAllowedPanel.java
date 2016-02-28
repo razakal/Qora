@@ -172,7 +172,7 @@ public class SettingsAllowedPanel extends JPanel
  		menuRpc.add(deleteaddressmenu1);
         
                
-        btnAddAddressWeb = new JButton("Add");
+        btnAddAddressWeb = new JButton(Lang.getInstance().translate("Add"));
         GridBagConstraints gbc_btnAddAddressWeb = new GridBagConstraints();
         gbc_btnAddAddressWeb.insets = new Insets(0, 0, 5, 0);
         gbc_btnAddAddressWeb.fill = GridBagConstraints.BOTH;

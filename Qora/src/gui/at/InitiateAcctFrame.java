@@ -538,7 +538,7 @@ public class InitiateAcctFrame extends JFrame {
 			//CHECK VALIDATE MESSAGE
 			if (result.getB() > 1000)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), AT_Error.getATError( result.getB() - Transaction.AT_ERROR) , "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), AT_Error.getATError( result.getB() - Transaction.AT_ERROR) , Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 				return;
 			}

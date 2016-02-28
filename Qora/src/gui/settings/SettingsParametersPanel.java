@@ -369,7 +369,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxSoundNewTransaction.gridy = 14;
         add(chckbxSoundNewTransaction, gbc_chckbxSoundNewTransaction);
   
-        JLabel lblLang = new JLabel("Language:");
+        JLabel lblLang = new JLabel(Lang.getInstance().translate("Language")+":");
         GridBagConstraints gbc_lblLang = new GridBagConstraints();
         gbc_lblLang.anchor = GridBagConstraints.WEST;
         gbc_lblLang.insets = new Insets(0, 0, 5, 5);

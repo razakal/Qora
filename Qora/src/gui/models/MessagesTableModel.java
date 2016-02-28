@@ -201,7 +201,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		
 		menu.add(copyRecipient);
 		
-		menuDecrypt = new JMenuItem("Decrypt");
+		menuDecrypt = new JMenuItem(Lang.getInstance().translate("Decrypt"));
 		menuDecrypt.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
