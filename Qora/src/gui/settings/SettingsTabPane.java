@@ -22,7 +22,7 @@ public class SettingsTabPane extends JTabbedPane{
 			
         settingsParametersPanel = new SettingsParametersPanel();
         JScrollPane scrollPane1 = new JScrollPane(settingsParametersPanel);
-        this.addTab(Lang.getInstance().translate("Basic"),scrollPane1);
+        this.addTab(Lang.getInstance().translate("Basic"), scrollPane1);
 
 		settingsKnownPeersPanel = new SettingsKnownPeersPanel();
         JScrollPane scrollPane2 = new JScrollPane(settingsKnownPeersPanel);

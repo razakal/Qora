@@ -42,7 +42,7 @@ public class DebugTabPane extends JTabbedPane{
         }
         
         this.peersTableModel = new PeersTableModel();
-		this.addTab("Peers", new JScrollPane(new JTable(this.peersTableModel)));
+		this.addTab(Lang.getInstance().translate("Peers"), new JScrollPane(new JTable(this.peersTableModel)));
         
 		//TRANSACTIONS TABLE MODEL
 		this.transactionsTableModel = new TransactionsTableModel();

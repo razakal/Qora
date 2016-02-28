@@ -399,7 +399,7 @@ public class SettingsFrame extends JFrame{
 		if(changeKeyCaching)
 		{
 			JOptionPane.showMessageDialog(
-				new JFrame(), Lang.getInstance().translate("You changed Generator Key Caching option.You need to restart the wallet for the changes to take effect."),
+				new JFrame(), Lang.getInstance().translate("You changed Generator Key Caching option. You need to restart the wallet for the changes to take effect."),
 				Lang.getInstance().translate("Attention!"),
                 JOptionPane.WARNING_MESSAGE);
 		}
