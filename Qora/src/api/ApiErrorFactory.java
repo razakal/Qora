@@ -216,7 +216,7 @@ public class ApiErrorFactory
 		this.errorMessages.put(ERROR_BODY_EMPTY, Lang.getInstance().translate("invalid body it must not be empty"));
 		this.errorMessages.put(ERROR_BLOG_DISABLED, Lang.getInstance().translate("this blog is disabled"));
 		this.errorMessages.put(ERROR_NAME_NOT_OWNER, Lang.getInstance().translate("the creator address does not own the author name"));
-		this.errorMessages.put(ERROR_TX_AMOUNT, Lang.getInstance().translate("the data size is too large - currently only "+BATCH_TX_AMOUNT+" arbitrary transactions are allowed at once!"));
+		this.errorMessages.put(ERROR_TX_AMOUNT, Lang.getInstance().translate("the data size is too large - currently only %BATCH_TX_AMOUNT% arbitrary transactions are allowed at once!").replace("%BATCH_TX_AMOUNT%", String.valueOf(BATCH_TX_AMOUNT)));
 		this.errorMessages.put(ERROR_BLOG_ENTRY_NO_EXISTS, Lang.getInstance().translate("transaction with this signature contains no entries!"));
 		this.errorMessages.put(ERROR_BLOG_EMPTY, Lang.getInstance().translate("this blog is empty"));
 		this.errorMessages.put(ERROR_POSTID_EMPTY, Lang.getInstance().translate("the attribute postid is empty! this is the signature of the post you want to comment"));

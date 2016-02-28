@@ -315,7 +315,7 @@ public class UpdateNameFrame extends JFrame
         //BUTTON Register
         buttonGBC.gridy = 10;
         updateButton = new JButton(Lang.getInstance().translate("Update"));
-        updateButton.setPreferredSize(new Dimension(80, 25));
+        updateButton.setPreferredSize(new Dimension(100, 25));
         updateButton.addActionListener(new ActionListener()
 		{
 		    public void actionPerformed(ActionEvent e)

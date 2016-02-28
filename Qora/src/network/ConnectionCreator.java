@@ -110,7 +110,7 @@ public class ConnectionCreator extends Thread {
 															int maxReceivePeersForPrint = (maxReceivePeers > peersMessage.getPeers().size()) ? peersMessage.getPeers().size() : maxReceivePeers;  
 															
 															Logger.getGlobal().info(
-																Lang.getInstance().translate("Connecting to peer ") + newPeer.getAddress().getHostAddress() + " proposed by " + peer.getAddress().getHostAddress() 
+																Lang.getInstance().translate("Connecting to peer ") + newPeer.getAddress().getHostAddress() + Lang.getInstance().translate(" proposed by ") + peer.getAddress().getHostAddress() 
 																+ " :: " + foreignPeersCounter + " / " + maxReceivePeersForPrint + " / " + peersMessage.getPeers().size() 
 																+ " :: " + Lang.getInstance().translate("Connections: ") + callback.getActiveConnections().size());
 														

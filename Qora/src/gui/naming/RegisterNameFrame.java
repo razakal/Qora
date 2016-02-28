@@ -327,7 +327,7 @@ public class RegisterNameFrame extends JFrame
         //BUTTON Register
         buttonGBC.gridy = 10;
         registerButton = new JButton(Lang.getInstance().translate("Register"));
-        registerButton.setPreferredSize(new Dimension(80, 25));
+        registerButton.setPreferredSize(new Dimension(100, 25));
         registerButton.addActionListener(new ActionListener()
 		{
 		    public void actionPerformed(ActionEvent e)

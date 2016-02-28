@@ -92,25 +92,43 @@ public class Lang {
 	
 	private JSONObject OpenLangFile(String filename)
 	{
-		File file = new File( "lang/" + filename );
-		if (!file.isFile()) {
-			return (JSONObject) JSONValue.parse("");
+		JSONObject langJsonObject;
+		
+		try 
+		{
+		
+			File file = new File( "lang/" + filename );
+			if ( !file.isFile() ) {
+				return (JSONObject) JSONValue.parse("");
+			}
+			
+			List<String> lines = null;
+			try {
+				lines = Files.readLines(file, Charsets.UTF_8);
+			} catch( IOException e ) {
+				lines = new ArrayList<String>();
+				e.printStackTrace();
+			}
+			
+			String jsonString = "";
+			for( String line : lines ){
+				jsonString += line;
+			}
+			
+			langJsonObject = (JSONObject) JSONValue.parse(jsonString);
+		} catch ( Exception e ) {
+			langJsonObject = new JSONObject();
 		}
 		
-		List<String> lines = null;
-		try {
-			lines = Files.readLines(file, Charsets.UTF_8);
-		} catch(IOException e) {
-			lines = new ArrayList<String>();
-			e.printStackTrace();
+		if( langJsonObject == null ) {
+			langJsonObject = new JSONObject();
 		}
-		
-		String jsonString = "";
-		for(String line : lines){
-			jsonString += line;
+
+		if( langJsonObject.size() == 0 ) {
+			System.out.println("ERROR reading language file " + filename + ".");	
 		}
-		
-		return (JSONObject) JSONValue.parse(jsonString);
+				
+		return langJsonObject;
 	};
 
 	public List<Pair<String, String>> getListOfAvailable()

@@ -24,6 +24,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import controller.Controller;
+import lang.Lang;
 import network.Peer;
 import ntp.NTP;
 
@@ -317,15 +318,15 @@ public class Settings {
 					this.cacheInternetPeers = getKnownPeersFromJSONArray(peersArray);
 				}
 			}
-			
-			Logger.getGlobal().info("Peers loaded from Internet : " + this.cacheInternetPeers.size());
+		
+			Logger.getGlobal().info(Lang.getInstance().translate("Peers loaded from Internet : ") + this.cacheInternetPeers.size());
 
 			return this.cacheInternetPeers;
 			
 		} catch (Exception e) {
 			//RETURN EMPTY LIST
 
-			Logger.getGlobal().info("Peers loaded from Internet with errors : " + this.cacheInternetPeers.size());
+			Logger.getGlobal().info(Lang.getInstance().translate("Peers loaded from Internet with errors : ") + this.cacheInternetPeers.size());
 						
 			return this.cacheInternetPeers;
 		}

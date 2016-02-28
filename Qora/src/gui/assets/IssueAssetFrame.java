@@ -177,7 +177,7 @@ public class IssueAssetFrame extends JFrame
         //BUTTON Register
         buttonGBC.gridy = 6;
         this.issueButton = new JButton(Lang.getInstance().translate("Issue"));
-        this.issueButton.setPreferredSize(new Dimension(80, 25));
+        this.issueButton.setPreferredSize(new Dimension(100, 25));
         this.issueButton.addActionListener(new ActionListener()
 		{
 		    public void actionPerformed(ActionEvent e)

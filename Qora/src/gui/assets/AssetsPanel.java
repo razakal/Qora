@@ -133,7 +133,7 @@ public class AssetsPanel extends JPanel
 		
 		//ADD REGISTER BUTTON
 		JButton issueButton = new JButton(Lang.getInstance().translate("Issue Asset"));
-		issueButton.setPreferredSize(new Dimension(100, 25));
+		issueButton.setPreferredSize(new Dimension(120, 25));
 		issueButton.addActionListener(new ActionListener()
 		{
 		    public void actionPerformed(ActionEvent e)
@@ -146,7 +146,7 @@ public class AssetsPanel extends JPanel
 		//ADD ALL BUTTON
 		buttonGBC.gridx = 1;
 		JButton allButton = new JButton(Lang.getInstance().translate("All Assets"));
-		allButton.setPreferredSize(new Dimension(100, 25));
+		allButton.setPreferredSize(new Dimension(120, 25));
 		allButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -159,7 +159,7 @@ public class AssetsPanel extends JPanel
 		//ADD MY ORDERS BUTTON
 		buttonGBC.gridx = 2;
 		JButton myOrdersButton = new JButton(Lang.getInstance().translate("My Orders"));
-		myOrdersButton.setPreferredSize(new Dimension(100, 25));
+		myOrdersButton.setPreferredSize(new Dimension(120, 25));
 		myOrdersButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
