@@ -39,7 +39,7 @@ public class SettingsFrame extends JFrame{
 	{
 		
 		//CREATE FRAME
-		super("Qora - Settings");
+		super(Lang.getInstance().translate("Qora")+" - "+Lang.getInstance().translate("Settings"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -74,7 +74,7 @@ public class SettingsFrame extends JFrame{
         gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         panel.setLayout(gbl_panel);
         
-        JButton btnNewButton = new JButton("Apply");
+        JButton btnNewButton = new JButton(Lang.getInstance().translate("Apply"));
         GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
         gbc_btnNewButton.gridwidth = 2;
         gbc_btnNewButton.fill = GridBagConstraints.BOTH;
@@ -89,8 +89,8 @@ public class SettingsFrame extends JFrame{
 			{
 				
 				int n = JOptionPane.showConfirmDialog(
-						new JFrame(), "To apply the new settings?",
-		                "Confirmation",
+						new JFrame(), Lang.getInstance().translate("To apply the new settings?"),
+						Lang.getInstance().translate("Confirmation"),
 		                JOptionPane.OK_CANCEL_OPTION);
 				if (n == JOptionPane.OK_OPTION) {
 					if(saveSettings())
@@ -109,7 +109,7 @@ public class SettingsFrame extends JFrame{
         
         panel.add(btnNewButton, gbc_btnNewButton);
         
-        JButton btnCancel = new JButton("Cancel");
+        JButton btnCancel = new JButton(Lang.getInstance().translate("Cancel"));
         GridBagConstraints gbc_btnCancel = new GridBagConstraints();
         gbc_btnCancel.gridwidth = 2;
         gbc_btnCancel.fill = GridBagConstraints.BOTH;
@@ -206,8 +206,8 @@ public class SettingsFrame extends JFrame{
 		if(!settingsTabPane.settingsParametersPanel.chckbxGuiEnabled.isSelected() && !settingsTabPane.settingsParametersPanel.chckbxRpcEnabled.isSelected())
 		{
 			JOptionPane.showMessageDialog(
-					new JFrame(), "Both gui and rpc cannot be disabled!",
-	                "Error!",
+					new JFrame(), Lang.getInstance().translate("Both gui and rpc cannot be disabled!"),
+					Lang.getInstance().translate("Error!"),
 	                JOptionPane.ERROR_MESSAGE);
 			return false;	
 		}
@@ -229,8 +229,8 @@ public class SettingsFrame extends JFrame{
 			else
 			{
 				JOptionPane.showMessageDialog(
-						new JFrame(), "Rpc port " + newRpcPort + " already in use!",
-		                "Error!",
+						new JFrame(), "Rpc port " + newRpcPort + " "+ Lang.getInstance().translate("already in use!"),
+						Lang.getInstance().translate("Error!"),
 		                JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
@@ -248,8 +248,8 @@ public class SettingsFrame extends JFrame{
 			else
 			{
 				JOptionPane.showMessageDialog(
-						new JFrame(), "Web port " + newWebPort + " already in use!",
-		                "Error!",
+						new JFrame(), "Web port " + newWebPort + " " +Lang.getInstance().translate("already in use!"),
+						Lang.getInstance().translate("Error!"),
 		                JOptionPane.ERROR_MESSAGE);
 				return false;
 			}

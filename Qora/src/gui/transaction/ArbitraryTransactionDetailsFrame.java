@@ -34,7 +34,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 {
 	public ArbitraryTransactionDetailsFrame(ArbitraryTransaction arbitraryTransaction)
 	{
-		super("Qora - Transaction Details");
+		super(Lang.getInstance().translate("Qora")+" - "+Lang.getInstance().translate("Transaction Details"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -79,7 +79,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 						
 		//TYPE
 		detailGBC.gridy = componentLevel;
-		JLabel type = new JLabel("Arbitrary Transaction");
+		JLabel type = new JLabel(Lang.getInstance().translate("Arbitrary Transaction"));
 		this.add(type, detailGBC);
 		
 		componentLevel ++;

@@ -50,7 +50,7 @@ public class IssueAssetFrame extends JFrame
 
 	public IssueAssetFrame()
 	{
-		super("Qora - Issue Asset");
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Issue Asset"));
 		
 		//CLOSE
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -176,7 +176,7 @@ public class IssueAssetFrame extends JFrame
 		           
         //BUTTON Register
         buttonGBC.gridy = 6;
-        this.issueButton = new JButton("Issue");
+        this.issueButton = new JButton(Lang.getInstance().translate("Issue"));
         this.issueButton.setPreferredSize(new Dimension(80, 25));
         this.issueButton.addActionListener(new ActionListener()
 		{
@@ -203,7 +203,7 @@ public class IssueAssetFrame extends JFrame
 		if(Controller.getInstance().getStatus() != Controller.STATUS_OK)
 		{
 			//NETWORK NOT OK
-			JOptionPane.showMessageDialog(null, "You are unable to send a transaction while synchronizing or while having no connections!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, Lang.getInstance().translate("You are unable to send a transaction while synchronizing or while having no connections!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 			
 			//ENABLE
 			this.issueButton.setEnabled(true);
@@ -219,7 +219,7 @@ public class IssueAssetFrame extends JFrame
 			if(!Controller.getInstance().unlockWallet(password))
 			{
 				//WRONG PASSWORD
-				JOptionPane.showMessageDialog(null, "Invalid password", "Unlock Wallet", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, Lang.getInstance().translate("Invalid password"), Lang.getInstance().translate("Unlock Wallet"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.issueButton.setEnabled(true);
@@ -244,7 +244,7 @@ public class IssueAssetFrame extends JFrame
 			//CHECK MIMIMUM FEE
 			if(fee.compareTo(Transaction.MINIMUM_FEE) == -1)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), "Fee must be at least 1!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Fee must be at least 1!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				
 				//ENABLE
 				this.issueButton.setEnabled(true);

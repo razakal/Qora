@@ -147,7 +147,7 @@ public class ResponseAcctFrame extends JFrame {
 		//LABEL NAME
 		labelGBC.gridy = 1;
 		labelGBC.gridx = 4;
-		JLabel otherLabel = new JLabel("BURST");
+		JLabel otherLabel = new JLabel(Lang.getInstance().translate("BURST"));
 		this.add(otherLabel, labelGBC);
 
 		//LABEL NAME

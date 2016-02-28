@@ -92,7 +92,7 @@ public class ConfirmSeedFrame extends JFrame {
 		
 		// MENU
 		JPopupMenu menu = new JPopupMenu();
-		JMenuItem pasteSeed = new JMenuItem("Paste");
+		JMenuItem pasteSeed = new JMenuItem(Lang.getInstance().translate("Paste"));
 		pasteSeed.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 

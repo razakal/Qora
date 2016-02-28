@@ -72,8 +72,11 @@ public class Lang {
 				return langObj.get(messageWithoutComment).toString();
 			}
 		}
-			
-		return langObj.get(message).toString();		
+		// if "message" = isNull  - return message
+		// if "massage" = "any string"  - return "any string" 
+		String res = langObj.get(message).toString();
+		if (res.isEmpty()) return (message);
+		return res;		
 	}
 	
 	private void noTranslate(String message) 

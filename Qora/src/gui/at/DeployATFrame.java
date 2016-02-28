@@ -64,7 +64,7 @@ public class DeployATFrame extends JFrame {
 
 	public DeployATFrame()
 	{
-		super("Qora - Deploy AT Program");
+		super(Lang.getInstance().translate("Qora")+" - "+Lang.getInstance().translate("Deploy AT Program"));
 
 		//CLOSE
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -150,7 +150,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL TYPE
 		labelGBC.gridy = 3;
-		JLabel typeBytesLabel = new JLabel("Type/Domain:");
+		JLabel typeBytesLabel = new JLabel(Lang.getInstance().translate("Type/Domain:"));
 		this.add(typeBytesLabel, labelGBC);
 
 		//TXTAREA TYPE
@@ -161,7 +161,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL TAGS
 		labelGBC.gridy = 4;
-		JLabel tagsBytesLabel = new JLabel("Tags:");
+		JLabel tagsBytesLabel = new JLabel(Lang.getInstance().translate("Tags:"));
 		this.add(tagsBytesLabel, labelGBC);
 
 		//TXTAREA TAGS
@@ -173,7 +173,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL CODE
 		labelGBC.gridy = 5;
-		JLabel codeBytesLabel = new JLabel("Code:");
+		JLabel codeBytesLabel = new JLabel(Lang.getInstance().translate("Code:"));
 		this.add(codeBytesLabel, labelGBC);
 
 		//TXTAREA CODE
@@ -184,7 +184,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL DATA
 		labelGBC.gridy = 6;
-		JLabel dataBytesLabel = new JLabel("Data:");
+		JLabel dataBytesLabel = new JLabel(Lang.getInstance().translate("Data:"));
 		this.add(dataBytesLabel, labelGBC);
 
 		//TXTAREA DESCRIPTION
@@ -195,7 +195,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL NAME
 		labelGBC.gridy = 7;
-		JLabel dPagesLabel = new JLabel("Data Pages:");
+		JLabel dPagesLabel = new JLabel(Lang.getInstance().translate("Data Pages:"));
 		this.add(dPagesLabel, labelGBC);
 
 		//TXT NAME
@@ -205,7 +205,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL NAME
 		labelGBC.gridy = 8;
-		JLabel csPagesLabel = new JLabel("CS Pages:");
+		JLabel csPagesLabel = new JLabel(Lang.getInstance().translate("CS Pages:"));
 		this.add(csPagesLabel, labelGBC);
 
 		//TXT NAME
@@ -215,7 +215,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL NAME
 		labelGBC.gridy = 9;
-		JLabel usPagesLabel = new JLabel("US Pages:");
+		JLabel usPagesLabel = new JLabel(Lang.getInstance().translate("US Pages:"));
 		this.add(usPagesLabel, labelGBC);
 
 		//TXT NAME
@@ -225,7 +225,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL NAME
 		labelGBC.gridy = 10;
-		JLabel minActivationAmountLabel = new JLabel("Minimum Activation Amount:");
+		JLabel minActivationAmountLabel = new JLabel(Lang.getInstance().translate("Minimum Activation Amount:"));
 		this.add(minActivationAmountLabel, labelGBC);
 
 		//TXT NAME
@@ -235,7 +235,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL QUANTITY
 		labelGBC.gridy = 11;
-		JLabel quantityLabel = new JLabel("Quantity:");
+		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity:"));
 		this.add(quantityLabel, labelGBC);
 
 		//TXT QUANTITY
