@@ -45,7 +45,8 @@ public class BalancesComboBoxModel extends DefaultComboBoxModel<Pair<Tuple2<Stri
 	{
 		ObserverMessage message = (ObserverMessage) arg;
 		
-		if(message.getType() == ObserverMessage.ADD_BALANCE_TYPE || message.getType() == ObserverMessage.REMOVE_BALANCE_TYPE)
+		if(( message.getType() == ObserverMessage.NETWORK_STATUS && (int) message.getValue() == Controller.STATUS_OK )
+				||	(Controller.getInstance().getStatus() == Controller.STATUS_OK && (message.getType() == ObserverMessage.ADD_BALANCE_TYPE || message.getType() == ObserverMessage.REMOVE_BALANCE_TYPE)))
 		{
 			this.update();
 		}

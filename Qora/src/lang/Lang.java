@@ -39,7 +39,7 @@ public class Lang {
 	}
 	
 	public void loadLang() {
-		langObj = OpenLangFile( Settings.getInstance().getLang());
+		langObj = openLangFile( Settings.getInstance().getLang());
 		noTranslateMap = new LinkedHashMap<String, String>();
 	}
 	
@@ -90,7 +90,7 @@ public class Lang {
 		return noTranslateMap;
 	}
 	
-	private JSONObject OpenLangFile(String filename)
+	public static JSONObject openLangFile(String filename)
 	{
 		JSONObject langJsonObject;
 		
@@ -146,7 +146,7 @@ public class Lang {
         		lngList.add(
         				new Pair<>(
         						fileList[i].getName(), 
-        						(String)this.OpenLangFile(fileList[i].getName()).get("lang_name")
+        						(String)openLangFile(fileList[i].getName()).get("lang_name")
         						)
         				);
         	}

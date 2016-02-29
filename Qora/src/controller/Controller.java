@@ -662,10 +662,16 @@ public class Controller extends Observable {
 		return this.network.getActiveConnections();
 	}
 
-	public void walletStatusUpdate(int height) {
+	public void walletSyncStatusUpdate(int height) {
 		this.setChanged();
 		this.notifyObservers(new ObserverMessage(
 				ObserverMessage.WALLET_SYNC_STATUS, height));
+	}
+	
+	public void blockchainSyncStatusUpdate(int height) {
+		this.setChanged();
+		this.notifyObservers(new ObserverMessage(
+				ObserverMessage.BLOCKCHAIN_SYNC_STATUS, height));
 	}
 		
 	public long getToOfflineTime() {

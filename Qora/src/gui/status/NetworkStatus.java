@@ -13,7 +13,6 @@ import javax.swing.ToolTipManager;
 
 import controller.Controller;
 import lang.Lang;
-import qora.block.Block;
 import utils.GUIUtils;
 import utils.ObserverMessage;
 
@@ -24,7 +23,7 @@ public class NetworkStatus extends JLabel implements Observer
 	private ImageIcon synchronizingIcon;
 	private ImageIcon walletSynchronizingIcon;
 	private ImageIcon okeIcon;
-	private int currentHeight;
+	private int currentHeight = 1;
 	
 	public NetworkStatus()
 	{
@@ -42,7 +41,7 @@ public class NetworkStatus extends JLabel implements Observer
 			public void mouseEntered(MouseEvent mEvt) {
 				if(Controller.getInstance().getStatus() == Controller.STATUS_OK || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
 					setToolTipText(Lang.getInstance().translate("Block height: ") + Controller.getInstance().getHeight());
-				} else if(currentHeight < Controller.getInstance().getHeight()) {
+				} else if( Controller.getInstance().getWalletSyncHeight() > 0 ) {
 					setToolTipText(Lang.getInstance().translate("Block height: ") + currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight());
 				} else {
 					setToolTipText(Lang.getInstance().translate("Block height: ") + currentHeight + "/" + Controller.getInstance().getMaxPeerHeight());
@@ -78,9 +77,9 @@ public class NetworkStatus extends JLabel implements Observer
 			this.setText(Lang.getInstance().translate("Wallet Synchronizing ") + 100 * currentHeight/Controller.getInstance().getHeight() + "%");
 		}
 		
-		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE)
+		if(message.getType() == ObserverMessage.BLOCKCHAIN_SYNC_STATUS)
 		{
-			currentHeight = ((Block)message.getValue()).getHeight(); 
+			currentHeight = (int)message.getValue(); 
 
 			if(Controller.getInstance().getStatus() == Controller.STATUS_SYNCHRONIZING)
 			{

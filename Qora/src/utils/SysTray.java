@@ -41,7 +41,6 @@ import gui.naming.NamingServicePanel;
 import gui.settings.SettingsFrame;
 import gui.transaction.TransactionDetailsFactory;
 import gui.voting.VotingPanel;
-import qora.block.Block;
 import qora.transaction.Transaction;
 import settings.Settings;
 
@@ -50,11 +49,7 @@ public class SysTray implements Observer{
 	private static SysTray systray = null;
 	private TrayIcon icon = null;
 	private PopupMenu createPopupMenu;
-	private int currentHeight;
-	private String networkStatus;
-	private String syncProcent;
-	private String toolTipText;
-	
+
 	public static SysTray getInstance() {
 		if (systray == null) {
 			systray = new SysTray();
@@ -65,8 +60,6 @@ public class SysTray implements Observer{
 	
 	public SysTray()
 	{
-		this.networkStatus = "";
-		this.syncProcent = "";
 		Controller.getInstance().addObserver(this);	
 	}
 	
@@ -77,7 +70,7 @@ public class SysTray implements Observer{
 				System.out.println("SystemTray is not supported");
 			} else {
 				
-				this.toolTipText = "Qora "	+ Controller.getInstance().getVersion();
+				//String toolTipText = "Qora "	+ Controller.getInstance().getVersion();
 				createPopupMenu = createPopupMenu();
 				TrayIcon icon = new TrayIcon(createImage(
 						"images/icons/icon32.png", "tray icon"), "Qora "
@@ -344,59 +337,58 @@ public class SysTray implements Observer{
 		
 		ObserverMessage message = (ObserverMessage) arg1;
 			
-		this.toolTipText = "Qora " + Controller.getInstance().getVersion() + "\n";
+		int currentHeight;
+		String networkStatus = "";
+		String syncProcent = "";
+		String toolTipText = "Qora " + Controller.getInstance().getVersion() + "\n";
 		
-		if(Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS)
-		{
-			this.networkStatus = "No connections";
-			this.syncProcent = "";
-		}
-		if(Controller.getInstance().getStatus() == Controller.STATUS_SYNCHRONIZING)
-		{
-			this.networkStatus = "Synchronizing";
-		}
-		if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
-		{
-			this.networkStatus = "OK";
-			this.syncProcent = "";
+		
+		if(Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
+			networkStatus = "No connections";
+			syncProcent = "";
+		} else if(Controller.getInstance().getStatus() == Controller.STATUS_SYNCHRONIZING) {
+			networkStatus = "Synchronizing";
+		} else if(Controller.getInstance().getStatus() == Controller.STATUS_OK)	{
+			networkStatus = "OK";
+			syncProcent = "";
 		}	
 
-		if(message.getType() == ObserverMessage.WALLET_SYNC_STATUS)
-		{
-			this.currentHeight = (int)message.getValue();
-			if(this.currentHeight == -1)
+		if(message.getType() == ObserverMessage.WALLET_SYNC_STATUS)	{
+			currentHeight = (int)message.getValue();
+			if(currentHeight == -1)
 			{
 				this.update(null, new ObserverMessage(
 						ObserverMessage.NETWORK_STATUS, Controller.getInstance().getStatus()));
-				this.currentHeight = Controller.getInstance().getHeight();
+				currentHeight = Controller.getInstance().getHeight();
 				return;
 			}
-			this.networkStatus = "Wallet Synchronizing";
+			networkStatus = "Wallet Synchronizing";
 			
-			this.syncProcent = 100 * this.currentHeight/Controller.getInstance().getHeight() + "%";
-		}
-
-		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE)
-		{
-			this.currentHeight = ((Block)message.getValue()).getHeight(); 
+			syncProcent = 100 * currentHeight/Controller.getInstance().getHeight() + "%";
+			
+			toolTipText += networkStatus + " " + syncProcent;
+			toolTipText += "\nHeight: " + currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
+			setToolTipText(toolTipText);
+			
+		} else if(message.getType() == ObserverMessage.BLOCKCHAIN_SYNC_STATUS) {
+			currentHeight = (int)message.getValue(); 
 
 			if(Controller.getInstance().getStatus() == Controller.STATUS_SYNCHRONIZING)
 			{
-				this.syncProcent = 100 * this.currentHeight/Controller.getInstance().getMaxPeerHeight() + "%";	
-			}	
+				syncProcent = 100 * currentHeight/Controller.getInstance().getMaxPeerHeight() + "%";	
+			}
+			
+			toolTipText += networkStatus + " " + syncProcent;
+			toolTipText += "\nHeight: " + currentHeight + "/" + Controller.getInstance().getMaxPeerHeight();
+			setToolTipText(toolTipText);
+			
+		} else {
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OK || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
+				toolTipText += networkStatus + " " + syncProcent;
+				toolTipText += "\nHeight: " + Controller.getInstance().getHeight();
+				setToolTipText(toolTipText);
+			}
 		}
-		
-		this.toolTipText += this.networkStatus + " " + this.syncProcent;
-
-		if(Controller.getInstance().getStatus() == Controller.STATUS_OK || Controller.getInstance().getStatus() == Controller.STATUS_NO_CONNECTIONS) {
-			this.toolTipText += "\nHeight: " + Controller.getInstance().getHeight();
-		} else if(this.currentHeight == Controller.getInstance().getHeight()) {
-			this.toolTipText += "\nHeight: " + this.currentHeight;
-		} else if(this.currentHeight < Controller.getInstance().getHeight()) {
-			this.toolTipText += "\nHeight: " + this.currentHeight + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
-		} 
-		
-		setToolTipText(toolTipText);
 	}
 	
 	

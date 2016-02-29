@@ -157,7 +157,8 @@ public class AssetPairSelectTableModel extends AbstractTableModel implements Obs
 		ObserverMessage message = (ObserverMessage) arg;
 		
 		//CHECK IF LIST UPDATED
-		if(message.getType() == ObserverMessage.ADD_BALANCE_TYPE || message.getType() == ObserverMessage.REMOVE_BALANCE_TYPE)
+		if(( message.getType() == ObserverMessage.NETWORK_STATUS && (int) message.getValue() == Controller.STATUS_OK )
+				||	(Controller.getInstance().getStatus() == Controller.STATUS_OK && (message.getType() == ObserverMessage.ADD_BALANCE_TYPE || message.getType() == ObserverMessage.REMOVE_BALANCE_TYPE)))
 		{
 			this.fireTableDataChanged();
 		}

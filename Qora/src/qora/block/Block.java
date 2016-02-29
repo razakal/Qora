@@ -31,6 +31,7 @@ import at.AT_Constants;
 import at.AT_Controller;
 import at.AT_Exception;
 import at.AT_Transaction;
+import controller.Controller;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -758,6 +759,11 @@ public class Block {
 			seq++;
 		}
 
+		if(height % 2000 == 0) 
+		{
+			Controller.getInstance().blockchainSyncStatusUpdate(height);
+		}
+		
 		//ADD TO DB
 		db.getBlockMap().add(this);
 

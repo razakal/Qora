@@ -60,7 +60,8 @@ public class ObserverMessage {
 	public static final int REMOVE_AT_TX = 42;
 	
 	public static final int WALLET_SYNC_STATUS = 43;
-	
+	public static final int BLOCKCHAIN_SYNC_STATUS = 44;
+		
 	private int type;
 	private Object value;
 	

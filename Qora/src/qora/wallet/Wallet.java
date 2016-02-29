@@ -465,11 +465,10 @@ public class Wallet extends Observable implements Observer
 				
 				if(block.getHeight() % 2000 == 0) 
 				{
-					Controller.getInstance().walletStatusUpdate(block.getHeight());
-					
-					//Gui.getInstance().
-					
 					this.syncHeight = block.getHeight();
+					
+					Controller.getInstance().walletSyncStatusUpdate(this.syncHeight);
+					
 					Logger.getGlobal().info("Synchronize wallet: " + this.syncHeight);
 					this.database.commit();
 				}
@@ -496,7 +495,7 @@ public class Wallet extends Observable implements Observer
 		}
 		Logger.getGlobal().info("Resetted balances");
 
-		Controller.getInstance().walletStatusUpdate(-1);
+		Controller.getInstance().walletSyncStatusUpdate(-1);
 		
 		//NOW IF NOT SYNCHRONIZED SET STATUS
 		//CHECK IF WE ARE UPTODATE

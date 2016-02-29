@@ -149,9 +149,14 @@ public class AcctTableModel extends QoraTableModel<String, AT> implements Observ
 			//CHECK IF LIST UPDATED
 			if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
 			{
+				this.ats = Controller.getInstance().getAcctATs(type, initiators);
+
 				this.fireTableDataChanged();
 			}
-			this.ats = Controller.getInstance().getAcctATs(type, initiators);
+			
+			if(this.ats == null) {
+				this.ats = Controller.getInstance().getAcctATs(type, initiators);
+			}
 		}
 		
 		//STATUS_OK

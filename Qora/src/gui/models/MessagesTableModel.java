@@ -41,7 +41,6 @@ import gui.PasswordPane;
 import lang.Lang;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
-import qora.block.Block;
 import qora.crypto.AEScrypto;
 import qora.transaction.MessageTransaction;
 import qora.transaction.Transaction;
@@ -272,7 +271,7 @@ public class MessagesTableModel extends JTable implements Observer{
 		});
 
 		Controller.getInstance().addWalletListener(this);
-		DBSet.getInstance().getBlockMap().addObserver(this);
+		Controller.getInstance().addObserver(this);
 	}
 
 	
@@ -335,7 +334,7 @@ public class MessagesTableModel extends JTable implements Observer{
 
 		ObserverMessage message = (ObserverMessage) arg;
 		
-		if(message.getType() == ObserverMessage.WALLET_STATUS)
+		if( message.getType() == ObserverMessage.WALLET_STATUS )
 		{
 			int status = (int) message.getValue();
 			
@@ -345,19 +344,17 @@ public class MessagesTableModel extends JTable implements Observer{
 			}
 		}
 		
-		if(message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE
+		if( message.getType() == ObserverMessage.NETWORK_STATUS || (int)message.getValue() == Controller.STATUS_OK ) {
+			this.repaint();
+		}
+		
+		if( message.getType() == ObserverMessage.ADD_BLOCK_TYPE || message.getType() == ObserverMessage.REMOVE_BLOCK_TYPE
 				|| message.getType() == ObserverMessage.LIST_BLOCK_TYPE)
 		{
-			if(Controller.getInstance().getStatus() == Controller.STATUS_OK)
-			{
+			if(Controller.getInstance().getStatus() == Controller.STATUS_OK) {
+				
 				this.repaint();
-			}
-			else if (message.getType() == ObserverMessage.ADD_BLOCK_TYPE &&
-					((Block)message.getValue()).getHeight() == Controller.getInstance().getMaxPeerHeight())
-			{
-				this.repaint();
-			}
-			
+			} 
 		}
 
 		if(message.getType() == ObserverMessage.ADD_TRANSACTION_TYPE)
