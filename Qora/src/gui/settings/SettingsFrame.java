@@ -9,9 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +26,8 @@ import gui.Menu;
 import lang.Lang;
 import network.Network;
 import settings.Settings;
-import utils.JSonWriter;
+import lang.LangFile;
+import utils.SaveStrToFile;
 
 @SuppressWarnings("serial")
 public class SettingsFrame extends JFrame{
@@ -282,11 +281,9 @@ public class SettingsFrame extends JFrame{
 		}
 		
 		if(!Settings.getInstance().getLang().equals(
-				settingsTabPane.settingsParametersPanel.listOfAvailableLangs.get(
-						settingsTabPane.settingsParametersPanel.cbxListOfAvailableLangs.getSelectedIndex()).getA()))
+				((LangFile)settingsTabPane.settingsParametersPanel.cbxListOfAvailableLangs.getSelectedItem()).getFileName()))
 		{
-			settingsJSONbuf.put("lang", settingsTabPane.settingsParametersPanel.listOfAvailableLangs.get(
-					settingsTabPane.settingsParametersPanel.cbxListOfAvailableLangs.getSelectedIndex()).getA());
+			settingsJSONbuf.put("lang", ((LangFile)settingsTabPane.settingsParametersPanel.cbxListOfAvailableLangs.getSelectedItem()).getFileName());
 			changeLang = true;
 		}
 		
@@ -304,21 +301,15 @@ public class SettingsFrame extends JFrame{
 		if(newPeersJson.size() != peersJson.size())
 		{
 			try {
-		        Writer writer = new JSonWriter();
-		        
-		        JSONObject jsonObject = new JSONObject();
+    	        JSONObject jsonObject = new JSONObject();
 		        jsonObject.put("knownpeers", newPeersJson);
 		        
-		        jsonObject.writeJSONString(writer);
-					
-				FileWriter file = new FileWriter(Settings.getInstance().getCurrentPeersPath());
-				file.write(writer.toString());
-				file.flush();
-				file.close();
+				SaveStrToFile.saveJsonFine(Settings.getInstance().getPeersPath(), jsonObject);			
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(
-						new JFrame(), "Error writing to the file: " + Settings.getInstance().getCurrentPeersPath()
+						new JFrame(), "Error writing to the file: " + Settings.getInstance().getPeersPath()
 								+ "\nProbably there is no access.",
 		                "Error!",
 		                JOptionPane.ERROR_MESSAGE);
@@ -357,17 +348,11 @@ public class SettingsFrame extends JFrame{
 		}
 		
 		try {
-	        Writer writer = new JSonWriter();
-	        settingsJSONbuf.writeJSONString(writer);
-				
-			FileWriter file = new FileWriter(Settings.getInstance().getCurrentSettingsPath());
-			file.write(writer.toString());
-			file.flush();
-			file.close();
+			SaveStrToFile.saveJsonFine(Settings.getInstance().getSettingsPath(), settingsJSONbuf);			
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(
-					new JFrame(), "Error writing to the file: " + Settings.getInstance().getCurrentSettingsPath()
+					new JFrame(), "Error writing to the file: " + Settings.getInstance().getSettingsPath()
 							+ "\nProbably there is no access.",
 	                "Error!",
 	                JOptionPane.ERROR_MESSAGE);

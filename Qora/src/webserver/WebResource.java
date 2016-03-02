@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -46,9 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -85,7 +82,6 @@ import settings.Settings;
 import utils.AccountBalanceComparator;
 import utils.BlogUtils;
 import utils.DiffHelper;
-import utils.JSonWriter;
 import utils.NameUtils;
 import utils.NameUtils.NameResult;
 import utils.Pair;
@@ -173,7 +169,7 @@ public class WebResource {
 
 		return Response.status(200)
 				.header("Content-Type", "application/json; charset=utf-8")
-				.entity(StrJSonFine.convert(JSONValue.toJSONString(output)))
+				.entity(StrJSonFine.convert(output))
 				.build();
 	}
 
@@ -3077,27 +3073,6 @@ public class WebResource {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "ERROR";
-		}
-	}
-
-	public String jsonToFineSting(String str) {
-		Writer writer = new JSonWriter();
-		Object jsonResult = JSONValue.parse(str);
-
-		try {
-			if (jsonResult instanceof JSONArray) {
-				((JSONArray) jsonResult).writeJSONString(writer);
-				return writer.toString();
-			}
-			if (jsonResult instanceof JSONObject) {
-				((JSONObject) jsonResult).writeJSONString(writer);
-				return writer.toString();
-			}
-			writer.close();
-			return "";
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "";
 		}
 	}
 

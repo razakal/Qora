@@ -1,9 +1,22 @@
 package utils;
 
 import java.io.StringWriter;
+import java.util.Map;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 public class StrJSonFine{
 
+    public static String convert(JSONObject json) {
+    	return convert(json.toJSONString());
+    }
+    
+    @SuppressWarnings("rawtypes")
+	public static String convert(Map map) {
+    	return convert(JSONValue.toJSONString(map));
+    }
+    
     public static String convert(String str) {
         int indent = 0;
         
@@ -48,6 +61,7 @@ public class StrJSonFine{
 		}
     	return output.toString();
     }
+    
 	private static void writeIndentation(StringWriter writer, int indent) {
 		for (int i = 0; i < indent; i++) {
 			writer.write('\t');

@@ -1,12 +1,15 @@
 package gui.settings;
 
+import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.List;
+import java.io.InputStream;
+import java.net.URL;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,15 +17,25 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import com.google.common.base.Charsets;
+
+import controller.Controller;
 import lang.Lang;
 import settings.Settings;
-import utils.Pair;
-
+import utils.DateTimeFormat;
+import lang.LangFile;
 
 @SuppressWarnings("serial")
 public class SettingsParametersPanel extends JPanel 
@@ -41,8 +54,8 @@ public class SettingsParametersPanel extends JPanel
 	public JTextField textMinConnections;
 	public JTextField textMaxConnections;
 	public JDialog waitDialog;
-	public List<Pair<String, String>> listOfAvailableLangs;
-	public JComboBox<String> cbxListOfAvailableLangs;
+	public JComboBox<LangFile> cbxListOfAvailableLangs;
+	public JButton btnLoadNewLang;
 	
 	public SettingsParametersPanel()
 	{
@@ -377,20 +390,125 @@ public class SettingsParametersPanel extends JPanel
         gbc_lblLang.gridy = 15;
         add(lblLang, gbc_lblLang);
         
-        cbxListOfAvailableLangs = new JComboBox<String>();
+        cbxListOfAvailableLangs = new JComboBox<LangFile>();
         
-        listOfAvailableLangs = Lang.getInstance().getListOfAvailable();
-        
-        for (Pair<String, String> availableLang : listOfAvailableLangs) {
+        for (LangFile langFile : Lang.getInstance().getListOfAvailable()) {
+        	cbxListOfAvailableLangs.addItem(langFile);
         	
-        	cbxListOfAvailableLangs.addItem(availableLang.getB());
-        	if(availableLang.getA().equals(Settings.getInstance().getLang())) {
-        		cbxListOfAvailableLangs.setSelectedIndex(cbxListOfAvailableLangs.getItemCount() - 1);
+        	if(langFile.getFileName().equals(Settings.getInstance().getLang())) {
+        		cbxListOfAvailableLangs.setSelectedItem(langFile);
         	}
 		}
         
+        btnLoadNewLang = new JButton(Lang.getInstance().translate("Download"));
+		GridBagConstraints btn_LoadNewLang = new GridBagConstraints();
+		btn_LoadNewLang.anchor = GridBagConstraints.WEST;
+		btn_LoadNewLang.insets = new Insets(0, 0, 5, 5);
+		btn_LoadNewLang.gridx = 4;
+		btn_LoadNewLang.gridy = 15;
+		btnLoadNewLang.setPreferredSize(new Dimension(80, 25));
+		btnLoadNewLang.addActionListener(new ActionListener()
+        {
+        	public void actionPerformed(ActionEvent e)
+        	{
+        		btnLoadNewLang.setText( "..." );
+        		btnLoadNewLang.repaint(0);
+        		
+        		EventQueue.invokeLater(new Runnable() {
+        		    @Override
+        		    public void run() {
+        		    	try {
+	        		    	final JPopupMenu menu = new JPopupMenu();
+	        				
+	        				String stringFromInternet = "";
+	        				try {
+	        					String url = Lang.translationsUrl + Controller.getInstance().getVersion().replace(" ", "%20") + "/available.json";
+
+	        					URL u = new URL(url);
+	        					InputStream in = u.openStream();
+	        					stringFromInternet = IOUtils.toString(in, Charsets.UTF_8);
+	        				} catch (Exception e1) {
+	        					e1.printStackTrace();
+	        				}
+	        				JSONObject inernetLangsJSON = (JSONObject) JSONValue.parse(stringFromInternet);
+	        				
+	        				
+	        				for (Object internetKey : inernetLangsJSON.keySet()) {
+
+	        					JSONObject internetValue = (JSONObject) inernetLangsJSON.get(internetKey);
+
+	        					String itemText = null;
+	        					final String langFileName = (String)(internetValue).get("file");
+
+	        					long time_of_translation = ((Long)(internetValue).get("timestamp_of_translation")).longValue();
+	        					
+	        					try {
+		        					JSONObject oldLangFile = Lang.openLangFile(langFileName);
+		        					
+		        					if(oldLangFile == null) {
+		        						itemText = (String)(internetValue).get("download");
+		        						
+		        					} else if (time_of_translation > (Long)oldLangFile.get("timestamp_of_translation")) {
+		        						itemText = ((String)(internetValue).get("update from %date%")).replace("%date%", DateTimeFormat.timestamptoString(time_of_translation, "yyyy-MM-dd", ""));
+		        					}
+	        					} catch( Exception e2 ) {
+	        						itemText = (String)(internetValue).get("download");
+	        					}
+	        					
+	        					if(itemText != null) {
+		        					
+	        						JMenuItem item = new JMenuItem();
+	        						item.setText("[" + (String) internetKey + "] " + itemText);
+	        						
+	        						item.addActionListener(new ActionListener()
+	        						{
+	        							public void actionPerformed(ActionEvent e) 
+	        							{
+	        								try {
+	        		        					String url = Lang.translationsUrl + Controller.getInstance().getVersion().replace(" ", "%20") + "/lang/" + langFileName;
+
+	        		        					FileUtils.copyURLToFile(new URL(url), new File(Settings.getInstance().getUserPath() + "lang/" + langFileName));
+	
+	        								} catch (Exception e1) {
+	        		        					e1.printStackTrace();
+	        		        				}
+	        								
+	        						        cbxListOfAvailableLangs.removeAllItems();
+	        						        
+	        						        for (LangFile langFile : Lang.getInstance().getListOfAvailable()) {
+	        						        	cbxListOfAvailableLangs.addItem(langFile);
+	        						        	
+	        						        	if(langFile.getFileName().equals(langFileName)) {
+	        						        		cbxListOfAvailableLangs.setSelectedItem(langFile);
+	        						        	}
+	        								}
+	        							}
+	        						});
+	        						
+	        						menu.add(item);	
+	        					}
+	        					
+	        				}
+	        				if(menu.getComponentCount() == 0) {
+	        					JMenuItem item = new JMenuItem();
+        						item.setText(Lang.getInstance().translate("No new translations"));
+        						item.setEnabled(false);
+        						menu.add(item);	
+	        				}
+	        				
+	        				menu.show(btnLoadNewLang, 0, btnLoadNewLang.getHeight());
+        		    	} finally {
+        		    		btnLoadNewLang.setText(Lang.getInstance().translate("Download"));	
+        		    	}
+        		    }
+        		});
+        	}
+        });	   
+		add(btnLoadNewLang, btn_LoadNewLang);
+		
+        
         GridBagConstraints gbc_cbxListOfAvailableLangs = new GridBagConstraints();
-        gbc_cbxListOfAvailableLangs.gridwidth = 5;
+        gbc_cbxListOfAvailableLangs.gridwidth = 2;
         gbc_cbxListOfAvailableLangs.insets = new Insets(0, 0, 5, 5);
         gbc_cbxListOfAvailableLangs.fill = GridBagConstraints.HORIZONTAL;
         gbc_cbxListOfAvailableLangs.gridx = 2;

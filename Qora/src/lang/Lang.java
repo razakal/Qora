@@ -14,10 +14,10 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import settings.Settings;
-import utils.Pair;
-
 
 public class Lang {
+												
+	public static final String translationsUrl = "https://raw.githubusercontent.com/Qoracoin/translations/master/";
 
 	private static Lang instance;
 	private Map<String, String> noTranslateMap;
@@ -97,7 +97,7 @@ public class Lang {
 		try 
 		{
 		
-			File file = new File( "lang/" + filename );
+			File file = new File( Settings.getInstance().getUserPath() + "lang/" + filename );
 			if ( !file.isFile() ) {
 				return (JSONObject) JSONValue.parse("");
 			}
@@ -131,28 +131,38 @@ public class Lang {
 		return langJsonObject;
 	};
 
-	public List<Pair<String, String>> getListOfAvailable()
+	public List<LangFile> getListOfAvailable()
 	{
-		List<Pair<String, String>> lngList = new ArrayList<>();
+		List<LangFile> lngList = new ArrayList<>();
 		
 		File[] fileList;        
-        File f = new File("lang");
-                
-        fileList = f.listFiles();
-                        
+        File dir = new File(Settings.getInstance().getUserPath() + "lang");
+             
+        if(!dir.exists()){
+        	dir.mkdir();
+        }
+        
+        fileList = dir.listFiles();
+        
+		lngList.add( new LangFile() );
+
         for(int i=0; i<fileList.length; i++)           
         {
-        	if(fileList[i].isFile() && fileList[i].getName().endsWith(".lng")) {
-        		lngList.add(
-        				new Pair<>(
-        						fileList[i].getName(), 
-        						(String)openLangFile(fileList[i].getName()).get("lang_name")
-        						)
-        				);
+        	if(fileList[i].isFile() && fileList[i].getName().endsWith(".json")) {
+        		try {
+        			JSONObject langFile = openLangFile(fileList[i].getName());
+        			String lang_name = (String)langFile.get("lang_name");
+        			long time_of_translation = ((Long)langFile.get("timestamp_of_translation")).longValue();
+        			lngList.add( new LangFile( lang_name, fileList[i].getName(), time_of_translation) );
+        		} catch (Exception e) {
+        			e.printStackTrace();
+        		}
         	}
-        	
         }
         
         return lngList;
 	}
+	
+	
+	
 }

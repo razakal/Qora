@@ -60,9 +60,6 @@ public class Settings {
 	//GUI
 	private static final boolean DEFAULT_GUI_ENABLED = true;
 	
-	//SETTINGS.JSON FILE
-	private static final String DEFAULT_SETTINGS_PATH = "settings.json";
-	
 	//DATA
 	private static final String DEFAULT_DATA_DIR = "data";
 	private static final String DEFAULT_WALLET_DIR = "wallet";
@@ -86,15 +83,14 @@ public class Settings {
 	private static final boolean DEFAULT_NS_UPDATE = false;
 	private static final boolean DEFAULT_FORGING_ENABLED = true;
 	
-	private static String DEFAULT_LANGUAGE = "eng.lng";
+	private static String DEFAULT_LANGUAGE = "";
 	
 	private static Settings instance;
 	
 	private JSONObject settingsJSON;
 	private JSONObject peersJSON;
 
-	private String currentSettingsPath;
-	private String currentPeersPath;
+	private String userPath = "";
 
 	private InetAddress localAddress;
 	
@@ -123,15 +119,13 @@ public class Settings {
 	{
 		this.localAddress = this.getCurrentIp();
 		int alreadyPassed = 0;
-		String settingsFilePath = "settings.json";
 		
 		try
 		{
 			while(alreadyPassed<2)
 			{
 				//OPEN FILE
-				File file = new File(settingsFilePath);
-				currentSettingsPath = settingsFilePath;
+				File file = new File(this.userPath + "settings.json");
 				
 				//CREATE FILE IF IT DOESNT EXIST
 				if(!file.exists())
@@ -152,9 +146,13 @@ public class Settings {
 				
 				alreadyPassed++;
 				
-				if(this.settingsJSON.containsKey("settingspath"))
+				if(this.settingsJSON.containsKey("userpath"))
 				{
-					settingsFilePath = (String) this.settingsJSON.get("settingspath");
+					this.userPath = (String) this.settingsJSON.get("userpath");
+					
+					if( !(this.userPath.endsWith("\\") || this.userPath.endsWith("/")) ) {
+						this.userPath += "/";
+					}
 				}
 				else
 				{
@@ -173,7 +171,7 @@ public class Settings {
 		try
 		{
 			//OPEN FILE
-			File file = new File(this.getCurrentPeersPath());
+			File file = new File(this.getPeersPath());
 			
 			//CREATE FILE IF IT DOESNT EXIST
 			if(file.exists())
@@ -206,26 +204,14 @@ public class Settings {
 		return settingsJSON;
 	}
 	
-	public String getCurrentSettingsPath()
+	public String getSettingsPath()
 	{
-		return currentSettingsPath;
+		return this.userPath + "settings.json";
 	}
 	
-	public String getCurrentPeersPath()
+	public String getPeersPath()
 	{
-		if(this.currentPeersPath == null) {
-			if(this.currentSettingsPath == "settings.json" || this.currentSettingsPath == "") {
-				this.currentPeersPath = "peers.json";
-			} else {
-				File file = new File(this.currentSettingsPath);
-			    if(file.exists()){
-			    	this.currentPeersPath = file.getAbsoluteFile().getParent() + "/peers.json";
-			    } else {
-			    	this.currentPeersPath = "peers.json";
-			    }
-			}
-		}
-		return this.currentPeersPath;
+		return this.userPath + "peers.json";
 	}
 	
 	public JSONArray getPeersJson()
@@ -597,32 +583,17 @@ public class Settings {
 	
 	public String getWalletDir()
 	{
-		if(this.settingsJSON.containsKey("walletdir"))
-		{
-			return (String) this.settingsJSON.get("walletdir");
-		}
-		
-		return DEFAULT_WALLET_DIR;
+		return this.getUserPath() + DEFAULT_WALLET_DIR;
 	}
 	
 	public String getDataDir()
 	{
-		if(this.settingsJSON.containsKey("datadir"))
-		{
-			return (String) this.settingsJSON.get("datadir");
-		}
-		
-		return DEFAULT_DATA_DIR;
+		return this.getUserPath() + DEFAULT_DATA_DIR;
 	}
 	
-	public String getSettingsPath()
+	public String getUserPath()
 	{
-		if(this.settingsJSON.containsKey("settingspath"))
-		{
-			return (String) this.settingsJSON.get("settingspath");
-		}
-		
-		return DEFAULT_SETTINGS_PATH;
+		return this.userPath;
 	}
 	
 	public int getPingInterval()

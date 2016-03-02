@@ -1,7 +1,7 @@
-/data
+/data*
 /Data Files
-/wallet
+/wallet*
 /ACCOUNTS.txt
 /settings.ini
 /bin/
-/dataBak/
+/lang/
