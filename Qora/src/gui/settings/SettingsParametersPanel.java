@@ -438,21 +438,21 @@ public class SettingsParametersPanel extends JPanel
 	        					JSONObject internetValue = (JSONObject) inernetLangsJSON.get(internetKey);
 
 	        					String itemText = null;
-	        					final String langFileName = (String)(internetValue).get("file");
+	        					final String langFileName = (String)(internetValue).get("_file_");
 
-	        					long time_of_translation = ((Long)(internetValue).get("timestamp_of_translation")).longValue();
+	        					long time_of_translation = ((Long)(internetValue).get("_timestamp_of_translation_")).longValue();
 	        					
 	        					try {
 		        					JSONObject oldLangFile = Lang.openLangFile(langFileName);
 		        					
 		        					if(oldLangFile == null) {
-		        						itemText = (String)(internetValue).get("download");
+		        						itemText = (String)(internetValue).get("download lang_name translation");
 		        						
-		        					} else if (time_of_translation > (Long)oldLangFile.get("timestamp_of_translation")) {
-		        						itemText = ((String)(internetValue).get("update from %date%")).replace("%date%", DateTimeFormat.timestamptoString(time_of_translation, "yyyy-MM-dd", ""));
+		        					} else if (time_of_translation > (Long)oldLangFile.get("_timestamp_of_translation_")) {
+		        						itemText = ((String)(internetValue).get("download update of lang_name translation from %date%")).replace("%date%", DateTimeFormat.timestamptoString(time_of_translation, "yyyy-MM-dd", ""));
 		        					}
 	        					} catch( Exception e2 ) {
-	        						itemText = (String)(internetValue).get("download");
+	        						itemText = (String)(internetValue).get("download lang_name translation");
 	        					}
 	        					
 	        					if(itemText != null) {
@@ -465,9 +465,9 @@ public class SettingsParametersPanel extends JPanel
 	        							public void actionPerformed(ActionEvent e) 
 	        							{
 	        								try {
-	        		        					String url = Lang.translationsUrl + Controller.getInstance().getVersion().replace(" ", "%20") + "/lang/" + langFileName;
+	        		        					String url = Lang.translationsUrl + Controller.getInstance().getVersion().replace(" ", "%20") + "/languages/" + langFileName;
 
-	        		        					FileUtils.copyURLToFile(new URL(url), new File(Settings.getInstance().getUserPath() + "lang/" + langFileName));
+	        		        					FileUtils.copyURLToFile(new URL(url), new File(Settings.getInstance().getUserPath() + "languages/" + langFileName));
 	
 	        								} catch (Exception e1) {
 	        		        					e1.printStackTrace();

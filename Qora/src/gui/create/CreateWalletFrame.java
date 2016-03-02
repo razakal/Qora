@@ -168,7 +168,7 @@ public class CreateWalletFrame extends JFrame {
         
       	//CALCULATE HEIGHT WIDTH
       	this.pack();
-      	this.setSize(500, this.getHeight());
+      	this.setSize(600, this.getHeight());
       	
       	this.setResizable(false);
 		this.setLocationRelativeTo(null);

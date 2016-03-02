@@ -97,7 +97,7 @@ public class Lang {
 		try 
 		{
 		
-			File file = new File( Settings.getInstance().getUserPath() + "lang/" + filename );
+			File file = new File( Settings.getInstance().getUserPath() + "languages/" + filename );
 			if ( !file.isFile() ) {
 				return (JSONObject) JSONValue.parse("");
 			}
@@ -136,7 +136,7 @@ public class Lang {
 		List<LangFile> lngList = new ArrayList<>();
 		
 		File[] fileList;        
-        File dir = new File(Settings.getInstance().getUserPath() + "lang");
+        File dir = new File(Settings.getInstance().getUserPath() + "languages");
              
         if(!dir.exists()){
         	dir.mkdir();
@@ -151,8 +151,8 @@ public class Lang {
         	if(fileList[i].isFile() && fileList[i].getName().endsWith(".json")) {
         		try {
         			JSONObject langFile = openLangFile(fileList[i].getName());
-        			String lang_name = (String)langFile.get("lang_name");
-        			long time_of_translation = ((Long)langFile.get("timestamp_of_translation")).longValue();
+        			String lang_name = (String)langFile.get("_lang_name_");
+        			long time_of_translation = ((Long)langFile.get("_timestamp_of_translation_")).longValue();
         			lngList.add( new LangFile( lang_name, fileList[i].getName(), time_of_translation) );
         		} catch (Exception e) {
         			e.printStackTrace();

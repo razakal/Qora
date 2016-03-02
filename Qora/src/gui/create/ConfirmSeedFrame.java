@@ -150,7 +150,7 @@ public class ConfirmSeedFrame extends JFrame {
 		        onConfirmClick();
 		    }
 		});	
-        confirmButton.setPreferredSize(new Dimension(80, 25));
+        confirmButton.setPreferredSize(new Dimension(110, 25));
     	this.add(confirmButton, buttonGBC);
     	
     	//BUTTON BACK
@@ -163,7 +163,7 @@ public class ConfirmSeedFrame extends JFrame {
 		        onBackClick();
 		    }
 		});
-        backButton.setPreferredSize(new Dimension(80, 25));
+        backButton.setPreferredSize(new Dimension(110, 25));
     	this.add(backButton, buttonGBC);
         
     	//CLOSE NICELY
