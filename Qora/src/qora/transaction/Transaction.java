@@ -3,7 +3,9 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 
@@ -359,5 +361,46 @@ public abstract class Transaction {
 		
 		// IF UNCONFIRMED
 		return Controller.getInstance().getLastBlock().getNextBlockVersion(DBSet.getInstance());	
+	}
+
+	public abstract Map<String, Map<Long, BigDecimal>> getAssetAmount();
+	
+	public static Map<String, Map<Long, BigDecimal>> subAssetAmount(Map<String, Map<Long, BigDecimal>> allAssetAmount, String address, Long assetKey, BigDecimal amount) 
+	{
+		return addAssetAmount(allAssetAmount, address, assetKey, BigDecimal.ZERO.setScale(8).subtract(amount));
+	}
+	
+	public static Map<String, Map<Long, BigDecimal>> addAssetAmount(Map<String, Map<Long, BigDecimal>> allAssetAmount, String address, Long assetKey, BigDecimal amount) 
+	{
+		Map<String, Map<Long, BigDecimal>> newAllAssetAmount;
+		if(allAssetAmount != null) {
+			newAllAssetAmount = new LinkedHashMap<String, Map<Long, BigDecimal>>(allAssetAmount);
+		} else {
+			newAllAssetAmount = new LinkedHashMap<String, Map<Long, BigDecimal>>();
+		}
+
+		Map<Long, BigDecimal> newAssetAmountOfAddress;
+		
+		if(!newAllAssetAmount.containsKey(address)){
+			newAssetAmountOfAddress = new LinkedHashMap<Long, BigDecimal>();
+			newAssetAmountOfAddress.put(assetKey, amount);
+			
+			newAllAssetAmount.put(address, newAssetAmountOfAddress);
+		} else {
+			if(!newAllAssetAmount.get(address).containsKey(assetKey)) {
+				newAssetAmountOfAddress = new LinkedHashMap<Long, BigDecimal>(newAllAssetAmount.get(address));
+				newAssetAmountOfAddress.put(assetKey, amount);
+
+				newAllAssetAmount.put(address, newAssetAmountOfAddress);
+			} else {
+				newAssetAmountOfAddress = new LinkedHashMap<Long, BigDecimal>(newAllAssetAmount.get(address));
+				BigDecimal newAmount = newAllAssetAmount.get(address).get(assetKey).add(amount);
+				newAssetAmountOfAddress.put(assetKey, newAmount);
+				
+				newAllAssetAmount.put(address, newAssetAmountOfAddress);
+			}
+		}
+		
+		return newAllAssetAmount;
 	}
 }

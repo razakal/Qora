@@ -5,7 +5,9 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 
@@ -19,6 +21,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
+import database.BalanceMap;
 import database.DBSet;
 
 public class RegisterNameTransaction extends Transaction 
@@ -312,6 +315,16 @@ public class RegisterNameTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 
+	@Override
+	public Map<String, Map<Long, BigDecimal>> getAssetAmount() 
+	{
+		Map<String, Map<Long, BigDecimal>> assetAmount = new LinkedHashMap<>();
+		
+		assetAmount = subAssetAmount(assetAmount, this.registrant.getAddress(), BalanceMap.QORA_KEY, this.fee);
+		
+		return assetAmount;
+	}
+	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Name name, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];

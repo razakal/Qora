@@ -3,7 +3,9 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 
@@ -12,7 +14,6 @@ import com.google.common.primitives.Longs;
 import database.BalanceMap;
 import database.DBSet;
 import qora.account.Account;
-import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import utils.Converter;
 
@@ -183,6 +184,19 @@ public abstract class MessageTransaction extends Transaction {
 		return amount;
 	}
 	
+	@Override
+	public Map<String, Map<Long, BigDecimal>> getAssetAmount() 
+	{
+		Map<String, Map<Long, BigDecimal>> assetAmount = new LinkedHashMap<>();
+		
+		assetAmount = subAssetAmount(assetAmount, this.creator.getAddress(), BalanceMap.QORA_KEY, this.fee);
+		
+		assetAmount = subAssetAmount(assetAmount, this.creator.getAddress(), this.key, this.amount);
+		assetAmount = addAssetAmount(assetAmount, this.recipient.getAddress(), this.key, this.amount);
+		
+		return assetAmount;
+	}
+	
 	public static Transaction Parse(byte[] data) throws Exception
 	{
 		// READ TIMESTAMP
@@ -197,40 +211,5 @@ public abstract class MessageTransaction extends Transaction {
 		}
 	}
 	
-	public static byte[] generateSignature(PrivateKeyAccount creator, Account recipient, BigDecimal amount, BigDecimal fee, byte[] arbitraryData, byte[] isText, byte[] encrypted, long timestamp) 
-	{
-		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
-			return MessageTransactionV1.generateSignature(creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
-		} else {
-			return MessageTransactionV3.generateSignature(creator, recipient, 0L, amount, fee, arbitraryData, isText, encrypted, timestamp);	
-		}	
-	}
-	
-	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Account recipient, BigDecimal amount, BigDecimal fee, byte[] arbitraryData,byte[] isText, byte[] encrypted, long timestamp) 
-	{
-		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
-			return MessageTransactionV1.generateSignature(db, creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
-		} else {
-			return MessageTransactionV3.generateSignature(db, creator, recipient, 0L, amount, fee, arbitraryData, isText, encrypted, timestamp);	
-		}
-	}
-
-	public static byte[] generateSignature(PrivateKeyAccount creator, Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] arbitraryData, byte[] isText, byte[] encrypted, long timestamp) 
-	{
-		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
-			return MessageTransactionV1.generateSignature(creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
-		} else {
-			return MessageTransactionV3.generateSignature(creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);	
-		}	
-	}
-	
-	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Account recipient, long key, BigDecimal amount, BigDecimal fee, byte[] arbitraryData,byte[] isText, byte[] encrypted, long timestamp) 
-	{
-		if(timestamp < Transaction.getPOWFIX_RELEASE()) {
-			return MessageTransactionV1.generateSignature(db, creator, recipient, amount, fee, arbitraryData, isText, encrypted, timestamp);
-		} else {
-			return MessageTransactionV3.generateSignature(db, creator, recipient, key, amount, fee, arbitraryData, isText, encrypted, timestamp);	
-		}
-	}
 }
 

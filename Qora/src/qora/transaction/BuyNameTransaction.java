@@ -5,7 +5,9 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 
@@ -21,6 +23,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
+import database.BalanceMap;
 import database.DBSet;
 
 public class BuyNameTransaction extends Transaction
@@ -365,6 +368,19 @@ public class BuyNameTransaction extends Transaction
 		}
 		
 		return BigDecimal.ZERO.setScale(8);
+	}
+	
+	@Override
+	public Map<String, Map<Long, BigDecimal>> getAssetAmount() 
+	{
+		Map<String, Map<Long, BigDecimal>> assetAmount = new LinkedHashMap<>();
+		
+		assetAmount = subAssetAmount(assetAmount, this.buyer.getAddress(), BalanceMap.QORA_KEY, this.fee);
+		assetAmount = subAssetAmount(assetAmount, this.buyer.getAddress(), BalanceMap.QORA_KEY, this.nameSale.getAmount());
+		
+		assetAmount = addAssetAmount(assetAmount, this.getSeller().getAddress(), BalanceMap.QORA_KEY, this.nameSale.getAmount());
+		
+		return assetAmount;
 	}
 	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount buyer, NameSale nameSale, Account seller, BigDecimal fee, long timestamp) 

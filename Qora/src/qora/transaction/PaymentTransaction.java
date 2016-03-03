@@ -3,21 +3,23 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
-
-import qora.account.Account;
-import qora.account.PrivateKeyAccount;
-import qora.account.PublicKeyAccount;
-import qora.crypto.Base58;
-import qora.crypto.Crypto;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
+import database.BalanceMap;
 import database.DBSet;
+import qora.account.Account;
+import qora.account.PrivateKeyAccount;
+import qora.account.PublicKeyAccount;
+import qora.crypto.Base58;
+import qora.crypto.Crypto;
 
 public class PaymentTransaction extends Transaction {
 
@@ -349,6 +351,19 @@ public class PaymentTransaction extends Transaction {
 		}
 		
 		return BigDecimal.ZERO;
+	}
+	
+	@Override
+	public Map<String, Map<Long, BigDecimal>> getAssetAmount() 
+	{
+		Map<String, Map<Long, BigDecimal>> assetAmount = new LinkedHashMap<>();
+		
+		assetAmount = subAssetAmount(assetAmount, this.sender.getAddress(), BalanceMap.QORA_KEY, this.fee);
+		
+		assetAmount = subAssetAmount(assetAmount, this.sender.getAddress(), BalanceMap.QORA_KEY, this.amount);
+		assetAmount = addAssetAmount(assetAmount, this.recipient.getAddress(), BalanceMap.QORA_KEY, this.amount);
+		
+		return assetAmount;
 	}
 	
 	public static byte[] generateSignature(PrivateKeyAccount sender, Account recipient, BigDecimal amount, BigDecimal fee, long timestamp) 

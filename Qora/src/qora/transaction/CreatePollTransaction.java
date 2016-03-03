@@ -6,24 +6,24 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import ntp.NTP;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import database.BalanceMap;
+import database.DBSet;
+import ntp.NTP;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Crypto;
 import qora.voting.Poll;
 import qora.voting.PollOption;
-
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
-import database.DBSet;
 
 public class CreatePollTransaction extends Transaction 
 {
@@ -357,6 +357,12 @@ public class CreatePollTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 
+	@Override
+	public Map<String, Map<Long, BigDecimal>> getAssetAmount() 
+	{
+		return subAssetAmount(null, this.creator.getAddress(), BalanceMap.QORA_KEY, this.fee);
+	}
+	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount creator, Poll poll, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];

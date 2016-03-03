@@ -23,6 +23,7 @@ import org.mapdb.Fun.Tuple6;
 import at.AT;
 import at.AT_Transaction;
 import controller.Controller;
+import database.BalanceMap;
 import database.DBSet;
 import database.SortableList;
 import qora.account.Account;
@@ -482,7 +483,7 @@ public class BlockExplorer
 			i++;
 			foundList.put(i, "blockSignature");
 		}
-		else if(query.matches("\\d+") && Integer.valueOf(query) > 0 && Integer.valueOf(query) <= Controller.getInstance().getHeight())
+		else if(query.matches("\\d+") && Integer.valueOf(query) > 0 && Integer.valueOf(query) <= getHeight())
 		{
 			i++;
 			foundList.put(i, "blockHeight");
@@ -686,7 +687,7 @@ public class BlockExplorer
 		//SCAN
 		int back = 815; // 3*24*60*60/318 = 815 // 3 days
 		//back = 40815;
-		Pair<Block, List<Transaction>> result = Controller.getInstance().scanTransactions(Controller.getInstance().getBlockByHeight(Controller.getInstance().getHeight()-back), back, 100, Transaction.CREATE_POLL_TRANSACTION, -1, null);
+		Pair<Block, List<Transaction>> result = Controller.getInstance().scanTransactions(Controller.getInstance().getBlockByHeight(getHeight()-back), back, 100, Transaction.CREATE_POLL_TRANSACTION, -1, null);
 
 		for(Transaction transaction: result.getB())
 		{
@@ -1261,7 +1262,7 @@ public class BlockExplorer
 		}
 		else
 		{
-			block = Controller.getInstance().getLastBlock();	
+			block = getLastBlock();	
 			start = block.getHeight(); 
 		}
 
@@ -1324,7 +1325,7 @@ public class BlockExplorer
 	{
 		Map output=new LinkedHashMap();
 
-		Block lastBlock = Controller.getInstance().getLastBlock();
+		Block lastBlock = getLastBlock();
 
 		output.put("height", lastBlock.getHeight());
 		output.put("timestamp", lastBlock.getTimestamp());
@@ -1458,7 +1459,7 @@ public class BlockExplorer
 
 			Block parentBlock = Controller.getInstance().getTransaction(orderInitiator.getId().toByteArray()).getParent(); 
 			transactionDataJSON.put("height", parentBlock.getHeight());
-			transactionDataJSON.put("confirmations", Controller.getInstance().getHeight() - parentBlock.getHeight() + 1 );
+			transactionDataJSON.put("confirmations", getHeight() - parentBlock.getHeight() + 1 );
 
 			transactionDataJSON.put("timestamp", trade.getTimestamp());
 			transactionDataJSON.put("dateTime", BlockExplorer.timestampToStr(trade.getTimestamp()));
@@ -1543,6 +1544,9 @@ public class BlockExplorer
 			if(transaction.getType() == Transaction.MESSAGE_TRANSACTION) 
 			{
 				transactionDataJSON.put("assetName", assetNamesByKey.getNameByKey(((MessageTransaction)unit).getKey()));
+				if(((MessageTransaction)unit).isEncrypted()){
+					transactionDataJSON.put("data", "encrypted");
+				}
 			}
 			
 			if(transaction.getType() == Transaction.MULTI_PAYMENT_TRANSACTION) 
@@ -1644,7 +1648,7 @@ public class BlockExplorer
 			transactionDataJSON.put("dateTime", BlockExplorer.timestampToStr(block.getTimestamp()));
 
 			int height = block.getHeight();
-			transactionDataJSON.put("confirmations", Controller.getInstance().getHeight() - height + 1 );
+			transactionDataJSON.put("confirmations", getHeight() - height + 1 );
 			transactionDataJSON.put("height", height);
 
 			transactionDataJSON.put("generator", block.getGenerator().getAddress());
@@ -1677,7 +1681,7 @@ public class BlockExplorer
 			transactionDataJSON.put("timestamp", timestamp);
 			transactionDataJSON.put("dateTime", BlockExplorer.timestampToStr(timestamp));
 
-			transactionDataJSON.put("confirmations", Controller.getInstance().getHeight() - ((AT_Transaction)unit).getBlockHeight() + 1 );
+			transactionDataJSON.put("confirmations", getHeight() - ((AT_Transaction)unit).getBlockHeight() + 1 );
 
 			if(((AT_Transaction)unit).getRecipient().equals("11111111111111111111111111"))
 			{
@@ -1821,7 +1825,7 @@ public class BlockExplorer
 		{
 			Map assetBalance = new LinkedHashMap();
 
-			assetBalance.put("name", Controller.getInstance().getAsset(assetsBalance.getA().b).getName());
+			assetBalance.put("assetName", Controller.getInstance().getAsset(assetsBalance.getA().b).getName());
 			assetBalance.put("amount", assetsBalance.getB().toPlainString());
 			
 			output.put(assetsBalance.getA().b, assetBalance);
@@ -1830,6 +1834,7 @@ public class BlockExplorer
 		return output; 
 	}
 	
+	@SuppressWarnings("serial")
 	public Map jsonQueryAddress(String query, int start, int txOnPage, String filter, boolean allOnOnePage, boolean withoutBlocks, String showOnly, String showWithout)
 	{
 		List<Object> all = new ArrayList<Object>();
@@ -1943,156 +1948,36 @@ public class BlockExplorer
 
 
 		int size = all.size();
-		Balance[] balances = new Balance[size+1];
-
-		balances[0] = new Balance();
-		balances[0].setTotalBalance(0, BigDecimal.ZERO.setScale(8));
-		balances[0].setTransactionBalance(0, BigDecimal.ZERO.setScale(8));
-
+		List<Map<String, Map<Long, BigDecimal>>> tXincomes = new ArrayList<>();
+		List<Map<Long, BigDecimal>> totalBalances = new ArrayList<>();
+		Map<Long, BigDecimal> zeroAmount = new LinkedHashMap<Long, BigDecimal>(){{put(BalanceMap.QORA_KEY, BigDecimal.ZERO);}};
+		
 		int i = 1;
 		for (Object unit : all) {
-
-			balances[i] = new Balance();
-
-			balances[i].copyTotalBalanceFrom(balances[i-1].getTotalBalance());
-
-			balances[i].setTransactionBalance(0, BigDecimal.ZERO.setScale(8));
-
-			if(unit instanceof Transaction)
-			{
-				if(!(unit instanceof MultiPaymentTransaction))
-				{
-					balances[i].addTransactionBalance(0, ((Transaction)unit).getAmount(new Account(address)));
-				}
-
-				if(unit instanceof TransferAssetTransaction)
-				{
-					TransferAssetTransaction transferAssetTransaction = (TransferAssetTransaction)unit;
-
-					if(transferAssetTransaction.getSender().getAddress().equals(address))
-					{
-						balances[i].addTransactionBalance(transferAssetTransaction.getKey(), 
-								BigDecimal.ZERO.setScale(8).subtract(transferAssetTransaction.getAmount()));
-					}
-
-					if(transferAssetTransaction.getRecipient().getAddress().equals(address))
-					{
-						balances[i].addTransactionBalance(transferAssetTransaction.getKey(), 
-								transferAssetTransaction.getAmount());
-					}
-				}
-
-				else if(unit instanceof MultiPaymentTransaction)
-				{
-					MultiPaymentTransaction multiPaymentTransaction = (MultiPaymentTransaction)unit;
-					if(multiPaymentTransaction.getSender().getAddress().equals(address))
-					{
-						balances[i].addTransactionBalance(0L, 
-								BigDecimal.ZERO.setScale(8).subtract(multiPaymentTransaction.getFee()));
-					}
-
-					for(Payment payment: multiPaymentTransaction.getPayments())
-					{
-						if(multiPaymentTransaction.getSender().getAddress().equals(address))
-						{
-							balances[i].addTransactionBalance(payment.getAsset(), 
-									BigDecimal.ZERO.setScale(8).subtract(payment.getAmount()));
-						}
-
-						if(payment.getRecipient().getAddress().equals(address))
-						{
-							balances[i].addTransactionBalance(payment.getAsset(), 
-									payment.getAmount());
-						}		
-					}
-				}
-
-				else if(unit instanceof ArbitraryTransaction)
-				{
-					ArbitraryTransaction arbitraryTransaction = (ArbitraryTransaction)unit;
-					if(arbitraryTransaction.getCreator().getAddress().equals(address))
-					{
-						balances[i].addTransactionBalance(0L, 
-								BigDecimal.ZERO.setScale(8).subtract(arbitraryTransaction.getFee()));
-					}
-
-					for(Payment payment: arbitraryTransaction.getPayments())
-					{
-						if(arbitraryTransaction.getCreator().getAddress().equals(address))
-						{
-							balances[i].addTransactionBalance(payment.getAsset(), 
-									BigDecimal.ZERO.setScale(8).subtract(payment.getAmount()));
-						}
-
-						if(payment.getRecipient().getAddress().equals(address))
-						{
-							balances[i].addTransactionBalance(payment.getAsset(), 
-									payment.getAmount());
-						}		
-					}
-				}
+			
+			Map<String, Map<Long, BigDecimal>> tXincome = new LinkedHashMap<>();
+			
+			//tXincome.put(address, new LinkedHashMap<Long, BigDecimal>(){{put(BalanceMap.QORA_KEY, BigDecimal.ZERO);}});
+			
+			if(unit instanceof Transaction) {
 				
-				else if(unit instanceof IssueAssetTransaction)
-				{
-					Asset asset = DBSet.getInstance().getAssetMap().get(DBSet.getInstance().getIssueAssetMap().get(((IssueAssetTransaction)unit).getSignature()));
-
-					balances[i].addTransactionBalance(asset.getKey(), 
-							new BigDecimal(asset.getQuantity()).setScale(8));
-				}
-
-				else if(unit instanceof CreateOrderTransaction)
-				{
-					Order order =  ((CreateOrderTransaction)unit).getOrder();
-
-					balances[i].addTransactionBalance(
-							order.getHave(), 
-							BigDecimal.ZERO.setScale(8).subtract(order.getAmount())
-							);
-				}
-
-				else if(unit instanceof CancelOrderTransaction)
-				{
-					BigInteger key = ((CancelOrderTransaction)unit).getOrder();
-					Order order;
-					if(DBSet.getInstance().getCompletedOrderMap().contains(key))
-					{
-						order =  DBSet.getInstance().getCompletedOrderMap().get(key);
-					}
-					else
-					{
-						order =  DBSet.getInstance().getOrderMap().get(key);
-					}	
-
-					balances[i].addTransactionBalance(
-							order.getHave(),
-							order.getAmountLeft()
-							);
-				}
-
-				else if(unit instanceof DeployATTransaction && address.startsWith("A"))
-				{
-					balances[i].addTransactionBalance(
-							0,
-							((DeployATTransaction)unit).getAmount()
-							);
-				}
+				tXincome = ((Transaction)unit).getAssetAmount();
 
 				txsCount ++;
 				txsTypeCount[((Transaction)unit).getType()-1] ++;
-			}
-
-			if (unit instanceof Block)
-			{
-				BigDecimal Fee = ((Block)unit).getTotalFee();
-				balances[i].addTransactionBalance(0, Fee);
+				
+			} else if (unit instanceof Block) {
+				
+				BigDecimal fee = ((Block)unit).getTotalFee();
+				
+				tXincome = Transaction.addAssetAmount(tXincome, address, BalanceMap.QORA_KEY, fee);
 
 				blocksCount++;
 
-				totalGeneratedFee = totalGeneratedFee.add(Fee);
-			}
-
-			else if(unit instanceof Trade)
-			{
+				totalGeneratedFee = totalGeneratedFee.add(fee);
+				
+			} else if(unit instanceof Trade) {
+				
 				Trade trade = (Trade)unit;
 
 				Order orderInitiator;
@@ -2117,58 +2002,72 @@ public class BlockExplorer
 
 				if(orderInitiator.getCreator().getAddress().equals(address))
 				{
-					balances[i].addTransactionBalance(
-							orderInitiator.getWant(), 
-							trade.getAmount()
-							);
+					tXincome = Transaction.addAssetAmount(tXincome, address, orderInitiator.getWant(), trade.getAmount());
 				}
 
 				if(orderTarget.getCreator().getAddress().equals(address))
 				{
-					balances[i].addTransactionBalance(
-							orderInitiator.getHave(),
-							trade.getPrice()
-							);
+					tXincome = Transaction.addAssetAmount(tXincome, address, orderInitiator.getHave(), trade.getPrice());
 				}
 
 				tradesCount ++;
-			}
-
-			else if(unit instanceof AT_Transaction)
-			{
+				
+			} else if(unit instanceof AT_Transaction) {
+				
 				AT_Transaction atTransaction = (AT_Transaction)unit;
 
 				if(atTransaction.getSender().equals(address))
 				{
-					balances[i].addTransactionBalance(
-							0,
-							BigDecimal.ZERO.setScale(8).subtract(BigDecimal.valueOf( atTransaction.getAmount() , 8) )
-							);
+					tXincome = Transaction.subAssetAmount(tXincome, address, BalanceMap.QORA_KEY, BigDecimal.valueOf( atTransaction.getAmount() , 8));
 				}
 
 				if(atTransaction.getRecipient().equals(address))
 				{
-					balances[i].addTransactionBalance(
-							0,
-							BigDecimal.valueOf( atTransaction.getAmount() , 8)
-							);
+					tXincome = Transaction.addAssetAmount(tXincome, address, BalanceMap.QORA_KEY, BigDecimal.valueOf( atTransaction.getAmount() , 8));
 				}
 
 				aTTxsCount++;
 			}
 
-			if( balances[i].getTransactionBalance(0).compareTo(BigDecimal.ZERO) < 0 )
-			{
-				sendQora = sendQora.subtract(balances[i].getTransactionBalance(0));
+			if(tXincome.containsKey(address) && tXincome.get(address).containsKey(BalanceMap.QORA_KEY)) {
+				if( tXincome.get(address).get(BalanceMap.QORA_KEY).compareTo(BigDecimal.ZERO) < 0 )
+				{
+					sendQora = sendQora.subtract(tXincome.get(address).get(BalanceMap.QORA_KEY));
+				}
+	
+				if( tXincome.get(address).get(BalanceMap.QORA_KEY).compareTo(BigDecimal.ZERO) > 0 )
+				{
+					receivedQora = receivedQora.add(tXincome.get(address).get(BalanceMap.QORA_KEY));
+				}
 			}
+			
+			tXincomes.add(tXincome);
 
-			if( balances[i].getTransactionBalance(0).compareTo(BigDecimal.ZERO) > 0 )
-			{
-				receivedQora = receivedQora.add(balances[i].getTransactionBalance(0));
+			if(totalBalances.size() > 0) {
+				Map<Long, BigDecimal> newTotalBalance = new LinkedHashMap<>(totalBalances.get(totalBalances.size()-1));
+				
+				for(Map.Entry<Long, BigDecimal> e : tXincome.getOrDefault(address, zeroAmount).entrySet()) {
+					if(newTotalBalance.containsKey(e.getKey()))
+					{
+						newTotalBalance.put(e.getKey(), newTotalBalance.get(e.getKey()).add(e.getValue()));
+					}
+					else
+					{
+						newTotalBalance.put(e.getKey(), e.getValue());
+					}
+				}
+				
+				if((newTotalBalance.containsKey(0L)) && newTotalBalance.get(0L).compareTo(BigDecimal.ZERO)<0)
+				{
+					System.out.println(i);
+				}
+				
+				totalBalances.add(newTotalBalance);
+				
+			} else {
+				totalBalances.add(tXincome.getOrDefault(address, zeroAmount));
 			}
-
-			balances[i].setFromTransactionToTotalBalance();
-
+			
 			i++;
 		}
 
@@ -2176,7 +2075,7 @@ public class BlockExplorer
 
 		Map IncomeJSON=new LinkedHashMap();
 
-		for(Map.Entry<Long, BigDecimal> e : balances[size].getTotalBalance().entrySet())
+		for(Map.Entry<Long, BigDecimal> e : totalBalances.get(size - 1).entrySet())
 		{	
 			Map IncomeAssetJSON = new LinkedHashMap();
 
@@ -2185,14 +2084,14 @@ public class BlockExplorer
 
 			IncomeJSON.put(e.getKey(), IncomeAssetJSON);
 		}
-
+		
 		IncomeJSON.put("sendQora", sendQora.toPlainString());
 		IncomeJSON.put("receivedQora", receivedQora.toPlainString());
 		IncomeJSON.put("totalGeneratedFee", totalGeneratedFee.toPlainString());
 
 		output.put("totalBalance", IncomeJSON);
 
-		output.put("balanceCheck", new Account(address).getBalance(1).toPlainString());
+		output.put("balanceCheck", jsonQueryBalance(address));
 
 		Map txCountJSON = new LinkedHashMap();
 		
@@ -2373,7 +2272,7 @@ public class BlockExplorer
 
 				IncomeJSON = new LinkedHashMap();
 
-				for(Map.Entry<Long, BigDecimal> e : balances[size - counter].getTransactionBalance().entrySet())
+				for(Map.Entry<Long, BigDecimal> e : tXincomes.get(size - counter - 1).getOrDefault(address, zeroAmount).entrySet())
 				{	
 					Map IncomeAssetJSON = new LinkedHashMap();
 
@@ -2387,9 +2286,9 @@ public class BlockExplorer
 
 				IncomeJSON = new LinkedHashMap();
 
-				for(Map.Entry<Long, BigDecimal> e : balances[size - counter].getTotalBalance().entrySet())
+				for(Map.Entry<Long, BigDecimal> e : totalBalances.get( size - counter - 1 ).entrySet())
 				{	
-					if(balances[size - counter].getTransactionBalance().containsKey(e.getKey()))
+					if(tXincomes.get( size - counter - 1 ).getOrDefault(address, zeroAmount).containsKey(e.getKey()))
 					{
 						Map IncomeAssetJSON = new LinkedHashMap();
 
@@ -2550,7 +2449,7 @@ public class BlockExplorer
 		}
 		else if (query.equals("last"))
 		{
-			block = Controller.getInstance().getLastBlock();
+			block = getLastBlock();
 		}
 		else
 		{
@@ -2665,7 +2564,7 @@ public class BlockExplorer
 			transactionDataJSON.put("dateTime", BlockExplorer.timestampToStr(block.getTimestamp()));
 
 			int height = block.getHeight();
-			transactionDataJSON.put("confirmations", Controller.getInstance().getHeight() - height + 1 );
+			transactionDataJSON.put("confirmations", getHeight() - height + 1 );
 			transactionDataJSON.put("height", height);
 
 			transactionDataJSON.put("generator", block.getGenerator().getAddress());
@@ -2869,7 +2768,32 @@ public class BlockExplorer
 		}
 
 	}
-
+	
+	/*
+	public int getHeight() {
+		return  Controller.getInstance().getHeight();
+	}
+	
+	public Block getLastBlock() 
+	{
+		return  Controller.getInstance().getLastBlock();
+	}
+	*/
+	
+	public int getHeight() {
+		
+		//GET LAST BLOCK
+		byte[] lastBlockSignature = DBSet.getInstance().getBlockMap().getLastBlockSignature();
+		
+		//RETURN HEIGHT
+		return DBSet.getInstance().getHeightMap().get(lastBlockSignature);
+	}
+	
+	public Block getLastBlock() 
+	{	
+		return DBSet.getInstance().getBlockMap().getLastBlock();
+	}
+	
 	public static class Stopwatch { 
 
 		private long start;

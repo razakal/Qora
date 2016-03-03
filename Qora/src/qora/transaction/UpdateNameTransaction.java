@@ -6,20 +6,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
-
-import qora.account.Account;
-import qora.account.PrivateKeyAccount;
-import qora.account.PublicKeyAccount;
-import qora.crypto.Crypto;
-import qora.naming.Name;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
+import database.BalanceMap;
 import database.DBSet;
+import qora.account.Account;
+import qora.account.PrivateKeyAccount;
+import qora.account.PublicKeyAccount;
+import qora.crypto.Crypto;
+import qora.naming.Name;
 
 public class UpdateNameTransaction extends Transaction 
 {
@@ -310,7 +311,7 @@ public class UpdateNameTransaction extends Transaction
 		
 		return false;
 	}
-
+	
 	@Override
 	public BigDecimal getAmount(Account account) 
 	{
@@ -322,6 +323,12 @@ public class UpdateNameTransaction extends Transaction
 		return BigDecimal.ZERO;
 	}
 
+	@Override
+	public Map<String, Map<Long, BigDecimal>> getAssetAmount() 
+	{
+		return subAssetAmount(null, this.owner.getAddress(), BalanceMap.QORA_KEY, this.fee);
+	}
+	
 	public static byte[] generateSignature(DBSet db, PrivateKeyAccount owner, Name name, BigDecimal fee, long timestamp) 
 	{
 		byte[] data = new byte[0];
