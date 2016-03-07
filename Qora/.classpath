@@ -3,28 +3,14 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="srcunittest"/>
 	<classpathentry kind="lib" path="libs/json-simple-1.1.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Qora/libs/native"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libs/commons-net-3.3.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/api/javax.ws.rs-api-2.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javassist-3.18.1-GA.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javax.annotation-api-1.2.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javax.servlet-api-3.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/jersey/ext/jaxb-api-2.2.7.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/org.osgi.core-4.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/osgi-resource-locator-1.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/persistence-api-1.0.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/validation-api-1.1.0.Final.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-client.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-common.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet-core.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-media-jaxb.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-server.jar"/>
 	<classpathentry kind="lib" path="libs/jsoup-1.8.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/jsoup-1.8.2-javadoc.jar!/"/>
@@ -41,13 +27,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/coverity-escapers-1.1.1.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/aopalliance-repackaged-2.4.0-b25.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/asm-debug-all-5.0.3.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-api-2.4.0-b25.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-locator-2.4.0-b25.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/hk2-utils-2.4.0-b25.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/javax.inject-2.4.0-b25.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/ext/jersey-guava-2.19.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.12.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-nop-1.7.12.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/servlet-api-3.1.jar"/>
@@ -61,16 +40,40 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/diffutils-1.3.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-multipart-1.19.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-media-multipart-2.21.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/jersey-core-1.19.jar"/>
-	<classpathentry kind="lib" path="libs/jersey/lib/mimepull-1.9.3.jar"/>
 	<classpathentry kind="lib" path="libs/pebble-1.6.0.jar" sourcepath="libs/sourceandjavadoc/pebble-1.6.0-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/pebble-1.6.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-154.jar"/>
+	<classpathentry kind="lib" path="libs/jetty/jetty-schemas-3.1.jar"/>
+	<classpathentry kind="lib" path="libs/guava-19.0.jar" sourcepath="libs/sourceandjavadoc/guava-19.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/guava-19.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/jersey/api/javax.ws.rs-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-server.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-client.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-common.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet-core.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-container-servlet.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-media-jaxb.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/aopalliance-repackaged-2.4.0-b34.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/asm-debug-all-5.0.4.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-api-2.4.0-b34.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-locator-2.4.0-b34.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/hk2-utils-2.4.0-b34.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javassist-3.18.1-GA.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javax.annotation-api-1.2.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javax.inject-2.4.0-b34.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/javax.servlet-api-3.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/jersey-guava-2.22.2.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/org.osgi.core-4.2.0.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/osgi-resource-locator-1.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/persistence-api-1.0.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/ext/validation-api-1.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="libs/jersey/lib/jersey-media-multipart-2.22.2.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-alpn-client-9.2.15.v20160210.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-alpn-server-9.2.15.v20160210.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-annotations-9.2.15.v20160210.jar"/>
@@ -88,7 +91,6 @@
 	<classpathentry kind="lib" path="libs/jetty/jetty-proxy-9.2.15.v20160210.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-quickstart-9.2.15.v20160210.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-rewrite-9.2.15.v20160210.jar"/>
-	<classpathentry kind="lib" path="libs/jetty/jetty-schemas-3.1.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-security-9.2.15.v20160210.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-server-9.2.15.v20160210.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-servlet-9.2.15.v20160210.jar"/>
@@ -96,10 +98,6 @@
 	<classpathentry kind="lib" path="libs/jetty/jetty-util-9.2.15.v20160210.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-webapp-9.2.15.v20160210.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-xml-9.2.15.v20160210.jar"/>
-	<classpathentry kind="lib" path="libs/guava-19.0.jar" sourcepath="libs/sourceandjavadoc/guava-19.0-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/guava-19.0-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="libs/mimepull-1.9.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
