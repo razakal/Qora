@@ -1181,9 +1181,17 @@ function mainQuery(data) {
 			}
 			
 			
+			if(!data.balance.received.hasOwnProperty('0'))
+			{
+				data.balance.received['0'] = "0.00000000";
+			}
 			output += '<br>Total Received: ' + addCommas(data.balance.received['0']) + ' Qora';
-			
+			if(!data.balance.sent.hasOwnProperty('0'))
+			{
+				data.balance.sent['0'] = "0.00000000";
+			}
 			output += '<br>Total Send: ' + addCommas(data.balance.sent['0']) + ' Qora' + '<br>';
+			
 			output += '<br>';
 
 			
