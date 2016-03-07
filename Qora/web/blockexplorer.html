@@ -1135,7 +1135,16 @@ function mainQuery(data) {
 		
 			if (data.countTx.hasOwnProperty('txsCount'))
 			{
-				output += 'Transactions count: ' + data.countTx.txsCount + '<br>Including:<br>';
+				if (data.addresses.length > 1) 
+				{
+					output += 'Total transactions count: ';
+				}
+				else
+				{
+					output += 'Transactions count: ';
+				}
+				
+				output += data.countTx.txsCount + '<br>Including:<br>';
 
 				for(key in data.countTx.txsTypesCount) {
 					output += '<div style="display:inline-block; padding-left: 20px; width: 200px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=' + key + '><a class=showOnly id=' + key + ' href=#>' + transactionTypes[key] + ': ' + data.countTx.txsTypesCount[key]+ '</a></div>\n';
