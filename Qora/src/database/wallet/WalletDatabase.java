@@ -5,6 +5,7 @@ import java.io.File;
 import org.mapdb.Atomic.Var;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
 
 import database.IDB;
 import qora.account.Account;
@@ -72,13 +73,29 @@ public class WalletDatabase implements IDB
 	
 	public void setLastBlockSignature(byte[] signature)
 	{
-		Var<byte[]> atomic = this.database.getAtomicVar(LAST_BLOCK);
+		Var<byte[]> atomic;
+		if(database.exists(LAST_BLOCK))
+		{
+			atomic = database.getAtomicVar(LAST_BLOCK);
+		}
+		else
+		{
+			atomic = database.createAtomicVar(LAST_BLOCK, new byte[0], Serializer.BYTE_ARRAY);
+		}
 		atomic.set(signature);
 	}
 	
 	public byte[] getLastBlockSignature()
 	{
-		Var<byte[]> atomic = this.database.getAtomicVar(LAST_BLOCK);
+		Var<byte[]> atomic;
+		if(database.exists(LAST_BLOCK))
+		{
+			atomic = database.getAtomicVar(LAST_BLOCK);
+		}
+		else
+		{
+			atomic = database.createAtomicVar(LAST_BLOCK, new byte[0], Serializer.BYTE_ARRAY);
+		}
 		return atomic.get();
 	}
 	
