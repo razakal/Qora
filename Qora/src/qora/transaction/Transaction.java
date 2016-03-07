@@ -303,6 +303,15 @@ public abstract class Transaction {
 	
 	public abstract BigDecimal getAmount(Account account);
 	
+	public int getSeq()
+	{
+		if(this.isConfirmed())
+		{
+			return this.getParent().getTransactionSeq(this.signature);
+		}
+		return -1;
+	}
+	
 	@Override 
 	public boolean equals(Object object)
 	{

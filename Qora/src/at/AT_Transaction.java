@@ -11,6 +11,7 @@ package at;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 import org.json.simple.JSONObject;
 
@@ -157,4 +158,21 @@ public class AT_Transaction{
 		return ob;
 	}
 	
+	@Override 
+	public boolean equals(Object otherObject)
+	{
+		if(otherObject instanceof AT_Transaction)
+		{
+			AT_Transaction otherAtTx = (AT_Transaction) otherObject;
+			
+			return 		(this.getBlockHeight() == otherAtTx.getBlockHeight()) 
+					&& 	(this.getSeq() == otherAtTx.getSeq())
+					&&	(Arrays.equals(this.getSenderId(), otherAtTx.getSenderId()))
+					&&	(Arrays.equals(this.getRecipientId(), otherAtTx.getRecipientId()))
+					&&	(Arrays.equals(this.getMessage(), otherAtTx.getMessage()))
+					&&	(this.getAmount() == otherAtTx.getAmount());
+		}
+		
+		return false;
+	}
 }

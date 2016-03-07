@@ -29,6 +29,7 @@ import qora.account.Account;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.GenesisTransaction;
 import qora.transaction.Transaction;
+import utils.BlExpUnit;
 
 public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transaction>
 {
@@ -257,6 +258,29 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 		return txs;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Set<BlExpUnit> getBlExpTransactionsByAddress(String address)
+	{
+		Iterable senderKeys = Fun.filter(this.senderKey, address);
+		Iterable recipientKeys = Fun.filter(this.recipientKey, address);
+
+		Set<Tuple2<Integer, Integer>> treeKeys = new TreeSet<>();
+		
+		treeKeys.addAll(Sets.newTreeSet(senderKeys));
+		treeKeys.addAll(Sets.newTreeSet(recipientKeys));
+
+		Iterator iter = treeKeys.iterator();
+
+		Set<BlExpUnit> txs = new TreeSet<>();
+		while ( iter.hasNext() )
+		{
+			Tuple2<Integer, Integer> request = (Tuple2<Integer, Integer>) iter.next();
+			txs.add(new BlExpUnit(request.a, request.b, this.map.get(request)));
+		}
+		
+		return txs;
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Transaction> getTransactionsByAddress(String address)
 	{

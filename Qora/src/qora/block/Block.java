@@ -215,6 +215,8 @@ public class Block {
 		return null;
 	}
 
+
+	
 	public byte[] getBlockATs()
 	{
 		return this.atBytes;
@@ -755,7 +757,7 @@ public class Block {
 		int seq = 1;
 		for(Transaction transaction: this.getTransactions())
 		{
-			db.getTransactionFinalMap().add( height , seq, transaction);
+			db.getTransactionFinalMap().add( height, seq, transaction);
 			seq++;
 		}
 
@@ -844,4 +846,31 @@ public class Block {
 		}
 	}
 
+	public int getTransactionSeq(byte[] signature)
+	{
+		int seq = 1;
+		for(Transaction transaction: this.getTransactions())
+		{
+			if(Arrays.equals(transaction.getSignature(), signature))
+			{
+				return seq;
+			}
+			seq ++;
+		}
+
+		return -1;
+	}
+	
+	@Override 
+	public boolean equals(Object otherObject)
+	{
+		if(otherObject instanceof Block)
+		{
+			Block otherBlock = (Block) otherObject;
+			
+			return Arrays.equals(this.getSignature(), otherBlock.getSignature());
+		}
+		
+		return false;
+	}
 }

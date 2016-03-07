@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.mapdb.BTreeMap;
 import org.mapdb.Bind;
@@ -16,6 +18,7 @@ import org.mapdb.DBMaker;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 
+import utils.BlExpUnit;
 import utils.ObserverMessage;
 import at.AT_Transaction;
 import database.serializer.ATTransactionSerializer;
@@ -193,6 +196,22 @@ public class ATTransactionMap extends DBMap< Tuple2<Integer, Integer> ,  AT_Tran
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Set<BlExpUnit> getBlExpATTransactionsBySender(String sender)
+	{
+		Iterable keys = Fun.filter(this.senderKey, sender);
+		Iterator iter = keys.iterator();
+
+		Set<BlExpUnit> ats = new TreeSet<>();
+		while ( iter.hasNext() )
+		{
+			AT_Transaction aTtx = this.map.get(iter.next());
+			ats.add( new BlExpUnit( aTtx.getBlockHeight(), aTtx.getSeq(), aTtx ) );
+		}
+		
+		return ats;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<AT_Transaction> getATTransactionsByRecipient(String recipient)
 	{
 		Iterable keys = Fun.filter(this.recipientKey,recipient);
@@ -202,6 +221,22 @@ public class ATTransactionMap extends DBMap< Tuple2<Integer, Integer> ,  AT_Tran
 		while ( iter.hasNext() )
 		{
 			ats.add(this.map.get(iter.next()));
+		}
+		
+		return ats;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Set<BlExpUnit> getBlExpATTransactionsByRecipient(String recipient)
+	{
+		Iterable keys = Fun.filter(this.recipientKey,recipient);
+		Iterator iter = keys.iterator();
+
+		Set<BlExpUnit> ats = new TreeSet<>();
+		while ( iter.hasNext() )
+		{
+			AT_Transaction aTtx = this.map.get(iter.next());
+			ats.add( new BlExpUnit( aTtx.getBlockHeight(), aTtx.getSeq(), aTtx ) );
 		}
 		
 		return ats;

@@ -28,6 +28,10 @@ public class QoraResource
 	{
 		APIUtils.askAPICallAllowed("GET qora/stop", request);
 
+		if(Controller.getInstance().doesWalletExists() && !Controller.getInstance().isWalletUnlocked()) {
+			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_WALLET_LOCKED);
+		}
+		
 		//STOP
 		Controller.getInstance().stopAll();		
 		System.exit(0);
