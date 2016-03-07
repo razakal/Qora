@@ -2032,6 +2032,13 @@ public class BlockExplorer
 		}
 		
 		int size = all.size();
+		
+		if(size == 0)
+		{
+			output.put("error", "No transactions found for this address.<br>It has probably not been used on the network yet.");
+			return output;
+		}
+		
 		int tradesCount = 0;
 		int aTTxsCount = 0;
 		int txsCount = 0;
