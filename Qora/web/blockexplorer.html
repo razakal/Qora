@@ -1115,6 +1115,11 @@ function mainQuery(data) {
 						balances += 'generated ' + data.generatedBlocks[address].count + ' blocks with ' + addCommas(data.generatedBlocks[address].fees) + ' Qora of fees, ';
 					}
 					
+					if (data.txsCountOfAddr.hasOwnProperty(address)) 
+					{
+						balances += 'transactions: ' + data.txsCountOfAddr[address] + ', ';
+					}
+
 					balances = balances.slice(0, -2);
 					
 					output += balances;
