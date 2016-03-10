@@ -289,12 +289,12 @@ public class ApiClient {
 			},
 			{
 				"GET addresses/lastreference/{address}", 
-				"Returns the 64-byte long base58-encoded signature of last transaction of the given address, where the address is delivered as creator. Or the first incoming transaction. Returns \"false\" if there is no transactions.",
+				"Returns the 64-byte long base58-encoded signature of last transaction where the address is delivered as creator. Or the first incoming transaction. Returns \"false\" if there is no transactions.",
 				"Errors: 102 - Invalid address."
 			},
 			{
 				"GET addresses/lastreference/{address}/unconfirmed", 
-				"Returns the 64-byte long base58-encoded signature of last unconfirmed transaction of the given address, where the address is delivered as creator. Or the first incoming transaction. Returns \"false\" if there is no transactions.",
+				"Returns the 64-byte long base58-encoded signature of last transaction including unconfirmed where the address is delivered as creator. Or the first incoming transaction. Returns \"false\" if there is no transactions.",
 				"Errors: 102 - Invalid address."
 			},
 			{
