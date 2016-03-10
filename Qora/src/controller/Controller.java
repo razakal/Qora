@@ -90,7 +90,7 @@ import webserver.WebService;
 public class Controller extends Observable {
 
 	private String version = "0.26.0 beta";
-	private String buildTime = "2016-03-07 00:00:00 UTC";
+	private String buildTime = "2016-03-10 00:00:00 UTC";
 	private long buildTimestamp;
 	
 	public static final String releaseVersion = "0.26.0";
