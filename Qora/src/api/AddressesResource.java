@@ -2,6 +2,8 @@ package api;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,7 @@ import qora.account.PrivateKeyAccount;
 import qora.account.PublicKeyAccount;
 import qora.crypto.Base58;
 import qora.crypto.Crypto;
+import qora.transaction.Transaction;
 import utils.APIUtils;
 import utils.Pair;
 
@@ -85,6 +88,63 @@ public class AddressesResource {
 			return Base58.encode(lastReference);
 		}
 	}
+	
+	@GET
+	@Path("/lastreference/{address}/unconfirmed")
+	public String getLastReferenceUnconfirmed(@PathParam("address") String address) {
+		
+		// CHECK IF VALID ADDRESS
+		if (!Crypto.getInstance().isValidAddress(address)) {
+			throw ApiErrorFactory.getInstance().createError(
+					ApiErrorFactory.ERROR_INVALID_ADDRESS);
+		}
+		
+		// GET ACCOUNT
+		Account account = new Account(address);
+
+		HashSet<byte[]> isSomeoneReference = new HashSet<byte[]>();
+		
+		List<Transaction> transactions = Controller.getInstance().getUnconfirmedTransactions();
+		
+		byte[] lastReference = account.getLastReference();
+		if(!(lastReference == null || lastReference.length == 0)) 
+		{
+			transactions.add(Controller.getInstance().getTransaction(lastReference));
+		}	
+		
+		for (Transaction tx : transactions)
+		{
+			if (tx.getCreator().equals(account))
+			{
+				for (Transaction tx2 : transactions)
+				{
+					if (Arrays.equals(tx.getSignature(), tx2.getReference())){
+						isSomeoneReference.add(tx.getSignature());
+						break;
+					}
+				}
+			}	
+		}
+		
+		if(isSomeoneReference.isEmpty())
+		{
+			return getLastReference(address);
+		}
+		
+		for (Transaction tx : Controller.getInstance().getUnconfirmedTransactions())
+		{
+			if (tx.getCreator().equals(account))
+			{
+				if(!isSomeoneReference.contains(tx.getSignature()))
+				{
+					return Base58.encode(tx.getSignature());
+				}
+			}
+		}
+		
+		return "false"; 
+	}
+
 	
 	@GET
 	@Path("/validate/{address}")
