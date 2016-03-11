@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.json.simple.JSONObject;
 
 import qora.naming.Name;
+import qora.payment.Payment;
 import utils.KeyVariation;
 import utils.Pair;
 import utils.ProfileUtils;
@@ -284,7 +285,7 @@ public class Profile {
 		return blogBlackWhiteList;
 	}
 
-	public String saveProfile() throws WebApplicationException {
+	public String saveProfile(List<Payment> paymentsOpt) throws WebApplicationException {
 
 		JSONObject oldProfileJson = ProfileUtils.getProfile(name.getName());
 		JSONObject oldBWListJson = ProfileUtils.getBlogBlackWhiteList(name
@@ -453,21 +454,45 @@ public class Profile {
 		JSONObject jsonResult = StorageUtils.getStorageJsonObject(
 				addCompleteKeys, removeCompleteKeys, addListKeys,
 				removeListKeys, null, null);
+		
+		addMultiPaymentsOnDemand(paymentsOpt, jsonResult);
 
 		return new NameStorageResource().updateEntry(jsonResult.toJSONString(),
 				name.getName());
 
-		// String jsonString = jsonRepresenation.toJSONString();
-		// String compressValue = GZIP.compress(jsonString);
-		// JSONObject jsonObject = new JSONObject();
-		// jsonObject.put("fee", Controller.getInstance()
-		// .calcRecommendedFeeForNameUpdate(name.getName(), compressValue)
-		// .getA().toPlainString());
-		// jsonObject.put("newowner", name.getOwner().getAddress());
-		// jsonObject.put("newvalue", compressValue);
-		//
-		// return new NamesResource().updateName(jsonObject.toJSONString(),
-		// name.getName());
+//		 String jsonString = jsonRepresenation.toJSONString();
+//		 String compressValue = GZIP.compress(jsonString);
+//		 JSONObject jsonObject = new JSONObject();
+//		 jsonObject.put("fee", Controller.getInstance()
+//		 .calcRecommendedFeeForNameUpdate(name.getName(), compressValue)
+//		 .getA().toPlainString());
+//		 jsonObject.put("newowner", name.getOwner().getAddress());
+//		 jsonObject.put("newvalue", compressValue);
+//		
+//		 return new NamesResource().updateName(jsonObject.toJSONString(),
+//		 name.getName());
+	}
+
+	private void addMultiPaymentsOnDemand(List<Payment> paymentsOpt, JSONObject jsonResult) {
+		if(paymentsOpt != null && paymentsOpt.size() > 0)
+		{
+			JSONObject innerpayments = new JSONObject();
+			
+			for (Payment payment : paymentsOpt) {
+				 JSONObject amountAssetJson = new JSONObject();
+				 amountAssetJson.put(NameStorageResource.AMOUNT_JSON_KEY, payment.getAmount().toString());
+				 long asset = payment.getAsset();
+				 if(asset != 0L)
+				 {
+					 amountAssetJson.put(NameStorageResource.ASSET_JSON_KEY, asset);
+				 }
+				 
+				innerpayments.put(payment.getRecipient().getAddress(), amountAssetJson.toJSONString());
+			}
+			
+			jsonResult.put(NameStorageResource.PAYMENTS_JSON_KEY, innerpayments.toJSONString());
+		}
+		
 	}
 
 	public Name getName() {

@@ -65,6 +65,7 @@ import qora.blockexplorer.BlockExplorer;
 import qora.crypto.Base58;
 import qora.crypto.Base64;
 import qora.naming.Name;
+import qora.payment.Payment;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import qora.web.BlogBlackWhiteList;
@@ -735,7 +736,7 @@ public class WebResource {
 
 			try {
 
-				profile.saveProfile();
+				profile.saveProfile(null);
 
 				json.put("type", "settingsSuccessfullySaved");
 				return Response
@@ -1566,7 +1567,7 @@ public class WebResource {
 							try {
 
 								activeProfileOpt.addFollowedBlog(blogname);
-								result = activeProfileOpt.saveProfile();
+								result = activeProfileOpt.saveProfile(null);
 								result = "<div class=\"alert alert-success\" role=\"alert\">You follow this blog now<br>"
 										+ result + "</div>";
 
@@ -1607,7 +1608,7 @@ public class WebResource {
 							activeProfileOpt.removeFollowedBlog(blogname);
 							String result;
 							try {
-								result = activeProfileOpt.saveProfile();
+								result = activeProfileOpt.saveProfile(null);
 								result = "<div class=\"alert alert-success\" role=\"alert\">Unfollow successful<br>"
 										+ result + "</div>";
 
@@ -2062,7 +2063,15 @@ public class WebResource {
 						activeProfileOpt.addLikePost(signature);
 						try {
 
-							result = activeProfileOpt.saveProfile();
+							String creator = blogEntryOpt.getCreator();
+							List<Payment> payments = new ArrayList<>();
+							if(creator != null)
+							{
+								BigDecimal amount = BigDecimal.TEN;
+								amount = amount.setScale(8);
+								payments.add(new Payment(new Account(creator), 0L,amount ));
+							}
+							result = activeProfileOpt.saveProfile(payments);
 
 							json.put("type", "LikeSuccessful");
 							json.put("result", result);
@@ -2085,7 +2094,7 @@ public class WebResource {
 							activeProfileOpt.removeLikeProfile(signature);
 							String result;
 							try {
-								result = activeProfileOpt.saveProfile();
+								result = activeProfileOpt.saveProfile(null);
 
 								json.put("type", "LikeRemovedSuccessful");
 								json.put("result", result);
