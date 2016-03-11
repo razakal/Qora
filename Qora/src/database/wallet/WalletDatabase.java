@@ -73,29 +73,13 @@ public class WalletDatabase implements IDB
 	
 	public void setLastBlockSignature(byte[] signature)
 	{
-		Var<byte[]> atomic;
-		if(database.exists(LAST_BLOCK))
-		{
-			atomic = database.getAtomicVar(LAST_BLOCK);
-		}
-		else
-		{
-			atomic = database.createAtomicVar(LAST_BLOCK, new byte[0], Serializer.BYTE_ARRAY);
-		}
+		Var<byte[]> atomic = this.database.getAtomicVar(LAST_BLOCK);
 		atomic.set(signature);
 	}
 	
 	public byte[] getLastBlockSignature()
 	{
-		Var<byte[]> atomic;
-		if(database.exists(LAST_BLOCK))
-		{
-			atomic = database.getAtomicVar(LAST_BLOCK);
-		}
-		else
-		{
-			atomic = database.createAtomicVar(LAST_BLOCK, new byte[0], Serializer.BYTE_ARRAY);
-		}
+		Var<byte[]> atomic = this.database.getAtomicVar(LAST_BLOCK);		
 		return atomic.get();
 	}
 	
