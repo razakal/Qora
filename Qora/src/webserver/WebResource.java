@@ -1127,6 +1127,18 @@ public class WebResource {
 		}
 	}
 
+	@Path("index/libs/js/clipboard.js")
+	@GET
+	public Response clipboard() {
+		File file = new File("web/libs/js/clipboard.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+
 	@Path("index/libs/js/third-party/ZeroClipboard.min.js")
 	@GET
 	public Response ZeroClipboardmin() {
@@ -1138,7 +1150,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-
+	
 	@Path("index/libs/js/third-party/ZeroClipboard.swf")
 	@GET
 	public Response ZeroClipboard() {
