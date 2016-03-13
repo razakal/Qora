@@ -9,15 +9,29 @@ public class BlExpUnit implements Comparable<BlExpUnit>
 {
 	private Object unit;
 	private int height;
+	private int height2;
 	private int seq;
+	private int seq2;
 	
 	public BlExpUnit(int height, int seq, Object unit)
 	{
 		this.unit = unit;
 		this.height = height;
+		this.height2 = 0;
 		this.seq = seq;
+		this.seq2 = 0;
+
 	}
-	
+
+	public BlExpUnit(int height, int height2, int seq, int seq2, Object unit)
+	{
+		this.unit = unit;
+		this.height = height;
+		this.height2 = height2;
+		this.seq = seq;
+		this.seq2 = seq2;
+	}
+
 	public Object getUnit()
 	{
 		return this.unit;
@@ -33,6 +47,17 @@ public class BlExpUnit implements Comparable<BlExpUnit>
 		return this.seq;
 	}
 	
+	public int getSeq2()
+	{
+		return this.seq2;
+	}
+	
+	public int getHeight2()
+	{
+		return this.height2;
+	}
+	
+	/*
 	@Override 
  	public boolean equals(Object other) {
 		if (!(other instanceof BlExpUnit)) {
@@ -47,6 +72,8 @@ public class BlExpUnit implements Comparable<BlExpUnit>
 		return Integer.MIN_VALUE + height * 5*700 + seq + getOrder(this.unit)*700;
 	}
 
+	*/
+	
 	private int getOrder(Object unit)
 	{
 		if(unit instanceof Block)
@@ -90,6 +117,16 @@ public class BlExpUnit implements Comparable<BlExpUnit>
 				else if (this.seq  < other.getSeq())
 					return -1;
 				else
-					return 0;
+					if (this.height2 > other.getHeight2())
+						return 1;
+					else if (this.height2  < other.getHeight2())
+						return -1;
+					else
+						if (this.seq2 > other.getSeq2())
+							return 1;
+						else if (this.seq2  < other.getSeq2())
+							return -1;
+						else
+							return 0;
 	}
 }

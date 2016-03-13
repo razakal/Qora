@@ -2022,9 +2022,11 @@ public class BlockExplorer
 	
 			for(Map.Entry<Tuple2<BigInteger, BigInteger>, Trade> trade : trades.entrySet())
 			{
-				Transaction tx = Controller.getInstance().getTransaction(trade.getValue().getInitiator().toByteArray());
+				Transaction txInitiator = Controller.getInstance().getTransaction(trade.getValue().getInitiator().toByteArray());
 				
-				all.add( new BlExpUnit(tx.getParent().getHeight(), tx.getSeq(), trade.getValue() ) );
+				Transaction txTarget = Controller.getInstance().getTransaction(trade.getValue().getTarget().toByteArray());
+				
+				all.add( new BlExpUnit(txInitiator.getParent().getHeight(), txTarget.getParent().getHeight(), txInitiator.getSeq(), txTarget.getSeq(), trade.getValue() ) );
 			}
 			
 			Set<BlExpUnit> atTransactions = DBSet.getInstance().getATTransactionMap().getBlExpATTransactionsByRecipient(address);
@@ -2065,7 +2067,7 @@ public class BlockExplorer
 				Transaction tx = (Transaction)unit.getUnit();
 				tXincome = tx.getAssetAmount();
 				
-				if(addresses.contains(tx.getCreator().getAddress()))
+				if (tx.getCreator() != null && addresses.contains(tx.getCreator().getAddress()))
 				{
 					spentFee = spentFee.add(tx.getFee());
 				}
@@ -2637,8 +2639,11 @@ public class BlockExplorer
 		
 		for(Map.Entry<Tuple2<BigInteger, BigInteger>, Trade> trade : trades.entrySet())
 		{
-			Transaction tx = Controller.getInstance().getTransaction(trade.getValue().getInitiator().toByteArray());
-			all.add( new BlExpUnit(tx.getParent().getHeight(), tx.getParent().getTransactionSeq(tx.getSignature()), trade.getValue() ) );
+			Transaction txInitiator = Controller.getInstance().getTransaction(trade.getValue().getInitiator().toByteArray());
+			
+			Transaction txTarget = Controller.getInstance().getTransaction(trade.getValue().getTarget().toByteArray());
+			
+			all.add( new BlExpUnit(txInitiator.getParent().getHeight(), txTarget.getParent().getHeight(), txInitiator.getSeq(), txTarget.getSeq(), trade.getValue() ) );
 		}
 
 		int size = all.size();

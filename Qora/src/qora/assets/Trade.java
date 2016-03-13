@@ -245,7 +245,7 @@ public class Trade {
 		{
 			Trade trade = (Trade) object;
 			
-			return (trade.getInitiator().compareTo(this.getInitiator()) == 0) && (trade.getTarget().compareTo(this.getTarget()) == 0);
+			return (trade.getInitiator().equals(this.getInitiator()) && trade.getTarget().equals(this.getTarget()));
 		}
 		
 		return false;
