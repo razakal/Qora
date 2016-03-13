@@ -3021,6 +3021,31 @@ public class WebResource {
 		}
 	}
 	
+	@Path("index/translation.json")
+	@GET
+	public Response translationjson() {
+		
+		File file = new File("languages\\" + Settings.getInstance().getLang());
+		
+		if (file.exists()) {
+			return Response.ok(file, "application/json").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+	
+	@Path("index/libs/js/translation.js")
+	@GET
+	public Response translationjs() {
+		File file = new File("web\\libs\\js\\translation.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+	
 	public Response error404(HttpServletRequest request, String titleOpt) {
 
 		try {

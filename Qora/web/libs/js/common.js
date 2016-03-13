@@ -40,3 +40,32 @@ function wordwrap(str, int_width, str_break, cut) {
 
   return r.join('\n');
 }
+
+function getXmlHttp(){
+	var xmlhttp;
+	try {
+		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+	} catch (e) {
+		try {
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (E) {
+			xmlhttp = false;
+		}
+	}
+	if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+		xmlhttp = new XMLHttpRequest();
+	}
+	return xmlhttp;
+}
+
+function getResponseJson (url){
+	var xmlhttp = getXmlHttp()
+	xmlhttp.open('GET', url, false);
+	xmlhttp.send(null);
+	
+	if (xmlhttp.readyState == 4) {
+		if (xmlhttp.status == 200) {
+			return JSON.parse(xmlhttp.responseText);
+		}
+	}
+}

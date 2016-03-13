@@ -5,7 +5,6 @@ import java.io.File;
 import org.mapdb.Atomic.Var;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
-import org.mapdb.Serializer;
 
 import database.IDB;
 import qora.account.Account;

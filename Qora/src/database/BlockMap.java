@@ -12,18 +12,16 @@ import org.mapdb.BTreeMap;
 import org.mapdb.Bind;
 import org.mapdb.DB;
 import org.mapdb.Fun;
-import org.mapdb.Serializer;
 import org.mapdb.Fun.Tuple2;
 import org.mapdb.Fun.Tuple2Comparator;
 
 import com.google.common.primitives.UnsignedBytes;
 
+import database.serializer.BlockSerializer;
 import qora.block.Block;
 import utils.Converter;
 import utils.ObserverMessage;
 import utils.ReverseComparator;
-import database.DBSet;
-import database.serializer.BlockSerializer;
 
 public class BlockMap extends DBMap<byte[], Block> 
 {

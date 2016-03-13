@@ -7,7 +7,10 @@
 	<script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
 	<link href="/index/libs/css/style.css" rel="stylesheet">
 	<script src="/index/libs/js/sidebar.js"></script>
+	
 	<script src="/index/libs/js/common.js"></script>
+	<script src="/index/libs/js/translation.js"></script>
+	
 	<script src="/index/libs/js/clipboard.js"></script>
 	<link href="/index/libs/css/sidebar.css" rel="stylesheet">
 	<script src="/index/libs/js/Base58.js" charset="utf-8"></script>
@@ -136,35 +139,6 @@
 var loading = true;
 var params;
 
-function getXmlHttp(){
-	var xmlhttp;
-	try {
-		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-	} catch (e) {
-		try {
-			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		} catch (E) {
-			xmlhttp = false;
-		}
-	}
-	if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-		xmlhttp = new XMLHttpRequest();
-	}
-	return xmlhttp;
-}
-
-function getResponseJson (url){
-	var xmlhttp = getXmlHttp()
-	xmlhttp.open('GET', url, false);
-	xmlhttp.send(null);
-	
-	if (xmlhttp.readyState == 4) {
-		if (xmlhttp.status == 200) {
-			return JSON.parse(xmlhttp.responseText);
-		}
-	}
-}
-
 function asyncAjax (url, type){
 	var xmlhttp = getXmlHttp()
 	xmlhttp.open('GET', url, true);
@@ -257,10 +231,10 @@ function secToFine(time) {
 	ret = "";
 
 	if (hrs > 0)
-		ret += "" + hrs + (hrs > 1 ? " hours " : " hour ");
+		ret += "" + hrs + (hrs > 1 ? " " + Lang.getInstance().translate("hours") + " " : " " + Lang.getInstance().translate("hour") + " ");
 
-	ret += "" + mins + (mins > 1 ? " mins " : " min ");
-	ret += "" + secs + ' secs';
+	ret += "" + mins + (mins > 1 ? " " + Lang.getInstance().translate("mins") + " " : " " + Lang.getInstance().translate("min") + " ");
+	ret += "" + secs + " " + Lang.getInstance().translate("secs");
 	return ret;
 }
 
@@ -378,10 +352,10 @@ function blocks(data)
 
 	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="">';
 	output += '<tr><td align=left>';
-	output += '<a href=?unconfirmed>Unconfirmed transactions: ' + data.unconfirmedTxs + '</a>.';
+	output += '<a href=?unconfirmed>' + Lang.getInstance().translate("Unconfirmed transactions:") + ' ' + data.unconfirmedTxs + '</a>.';
 	
 	output += '<table id=blocks BORDER=0 cellpadding=15 cellspacing=0 width="1180"  class="table table-striped" style="border: 1px solid #ddd;">';
-	output += '<tr><td><b>Height<td><b>Time<td><b>Generator<td><b>Gen.balance<td><b>TXs<td><b>Fee<td><b>AT Amount<td><b>Amount'; 
+	output += '<tr><td><b>' + Lang.getInstance().translate("Height") + '<td><b>' + Lang.getInstance().translate("Time") + '<td><b>' + Lang.getInstance().translate("Generator") + '<td><b>' + Lang.getInstance().translate("Gen.Balance") + '<td><b>TX<td><b>' + Lang.getInstance().translate("Fees")+'<td><b>' + Lang.getInstance().translate("AT Amount") + '<td><b>' + Lang.getInstance().translate("Amount"); 
 
 	minHeight = (data.maxHeight <= 20) ? 1 : data.maxHeight - 20;
 	for(var i = data.maxHeight; i >= minHeight; i--)
@@ -397,17 +371,17 @@ function blocks(data)
 	{
 		if (data.lastBlock.height < data.maxHeight + 21)
 		{
-			output += '<a href=?startBlock=' + (data.lastBlock.height) + '>Later';
+			output += '<a href=?startBlock=' + (data.lastBlock.height) + '>' + Lang.getInstance().translate("Later");
 		}
 		else
 		{
-			output += '<a href=?startBlock=' + (data.maxHeight+21) + '>Later';
+			output += '<a href=?startBlock=' + (data.maxHeight+21) + '>' + Lang.getInstance().translate("Later");
 		}
 	}
 	
 	output += '<td colspan=4 align=right>';
 	if (minHeight > 1) {
-		output += '<a href=?startBlock=' + (data.maxHeight-21) + '>Previous'
+		output += '<a href=?startBlock=' + (data.maxHeight-21) + '>' + Lang.getInstance().translate("Previous");
 	}
 	
 	return output;
@@ -3142,8 +3116,8 @@ function lastBlock(lastBlock)
 		return "";
 	
 	var output = '';
-	output += 'Last processed block: <a href=?block=' + lastBlock.height + '>' + lastBlock.height + '</a>';
-	output += ' (' + lastBlock.dateTime  + ', ' + secToFine(new Date().getTime() - lastBlock.timestamp) + ' ago' +  ') ';
+	output += Lang.getInstance().translate("Last processed block") + ': <a href=?block=' + lastBlock.height + '>' + lastBlock.height + '</a>';
+	output += ' (' + lastBlock.dateTime  + ', ' + secToFine(new Date().getTime() - lastBlock.timestamp) + ' ' + Lang.getInstance().translate("ago") + ') ';
 	output += '<br><br>';
 	
 	return output;
@@ -3186,7 +3160,7 @@ function start() {
 	document.getElementById('main').innerHTML = '';
 	 
 	document.getElementById('home').href = document.location.pathname;
-	document.getElementById('home2').href = document.location.pathname;
+	document.getElementById('linkBlocks').href = document.location.pathname;
 	
 	document.getElementById('menuBlocks').setAttribute('class', '');
 	document.getElementById('menuTop100Richest').setAttribute('class', '');
@@ -3562,11 +3536,11 @@ function start() {
           <div class="container">
             <div class="row">
               <ul role="tablist" class="nav nav-tabs">
-                <li id=menuBlocks><a href="#" id=home2>Blocks</a></li>
-				<li id=menuTop100Richest><a href="?top=100">Top 100 Richest</a></li>
-				<li id=menuPolls><a href="?polls">Polls</a></li>
-				<li id=menuAssets><a href="?assets">Assets</a></li>
-				<li id=menuATs><a href="?aTs">ATs</a></li>				
+                <li id=menuBlocks><a href="#" id=linkBlocks>Blocks</a></li>
+				<li id=menuTop100Richest><a href="?top=100" id=linkTop100Richest>Top 100 Richest</a></li>
+				<li id=menuPolls><a href="?polls" id=linkPolls>Polls</a></li>
+				<li id=menuAssets><a href="?assets" id=linkAssets>Assets</a></li>
+				<li id=menuATs><a href="?aTs" id=linkATs>ATs</a></li>				
               </ul>
             </div>
           </div>
@@ -3600,3 +3574,11 @@ function start() {
 </table>
 </body>
 </html>
+
+<script>
+	document.getElementById('linkBlocks').innerHTML = Lang.getInstance().translate("Blocks");
+	document.getElementById('linkTop100Richest').innerHTML = Lang.getInstance().translate("Top 100 Richest");
+	document.getElementById('linkPolls').innerHTML = Lang.getInstance().translate("Polls");
+	document.getElementById('linkAssets').innerHTML = Lang.getInstance().translate("Assets");
+	document.getElementById('linkATs').innerHTML = Lang.getInstance().translate("AT");
+</script>
