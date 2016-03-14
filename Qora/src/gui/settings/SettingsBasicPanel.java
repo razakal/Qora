@@ -38,7 +38,7 @@ import utils.DateTimeFormat;
 import lang.LangFile;
 
 @SuppressWarnings("serial")
-public class SettingsParametersPanel extends JPanel 
+public class SettingsBasicPanel extends JPanel 
 {
 	public JTextField txtRpcPort;
 	public JTextField txtWebport;
@@ -57,7 +57,7 @@ public class SettingsParametersPanel extends JPanel
 	public JComboBox<LangFile> cbxListOfAvailableLangs;
 	public JButton btnLoadNewLang;
 	
-	public SettingsParametersPanel()
+	public SettingsBasicPanel()
 	{
 		
 		//PADDING
@@ -65,7 +65,7 @@ public class SettingsParametersPanel extends JPanel
         
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.rowHeights = new int[] {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 0, 30, 40};
-        gridBagLayout.columnWidths = new int[] {40, 70, 92, 88, 92, 30, 0};
+        //gridBagLayout.columnWidths = new int[] {40, 70, 92, 88, 92, 30, 0};
         gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         setLayout(gridBagLayout);
@@ -382,7 +382,7 @@ public class SettingsParametersPanel extends JPanel
         gbc_chckbxSoundNewTransaction.gridy = 14;
         add(chckbxSoundNewTransaction, gbc_chckbxSoundNewTransaction);
   
-        JLabel lblLang = new JLabel(Lang.getInstance().translate("Language")+":");
+        JLabel lblLang = new JLabel(Lang.getInstance().translate("Interface language")+":");
         GridBagConstraints gbc_lblLang = new GridBagConstraints();
         gbc_lblLang.anchor = GridBagConstraints.WEST;
         gbc_lblLang.insets = new Insets(0, 0, 5, 5);

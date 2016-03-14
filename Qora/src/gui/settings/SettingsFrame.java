@@ -38,7 +38,7 @@ public class SettingsFrame extends JFrame{
 	{
 		
 		//CREATE FRAME
-		super(Lang.getInstance().translate("Qora")+" - "+Lang.getInstance().translate("Settings"));
+		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Settings"));
 		
 		//ICON
 		List<Image> icons = new ArrayList<Image>();
@@ -158,39 +158,39 @@ public class SettingsFrame extends JFrame{
 		boolean limitConnections = false;
 		boolean changeLang = false;
 		
-		if(Settings.getInstance().isGeneratorKeyCachingEnabled() != settingsTabPane.settingsParametersPanel.chckbxKeyCaching.isSelected())
+		if(Settings.getInstance().isGeneratorKeyCachingEnabled() != settingsTabPane.settingsBasicPanel.chckbxKeyCaching.isSelected())
 		{
-			settingsJSONbuf.put("generatorkeycaching", settingsTabPane.settingsParametersPanel.chckbxKeyCaching.isSelected());
+			settingsJSONbuf.put("generatorkeycaching", settingsTabPane.settingsBasicPanel.chckbxKeyCaching.isSelected());
 			changeKeyCaching = true;
 		}
 		
-		if(Settings.getInstance().isSoundNewTransactionEnabled() != settingsTabPane.settingsParametersPanel.chckbxSoundNewTransaction.isSelected())
+		if(Settings.getInstance().isSoundNewTransactionEnabled() != settingsTabPane.settingsBasicPanel.chckbxSoundNewTransaction.isSelected())
 		{
-			settingsJSONbuf.put("soundnewtransaction", settingsTabPane.settingsParametersPanel.chckbxSoundNewTransaction.isSelected());
+			settingsJSONbuf.put("soundnewtransaction", settingsTabPane.settingsBasicPanel.chckbxSoundNewTransaction.isSelected());
 		}
 		
-		if(Settings.getInstance().isSoundReceiveMessageEnabled() != settingsTabPane.settingsParametersPanel.chckbxSoundReceiveMessage.isSelected())
+		if(Settings.getInstance().isSoundReceiveMessageEnabled() != settingsTabPane.settingsBasicPanel.chckbxSoundReceiveMessage.isSelected())
 		{
-			settingsJSONbuf.put("soundreceivemessage", settingsTabPane.settingsParametersPanel.chckbxSoundReceiveMessage.isSelected());
+			settingsJSONbuf.put("soundreceivemessage", settingsTabPane.settingsBasicPanel.chckbxSoundReceiveMessage.isSelected());
 		}
 
-		if(Settings.getInstance().isSoundReceivePaymentEnabled() != settingsTabPane.settingsParametersPanel.chckbxSoundReceivePayment.isSelected())
+		if(Settings.getInstance().isSoundReceivePaymentEnabled() != settingsTabPane.settingsBasicPanel.chckbxSoundReceivePayment.isSelected())
 		{
-			settingsJSONbuf.put("soundreceivepayment", settingsTabPane.settingsParametersPanel.chckbxSoundReceivePayment.isSelected());
+			settingsJSONbuf.put("soundreceivepayment", settingsTabPane.settingsBasicPanel.chckbxSoundReceivePayment.isSelected());
 		}
 
-		if(Settings.getInstance().isGuiEnabled() != settingsTabPane.settingsParametersPanel.chckbxGuiEnabled.isSelected())
+		if(Settings.getInstance().isGuiEnabled() != settingsTabPane.settingsBasicPanel.chckbxGuiEnabled.isSelected())
 		{
-			settingsJSONbuf.put("guienabled", settingsTabPane.settingsParametersPanel.chckbxGuiEnabled.isSelected());
+			settingsJSONbuf.put("guienabled", settingsTabPane.settingsBasicPanel.chckbxGuiEnabled.isSelected());
 		}
 		
-		if(Settings.getInstance().isRpcEnabled() != settingsTabPane.settingsParametersPanel.chckbxRpcEnabled.isSelected())
+		if(Settings.getInstance().isRpcEnabled() != settingsTabPane.settingsBasicPanel.chckbxRpcEnabled.isSelected())
 		{
-			settingsJSONbuf.put("rpcenabled", settingsTabPane.settingsParametersPanel.chckbxRpcEnabled.isSelected());	
+			settingsJSONbuf.put("rpcenabled", settingsTabPane.settingsBasicPanel.chckbxRpcEnabled.isSelected());	
 			settingsTabPane.settingsAllowedPanel.rpcServiceRestart = true;
 		}
 		
-		if(!settingsTabPane.settingsParametersPanel.chckbxGuiEnabled.isSelected() && !settingsTabPane.settingsParametersPanel.chckbxRpcEnabled.isSelected())
+		if(!settingsTabPane.settingsBasicPanel.chckbxGuiEnabled.isSelected() && !settingsTabPane.settingsBasicPanel.chckbxRpcEnabled.isSelected())
 		{
 			JOptionPane.showMessageDialog(
 					new JFrame(), Lang.getInstance().translate("Both gui and rpc cannot be disabled!"),
@@ -199,13 +199,13 @@ public class SettingsFrame extends JFrame{
 			return false;	
 		}
 			
-		if(Settings.getInstance().isWebEnabled() != settingsTabPane.settingsParametersPanel.chckbxWebEnabled.isSelected())
+		if(Settings.getInstance().isWebEnabled() != settingsTabPane.settingsBasicPanel.chckbxWebEnabled.isSelected())
 		{
-			settingsJSONbuf.put("webenabled", settingsTabPane.settingsParametersPanel.chckbxWebEnabled.isSelected());
+			settingsJSONbuf.put("webenabled", settingsTabPane.settingsBasicPanel.chckbxWebEnabled.isSelected());
 			settingsTabPane.settingsAllowedPanel.webServiceRestart = true;
 		}
 		
-		int newRpcPort = Integer.parseInt(settingsTabPane.settingsParametersPanel.txtRpcPort.getText());
+		int newRpcPort = Integer.parseInt(settingsTabPane.settingsBasicPanel.txtRpcPort.getText());
 		if(Settings.getInstance().getRpcPort() != newRpcPort)
 		{
 			if(Network.isPortAvailable(newRpcPort))
@@ -223,7 +223,7 @@ public class SettingsFrame extends JFrame{
 			}
 		}
 		
-		int newWebPort = Integer.parseInt(settingsTabPane.settingsParametersPanel.txtWebport.getText());
+		int newWebPort = Integer.parseInt(settingsTabPane.settingsBasicPanel.txtWebport.getText());
 		
 		if(Settings.getInstance().getWebPort() != newWebPort)
 		{
@@ -242,36 +242,36 @@ public class SettingsFrame extends JFrame{
 			}
 		}
 		
-		int MinConnections = Integer.parseInt(settingsTabPane.settingsParametersPanel.textMinConnections.getText());
+		int MinConnections = Integer.parseInt(settingsTabPane.settingsBasicPanel.textMinConnections.getText());
 		if(Settings.getInstance().getMinConnections() != MinConnections)
 		{
 			settingsJSONbuf.put("minconnections", MinConnections);
 			limitConnections = true;
 		}
 		
-		int MaxConnections = Integer.parseInt(settingsTabPane.settingsParametersPanel.textMaxConnections.getText());
+		int MaxConnections = Integer.parseInt(settingsTabPane.settingsBasicPanel.textMaxConnections.getText());
 		if(Settings.getInstance().getMaxConnections() != MaxConnections)
 		{
 			settingsJSONbuf.put("maxconnections", MaxConnections);
 			limitConnections = true;
 		}
 		
-		if(!Settings.getInstance().getWalletDir().equals(settingsTabPane.settingsParametersPanel.textWallet.getText()))
+		if(!Settings.getInstance().getWalletDir().equals(settingsTabPane.settingsBasicPanel.textWallet.getText()))
 		{
-			settingsJSONbuf.put("walletdir", settingsTabPane.settingsParametersPanel.textWallet.getText());
+			settingsJSONbuf.put("walletdir", settingsTabPane.settingsBasicPanel.textWallet.getText());
 			changeWallet = true;
 		}
 		
-		if(!Settings.getInstance().getDataDir().equals(settingsTabPane.settingsParametersPanel.textDataFolder.getText()))
+		if(!Settings.getInstance().getDataDir().equals(settingsTabPane.settingsBasicPanel.textDataFolder.getText()))
 		{
-			settingsJSONbuf.put("datadir", settingsTabPane.settingsParametersPanel.textDataFolder.getText());
+			settingsJSONbuf.put("datadir", settingsTabPane.settingsBasicPanel.textDataFolder.getText());
 			changeDataDir = true;
 		}
 		
 		if(!Settings.getInstance().getLang().equals(
-				((LangFile)settingsTabPane.settingsParametersPanel.cbxListOfAvailableLangs.getSelectedItem()).getFileName()))
+				((LangFile)settingsTabPane.settingsBasicPanel.cbxListOfAvailableLangs.getSelectedItem()).getFileName()))
 		{
-			settingsJSONbuf.put("lang", ((LangFile)settingsTabPane.settingsParametersPanel.cbxListOfAvailableLangs.getSelectedItem()).getFileName());
+			settingsJSONbuf.put("lang", ((LangFile)settingsTabPane.settingsBasicPanel.cbxListOfAvailableLangs.getSelectedItem()).getFileName());
 			changeLang = true;
 		}
 		

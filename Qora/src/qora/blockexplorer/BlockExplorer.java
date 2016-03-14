@@ -30,6 +30,7 @@ import controller.Controller;
 import database.BalanceMap;
 import database.DBSet;
 import database.SortableList;
+import lang.Lang;
 import qora.account.Account;
 import qora.assets.Asset;
 import qora.assets.Order;
@@ -2037,7 +2038,7 @@ public class BlockExplorer
 		
 		if(size == 0)
 		{
-			output.put("error", "No transactions found for this address.<br>It has probably not been used on the network yet.");
+			output.put("error", Lang.getInstance().translate("No transactions found for this address.<br>It has probably not been used on the network yet."));
 			return output;
 		}
 		

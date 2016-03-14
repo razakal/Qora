@@ -55,7 +55,7 @@ public class SettingsAllowedPanel extends JPanel
 		this.setBorder(new EmptyBorder(5, 5, 5, 10));
 
         GridBagLayout gridBagLayout1 = new GridBagLayout();
-        gridBagLayout1.columnWidths = new int[]{60, 202, 60};
+        gridBagLayout1.columnWidths = new int[]{5, 202, 5};
         gridBagLayout1.rowHeights = new int[]{0, 100, 0, 15, 0, 100, 0};
         setLayout(gridBagLayout1);
         
@@ -219,7 +219,7 @@ public class SettingsAllowedPanel extends JPanel
 		
 		JScrollPane rpcScrollPane = new JScrollPane(rpcAllowedTable);
 		
-		rpcScrollPane.setPreferredSize(new Dimension( 490, 180 ));
+		rpcScrollPane.setPreferredSize(new Dimension( 520, 180 ));
         this.add(rpcScrollPane, gbc_rpcAllowedTable);
 		
 		JLabel labelRpcAddNewAddress = new JLabel(Lang.getInstance().translate("Add new address:"));
