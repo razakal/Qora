@@ -14,6 +14,7 @@ import org.mapdb.DB;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 import org.mapdb.Fun.Tuple2Comparator;
+import org.mapdb.Serializer;
 
 import com.google.common.primitives.UnsignedBytes;
 
@@ -46,11 +47,26 @@ public class BlockMap extends DBMap<byte[], Block>
 		this.observableData.put(DBMap.NOTIFY_LIST, ObserverMessage.LIST_BLOCK_TYPE);
 		
 		//LAST BLOCK
-		this.lastBlockVar = database.getAtomicVar("lastBlock");
+		if(database.exists("lastBlock"))
+		{
+			this.lastBlockVar = database.getAtomicVar("lastBlock");
+		}
+		else
+		{
+			this.lastBlockVar = database.createAtomicVar("lastBlock", new byte[0], Serializer.BYTE_ARRAY);
+		}
 		this.lastBlockSignature = this.lastBlockVar.get();
 		
 		//PROCESSING
-		this.processingVar = database.getAtomicVar("processingBlock");
+		if(database.exists("processingBlock"))
+		{
+			this.processingVar = database.getAtomicVar("processingBlock");
+		}
+		else
+		{
+			this.processingVar = database.createAtomicVar("processingBlock", false, Serializer.BOOLEAN);
+		}
+		
 		this.processing = this.processingVar.get();
 	}
 
