@@ -296,7 +296,7 @@ public class ATMap extends DBMap<String, AT>
 	@SuppressWarnings({ "unchecked" })
 	public void deleteAllAfterHeight(int blockHeight)
 	{
-		Iterable<String> ids = Fun.filter(this.creationHeightATs, blockHeight + 1 , true , Fun.HI() , true);
+		Iterable<String> ids = Fun.filter(this.creationHeightATs, blockHeight + 1 , true , Integer.MAX_VALUE , true);
 		Iterator<String> iter = ids.iterator();
 		while ( iter.hasNext() )
 		{
@@ -307,7 +307,7 @@ public class ATMap extends DBMap<String, AT>
 	@SuppressWarnings({ "unchecked" })
 	public Iterable<String> getATsLimited(int limit)
 	{
-		Iterable<String> ids = Fun.filter(this.creationHeightATs, limit + 1, true, Fun.HI(), true);
+		Iterable<String> ids = Fun.filter(this.creationHeightATs, limit + 1, true, Integer.MAX_VALUE, true);
 		return ids;
 	}
 	
