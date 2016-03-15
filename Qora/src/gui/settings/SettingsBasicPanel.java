@@ -467,7 +467,7 @@ public class SettingsBasicPanel extends JPanel
 	        								try {
 	        		        					String url = Lang.translationsUrl + Controller.getInstance().getVersion().replace(" ", "%20") + "/languages/" + langFileName;
 
-	        		        					FileUtils.copyURLToFile(new URL(url), new File(Settings.getInstance().getUserPath() + "languages/" + langFileName));
+	        		        					FileUtils.copyURLToFile(new URL(url), new File(Settings.getInstance().getLangDir(), langFileName));
 	
 	        								} catch (Exception e1) {
 	        		        					e1.printStackTrace();

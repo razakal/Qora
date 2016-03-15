@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.TrayIcon.MessageType;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -12,6 +13,7 @@ import javax.swing.table.TableRowSorter;
 
 import controller.Controller;
 import gui.create.NoWalletFrame;
+import gui.create.SettingLangFrame;
 import lang.Lang;
 import settings.Settings;
 import utils.SysTray;
@@ -41,6 +43,22 @@ public class Gui extends JFrame{
         UIManager.put("TabbedPane.focus", new Color(0, 0, 0, 0));
         UIManager.put("ComboBox.focus", new Color(0, 0, 0, 0));
         UIManager.put("TextArea.font", UIManager.get("TextField.font"));
+
+        
+        if(Settings.getInstance().Dump().containsKey("lang"))
+        {
+        	if(!Settings.getInstance().getLang().equals(Settings.DEFAULT_LANGUAGE))
+        	{
+	        	File langFile = new File( Settings.getInstance().getLangDir(), Settings.getInstance().getLang() );
+				if ( !langFile.isFile() ) {
+					new SettingLangFrame();	
+				}
+        	}
+        } 
+        else
+        {
+        	new SettingLangFrame();
+        } 
         
         //CHECK IF WALLET EXISTS
         if(!Controller.getInstance().doesWalletExists())

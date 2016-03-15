@@ -96,8 +96,7 @@ public class Lang {
 		
 		try 
 		{
-		
-			File file = new File( Settings.getInstance().getUserPath() + "languages/" + filename );
+			File file = new File( Settings.getInstance().getLangDir(), filename );
 			if ( !file.isFile() ) {
 				return (JSONObject) JSONValue.parse("");
 			}
@@ -136,7 +135,7 @@ public class Lang {
 		List<LangFile> lngList = new ArrayList<>();
 		
 		File[] fileList;        
-        File dir = new File(Settings.getInstance().getUserPath() + "languages");
+        File dir = new File(Settings.getInstance().getLangDir());
              
         if(!dir.exists()){
         	dir.mkdir();

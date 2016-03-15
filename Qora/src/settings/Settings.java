@@ -83,7 +83,7 @@ public class Settings {
 	private static final boolean DEFAULT_NS_UPDATE = false;
 	private static final boolean DEFAULT_FORGING_ENABLED = true;
 	
-	private static String DEFAULT_LANGUAGE = "";
+	public static String DEFAULT_LANGUAGE = "en.json";
 	
 	private static Settings instance;
 	
@@ -150,8 +150,9 @@ public class Settings {
 				{
 					this.userPath = (String) this.settingsJSON.get("userpath");
 					
-					if( !(this.userPath.endsWith("\\") || this.userPath.endsWith("/")) ) {
-						this.userPath += "/";
+					if (!(this.userPath.endsWith("\\") || this.userPath.endsWith("/")))
+					{
+						this.userPath += "/"; 
 					}
 				}
 				else
@@ -201,7 +202,7 @@ public class Settings {
 	
 	public JSONObject Dump()
 	{
-		return settingsJSON;
+		return (JSONObject) settingsJSON.clone();
 	}
 	
 	public String getSettingsPath()
@@ -212,6 +213,26 @@ public class Settings {
 	public String getPeersPath()
 	{
 		return this.userPath + "peers.json";
+	}
+	
+	public String getWalletDir()
+	{
+		return this.getUserPath() + DEFAULT_WALLET_DIR;
+	}
+	
+	public String getDataDir()
+	{
+		return this.getUserPath() + DEFAULT_DATA_DIR;
+	}
+	
+	public String getLangDir()
+	{
+		return this.getUserPath() + "languages";
+	}
+	
+	public String getUserPath()
+	{
+		return this.userPath;
 	}
 	
 	public JSONArray getPeersJson()
@@ -579,21 +600,6 @@ public class Settings {
 		}
 		
 		return DEFAULT_FORGING_ENABLED;
-	}
-	
-	public String getWalletDir()
-	{
-		return this.getUserPath() + DEFAULT_WALLET_DIR;
-	}
-	
-	public String getDataDir()
-	{
-		return this.getUserPath() + DEFAULT_DATA_DIR;
-	}
-	
-	public String getUserPath()
-	{
-		return this.userPath;
 	}
 	
 	public int getPingInterval()
