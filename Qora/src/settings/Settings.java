@@ -165,6 +165,7 @@ public class Settings {
 		{
 			//STOP
 			System.out.println("ERROR reading settings.json. closing");
+			e.printStackTrace();
 			System.exit(0);
 		}
 		
