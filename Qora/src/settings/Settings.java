@@ -144,6 +144,7 @@ public class Settings {
 				
 				//CREATE JSON OBJECT
 				this.settingsJSON = (JSONObject) JSONValue.parse(jsonString);
+				settingsJSON =	settingsJSON == null ? new JSONObject() : settingsJSON;
 				
 				alreadyPassed++;
 				
