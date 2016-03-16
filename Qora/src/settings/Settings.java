@@ -120,12 +120,13 @@ public class Settings {
 		this.localAddress = this.getCurrentIp();
 		int alreadyPassed = 0;
 		
+		File file = new File("");
 		try
 		{
 			while(alreadyPassed<2)
 			{
 				//OPEN FILE
-				File file = new File(this.userPath + "settings.json");
+				file = new File(this.userPath + "settings.json");
 				
 				//CREATE FILE IF IT DOESNT EXIST
 				if(!file.exists())
@@ -164,7 +165,7 @@ public class Settings {
 		catch(Exception e)
 		{
 			//STOP
-			System.out.println("ERROR reading settings.json. closing");
+			System.out.println("Error while reading/creating settings.json " + file.getAbsolutePath());
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -173,7 +174,7 @@ public class Settings {
 		try
 		{
 			//OPEN FILE
-			File file = new File(this.getPeersPath());
+			file = new File(this.getPeersPath());
 			
 			//CREATE FILE IF IT DOESNT EXIST
 			if(file.exists())
@@ -196,7 +197,8 @@ public class Settings {
 		catch(Exception e)
 		{
 			//STOP
-			System.out.println("ERROR reading peers.json.");
+			System.out.println("Error while reading peers.json " + file.getAbsolutePath());
+			e.printStackTrace();
 			System.exit(0);
 		}
 	}
