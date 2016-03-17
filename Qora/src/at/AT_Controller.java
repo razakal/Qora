@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Fun.Tuple2;
 
 import qora.account.Account;
@@ -27,6 +28,8 @@ import database.DBSet;
 
 public abstract class AT_Controller {
 
+	
+	private static final Logger LOGGER = Logger.getLogger(AT_Controller.class);
 
 	public static int runSteps( AT_Machine_State state , int blockHeight )
 	{
@@ -317,7 +320,7 @@ public abstract class AT_Controller {
 				}
 				catch ( Exception e )
 				{
-					e.printStackTrace();
+					LOGGER.error(e);
 
 				}
 			}
@@ -343,7 +346,7 @@ public abstract class AT_Controller {
 		catch ( NoSuchAlgorithmException e )
 		{
 			//should not reach ever here
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 
 
@@ -429,7 +432,7 @@ public abstract class AT_Controller {
 			}
 			catch ( Exception e )
 			{
-				e.printStackTrace();
+				LOGGER.error(e);
 				throw new AT_Exception( "ATs error. Block rejected" );
 			}
 		}

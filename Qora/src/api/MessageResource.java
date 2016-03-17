@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -32,6 +33,11 @@ import utils.Pair;
 @Produces(MediaType.APPLICATION_JSON)
 public class MessageResource {
 
+	
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(MessageResource.class);
+	
 	@Context
 	HttpServletRequest request;
 
@@ -154,7 +160,7 @@ public class MessageResource {
 				try {
 					messageBytes = Converter.parseHexString(message);
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOGGER.error(e);
 					throw ApiErrorFactory.getInstance().createError(
 							ApiErrorFactory.ERROR_MESSAGE_FORMAT_NOT_HEX);
 				}
@@ -240,15 +246,11 @@ public class MessageResource {
 						ApiErrorFactory.ERROR_UNKNOWN);
 			}
 
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | ClassCastException e) {
 			// JSON EXCEPTION
-			// e.printStackTrace();
+			LOGGER.info(e);
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_JSON);
-		} catch (ClassCastException e) {
-			// JSON EXCEPTION
-			throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_JSON);
-		}
+		} 
 	}
 }

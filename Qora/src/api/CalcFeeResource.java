@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,6 +26,9 @@ import api.BlogPostResource;
 @Produces(MediaType.APPLICATION_JSON)
 public class CalcFeeResource {
 
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(CalcFeeResource.class);
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/arbitrarytransactions")
@@ -60,16 +64,10 @@ public class CalcFeeResource {
 			return jsonObject.toJSONString();
 			
 		}
-		catch(NullPointerException e)
+		catch(ClassCastException | NullPointerException e)
 		{
 			//JSON EXCEPTION
-			//e.printStackTrace();
-			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
-		}
-		catch(ClassCastException e)
-		{
-			//JSON EXCEPTION
-			//e.printStackTrace();
+			LOGGER.info(e);
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
 		}
 	}

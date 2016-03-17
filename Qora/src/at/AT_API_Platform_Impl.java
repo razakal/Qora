@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Fun.Tuple2;
 
 import qora.account.Account;
@@ -26,6 +27,10 @@ import database.TransactionFinalMap;
 //QORA AT API IMPLEMENTATION
 public class AT_API_Platform_Impl extends AT_API_Impl {
 
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(AT_API_Platform_Impl.class);
+	
 	private final static AT_API_Platform_Impl instance = new AT_API_Platform_Impl();
 
 	private final static int FIX_HEIGHT_0 = 142000;
@@ -96,11 +101,9 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 		}
 		catch ( Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
-		finally
-		{
-		}
+		
 	}
 
 	@Override

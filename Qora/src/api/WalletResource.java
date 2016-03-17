@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -20,6 +21,9 @@ import controller.Controller;
 @Produces(MediaType.APPLICATION_JSON)
 public class WalletResource {
 
+	
+	private static final Logger LOGGER = Logger.getLogger(WalletResource.class);
+	
 	@Context
 	HttpServletRequest request;
 	
@@ -151,16 +155,9 @@ public class WalletResource {
 				return String.valueOf(Controller.getInstance().createWallet(seedBytes, password, amount));
 			}
 		}
-		catch(NullPointerException e)
+		catch(NullPointerException | ClassCastException e)
 		{
-			e.printStackTrace();
-			//JSON EXCEPTION
-			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
-		}
-		catch(ClassCastException e)
-		{
-			e.printStackTrace();
-			//JSON EXCEPTION
+			LOGGER.info(e);
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
 		}
 	}

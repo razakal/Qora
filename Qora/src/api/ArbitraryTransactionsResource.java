@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -30,6 +31,8 @@ import utils.Pair;
 public class ArbitraryTransactionsResource 
 {
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(ArbitraryTransactionsResource.class);
 	@Context
 	HttpServletRequest request;
 	
@@ -126,16 +129,10 @@ public class ArbitraryTransactionsResource
 				
 			return checkArbitraryTransaction(result);
 		}
-		catch(NullPointerException e)
+		catch(NullPointerException | ClassCastException e)
 		{
 			//JSON EXCEPTION
-			//e.printStackTrace();
-			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
-		}
-		catch(ClassCastException e)
-		{
-			//JSON EXCEPTION
-			//e.printStackTrace();
+			LOGGER.info(e);
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
 		}
 	}

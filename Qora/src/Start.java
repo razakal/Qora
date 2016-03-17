@@ -1,7 +1,11 @@
+import java.io.File;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import api.ApiClient;
 import controller.Controller;
@@ -11,9 +15,14 @@ import settings.Settings;
 import utils.SysTray;
 
 public class Start {
+	
+	static Logger LOGGER = Logger.getLogger(Start.class.getName());
 
 	public static void main(String args[])
 	{	
+		
+		PropertyConfigurator.configure(new File( "log4j.properties").getAbsolutePath());
+		
 		boolean cli = false;
 		
 		for(String arg: args)
@@ -37,6 +46,7 @@ public class Start {
 		{			
 			try
 			{
+				
 				//ONE MUST BE ENABLED
 				if(!Settings.getInstance().isGuiEnabled() && !Settings.getInstance().isRpcEnabled())
 				{

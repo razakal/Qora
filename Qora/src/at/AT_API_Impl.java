@@ -15,12 +15,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import org.apache.log4j.Logger;
+
 import at.RIPEMD160;
 
 
 
 public class AT_API_Impl implements AT_API
 {
+	
+	
+	private static final Logger LOGGER = Logger.getLogger(AT_API_Impl.class);
 	
 	AT_API_Platform_Impl platform = AT_API_Platform_Impl.getInstance();
 	
@@ -529,7 +534,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 	}
 
@@ -557,7 +562,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		
 		return 0;
@@ -630,7 +635,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 	}
 
@@ -657,7 +662,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		return 0;
 		
@@ -803,7 +808,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 	}
 

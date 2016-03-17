@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -18,6 +19,9 @@ import utils.APIUtils;
 @Produces(MediaType.APPLICATION_JSON)
 public class PaymentResource 
 {
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(PaymentResource.class);
 	@Context
 	HttpServletRequest request;
 	
@@ -37,15 +41,10 @@ public class PaymentResource
 			
 			return APIUtils.processPayment(assetKey, amount, fee, sender, recipient,x, request );
 		}
-		catch(NullPointerException e)
+		catch(NullPointerException| ClassCastException e)
 		{
 			//JSON EXCEPTION
-			//e.printStackTrace();
-			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
-		}
-		catch(ClassCastException e)
-		{
-			//JSON EXCEPTION
+			LOGGER.info(e);
 			throw ApiErrorFactory.getInstance().createError(ApiErrorFactory.ERROR_JSON);
 		}
 	}

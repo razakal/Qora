@@ -1,7 +1,6 @@
 package api;
 
 import java.io.BufferedReader;
-import java.io.IOError;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -13,6 +12,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.log4j.Logger;
+
 import settings.Settings;
 import utils.StrJSonFine;
 
@@ -23,6 +24,9 @@ public class ApiClient {
 	public static final int SELF_CALL = 10;
 
 	private static List<String> allowedcalls = new CopyOnWriteArrayList<>();
+	
+	
+	private static final Logger LOGGER = Logger.getLogger(ApiClient.class);
 	
 	
 	String[] [] helpStrings =
@@ -741,15 +745,9 @@ public class ApiClient {
 			}
 			
 		}
-		catch(IOError ioe)
+		catch(Exception ioe)
 		{
-			//ioe.printStackTrace();	
-			return "Invalid command! \n" +
-				"Type help to get a list of commands.";
-		}
-		catch(Exception e)
-		{
-			//e.printStackTrace();	
+			LOGGER.info(ioe);	
 			return "Invalid command! \n" +
 				"Type help to get a list of commands.";
 		}
