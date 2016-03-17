@@ -249,7 +249,6 @@ public class Controller extends Observable {
 
 	public static Controller getInstance() {
 		if (instance == null) {
-			LOGGER.info("TEST THIS WORKS!");
 			instance = new Controller();
 		}
 

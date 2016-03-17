@@ -3,6 +3,8 @@ package gui.models;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.log4j.Logger;
+
 import qora.transaction.Transaction;
 import utils.DateTimeFormat;
 import utils.NumberAsString;
@@ -19,6 +21,8 @@ public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> 
 	public static final int COLUMN_TYPE = 1;
 	public static final int COLUMN_FEE = 2;
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(TransactionsTableModel.class);
 	private SortableList<byte[], Transaction> transactions;
 	
 	private String[] columnNames = Lang.getInstance().translate(new String[]{"Timestamp", "Type", "Fee"});
@@ -93,7 +97,7 @@ public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> 
 			return null;
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 			return null;
 		}
 	}

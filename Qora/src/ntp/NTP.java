@@ -1,15 +1,17 @@
 package ntp;
 
 import java.net.InetAddress;
-import java.util.logging.Logger;
-
-import org.apache.commons.net.ntp.NTPUDPClient;
-import org.apache.commons.net.ntp.TimeInfo;
 
 import lang.Lang;
 
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
+import org.apache.log4j.Logger;
+
 public final class NTP
 {
+	
+	private static final Logger LOGGER = Logger.getLogger(NTP.class);
 	private static final long TIME_TILL_UPDATE = 1000*60*10;
 	private static final String NTP_SERVER = "pool.ntp.org";
 	
@@ -25,7 +27,7 @@ public final class NTP
 			lastUpdate = System.currentTimeMillis();
 			
 			//LOG OFFSET
-			Logger.getGlobal().info(Lang.getInstance().translate("Adjusting time with %offset% milliseconds.").replace("%offset%", String.valueOf(offset)));
+			LOGGER.info(Lang.getInstance().translate("Adjusting time with %offset% milliseconds.").replace("%offset%", String.valueOf(offset)));
 		}
 	   
 		//CALCULATE CORRECTED TIME

@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import controller.Controller;
@@ -19,6 +20,8 @@ import settings.Settings;
 
 public abstract class Transaction {
 	
+	
+	private static final Logger LOGGER = Logger.getLogger(Transaction.class);
 	//VALIDATION CODE
 	public static final int VALIDATE_OK = 1;
 	public static final int INVALID_ADDRESS = 2;
@@ -355,7 +358,7 @@ public abstract class Transaction {
 
 		}catch(Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e);
 			return 0;
 		}
 	}

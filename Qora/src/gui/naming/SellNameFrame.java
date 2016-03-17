@@ -21,6 +21,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
 import controller.Controller;
 import qora.account.PrivateKeyAccount;
 import qora.naming.Name;
@@ -37,6 +39,7 @@ public class SellNameFrame extends JFrame
 	private JTextField txtFee;
 	private JButton sellButton;
 	
+	private static final Logger LOGGER = Logger.getLogger(SellNameFrame.class);
 	public SellNameFrame(Name name)
 	{
 		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Sell Name"));
@@ -321,7 +324,7 @@ public class SellNameFrame extends JFrame
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e);
 			
 			//CHECK WHERE PARSING ERROR HAPPENED
 			switch(parsing)

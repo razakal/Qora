@@ -19,6 +19,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
 import controller.Controller;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
@@ -35,6 +37,7 @@ public class BuyNameFrame extends JFrame
 	private JTextField txtFee;
 	private JButton buyButton;
 	
+	private static final Logger LOGGER = Logger.getLogger(BuyNameFrame.class);
 	private NameSale nameSale;
 	
 	public BuyNameFrame(NameSale nameSale)
@@ -273,7 +276,7 @@ public class BuyNameFrame extends JFrame
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e);
 			
 			JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Invalid fee!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 		}

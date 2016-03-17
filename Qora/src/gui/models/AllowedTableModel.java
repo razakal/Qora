@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.log4j.Logger;
+
 import lang.Lang;
 import network.Peer;
 
@@ -18,6 +20,8 @@ public class AllowedTableModel extends AbstractTableModel implements Observer{
 
 	private List<Peer> peers;
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(AllowedTableModel.class);
 	private String[] columnNames = {"IP"};
 	
 	public ArrayList<String> getPeers()
@@ -39,8 +43,7 @@ public class AllowedTableModel extends AbstractTableModel implements Observer{
 			peers.add(peer);
 			this.fireTableDataChanged();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 	}
 	
@@ -80,7 +83,7 @@ public class AllowedTableModel extends AbstractTableModel implements Observer{
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		
 	}

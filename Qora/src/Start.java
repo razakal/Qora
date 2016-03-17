@@ -53,7 +53,7 @@ public class Start {
 					throw new Exception(Lang.getInstance().translate("Both gui and rpc cannot be disabled!"));
 				}
 				
-				System.out.println(Lang.getInstance().translate("Starting %qora% / version: %version% / build date: %builddate% / ...")
+				LOGGER.info(Lang.getInstance().translate("Starting %qora% / version: %version% / build date: %builddate% / ...")
 						.replace("%version%", Controller.getInstance().getVersion())
 						.replace("%builddate%", Controller.getInstance().getBuildDateString())
 						.replace("%qora%", Lang.getInstance().translate("Qora"))
@@ -75,17 +75,17 @@ public class Start {
 				
 			} catch(Exception e) {
 				
-				e.printStackTrace();
+				LOGGER.error(e);
 				
 				//USE SYSTEM STYLE
 		        try {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				} catch (Exception e2) {
-					e2.printStackTrace();
+					LOGGER.error(e2);
 				}
 				
 				//ERROR STARTING
-				System.out.println(Lang.getInstance().translate("STARTUP ERROR") + ": " + e.getMessage());
+				LOGGER.error(Lang.getInstance().translate("STARTUP ERROR") + ": " + e.getMessage());
 				
 				if(Gui.isGuiStarted())
 				{

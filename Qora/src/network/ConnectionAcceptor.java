@@ -2,18 +2,22 @@ package network;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Logger;
 
-import controller.Controller;
 import lang.Lang;
 import ntp.NTP;
+
+import org.apache.log4j.Logger;
+
 import qora.transaction.Transaction;
 import settings.Settings;
+import controller.Controller;
 
 public class ConnectionAcceptor extends Thread{
 
 	private ConnectionCallback callback;
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(ConnectionAcceptor.class);
 	private ServerSocket socket;
 	
 	private boolean isRun;
@@ -85,8 +89,8 @@ public class ConnectionAcceptor extends Thread{
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
-				Logger.getGlobal().warning(Lang.getInstance().translate("Error accepting new connection"));			
+				LOGGER.error(e);
+				LOGGER.warn(Lang.getInstance().translate("Error accepting new connection"));			
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import java.awt.TrayIcon.MessageType;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Fun.Tuple2;
 
 import qora.account.Account;
@@ -32,6 +33,8 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 	public static final int COLUMN_ADDRESS = 3;
 	public static final int COLUMN_AMOUNT = 4;
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(WalletTransactionsTableModel.class);
 	private SortableList<Tuple2<String, String>, Transaction> transactions;
 	
 	private String[] columnNames = Lang.getInstance().translate(new String[]{"Confirmations", "Timestamp", "Type", "Address", "Amount"});
@@ -115,7 +118,7 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 			return null;
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 			return null;
 		}
 		

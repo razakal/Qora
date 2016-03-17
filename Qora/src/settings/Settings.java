@@ -12,10 +12,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.logging.Logger;
+
+import lang.Lang;
+import network.Peer;
+import ntp.NTP;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -24,12 +28,11 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import controller.Controller;
-import lang.Lang;
-import network.Peer;
-import ntp.NTP;
 
 public class Settings {
 
+	
+	private static final Logger LOGGER = Logger.getLogger(Settings.class);
 	//NETWORK
 	private static final int DEFAULT_MIN_CONNECTIONS = 10;
 	private static final int DEFAULT_MAX_CONNECTIONS = 50;
@@ -166,8 +169,8 @@ public class Settings {
 		catch(Exception e)
 		{
 			//STOP
-			System.out.println("Error while reading/creating settings.json " + file.getAbsolutePath());
-			e.printStackTrace();
+			LOGGER.info("Error while reading/creating settings.json " + file.getAbsolutePath());
+			LOGGER.error(e);
 			System.exit(0);
 		}
 		
@@ -198,8 +201,8 @@ public class Settings {
 		catch(Exception e)
 		{
 			//STOP
-			System.out.println("Error while reading peers.json " + file.getAbsolutePath());
-			e.printStackTrace();
+			LOGGER.info("Error while reading peers.json " + file.getAbsolutePath());
+			LOGGER.error(e);
 			System.exit(0);
 		}
 	}
@@ -274,7 +277,8 @@ public class Settings {
 					}
 				}
 			} catch (Exception e) {
-				Logger.getGlobal().info("Error with loading knownpeers from settings.json.");
+				LOGGER.error(e);
+				LOGGER.info("Error with loading knownpeers from settings.json.");
 			}
 			
 			try {
@@ -290,7 +294,8 @@ public class Settings {
 				}
 				
 			} catch (Exception e) {
-				Logger.getGlobal().info("Error with loading knownpeers from peers.json.");
+				LOGGER.error(e);
+				LOGGER.info("Error with loading knownpeers from peers.json.");
 			}
 			
 			knownPeers = getKnownPeersFromJSONArray(peersArray);
@@ -303,7 +308,8 @@ public class Settings {
 			return knownPeers;
 		
 		} catch (Exception e) {
-			Logger.getGlobal().info("Error in getKnownPeers().");
+			LOGGER.error(e);
+			LOGGER.info("Error in getKnownPeers().");
 			return new ArrayList<Peer>();
 		}
 	}
@@ -330,14 +336,15 @@ public class Settings {
 				}
 			}
 		
-			Logger.getGlobal().info(Lang.getInstance().translate("Peers loaded from Internet : ") + this.cacheInternetPeers.size());
+			LOGGER.info(Lang.getInstance().translate("Peers loaded from Internet : ") + this.cacheInternetPeers.size());
 
 			return this.cacheInternetPeers;
 			
 		} catch (Exception e) {
 			//RETURN EMPTY LIST
 
-			Logger.getGlobal().info(Lang.getInstance().translate("Peers loaded from Internet with errors : ") + this.cacheInternetPeers.size());
+			LOGGER.debug(e);
+			LOGGER.info(Lang.getInstance().translate("Peers loaded from Internet with errors : ") + this.cacheInternetPeers.size());
 						
 			return this.cacheInternetPeers;
 		}
@@ -372,7 +379,8 @@ public class Settings {
 					}
 				}catch(Exception e)
 				{
-					Logger.getGlobal().info((String) peersArray.get(i) + " - invalid peer address!");
+					LOGGER.debug(e);
+					LOGGER.info((String) peersArray.get(i) + " - invalid peer address!");
 				}
 			}
 			

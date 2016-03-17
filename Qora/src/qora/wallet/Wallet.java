@@ -9,8 +9,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Fun.Tuple2;
 
 import com.google.common.primitives.Bytes;
@@ -49,6 +49,8 @@ import utils.Pair;
 
 public class Wallet extends Observable implements Observer
 {
+	
+	private static final Logger LOGGER = Logger.getLogger(Wallet.class);
 	public static final int STATUS_UNLOCKED = 1;
 	public static final int STATUS_LOCKED = 0;
 	
@@ -384,7 +386,7 @@ public class Wallet extends Observable implements Observer
 	    	//ADD TO DATABASE
 		    this.secureDatabase.getAccountSeedMap().add(account);
 		    this.database.getAccountMap().add(account);
-		    Logger.getGlobal().info("Added account #" + nonce);
+		    LOGGER.info("Added account #" + nonce);
 		    
 		    this.secureDatabase.commit();
 		    this.database.commit();
@@ -448,7 +450,7 @@ public class Wallet extends Observable implements Observer
 		this.database.getPollMap().reset();
 		this.database.getAssetMap().reset();
 		this.database.getOrderMap().reset();
-		Logger.getGlobal().info("Resetted maps");
+		LOGGER.info("Resetted maps");
 		
 		//REPROCESS BLOCKS
 		Block block = new GenesisBlock();
@@ -469,7 +471,7 @@ public class Wallet extends Observable implements Observer
 					
 					Controller.getInstance().walletSyncStatusUpdate(this.syncHeight);
 					
-					Logger.getGlobal().info("Synchronize wallet: " + this.syncHeight);
+					LOGGER.info("Synchronize wallet: " + this.syncHeight);
 					this.database.commit();
 				}
 				
@@ -493,7 +495,7 @@ public class Wallet extends Observable implements Observer
 				this.database.getAccountMap().update(account, account.getConfirmedBalance());
 			}
 		}
-		Logger.getGlobal().info("Resetted balances");
+		LOGGER.info("Resetted balances");
 
 		Controller.getInstance().walletSyncStatusUpdate(-1);
 		
@@ -912,7 +914,7 @@ public class Wallet extends Observable implements Observer
 		byte[] lastBlockSignature = this.database.getLastBlockSignature();
 		if(lastBlockSignature == null || !Arrays.equals(lastBlockSignature, block.getReference()))
 		{
-			Logger.getGlobal().info("Wallet not synchronized with current blockchain: synchronizing wallet.");
+			LOGGER.info("Wallet not synchronized with current blockchain: synchronizing wallet.");
 			this.synchronize();
 		}
 		

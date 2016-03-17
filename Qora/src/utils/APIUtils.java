@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.swing.JOptionPane;
 import javax.ws.rs.WebApplicationException;
 
+import org.apache.log4j.Logger;
+
 import api.ApiClient;
 import api.ApiErrorFactory;
 import controller.Controller;
@@ -21,6 +23,8 @@ import settings.Settings;
 
 public class APIUtils {
 
+	
+	private static final Logger LOGGER = Logger.getLogger(APIUtils.class);
 	public static String processPayment(String assetKeyString, String amount, String fee,
 			String sender, String recipient, String x,
 			HttpServletRequest request) {
@@ -196,10 +200,10 @@ public class APIUtils {
 				}
 			}
 		} catch (Exception e) {
+			LOGGER.error(e);
 			if (e instanceof WebApplicationException) {
 				throw (WebApplicationException) e;
 			}
-			e.printStackTrace();
 			throw ApiErrorFactory.getInstance().createError(
 					ApiErrorFactory.ERROR_UNKNOWN);
 		}

@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -18,7 +19,8 @@ import settings.Settings;
 public class Lang {
 												
 	public static final String translationsUrl = "https://raw.githubusercontent.com/Qoracoin/translations/master/";
-
+	
+	private static final Logger LOGGER = Logger.getLogger(Lang.class);
 	private static Lang instance;
 	private Map<String, String> noTranslateMap;
 	
@@ -106,7 +108,7 @@ public class Lang {
 				lines = Files.readLines(file, Charsets.UTF_8);
 			} catch( IOException e ) {
 				lines = new ArrayList<String>();
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
 			
 			String jsonString = "";
@@ -154,7 +156,7 @@ public class Lang {
         			long time_of_translation = ((Long)langFile.get("_timestamp_of_translation_")).longValue();
         			lngList.add( new LangFile( lang_name, fileList[i].getName(), time_of_translation) );
         		} catch (Exception e) {
-        			e.printStackTrace();
+        			LOGGER.error(e);
         		}
         	}
         }

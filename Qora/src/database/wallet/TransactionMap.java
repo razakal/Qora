@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.DB;
 import org.mapdb.Fun;
@@ -29,6 +30,7 @@ public class TransactionMap extends DBMap<Tuple2<String, String>, Transaction>
 	public static final int ADDRESS_INDEX = 2;
 	public static final int AMOUNT_INDEX = 3;
 	
+	private static final Logger LOGGER = Logger.getLogger(TransactionMap.class);
 	private Map<Integer, Integer> observableData = new HashMap<Integer, Integer>();
 	
 	public TransactionMap(WalletDatabase walletDatabase, DB database)
@@ -157,7 +159,7 @@ public class TransactionMap extends DBMap<Tuple2<String, String>, Transaction>
 		catch(Exception e)
 		{
 			//ERROR
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		
 		return transactions;
@@ -185,7 +187,7 @@ public class TransactionMap extends DBMap<Tuple2<String, String>, Transaction>
 		catch(Exception e)
 		{
 			//ERROR
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		
 		return transactions;

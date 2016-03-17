@@ -10,17 +10,21 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
-import controller.Controller;
 import lang.Lang;
 import network.message.FindMyselfMessage;
 import network.message.Message;
 import network.message.MessageFactory;
+
+import org.apache.log4j.Logger;
+
 import utils.ObserverMessage;
+import controller.Controller;
 
 public class Network extends Observable implements ConnectionCallback {
 
+	
+	private static final Logger LOGGER = Logger.getLogger(Network.class);
 	public static final int MAINNET_PORT = 9084;
 	public static final int TESTNET_PORT = 4809;
 	
@@ -59,7 +63,7 @@ public class Network extends Observable implements ConnectionCallback {
 	@Override
 	public void onConnect(Peer peer) {
 		
-		Logger.getGlobal().info(Lang.getInstance().translate("Connection successfull : ") + peer.getAddress());
+		LOGGER.info(Lang.getInstance().translate("Connection successfull : ") + peer.getAddress());
 		
 		//ADD TO CONNECTED PEERS
 		synchronized(this.connectedPeers)
@@ -84,7 +88,7 @@ public class Network extends Observable implements ConnectionCallback {
 	@Override
 	public void onDisconnect(Peer peer) {
 
-		Logger.getGlobal().info(Lang.getInstance().translate("Connection close : ") + peer.getAddress());
+		LOGGER.info(Lang.getInstance().translate("Connection close : ") + peer.getAddress());
 		
 		//REMOVE FROM CONNECTED PEERS
 		synchronized(this.connectedPeers)
@@ -110,7 +114,7 @@ public class Network extends Observable implements ConnectionCallback {
 	@Override
 	public void onError(Peer peer, String error) {
 		
-		Logger.getGlobal().warning(Lang.getInstance().translate("Connection error : ") + peer.getAddress() + " : " + error);
+		LOGGER.warn(Lang.getInstance().translate("Connection error : ") + peer.getAddress() + " : " + error);
 		
 		//REMOVE FROM CONNECTED PEERS
 		synchronized(this.connectedPeers)
@@ -191,7 +195,7 @@ public class Network extends Observable implements ConnectionCallback {
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 	}
 
@@ -253,7 +257,7 @@ public class Network extends Observable implements ConnectionCallback {
 			FindMyselfMessage findMyselfMessage = (FindMyselfMessage) message;
 			
 			if(Arrays.equals(findMyselfMessage.getFoundMyselfID(),Controller.getInstance().getFoundMyselfID())) {
-				Logger.getGlobal().info(Lang.getInstance().translate("Connected to self. Disconnection."));
+				LOGGER.info(Lang.getInstance().translate("Connected to self. Disconnection."));
 				message.getSender().close();
 			}
 			
@@ -269,7 +273,7 @@ public class Network extends Observable implements ConnectionCallback {
 
 	public void broadcast(Message message, List<Peer> exclude) 
 	{		
-		Logger.getGlobal().info(Lang.getInstance().translate("Broadcasting"));
+		LOGGER.info(Lang.getInstance().translate("Broadcasting"));
 		
 		try
 		{
@@ -287,10 +291,10 @@ public class Network extends Observable implements ConnectionCallback {
 		catch(Exception e)
 		{
 			//error broadcasting
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		
-		Logger.getGlobal().info(Lang.getInstance().translate("Broadcasting end"));
+		LOGGER.info(Lang.getInstance().translate("Broadcasting end"));
 	}
 	
 	@Override

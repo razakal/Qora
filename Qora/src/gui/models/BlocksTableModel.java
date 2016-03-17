@@ -2,6 +2,8 @@ package gui.models;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.log4j.Logger;
+
 import qora.block.Block;
 import utils.DateTimeFormat;
 import utils.NumberAsString;
@@ -14,6 +16,9 @@ import lang.Lang;
 @SuppressWarnings("serial")
 public class BlocksTableModel extends QoraTableModel<byte[], Block> implements Observer{
 
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(BlocksTableModel.class);
 	public static final int COLUMN_HEIGHT = 0;
 	public static final int COLUMN_TIMESTAMP = 1;
 	public static final int COLUMN_GENERATOR = 2;
@@ -101,7 +106,7 @@ public class BlocksTableModel extends QoraTableModel<byte[], Block> implements O
 			return null;
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 			return null;
 		}
 	}

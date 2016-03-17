@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -31,6 +32,8 @@ import database.DBSet;
  */
 public class BlogEntry {
 
+	
+	private static final Logger LOGGER = Logger.getLogger(BlogEntry.class);
 	private String titleOpt;
 	private String description;
 	private String nameOpt;
@@ -139,7 +142,7 @@ public class BlogEntry {
 					StandardCharsets.UTF_8);
 			return template.replace("{{url}}", url);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 			return "";
 		}
 	}

@@ -3,10 +3,9 @@ package qora;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
-import controller.Controller;
-import database.DBSet;
+import org.apache.log4j.Logger;
+
 import qora.account.Account;
 import qora.assets.Asset;
 import qora.block.Block;
@@ -15,18 +14,21 @@ import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
 import settings.Settings;
 import utils.Pair;
+import controller.Controller;
+import database.DBSet;
 
 public class BlockChain
 {
 	public static final int MAX_SIGNATURES = 500;
 	
+	private static final Logger LOGGER = Logger.getLogger(BlockChain.class);
 	public BlockChain()
 	{	
 		//CREATE GENESIS BLOCK
 		Block genesisBlock = new GenesisBlock();
 
 		if(Settings.getInstance().isTestnet()) {
-			Logger.getGlobal().info( ((GenesisBlock)genesisBlock).getTestNetInfo() );
+			LOGGER.info( ((GenesisBlock)genesisBlock).getTestNetInfo() );
 		}
 		
 		if(	!DBSet.getInstance().getBlockMap().contains(genesisBlock.getSignature())
@@ -35,13 +37,13 @@ public class BlockChain
 		{
 			if(DBSet.getInstance().getBlockMap().getLastBlockSignature() != null)
 			{
-				Logger.getGlobal().info("reCreate Database...");	
+				LOGGER.info("reCreate Database...");	
 		
 	        	try {
 	        		DBSet.getInstance().close();
 					Controller.getInstance().reCreateDB(false);
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOGGER.error(e);
 				}
 			}
         	//PROCESS

@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -42,6 +43,9 @@ import utils.SaveStrToFile;
 @SuppressWarnings("serial")
 public class SettingLangFrame extends JDialog {
 	
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(SettingLangFrame.class);
 	private  JList<LangFile> listLang;
 	
 	public SettingLangFrame()
@@ -175,7 +179,7 @@ public class SettingLangFrame extends JDialog {
 			Settings.FreeInstance();
 			Lang.getInstance().loadLang();
 		}catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 			JOptionPane.showMessageDialog(
 				new JFrame(), "Error writing to the file: "
 						+ "\nProbably there is no access.",

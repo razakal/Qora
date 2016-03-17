@@ -28,6 +28,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Base58;
@@ -54,7 +56,9 @@ public class ResponseAcctFrame extends JFrame {
 	private JTextField txtAmount;
 	private JTextField txtAmountOther;
 	private JTextField txtBurstAddress;
-
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(ResponseAcctFrame.class);
 	private JButton deployButton;
 
 
@@ -548,7 +552,7 @@ public class ResponseAcctFrame extends JFrame {
 				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown exception!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 			}
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 
 		//ENABLE

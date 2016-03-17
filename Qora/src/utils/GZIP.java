@@ -10,10 +10,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.log4j.Logger;
+
 import qora.crypto.Base64;
 
 
 public class GZIP {
+	
+	private static final Logger LOGGER = Logger.getLogger(GZIP.class);
 	private static byte[] GZIPcompress(String str) throws Exception {
 		try( ByteArrayOutputStream obj= new ByteArrayOutputStream(); GZIPOutputStream gzip = new GZIPOutputStream(obj);)
 		{
@@ -51,7 +55,7 @@ public class GZIP {
 			try {
 				value = GZIPdecompress(compressed);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
 		}
 		return value;
@@ -67,7 +71,7 @@ public class GZIP {
         	try {
             	text = GZIPdecompress(compressed);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
             return text;
         }
@@ -82,7 +86,7 @@ public class GZIP {
 		try {
 			compressed = GZIPcompress(text);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		return "?gz!"+Base64.encode(compressed);
 	}
@@ -93,7 +97,7 @@ public class GZIP {
 		try {
 			compressed = GZIPcompress(text);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		String compressedVariant = "?gz!"+Base64.encode(compressed);
 		

@@ -1,12 +1,14 @@
 package network;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import lang.Lang;
 import network.message.Message;
 import network.message.MessageFactory;
 import network.message.PeersMessage;
+
+import org.apache.log4j.Logger;
+
 import settings.Settings;
 
 public class ConnectionCreator extends Thread {
@@ -14,6 +16,8 @@ public class ConnectionCreator extends Thread {
 	private ConnectionCallback callback;
 	private boolean isRun;
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(ConnectionCreator.class);
 	public ConnectionCreator(ConnectionCallback callback)
 	{
 		this.callback = callback;
@@ -53,7 +57,7 @@ public class ConnectionCreator extends Thread {
 								//if(!peer.getAddress().isSiteLocalAddress() && !peer.getAddress().isLoopbackAddress() && !peer.getAddress().isAnyLocalAddress())
 								{
 									//CONNECT
-									Logger.getGlobal().info(
+									LOGGER.info(
 											Lang.getInstance().translate("Connecting to known peer ") + peer.getAddress().getHostAddress() 
 											+ " :: " + knownPeersCounter + " / " + knownPeers.size() 
 											+ " :: "+Lang.getInstance().translate("Connections: ") + callback.getActiveConnections().size());
@@ -109,7 +113,7 @@ public class ConnectionCreator extends Thread {
 														{
 															int maxReceivePeersForPrint = (maxReceivePeers > peersMessage.getPeers().size()) ? peersMessage.getPeers().size() : maxReceivePeers;  
 															
-															Logger.getGlobal().info(
+															LOGGER.info(
 																Lang.getInstance().translate("Connecting to peer ") + newPeer.getAddress().getHostAddress() + Lang.getInstance().translate(" proposed by ") + peer.getAddress().getHostAddress() 
 																+ " :: " + foreignPeersCounter + " / " + maxReceivePeersForPrint + " / " + peersMessage.getPeers().size() 
 																+ " :: " + Lang.getInstance().translate("Connections: ") + callback.getActiveConnections().size());
@@ -133,9 +137,9 @@ public class ConnectionCreator extends Thread {
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				LOGGER.error(e);
 				
-				Logger.getGlobal().info(Lang.getInstance().translate("Error creating new connection"));			
+				LOGGER.info(Lang.getInstance().translate("Error creating new connection"));			
 			}					
 		}
 	}
