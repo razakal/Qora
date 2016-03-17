@@ -5,12 +5,16 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Serializer;
 
 import qora.assets.Trade;
 
 public class TradeSerializer implements Serializer<Trade>, Serializable
 {
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(TradeSerializer.class);
 	private static final long serialVersionUID = -6538913048331349777L;
 
 	@Override
@@ -32,7 +36,7 @@ public class TradeSerializer implements Serializer<Trade>, Serializable
 		} 
         catch (Exception e) 
         {
-        	e.printStackTrace();
+        	LOGGER.error(e);
 		}
 		return null;
     }

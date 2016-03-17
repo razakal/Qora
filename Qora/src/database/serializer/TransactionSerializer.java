@@ -5,6 +5,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Serializer;
 
 import qora.transaction.Transaction;
@@ -14,6 +15,9 @@ public class TransactionSerializer implements Serializer<Transaction>, Serializa
 {
 	private static final long serialVersionUID = -6538913048331349777L;
 
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(TransactionSerializer.class);
 	@Override
 	public void serialize(DataOutput out, Transaction value) throws IOException 
 	{
@@ -33,7 +37,7 @@ public class TransactionSerializer implements Serializer<Transaction>, Serializa
 		} 
         catch (Exception e) 
         {
-        	e.printStackTrace();
+        	LOGGER.error(e);
 		}
 		return null;
     }

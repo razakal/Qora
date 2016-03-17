@@ -5,6 +5,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Serializer;
 
 import qora.block.Block;
@@ -12,6 +13,9 @@ import qora.block.BlockFactory;
 
 public class BlockSerializer implements Serializer<Block>, Serializable
 {
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(BlockSerializer.class);
 	private static final long serialVersionUID = -6538913048331349777L;
 
 	@Override
@@ -33,7 +37,7 @@ public class BlockSerializer implements Serializer<Block>, Serializable
 		} 
         catch (Exception e) 
         {
-        	e.printStackTrace();
+        	LOGGER.error(e);
 		}
 		return null;
     }
