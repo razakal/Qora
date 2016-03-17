@@ -65,7 +65,6 @@ public class SettingsFrame extends JFrame{
         gbc_tabPane.insets = new Insets(0, 0, 0, 0);
         gbc_tabPane.gridx = 0;
         gbc_tabPane.gridy = 0;
-        
         this.add(this.settingsTabPane, gbc_tabPane); 
         
         JButton btnNewButton = new JButton(Lang.getInstance().translate("Apply"));
@@ -254,18 +253,6 @@ public class SettingsFrame extends JFrame{
 		{
 			settingsJSONbuf.put("maxconnections", MaxConnections);
 			limitConnections = true;
-		}
-		
-		if(!Settings.getInstance().getWalletDir().equals(settingsTabPane.settingsBasicPanel.textWallet.getText()))
-		{
-			settingsJSONbuf.put("walletdir", settingsTabPane.settingsBasicPanel.textWallet.getText());
-			changeWallet = true;
-		}
-		
-		if(!Settings.getInstance().getDataDir().equals(settingsTabPane.settingsBasicPanel.textDataFolder.getText()))
-		{
-			settingsJSONbuf.put("datadir", settingsTabPane.settingsBasicPanel.textDataFolder.getText());
-			changeDataDir = true;
 		}
 		
 		if(!Settings.getInstance().getLang().equals(

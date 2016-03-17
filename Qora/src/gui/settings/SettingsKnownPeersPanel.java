@@ -39,26 +39,23 @@ public class SettingsKnownPeersPanel extends JPanel
 	public SettingsKnownPeersPanel()
 	{	
 		//PADDING
-		this.setBorder(new EmptyBorder(10, 5, 5, 10));
+		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{87, 202, 44, 37, 0};
-        gridBagLayout.rowHeights = new int[]{281, 23, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-        setLayout(gridBagLayout);
+		this.setLayout(new GridBagLayout());
         
+		this.setMaximumSize(this.getSize());
 		this.knownPeersTableModel = new KnownPeersTableModel();
 		
 		knownPeersTable = new JTable(knownPeersTableModel);
 
         GridBagConstraints gbc_knownPeersTable = new GridBagConstraints();
         gbc_knownPeersTable.fill = GridBagConstraints.BOTH;
-        gbc_knownPeersTable.gridwidth = 5;
-        gbc_knownPeersTable.anchor = GridBagConstraints.SOUTHWEST;
+        gbc_knownPeersTable.gridwidth = 4;
+        gbc_knownPeersTable.anchor = GridBagConstraints.NORTHWEST;
         gbc_knownPeersTable.insets = new Insets(0, 0, 5, 0);
         gbc_knownPeersTable.gridx = 0;
         gbc_knownPeersTable.gridy = 0;
+
         this.add(new JScrollPane(knownPeersTable), gbc_knownPeersTable);
         
         //CHECKBOX FOR CONNECTED
@@ -71,6 +68,7 @@ public class SettingsKnownPeersPanel extends JPanel
         gbc_lblAddNewAddress.insets = new Insets(4, 0, 0, 5);
         gbc_lblAddNewAddress.gridx = 0;
         gbc_lblAddNewAddress.gridy = 1;
+        gbc_lblAddNewAddress.weightx = 1;
         add(lblAddNewAddress, gbc_lblAddNewAddress);
        
         
@@ -79,20 +77,21 @@ public class SettingsKnownPeersPanel extends JPanel
         gbc_textAddress.fill = GridBagConstraints.HORIZONTAL;
         gbc_textAddress.gridx = 1;
         gbc_textAddress.gridy = 1;
-        
+        gbc_textAddress.weightx = 5;
+        gbc_textAddress.gridwidth = 1;
+
         textAddress = new JTextField();
         add(textAddress, gbc_textAddress);
-        textAddress.setColumns(10);
+        //textAddress.setColumns(10);
         textAddress.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        textAddress.setPreferredSize( new Dimension( 150, 24 ));
         
         JButton btnAdd = new JButton(Lang.getInstance().translate("Add"));
         GridBagConstraints gbc_btnAdd = new GridBagConstraints();
         gbc_btnAdd.fill = GridBagConstraints.BOTH;
-        gbc_btnAdd.gridwidth = 2;
-        gbc_btnAdd.anchor = GridBagConstraints.SOUTHWEST;
-        gbc_btnAdd.gridx = 2;
+        gbc_btnAdd.gridwidth = 1;
+        gbc_btnAdd.gridx = 3;
         gbc_btnAdd.gridy = 1;
+        gbc_btnAdd.weightx = 1;
         btnAdd.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -101,6 +100,7 @@ public class SettingsKnownPeersPanel extends JPanel
 			}
 		});	    
         add(btnAdd, gbc_btnAdd);
+        btnAdd.setPreferredSize( new Dimension( 100, 25 ));
         
         JPopupMenu menu = new JPopupMenu();	
         
@@ -131,6 +131,7 @@ public class SettingsKnownPeersPanel extends JPanel
 		
 		confirmedColumn.setMaxWidth(100);
 		confirmedColumn.setMinWidth(100);
+		
          
 	}
 	public void close() 

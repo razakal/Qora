@@ -52,16 +52,12 @@ public class SettingsAllowedPanel extends JPanel
 	{
 
 		//PADDING
-		this.setBorder(new EmptyBorder(5, 5, 5, 10));
+		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        GridBagLayout gridBagLayout1 = new GridBagLayout();
-        gridBagLayout1.columnWidths = new int[]{5, 202, 5};
-        gridBagLayout1.rowHeights = new int[]{0, 100, 0, 15, 0, 100, 0};
-        setLayout(gridBagLayout1);
+        this.setLayout(new GridBagLayout());
         
         this.webAllowedTableModel = new AllowedTableModel(Settings.getInstance().getWebAllowed());
         
-
         webAllowedTable = new JTable(webAllowedTableModel);
         
         webAllowedTable.addKeyListener(new KeyAdapter() {
@@ -120,7 +116,7 @@ public class SettingsAllowedPanel extends JPanel
         gbc_webAllowedScrollPane.gridy = 1;
         
         JScrollPane webAllowedScrollPane = new JScrollPane(webAllowedTable);
-        webAllowedScrollPane.setPreferredSize(new Dimension( 490, 180 ));
+        webAllowedScrollPane.setPreferredSize(new Dimension( 490, 170 ));
         this.add(webAllowedScrollPane, gbc_webAllowedScrollPane);
          
 	     JLabel lblAddNewAddress = new JLabel(Lang.getInstance().translate("Add new address:"));
@@ -219,7 +215,7 @@ public class SettingsAllowedPanel extends JPanel
 		
 		JScrollPane rpcScrollPane = new JScrollPane(rpcAllowedTable);
 		
-		rpcScrollPane.setPreferredSize(new Dimension( 520, 180 ));
+		rpcScrollPane.setPreferredSize(new Dimension( 490, 170 ));
         this.add(rpcScrollPane, gbc_rpcAllowedTable);
 		
 		JLabel labelRpcAddNewAddress = new JLabel(Lang.getInstance().translate("Add new address:"));
@@ -258,7 +254,7 @@ public class SettingsAllowedPanel extends JPanel
         {
         	public void actionPerformed(ActionEvent e)
         	{
-        		AllowedEnabled(chckbxRpcAllowForAll.isSelected(),2);
+        		AllowedEnabled(chckbxRpcAllowForAll.isSelected(), 2);
         		rpcServiceRestart = true;
         	}
         });	  
