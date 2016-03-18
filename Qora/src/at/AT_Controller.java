@@ -357,7 +357,7 @@ public abstract class AT_Controller {
 
 	public static AT_Block validateATs( byte[] blockATs , int blockHeight , DBSet dbSet ) throws NoSuchAlgorithmException, AT_Exception {
 
-		System.out.println("Validate ATs");
+		LOGGER.trace("Validate ATs");
 		if ( blockATs == null )
 		{
 			return new AT_Block( 0 , 0 , null , true );
@@ -444,7 +444,7 @@ public abstract class AT_Controller {
 		{
 			String atId = Base58.encode( at.getId() );
 			Account account = new Account(atId);
-			System.out.println("AT : " + account.getAddress() + " total balance: " + account.getConfirmedBalance(dbSet));
+			LOGGER.trace("AT : " + account.getAddress() + " total balance: " + account.getConfirmedBalance(dbSet));
 			//atLastState.put( atId ,  tempAtStates.get( atId ) );
 			dbSet.getATMap().update( at , blockHeight );
 			dbSet.getATStateMap().addOrUpdate( blockHeight , at.getId(), at.getState() );
@@ -554,7 +554,7 @@ public abstract class AT_Controller {
 					totalFees += tx.getAmount();
 				}
 				sender.setConfirmedBalance( sender.getConfirmedBalance( dbSet ).subtract( BigDecimal.valueOf( tx.getAmount() , 8 ) ) , dbSet );
-				System.out.println("Sender :" + sender.getAddress() + " total balance :" + sender.getConfirmedBalance(dbSet));
+				LOGGER.trace("Sender :" + sender.getAddress() + " total balance :" + sender.getConfirmedBalance(dbSet));
 			}
 
 		}

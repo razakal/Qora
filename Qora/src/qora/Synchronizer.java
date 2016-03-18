@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import network.Peer;
 import network.message.BlockMessage;
@@ -25,6 +26,8 @@ import database.DBSet;
 
 public class Synchronizer
 {
+	
+	private static final Logger LOGGER = Logger.getLogger(Synchronizer.class);
 	private boolean run = true;
 	
 	public Synchronizer()
@@ -167,7 +170,7 @@ public class Synchronizer
 	
 	public void synchronize(Peer peer) throws Exception
 	{
-		Logger.getGlobal().info("Synchronizing: " + peer.getAddress().getHostAddress() + " - " + peer.getPing());
+		LOGGER.info("Synchronizing: " + peer.getAddress().getHostAddress() + " - " + peer.getPing());
 		
 		//FIND LAST COMMON BLOCK
 		Block common =  this.findLastCommonBlock(peer);
