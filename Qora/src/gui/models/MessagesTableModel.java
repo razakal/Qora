@@ -33,6 +33,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 
 import controller.Controller;
@@ -53,6 +54,10 @@ import utils.TableMenuPopupUtil;
 
 @SuppressWarnings("serial")
 public class MessagesTableModel extends JTable implements Observer{
+	
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(MessagesTableModel.class);
 	private ArrayList<MessageBuf> messageBufs;
 	Comparator<MessageBuf> comparator = new Comparator<MessageBuf>() {
 	    public int compare(MessageBuf c1, MessageBuf c2) {
@@ -494,6 +499,7 @@ public class MessagesTableModel extends JTable implements Observer{
 				try {
 					decrypt = AEScrypto.dataDecrypt(messageBufs.get(row).getMessage(), privateKey, publicKey);
 				} catch ( InvalidCipherTextException | NullPointerException e1 ) {
+					LOGGER.error(e1);
 					messageBufs.get(row).setDecryptedMessage(Lang.getInstance().translate("Decrypt Error!"));
 				} 
 		
