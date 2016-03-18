@@ -237,7 +237,7 @@ public class BlockExplorerTest {
 
 		List<Object> all = new ArrayList<Object>();
 
-		List<Transaction> transactions = new ArrayList<Transaction>();;
+		List<Transaction> transactions = new ArrayList<Transaction>();
 		for (int type = 1; type <= 23; type++) {  // 17 - The number of transaction types. 23 - for the future
 			transactions.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress("QPVknSmwDryB98Hh8xB7E6U75dGFYwNkJ4", type, 0));
 		}
@@ -258,7 +258,7 @@ public class BlockExplorerTest {
 		all.clear();
 		stopwatchAll = new Stopwatch();
 		
-		transactions = new ArrayList<Transaction>();;
+		transactions = new ArrayList<Transaction>();
 		for (int type = 1; type <= 23; type++) {  // 17 - The number of transaction types. 23 - for the future
 			transactions.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress("QYsLsfwMRBPnunmuWmFkM4hvGsfooY8ssU", type, 0));
 		}
@@ -281,7 +281,7 @@ public class BlockExplorerTest {
 		
 		stopwatchAll = new Stopwatch();
 		
-		transactions = new ArrayList<Transaction>();;
+		transactions = new ArrayList<Transaction>();
 		for (int type = 1; type <= 23; type++) {  // 17 - The number of transaction types. 23 - for the future
 			transactions.addAll(DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress("QRZ5Ggk6o5wwEgzL4Wo3xmueXuDEgwLeyQ", type, 0));
 		}

@@ -291,7 +291,7 @@ public class Controller extends Observable {
 		// CHECK WEB PORT AVAILABLE
 		if (Settings.getInstance().isWebEnabled()) {
 			if (!Network.isPortAvailable(Settings.getInstance().getWebPort())) {	
-				System.out.println(Lang.getInstance().translate("Web port %port% already in use!").
+				LOGGER.error(Lang.getInstance().translate("Web port %port% already in use!").
 						replace("%port%", String.valueOf(Settings.getInstance().getWebPort())));
 			}
 		}
@@ -458,7 +458,7 @@ public class Controller extends Observable {
 			if (useDataBak && dataBak.exists()
 					&& Settings.getInstance().isCheckpointingEnabled()) {
 				FileUtils.copyDirectory(dataBak, dataDir);
-				System.out.println(Lang.getInstance().translate("restoring backup database"));
+				LOGGER.info(Lang.getInstance().translate("restoring backup database"));
 				try {
 					DBSet.reCreateDatabase();
 				} catch (IOError e) {

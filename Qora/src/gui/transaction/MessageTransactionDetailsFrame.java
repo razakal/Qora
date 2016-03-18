@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 
 import qora.account.Account;
@@ -40,6 +41,8 @@ public class MessageTransactionDetailsFrame extends JFrame
 {
 	private JTextField messageText;
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(MessageTransactionDetailsFrame.class);
 	public MessageTransactionDetailsFrame(final MessageTransaction messageTransaction)
 	{
 		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Transaction Details"));
@@ -232,12 +235,8 @@ public class MessageTransactionDetailsFrame extends JFrame
 	        		
 	        		try {
 	        			messageText.setText(new String(AEScrypto.dataDecrypt(messageTransaction.getData(), privateKey, publicKey), "UTF-8"));
-					} catch (UnsupportedEncodingException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (InvalidCipherTextException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					} catch (UnsupportedEncodingException | InvalidCipherTextException e1) {
+						LOGGER.error(e1);
 					}
         		}
         		else
@@ -245,8 +244,7 @@ public class MessageTransactionDetailsFrame extends JFrame
         			try {
         				messageText.setText(new String(messageTransaction.getData(), "UTF-8"));
 					} catch (UnsupportedEncodingException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						LOGGER.error(e1);
 					}
         		}
         		//encrypted.isSelected();

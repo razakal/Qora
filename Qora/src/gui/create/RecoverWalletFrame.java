@@ -28,6 +28,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
 import controller.Controller;
 import lang.Lang;
 import qora.crypto.Base58;
@@ -41,6 +43,8 @@ public class RecoverWalletFrame extends JFrame
 	private JTextField amountTxt;
 	private JTextField confirmPasswordTxt;
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(RecoverWalletFrame.class);
 	public RecoverWalletFrame(NoWalletFrame parent)
 	{
 		super(Lang.getInstance().translate("Qora") + " - " + Lang.getInstance().translate("Recover Wallet"));
@@ -101,7 +105,7 @@ public class RecoverWalletFrame extends JFrame
 					String clipboardContent = (String) clipboard.getData(DataFlavor.stringFlavor);
 					seedTxt.setText(clipboardContent);
 				} catch (UnsupportedFlavorException | IOException e1) {
-					e1.printStackTrace();
+					LOGGER.error(e1);
 				} 
 			}
 		});

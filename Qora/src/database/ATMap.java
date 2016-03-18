@@ -53,7 +53,9 @@ public class ATMap extends DBMap<String, AT>
 
 	}
 
-	protected void createIndexes(DB database){}
+	protected void createIndexes(DB database){
+//		
+	}
 
 	@Override
 	protected Map<String, AT> getMap(DB database) 

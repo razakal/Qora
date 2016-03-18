@@ -29,6 +29,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
 import controller.Controller;
 import lang.Lang;
 import qora.crypto.Base58;
@@ -41,6 +43,8 @@ public class ConfirmSeedFrame extends JFrame {
 	private JTextField passwordTxt;
 	private JTextField confirmPasswordTxt;
 	
+	private static final Logger LOGGER = Logger
+			.getLogger(ConfirmSeedFrame.class);
 	public ConfirmSeedFrame(CreateWalletFrame parent)
 	{
 		super(Lang.getInstance().translate("Qora") + " - "+ Lang.getInstance().translate("Create Wallet"));
@@ -102,7 +106,7 @@ public class ConfirmSeedFrame extends JFrame {
 					String clipboardContent = (String) clipboard.getData(DataFlavor.stringFlavor);
 					seedTxt.setText(clipboardContent);
 				} catch (UnsupportedFlavorException | IOException e1) {
-					e1.printStackTrace();
+					LOGGER.error(e1);
 				} 
 			}
 		});

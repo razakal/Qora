@@ -20,6 +20,7 @@ import java.util.TreeSet;
 
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Fun;
 import org.mapdb.Fun.Tuple2;
 import org.mapdb.Fun.Tuple6;
@@ -69,6 +70,8 @@ import utils.ReverseComparator;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class BlockExplorer
 {
+	
+	private static final Logger LOGGER = Logger.getLogger(BlockExplorer.class);
 	private static BlockExplorer blockExplorer;
 
 	public static BlockExplorer getInstance()
@@ -453,7 +456,7 @@ public class BlockExplorer
 		}
 		catch (Exception e)
 		{
-
+			LOGGER.error(e);
 		}
 
 		if (Crypto.getInstance().isValidAddress(query))
@@ -567,7 +570,7 @@ public class BlockExplorer
 			}
 			catch (Exception e) 
 			{
-
+				LOGGER.error(e);
 			}
 		}
 
@@ -1601,7 +1604,7 @@ public class BlockExplorer
 			
 			if(transaction.getType() == Transaction.MULTI_PAYMENT_TRANSACTION) 
 			{
-				Map<Long, BigDecimal> totalAmountOfAssets = new TreeMap<Long, BigDecimal>();;
+				Map<Long, BigDecimal> totalAmountOfAssets = new TreeMap<Long, BigDecimal>();
 
 				for (Payment payment : ((MultiPaymentTransaction)transaction).getPayments()) {
 					BigDecimal amount = BigDecimal.ZERO.setScale(8); 
@@ -1629,7 +1632,7 @@ public class BlockExplorer
 			
 			if(transaction.getType() == Transaction.ARBITRARY_TRANSACTION) 
 			{
-				Map<Long, BigDecimal> totalAmountOfAssets = new TreeMap<Long, BigDecimal>();;
+				Map<Long, BigDecimal> totalAmountOfAssets = new TreeMap<Long, BigDecimal>();
 
 				for (Payment payment : ((ArbitraryTransaction)transaction).getPayments()) {
 					BigDecimal amount = BigDecimal.ZERO.setScale(8); 

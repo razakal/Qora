@@ -70,7 +70,7 @@ public class Start {
 							SysTray.getInstance().createTrayIcon();
 						}
 				} catch(Exception e) {
-					System.out.println(Lang.getInstance().translate("GUI ERROR") + ": " + e.getMessage());
+					LOGGER.error(Lang.getInstance().translate("GUI ERROR") ,e);
 				}
 				
 			} catch(Exception e) {

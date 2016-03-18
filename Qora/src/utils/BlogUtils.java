@@ -9,18 +9,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.StringUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import com.google.common.collect.Lists;
-import com.twitter.Extractor;
-
-import api.BlogPostResource;
-import controller.Controller;
-import database.PostCommentMap;
-import database.DBSet;
 import qora.crypto.Base58;
 import qora.transaction.ArbitraryTransaction;
 import qora.transaction.Transaction;
@@ -29,9 +22,19 @@ import qora.web.BlogProfile;
 import qora.web.NameStorageMap;
 import qora.web.Profile;
 import qora.web.blog.BlogEntry;
+import api.BlogPostResource;
+
+import com.google.common.collect.Lists;
+import com.twitter.Extractor;
+
+import controller.Controller;
+import database.DBSet;
+import database.PostCommentMap;
 
 public class BlogUtils {
 
+	
+	private static final Logger LOGGER = Logger.getLogger(BlogUtils.class);
 	public static int COMMENT_SERVICE_ID = 778;
 
 	/**
@@ -336,7 +339,7 @@ public class BlogUtils {
 			transaction = (ArbitraryTransaction) Controller.getInstance()
 					.getTransaction(signature);
 		} catch (Exception e) {
-			System.err.println(ExceptionUtils.getStackTrace(e));
+			LOGGER.error(e);
 			return null;
 		}
 		return transaction == null ? null : BlogUtils

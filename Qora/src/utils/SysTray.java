@@ -26,6 +26,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import org.apache.log4j.Logger;
+
 import controller.Controller;
 import database.wallet.TransactionMap;
 import gui.ClosingDialog;
@@ -46,6 +48,8 @@ import settings.Settings;
 
 public class SysTray implements Observer{
 
+	
+	private static final Logger LOGGER = Logger.getLogger(SysTray.class);
 	private static SysTray systray = null;
 	private TrayIcon icon = null;
 	private PopupMenu createPopupMenu;
@@ -67,7 +71,7 @@ public class SysTray implements Observer{
 			MalformedURLException, AWTException, FileNotFoundException {
 		if (icon == null) {
 			if (!SystemTray.isSupported()) {
-				System.out.println("SystemTray is not supported");
+				LOGGER.info("SystemTray is not supported");
 			} else {
 				
 				//String toolTipText = "Qora "	+ Controller.getInstance().getVersion();
@@ -87,7 +91,7 @@ public class SysTray implements Observer{
 						try {
 							Gui.getInstance().bringtoFront();
 						} catch (Exception e1) {
-							e1.printStackTrace();
+							LOGGER.error(e1);
 						}
 					}
 				});
@@ -130,7 +134,7 @@ public class SysTray implements Observer{
 				try {
         			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()));
 				} catch (MalformedURLException e1) {
-					e1.printStackTrace();
+					LOGGER.error(e1);
 				}
 			}
 		});
@@ -141,7 +145,7 @@ public class SysTray implements Observer{
 				try {
 					URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort() + "/index/status.html"));
 				} catch (MalformedURLException e1) {
-					e1.printStackTrace();
+					LOGGER.error(e1);
 				}
 			}
 		});

@@ -10,6 +10,7 @@ import java.util.Observer;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.log4j.Logger;
 import org.mapdb.Fun.Tuple6;
 
 import qora.assets.Asset;
@@ -29,6 +30,9 @@ public class AssetPairSelectTableModel extends AbstractTableModel implements Obs
 	private static final int COLUMN_ORDERS_VOLUME = 3;
 	private static final int COLUMN_TRADES_COUNT = 4;
 	private static final int COLUMN_TRADES_VOLUME = 5;
+	
+	private static final Logger LOGGER = Logger
+			.getLogger(AssetPairSelectTableModel.class);
 	
 	public long key;
 	private String[] columnNames = {Lang.getInstance().translate("Key"), Lang.getInstance().translate("Name"), Lang.getInstance().translate("<html>Orders<br>Count</html>"), Lang.getInstance().translate("Orders Volume"), Lang.getInstance().translate("<html>Trades<br>Count</html>"), Lang.getInstance().translate("Trades Volume")};
@@ -133,7 +137,7 @@ public class AssetPairSelectTableModel extends AbstractTableModel implements Obs
 		
 		} catch ( NullPointerException e)
 		{
-			
+			LOGGER.error(e);
 		}
 		
 		return null;

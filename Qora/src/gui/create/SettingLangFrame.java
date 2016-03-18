@@ -104,7 +104,7 @@ public class SettingLangFrame extends JDialog {
 			InputStream in = u.openStream();
 			stringFromInternet = IOUtils.toString(in, Charsets.UTF_8);
 		} catch (Exception e1) {
-			e1.printStackTrace();
+			LOGGER.error(e1);
 			stringFromInternet = "";
 		}
 		

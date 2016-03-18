@@ -130,7 +130,7 @@ public class Lang {
 		}
 				
 		return langJsonObject;
-	};
+	}
 
 	public List<LangFile> getListOfAvailable()
 	{

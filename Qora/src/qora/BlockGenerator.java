@@ -79,7 +79,7 @@ public class BlockGenerator extends Thread implements Observer
 	private List<PrivateKeyAccount> cachedAccounts;
 	
 	private ForgingStatus forgingStatus = ForgingStatus.FORGING_DISABLED;
-	private boolean walletOnceUnlocked = false;;
+	private boolean walletOnceUnlocked = false;
 	
 	
 	public BlockGenerator()

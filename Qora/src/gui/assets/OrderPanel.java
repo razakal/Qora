@@ -68,7 +68,7 @@ public class OrderPanel extends JPanel
 		GridBagConstraints superhintGBC = new GridBagConstraints();
 		superhintGBC.insets = new Insets(0, 5, 5, 0);
 		superhintGBC.fill = GridBagConstraints.BOTH;   
-		superhintGBC.anchor = GridBagConstraints.SOUTHWEST;;
+		superhintGBC.anchor = GridBagConstraints.SOUTHWEST;
 		superhintGBC.gridx = 0;
 		superhintGBC.gridwidth = 3;
 		superhintGBC.weightx = superhintGBC.weighty = 1.0;

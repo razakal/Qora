@@ -273,7 +273,7 @@ public class BlogBlackWhiteList {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
-	};
+	}
 
 	public Pair<String, String> getJsonKeyPairRepresentation() {
 		String results = StringUtils.join(blackwhiteList, ";");

@@ -608,7 +608,7 @@ public class Settings {
 				return ((Boolean) this.settingsJSON.get("forging")).booleanValue();
 			}
 		} catch (Exception e) {
-			System.err.println("Bad Settings.json content for parameter forging " + ExceptionUtils.getStackTrace(e));
+			LOGGER.error("Bad Settings.json content for parameter forging " + ExceptionUtils.getStackTrace(e));
 		}
 		
 		return DEFAULT_FORGING_ENABLED;

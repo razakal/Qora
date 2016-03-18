@@ -35,7 +35,9 @@ public class ATStateMap extends DBMap< Tuple2<Integer, String> ,  byte[] > {
 		super(parent);
 	}
 
-	protected void createIndexes(DB database) {}
+	protected void createIndexes(DB database) {
+//		
+	}
 
 	@Override
 	protected Map< Tuple2< Integer, String> ,  byte[] > getMap(DB database)

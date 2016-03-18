@@ -19,6 +19,8 @@ import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import org.apache.log4j.Logger;
+
 import controller.Controller;
 import gui.settings.SettingsFrame;
 import lang.Lang;
@@ -33,7 +35,8 @@ public class Menu extends JMenuBar
 	public static JMenuItem lockItem;
 	private ImageIcon lockedIcon;
 	private ImageIcon unlockedIcon;
-
+	
+	private static final Logger LOGGER = Logger.getLogger(Menu.class);
 	public Menu()
 	{
 		super();
@@ -53,7 +56,7 @@ public class Menu extends JMenuBar
 			BufferedImage unlockedImage = ImageIO.read(new File("images/wallet/unlocked.png"));
 			this.unlockedIcon = new ImageIcon(unlockedImage.getScaledInstance(20, 16, Image.SCALE_SMOOTH));
 		} catch (IOException e2) {
-			e2.printStackTrace();
+			LOGGER.error(e2);
 		}
 		
         lockItem = new JMenuItem("lock");
@@ -110,7 +113,7 @@ public class Menu extends JMenuBar
         		try {
         			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()));
 				} catch (MalformedURLException e1) {
-					e1.printStackTrace();
+					LOGGER.error(e1);
 				}
         	}
         });
@@ -129,7 +132,7 @@ public class Menu extends JMenuBar
         		try {
         			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()+"/index/blockexplorer.html"));
 				} catch (MalformedURLException e1) {
-					e1.printStackTrace();
+					LOGGER.error(e1);
 				}
         	}
         });
