@@ -37,7 +37,7 @@ public class BlockSerializer implements Serializer<Block>, Serializable
 		} 
         catch (Exception e) 
         {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
 		}
 		return null;
     }

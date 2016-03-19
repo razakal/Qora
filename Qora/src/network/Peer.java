@@ -75,7 +75,7 @@ public class Peer extends Thread{
 		}
 		catch(Exception e)
 		{
-			LOGGER.debug(e);
+			LOGGER.debug(e.getMessage(),e);
 			//FAILED TO CONNECT NO NEED TO BLACKLIST
 			LOGGER.info("Failed to connect to : " + address);
 		}
@@ -142,7 +142,7 @@ public class Peer extends Thread{
 		}
 		catch(Exception e)
 		{
-			LOGGER.debug(e);
+			LOGGER.debug(e.getMessage(),e);
 			LOGGER.info(Lang.getInstance().translate("Failed to connect to : ") + address);
 		}
 	}
@@ -188,7 +188,7 @@ public class Peer extends Thread{
 		} 
 		catch (Exception e) 
 		{
-			LOGGER.debug(e);
+			LOGGER.debug(e.getMessage(),e);
 			
 			//DISCONNECT
 			callback.onDisconnect(this);
@@ -221,7 +221,7 @@ public class Peer extends Thread{
 		}
 		catch (Exception e) 
 		{
-			LOGGER.debug(e);
+			LOGGER.debug(e.getMessage(),e);
 			//ERROR
 			callback.onError(this, e.getMessage());
 			
@@ -306,7 +306,7 @@ public class Peer extends Thread{
 		}
 		catch(Exception e)
 		{
-			LOGGER.debug(e);
+			LOGGER.debug(e.getMessage(),e);
 		}		
 	}
 }

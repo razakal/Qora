@@ -35,7 +35,7 @@ public class ATSerializer implements Serializer<AT>, Serializable
 		} 
         catch (Exception e) 
         {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
 		}
 		return null;
     }

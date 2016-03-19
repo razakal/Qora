@@ -534,7 +534,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 	}
 
@@ -562,7 +562,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return 0;
@@ -635,7 +635,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 	}
 
@@ -662,7 +662,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		return 0;
 		
@@ -808,7 +808,7 @@ public class AT_API_Impl implements AT_API
 			
 		} catch (NoSuchAlgorithmException e) {
 			//not expected to reach that point
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 	}
 

@@ -84,7 +84,7 @@ class TextComponentHandler extends Handler
 					} 
 					catch (BadLocationException e) 
 					{
-						LOGGER.error(e);
+						LOGGER.error(e.getMessage(),e);
 					}
 					
 				}

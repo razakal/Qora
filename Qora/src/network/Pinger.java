@@ -87,7 +87,7 @@ public class Pinger extends Thread
 		}
 		catch(Exception e)
 		{
-			LOGGER.debug(e);
+			LOGGER.debug(e.getMessage(),e);
 		}
 	}
 }

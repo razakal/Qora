@@ -137,7 +137,7 @@ public class ConnectionCreator extends Thread {
 			}
 			catch(Exception e)
 			{
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 				
 				LOGGER.info(Lang.getInstance().translate("Error creating new connection"));			
 			}					

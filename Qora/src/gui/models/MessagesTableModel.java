@@ -499,7 +499,7 @@ public class MessagesTableModel extends JTable implements Observer{
 				try {
 					decrypt = AEScrypto.dataDecrypt(messageBufs.get(row).getMessage(), privateKey, publicKey);
 				} catch ( InvalidCipherTextException | NullPointerException e1 ) {
-					LOGGER.error(e1);
+					LOGGER.error(e1.getMessage(),e1);
 					messageBufs.get(row).setDecryptedMessage(Lang.getInstance().translate("Decrypt Error!"));
 				} 
 		

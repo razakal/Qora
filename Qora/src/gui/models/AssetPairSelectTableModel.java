@@ -137,7 +137,7 @@ public class AssetPairSelectTableModel extends AbstractTableModel implements Obs
 		
 		} catch ( NullPointerException e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return null;

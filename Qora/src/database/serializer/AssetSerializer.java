@@ -36,7 +36,7 @@ public class AssetSerializer implements Serializer<Asset>, Serializable
 		} 
         catch (Exception e) 
         {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
 		}
 		return null;
     }

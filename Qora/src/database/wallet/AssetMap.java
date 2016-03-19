@@ -129,7 +129,7 @@ public class AssetMap extends DBMap<Tuple2<String, String>, Asset>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return assets;
@@ -157,7 +157,7 @@ public class AssetMap extends DBMap<Tuple2<String, String>, Asset>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return assets;

@@ -53,7 +53,7 @@ public class KnownPeersTableModel extends AbstractTableModel implements Observer
 			peersStatus.add(false);
 			this.fireTableDataChanged();
 		} catch (UnknownHostException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 	}
 	

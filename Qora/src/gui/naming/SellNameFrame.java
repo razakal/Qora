@@ -324,7 +324,7 @@ public class SellNameFrame extends JFrame
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			
 			//CHECK WHERE PARSING ERROR HAPPENED
 			switch(parsing)

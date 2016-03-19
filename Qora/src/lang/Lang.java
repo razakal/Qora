@@ -108,7 +108,7 @@ public class Lang {
 				lines = Files.readLines(file, Charsets.UTF_8);
 			} catch( IOException e ) {
 				lines = new ArrayList<String>();
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 			}
 			
 			String jsonString = "";
@@ -156,7 +156,7 @@ public class Lang {
         			long time_of_translation = ((Long)langFile.get("_timestamp_of_translation_")).longValue();
         			lngList.add( new LangFile( lang_name, fileList[i].getName(), time_of_translation) );
         		} catch (Exception e) {
-        			LOGGER.error(e);
+        			LOGGER.error(e.getMessage(),e);
         		}
         	}
         }

@@ -186,7 +186,7 @@ public class BlockMap extends DBMap<Tuple2<String, String>, Block>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return blocks;
@@ -214,7 +214,7 @@ public class BlockMap extends DBMap<Tuple2<String, String>, Block>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return blocks;

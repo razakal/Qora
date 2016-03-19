@@ -320,7 +320,7 @@ public abstract class AT_Controller {
 				}
 				catch ( Exception e )
 				{
-					LOGGER.error(e);
+					LOGGER.error(e.getMessage(),e);
 
 				}
 			}
@@ -346,7 +346,7 @@ public abstract class AT_Controller {
 		catch ( NoSuchAlgorithmException e )
 		{
 			//should not reach ever here
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 
 
@@ -432,7 +432,7 @@ public abstract class AT_Controller {
 			}
 			catch ( Exception e )
 			{
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 				throw new AT_Exception( "ATs error. Block rejected" );
 			}
 		}

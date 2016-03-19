@@ -159,7 +159,7 @@ public class TransactionMap extends DBMap<Tuple2<String, String>, Transaction>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return transactions;
@@ -187,7 +187,7 @@ public class TransactionMap extends DBMap<Tuple2<String, String>, Transaction>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return transactions;

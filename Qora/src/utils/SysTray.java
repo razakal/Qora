@@ -91,7 +91,7 @@ public class SysTray implements Observer{
 						try {
 							Gui.getInstance().bringtoFront();
 						} catch (Exception e1) {
-							LOGGER.error(e1);
+							LOGGER.error(e1.getMessage(),e1);
 						}
 					}
 				});
@@ -134,7 +134,7 @@ public class SysTray implements Observer{
 				try {
         			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()));
 				} catch (MalformedURLException e1) {
-					LOGGER.error(e1);
+					LOGGER.error(e1.getMessage(),e1);
 				}
 			}
 		});
@@ -145,7 +145,7 @@ public class SysTray implements Observer{
 				try {
 					URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort() + "/index/status.html"));
 				} catch (MalformedURLException e1) {
-					LOGGER.error(e1);
+					LOGGER.error(e1.getMessage(),e1);
 				}
 			}
 		});

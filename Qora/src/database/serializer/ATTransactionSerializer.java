@@ -36,7 +36,7 @@ public class ATTransactionSerializer implements Serializer<AT_Transaction>, Seri
 		} 
         catch (Exception e) 
         {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
 		}
 		return null;
     }

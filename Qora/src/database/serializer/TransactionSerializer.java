@@ -37,7 +37,7 @@ public class TransactionSerializer implements Serializer<Transaction>, Serializa
 		} 
         catch (Exception e) 
         {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
 		}
 		return null;
     }

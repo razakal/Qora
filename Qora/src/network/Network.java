@@ -195,7 +195,7 @@ public class Network extends Observable implements ConnectionCallback {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 	}
 
@@ -291,7 +291,7 @@ public class Network extends Observable implements ConnectionCallback {
 		catch(Exception e)
 		{
 			//error broadcasting
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		LOGGER.info(Lang.getInstance().translate("Broadcasting end"));
@@ -328,7 +328,7 @@ public class Network extends Observable implements ConnectionCallback {
 			try {
 				this.connectedPeers.get(0).close();
 			} catch (Exception e) {
-				LOGGER.debug(e);
+				LOGGER.debug(e.getMessage(),e);
 			}
 		}
 		this.acceptor.halt();

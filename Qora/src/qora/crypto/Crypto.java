@@ -66,7 +66,7 @@ public class Crypto {
 		} 
 		catch (Exception e) 
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return null;
 		}
 	}
@@ -223,7 +223,7 @@ public class Crypto {
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return new byte[64];
 		}
 	}
@@ -237,7 +237,7 @@ public class Crypto {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return false;
 		}
 	}

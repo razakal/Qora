@@ -186,7 +186,7 @@ public class SortableList<T, U> extends AbstractList<Pair<T, U>> implements Obse
 						
 					} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 						
-						LOGGER.error(e);
+						LOGGER.error(e.getMessage(),e);
 					}
 				}
 				

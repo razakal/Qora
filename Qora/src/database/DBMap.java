@@ -116,7 +116,7 @@ public abstract class DBMap<T, U> extends Observable {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			
 			return this.getDefaultValue();
 		}			
@@ -179,7 +179,7 @@ public abstract class DBMap<T, U> extends Observable {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return false;
@@ -229,7 +229,7 @@ public abstract class DBMap<T, U> extends Observable {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}		
 	}
 	

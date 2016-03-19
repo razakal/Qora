@@ -43,7 +43,7 @@ public class AllowedTableModel extends AbstractTableModel implements Observer{
 			peers.add(peer);
 			this.fireTableDataChanged();
 		} catch (UnknownHostException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 	}
 	
@@ -83,7 +83,7 @@ public class AllowedTableModel extends AbstractTableModel implements Observer{
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 	}

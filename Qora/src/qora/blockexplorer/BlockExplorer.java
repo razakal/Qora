@@ -456,7 +456,7 @@ public class BlockExplorer
 		}
 		catch (Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 
 		if (Crypto.getInstance().isValidAddress(query))
@@ -570,7 +570,7 @@ public class BlockExplorer
 			}
 			catch (Exception e) 
 			{
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 			}
 		}
 

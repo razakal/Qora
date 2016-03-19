@@ -649,7 +649,7 @@ public class Block {
 			}
 			catch(NoSuchAlgorithmException | AT_Exception e)
 			{
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 				return false;
 			}
 		}

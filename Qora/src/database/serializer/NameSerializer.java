@@ -35,7 +35,7 @@ public class NameSerializer implements Serializer<Name>, Serializable
 		} 
         catch (Exception e) 
         {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
 		}
 		return null;
     }

@@ -160,7 +160,7 @@ public class MessageResource {
 				try {
 					messageBytes = Converter.parseHexString(message);
 				} catch (Exception e) {
-					LOGGER.error(e);
+					LOGGER.error(e.getMessage(),e);
 					throw ApiErrorFactory.getInstance().createError(
 							ApiErrorFactory.ERROR_MESSAGE_FORMAT_NOT_HEX);
 				}

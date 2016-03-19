@@ -43,7 +43,7 @@ public class WalletStatus extends JLabel implements Observer
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 	}
 

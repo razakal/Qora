@@ -75,7 +75,7 @@ public class Start {
 				
 			} catch(Exception e) {
 				
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 				
 				//USE SYSTEM STYLE
 		        try {

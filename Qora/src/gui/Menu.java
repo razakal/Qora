@@ -113,7 +113,7 @@ public class Menu extends JMenuBar
         		try {
         			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()));
 				} catch (MalformedURLException e1) {
-					LOGGER.error(e1);
+					LOGGER.error(e1.getMessage(),e1);
 				}
         	}
         });
@@ -132,7 +132,7 @@ public class Menu extends JMenuBar
         		try {
         			URLViewer.openWebpage(new URL("http://127.0.0.1:"+Settings.getInstance().getWebPort()+"/index/blockexplorer.html"));
 				} catch (MalformedURLException e1) {
-					LOGGER.error(e1);
+					LOGGER.error(e1.getMessage(),e1);
 				}
         	}
         });

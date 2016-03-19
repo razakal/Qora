@@ -24,7 +24,7 @@ public class AEScrypto {
 		try {
 			encryptdata = aesEncrypt(data, password, ivconst);
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		byte[] encryptdataandver = new byte[encryptdata.length + 1];
@@ -48,7 +48,7 @@ public class AEScrypto {
 		try {
 			decryptdata = aesDecrypt(encryptdata2, password, ivconst);
 		} catch (Exception e) {
-			LOGGER.debug(e);
+			LOGGER.debug(e.getMessage(),e);
 		}
 		
 		

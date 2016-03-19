@@ -284,7 +284,7 @@ public class SettingsFrame extends JFrame{
 				SaveStrToFile.saveJsonFine(Settings.getInstance().getPeersPath(), jsonObject);			
 				
 			} catch (IOException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 				JOptionPane.showMessageDialog(
 						new JFrame(), "Error writing to the file: " + Settings.getInstance().getPeersPath()
 								+ "\nProbably there is no access.",
@@ -327,7 +327,7 @@ public class SettingsFrame extends JFrame{
 		try {
 			SaveStrToFile.saveJsonFine(Settings.getInstance().getSettingsPath(), settingsJSONbuf);			
 		} catch (IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			JOptionPane.showMessageDialog(
 					new JFrame(), "Error writing to the file: " + Settings.getInstance().getSettingsPath()
 							+ "\nProbably there is no access.",

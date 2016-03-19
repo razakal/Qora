@@ -255,7 +255,7 @@ public class BlockGenerator extends Thread implements Observer
 					} 
 					catch (InterruptedException e) 
 					{
-						LOGGER.error(e);
+						LOGGER.error(e.getMessage(),e);
 					}
 				}
 			}
@@ -268,7 +268,7 @@ public class BlockGenerator extends Thread implements Observer
 				} 
 				catch (InterruptedException e) 
 				{
-					LOGGER.error(e);
+					LOGGER.error(e.getMessage(),e);
 				}
 			}
 		}
@@ -425,7 +425,7 @@ public class BlockGenerator extends Thread implements Observer
 							}
 						}
 					}catch(Exception e){
-						LOGGER.error(e);
+						LOGGER.error(e.getMessage(),e);
                         //REMOVE FROM LIST
                         orderedTransactions.remove(transaction);
                         transactionProcessed = true;

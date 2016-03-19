@@ -142,7 +142,7 @@ public class BlogEntry {
 					StandardCharsets.UTF_8);
 			return template.replace("{{url}}", url);
 		} catch (IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return "";
 		}
 	}

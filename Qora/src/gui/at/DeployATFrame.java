@@ -568,7 +568,7 @@ public class DeployATFrame extends JFrame {
 				JOptionPane.showMessageDialog(new JFrame(), Lang.getInstance().translate("Unknown exception!"), Lang.getInstance().translate("Error"), JOptionPane.ERROR_MESSAGE);
 				this.deployButton.setEnabled(true);
 			}
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 
 		//ENABLE

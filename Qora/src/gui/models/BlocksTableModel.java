@@ -106,7 +106,7 @@ public class BlocksTableModel extends QoraTableModel<byte[], Block> implements O
 			return null;
 		
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return null;
 		}
 	}

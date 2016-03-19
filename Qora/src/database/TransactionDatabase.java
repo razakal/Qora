@@ -67,7 +67,7 @@ public class TransactionDatabase extends Observable implements Observer {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return new ArrayList<Transaction>();
 		}		
 	}
@@ -124,7 +124,7 @@ public class TransactionDatabase extends Observable implements Observer {
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}	
 	}
 	

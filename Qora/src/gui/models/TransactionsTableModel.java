@@ -97,7 +97,7 @@ public class TransactionsTableModel extends QoraTableModel<byte[], Transaction> 
 			return null;
 			
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return null;
 		}
 	}

@@ -236,7 +236,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 	        		try {
 	        			messageText.setText(new String(AEScrypto.dataDecrypt(messageTransaction.getData(), privateKey, publicKey), "UTF-8"));
 					} catch (UnsupportedEncodingException | InvalidCipherTextException e1) {
-						LOGGER.error(e1);
+						LOGGER.error(e1.getMessage(),e1);
 					}
         		}
         		else
@@ -244,7 +244,7 @@ public class MessageTransactionDetailsFrame extends JFrame
         			try {
         				messageText.setText(new String(messageTransaction.getData(), "UTF-8"));
 					} catch (UnsupportedEncodingException e1) {
-						LOGGER.error(e1);
+						LOGGER.error(e1.getMessage(),e1);
 					}
         		}
         		//encrypted.isSelected();

@@ -506,7 +506,7 @@ public class OrderPanel extends JPanel
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			
 			if(parse == 0)
 			{

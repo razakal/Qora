@@ -166,7 +166,7 @@ public class Controller extends Observable {
 		        	try {
 						date = (Date)formatter.parse(this.buildTime);
 					} catch (ParseException e) {
-						LOGGER.error(e);
+						LOGGER.error(e.getMessage(),e);
 					}
 		        }
 		    }
@@ -315,7 +315,7 @@ public class Controller extends Observable {
 		try {
 			DBSet.getInstance();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			LOGGER.info(Lang.getInstance().translate("Error during startup detected trying to restore backup database..."));
 			reCreateDB();
 		}
@@ -326,7 +326,7 @@ public class Controller extends Observable {
 			try {
 				DBSet.getInstance().close();
 			} catch (Throwable e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 			}
 			reCreateDB();
 		}
@@ -462,7 +462,7 @@ public class Controller extends Observable {
 				try {
 					DBSet.reCreateDatabase();
 				} catch (IOError e) {
-					LOGGER.error(e);
+					LOGGER.error(e.getMessage(),e);
 					//backupdb is buggy too starting from scratch
 					if(dataDir.exists())
 					{
@@ -644,13 +644,13 @@ public class Controller extends Observable {
 								dataBak.toPath(),
 								new SimpleFileVisitorForRecursiveFolderDeletion());
 					} catch (IOException e) {
-						LOGGER.error(e);
+						LOGGER.error(e.getMessage(),e);
 					}
 				}
 				try {
 					FileUtils.copyDirectory(dataDir, dataBak);
 				} catch (IOException e) {
-					LOGGER.error(e);
+					LOGGER.error(e.getMessage(),e);
 				}
 
 			}
@@ -1024,7 +1024,7 @@ public class Controller extends Observable {
 				this.synchronizer.synchronize(peer);
 			}
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 
 			if (peer != null) {
 				// DISHONEST PEER

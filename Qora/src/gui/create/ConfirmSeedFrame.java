@@ -106,7 +106,7 @@ public class ConfirmSeedFrame extends JFrame {
 					String clipboardContent = (String) clipboard.getData(DataFlavor.stringFlavor);
 					seedTxt.setText(clipboardContent);
 				} catch (UnsupportedFlavorException | IOException e1) {
-					LOGGER.error(e1);
+					LOGGER.error(e1.getMessage(),e1);
 				} 
 			}
 		});

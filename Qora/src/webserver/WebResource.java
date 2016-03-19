@@ -140,7 +140,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 	}
@@ -192,7 +192,7 @@ public class WebResource {
 
 			return Response.ok(content, "text/html; charset=utf-8").build();
 		} catch (IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 	}
@@ -217,7 +217,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -313,7 +313,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -332,7 +332,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -385,7 +385,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -401,7 +401,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -421,7 +421,7 @@ public class WebResource {
 			return enhanceAndShowWebsite(website);
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -549,7 +549,7 @@ public class WebResource {
 					.entity(json.toJSONString()).build();
 
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 
 		return null;
@@ -641,7 +641,7 @@ public class WebResource {
 				}
 
 			} catch (Throwable e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 			}
 
 			if (storageJsonObject == null) {
@@ -762,7 +762,7 @@ public class WebResource {
 			}
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 
 			json.put("type", "error");
 			json.put("error", e.getMessage());
@@ -806,7 +806,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -868,7 +868,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -919,7 +919,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (PebbleException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return Response.status(404).build();
 		}
 	}
@@ -1424,7 +1424,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 	}
@@ -1501,7 +1501,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 	}
@@ -1659,7 +1659,7 @@ public class WebResource {
 
 			return getBlog(null);
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return Response.status(200)
 					.header("Content-Type", "application/json; charset=utf-8")
 					.entity("{}").build();
@@ -1765,7 +1765,7 @@ public class WebResource {
 					.entity(jsonanswer.toJSONString()).build();
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 
 			jsonanswer.put("type", "deleteError");
 			jsonanswer.put("errordetail", e.getMessage());
@@ -1894,7 +1894,7 @@ public class WebResource {
 					.entity(jsonanswer.toJSONString()).build();
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 
 			jsonanswer.put("type", "deleteError");
 			jsonanswer.put("errordetail", e.getMessage());
@@ -1999,7 +1999,7 @@ public class WebResource {
 			}
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 
 			json.put("type", "error");
 			json.put("error", e.getMessage());
@@ -2133,7 +2133,7 @@ public class WebResource {
 			}
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 
 			json.put("type", "error");
 			json.put("error", e.getMessage());
@@ -2194,7 +2194,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 	}
@@ -2265,7 +2265,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -2340,7 +2340,7 @@ public class WebResource {
 					"text/html; charset=utf-8").build();
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 	}
@@ -2450,7 +2450,7 @@ public class WebResource {
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 	}
@@ -3064,7 +3064,7 @@ public class WebResource {
 					.header("Content-Type", "text/html; charset=utf-8")
 					.entity(pebbleHelper.evaluate()).build();
 		} catch (PebbleException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return Response.status(404).build();
 		}
 	}
@@ -3109,7 +3109,7 @@ public class WebResource {
 			}
 
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 
@@ -3120,7 +3120,7 @@ public class WebResource {
 			return readFile("web/main.mini.html", StandardCharsets.UTF_8);
 
 		} catch (IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return "ERROR";
 		}
 	}
@@ -3146,7 +3146,7 @@ public class WebResource {
 				try {
 					return error404(request, "This key is empty");
 				} catch (Throwable e) {
-					LOGGER.error(e);
+					LOGGER.error(e.getMessage(),e);
 					return error404(request, null);
 				}
 
@@ -3154,7 +3154,7 @@ public class WebResource {
 
 			return enhanceAndShowWebsite(website);
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			return error404(request, null);
 		}
 	}
@@ -3180,7 +3180,7 @@ public class WebResource {
 							request,
 							"This name has currently no <a href=\"/index/namestorage.html\">website<a/>!");
 				} catch (Throwable e) {
-					LOGGER.error(e);
+					LOGGER.error(e.getMessage(),e);
 					return error404(request, null);
 				}
 
@@ -3188,7 +3188,7 @@ public class WebResource {
 
 			return enhanceAndShowWebsite(website);
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return error404(request, null);
 		}
 	}

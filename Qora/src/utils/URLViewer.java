@@ -16,7 +16,7 @@ public class URLViewer  {
             try {
                 desktop.browse(uri);
             } catch (Exception e) {
-            	LOGGER.error(e);
+            	LOGGER.error(e.getMessage(),e);
             }
         }
     }
@@ -25,7 +25,7 @@ public class URLViewer  {
         try {
             openWebpage(url.toURI());
         } catch (URISyntaxException e) {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
         }
     }
 }

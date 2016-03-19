@@ -101,7 +101,7 @@ public class AT_API_Platform_Impl extends AT_API_Impl {
 		}
 		catch ( Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 	}

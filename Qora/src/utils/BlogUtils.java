@@ -339,7 +339,7 @@ public class BlogUtils {
 			transaction = (ArbitraryTransaction) Controller.getInstance()
 					.getTransaction(signature);
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return null;
 		}
 		return transaction == null ? null : BlogUtils

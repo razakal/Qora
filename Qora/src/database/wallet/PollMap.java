@@ -132,7 +132,7 @@ public class PollMap extends DBMap<Tuple2<String, String>, Poll>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return polls;
@@ -160,7 +160,7 @@ public class PollMap extends DBMap<Tuple2<String, String>, Poll>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return polls;

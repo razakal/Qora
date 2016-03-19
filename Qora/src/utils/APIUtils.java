@@ -200,7 +200,7 @@ public class APIUtils {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			if (e instanceof WebApplicationException) {
 				throw (WebApplicationException) e;
 			}

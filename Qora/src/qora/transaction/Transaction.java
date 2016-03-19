@@ -358,7 +358,7 @@ public abstract class Transaction {
 
 		}catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return 0;
 		}
 	}

@@ -104,7 +104,7 @@ public class SettingLangFrame extends JDialog {
 			InputStream in = u.openStream();
 			stringFromInternet = IOUtils.toString(in, Charsets.UTF_8);
 		} catch (Exception e1) {
-			LOGGER.error(e1);
+			LOGGER.error(e1.getMessage(),e1);
 			stringFromInternet = "";
 		}
 		
@@ -179,7 +179,7 @@ public class SettingLangFrame extends JDialog {
 			Settings.FreeInstance();
 			Lang.getInstance().loadLang();
 		}catch (IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			JOptionPane.showMessageDialog(
 				new JFrame(), "Error writing to the file: "
 						+ "\nProbably there is no access.",

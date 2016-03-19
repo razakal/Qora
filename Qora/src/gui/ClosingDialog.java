@@ -25,7 +25,7 @@ public class ClosingDialog extends JFrame{
 		try {
 			Gui.getInstance().hideMainFrame();
 		} catch (Exception e1) {
-			LOGGER.error(e1);
+			LOGGER.error(e1.getMessage(),e1);
 		}
 		
 		//CREATE WAIT DIALOG

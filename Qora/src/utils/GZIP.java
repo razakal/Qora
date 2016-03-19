@@ -55,7 +55,7 @@ public class GZIP {
 			try {
 				value = GZIPdecompress(compressed);
 			} catch (Exception e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 			}
 		}
 		return value;
@@ -71,7 +71,7 @@ public class GZIP {
         	try {
             	text = GZIPdecompress(compressed);
 			} catch (Exception e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 			}
             return text;
         }
@@ -86,7 +86,7 @@ public class GZIP {
 		try {
 			compressed = GZIPcompress(text);
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		return "?gz!"+Base64.encode(compressed);
 	}
@@ -97,7 +97,7 @@ public class GZIP {
 		try {
 			compressed = GZIPcompress(text);
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		String compressedVariant = "?gz!"+Base64.encode(compressed);
 		

@@ -36,7 +36,7 @@ public class TradeSerializer implements Serializer<Trade>, Serializable
 		} 
         catch (Exception e) 
         {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
 		}
 		return null;
     }

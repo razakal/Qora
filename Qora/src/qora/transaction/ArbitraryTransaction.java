@@ -222,7 +222,7 @@ public abstract class ArbitraryTransaction extends Transaction {
 				addToCommentMapOnDemand(db);
 			}
 		} catch (Throwable e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 
 		// UPDATE CREATOR

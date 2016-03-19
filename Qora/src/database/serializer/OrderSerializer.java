@@ -36,7 +36,7 @@ public class OrderSerializer implements Serializer<Order>, Serializable
 		} 
         catch (Exception e) 
         {
-        	LOGGER.error(e);
+        	LOGGER.error(e.getMessage(),e);
 		}
 		return null;
     }

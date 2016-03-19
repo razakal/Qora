@@ -118,7 +118,7 @@ public class WalletTransactionsTableModel extends QoraTableModel<Tuple2<String, 
 			return null;
 			
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 			return null;
 		}
 		

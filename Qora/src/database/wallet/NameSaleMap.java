@@ -146,7 +146,7 @@ public class NameSaleMap extends DBMap<Tuple2<String, String>, BigDecimal>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return nameSales;
@@ -174,7 +174,7 @@ public class NameSaleMap extends DBMap<Tuple2<String, String>, BigDecimal>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return nameSales;

@@ -89,7 +89,7 @@ public class ConnectionAcceptor extends Thread{
 			}
 			catch(Exception e)
 			{
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(),e);
 				LOGGER.warn(Lang.getInstance().translate("Error accepting new connection"));			
 			}
 		}

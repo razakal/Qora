@@ -43,7 +43,7 @@ public class BlockChain
 	        		DBSet.getInstance().close();
 					Controller.getInstance().reCreateDB(false);
 				} catch (Exception e) {
-					LOGGER.error(e);
+					LOGGER.error(e.getMessage(),e);
 				}
 			}
         	//PROCESS

@@ -132,7 +132,7 @@ public class NameMap extends DBMap<Tuple2<String, String>, Name>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return names;
@@ -160,7 +160,7 @@ public class NameMap extends DBMap<Tuple2<String, String>, Name>
 		catch(Exception e)
 		{
 			//ERROR
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(),e);
 		}
 		
 		return names;
