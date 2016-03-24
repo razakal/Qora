@@ -3028,7 +3028,7 @@ public class WebResource {
 	@GET
 	public Response translationjson() {
 		
-		File file = new File("languages\\" + Settings.getInstance().getLang());
+		File file = new File("languages/" + Settings.getInstance().getLang());
 		
 		if (file.exists()) {
 			return Response.ok(file, "application/json").build();
@@ -3040,7 +3040,7 @@ public class WebResource {
 	@Path("index/libs/js/translation.js")
 	@GET
 	public Response translationjs() {
-		File file = new File("web\\libs\\js\\translation.js");
+		File file = new File("web/libs/js/translation.js");
 
 		if (file.exists()) {
 			return Response.ok(file, "text/javascript").build();
