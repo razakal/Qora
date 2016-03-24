@@ -168,6 +168,12 @@ public class Name {
 	}
 	
 	@Override
+	public int hashCode()
+	{
+		return this.name.hashCode();
+	}
+	
+	@Override
 	public boolean equals(Object b)
 	{
 		if(b != null && b instanceof Name)

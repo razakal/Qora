@@ -1,6 +1,7 @@
 package api;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,16 +19,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import controller.Controller;
+import database.DBSet;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.crypto.Crypto;
 import qora.naming.Name;
+import qora.transaction.BuyNameTransaction;
+import qora.transaction.RegisterNameTransaction;
 import qora.transaction.Transaction;
+import qora.transaction.UpdateNameTransaction;
 import utils.APIUtils;
 import utils.GZIP;
 import utils.Pair;
 import utils.Qorakeys;
-import controller.Controller;
 
 @Path("names")
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,17 +62,20 @@ public class NamesResource {
 		return array.toJSONString();
 	}
 
-	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/address/{address}/values")
+	public String getNamesValues(@PathParam("address") String address) {
+		return getNames(address, true);
+	}
+	
 	@GET
 	@Path("/address/{address}")
 	public String getNames(@PathParam("address") String address) {
-		APIUtils.askAPICallAllowed("GET names/address/" + address, request);
-
-		// CHECK IF WALLET EXISTS
-		if (!Controller.getInstance().doesWalletExists()) {
-			throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_WALLET_NO_EXISTS);
-		}
+		return getNames(address, false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String getNames(String address, boolean values) {
 
 		// CHECK ADDRESS
 		if (!Crypto.getInstance().isValidAddress(address)) {
@@ -75,18 +83,63 @@ public class NamesResource {
 					ApiErrorFactory.ERROR_INVALID_ADDRESS);
 		}
 
+		JSONArray array = new JSONArray();
+		
 		// CHECK ACCOUNT IN WALLET
 		Account account = Controller.getInstance().getAccountByAddress(address);
-		if (account == null) {
-			throw ApiErrorFactory.getInstance().createError(
-					ApiErrorFactory.ERROR_WALLET_ADDRESS_NO_EXISTS);
-		}
+		if (account == null) 
+		{
+			//SLOW METHOD FOR FOREIGN ADDRESSES
 
-		JSONArray array = new JSONArray();
-		for (Name name : Controller.getInstance().getNames(account)) {
-			array.add(name.toJson());
-		}
+			HashSet<Name> names = new HashSet<>();
 
+			for (Transaction transaction : DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, Transaction.REGISTER_NAME_TRANSACTION, 0)) {
+				if(((RegisterNameTransaction)transaction).getName().getOwner().getAddress().equals(address))
+				{
+					names.add(((RegisterNameTransaction)transaction).getName());
+				}
+			}
+
+			for (Transaction transaction : DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, Transaction.UPDATE_NAME_TRANSACTION, 0)) {
+				if(((UpdateNameTransaction)transaction).getName().getOwner().getAddress().equals(address))
+				{
+					names.add(((UpdateNameTransaction)transaction).getName());
+				}
+			}
+
+			for (Transaction transaction : DBSet.getInstance().getTransactionFinalMap().getTransactionsByTypeAndAddress(address, Transaction.BUY_NAME_TRANSACTION, 0)) {
+				if(((BuyNameTransaction)transaction).getNameSale().getName().getOwner().getAddress().equals(address))
+				{
+					names.add(((BuyNameTransaction)transaction).getNameSale().getName());
+				}
+			}
+			
+			for (Name name : names) {
+				if(values)
+				{
+					array.add(name.toJson());	
+				}
+				else
+				{
+					array.add(name.getName());
+				}
+			}
+		}
+		else
+		{
+			//FAST METHOD FOR OWN ADDRESS
+			for (Name name : Controller.getInstance().getNames(account)) {
+				if(values)
+				{
+					array.add(name.toJson());	
+				}
+				else
+				{
+					array.add(name.getName());
+				}
+			}
+		}
+		
 		return array.toJSONString();
 	}
 

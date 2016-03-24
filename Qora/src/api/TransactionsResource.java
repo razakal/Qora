@@ -201,6 +201,23 @@ public class TransactionsResource {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/unconfirmedof/{address}")
+	public String getNetworkTransactions(@PathParam("address") String address)
+	{
+		List<Transaction> transactions = Controller.getInstance().getUnconfirmedTransactions();
+		JSONArray array = new JSONArray();
+		
+		for(Transaction transaction: transactions)
+		{
+			if(transaction.getCreator().getAddress().equals(address))
+			array.add(transaction.toJson());
+		}
+		
+		return array.toJSONString();
+	}
+	
+	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/scan")
 	public String scanTransactions(String x)

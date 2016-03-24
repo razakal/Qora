@@ -132,6 +132,11 @@ public class ApiClient {
 				""
 			},
 			{
+				"GET transactions/unconfirmedof/<address>", 
+				"Returns an array of all the unconfirmed transactions of address known to the client.",
+				""
+			},
+			{
 				"POST transactions/scan {\"start\": \"<startBlockSign>, \"blocklimit\":<amountBlocks>, \"transactionlimit\":<amountTransactions>, \"type\":<type>, \"service\":<service>, \"address\":\"<address>\"}", 
 				"Returns all the transactions that match the filters. All filters are optional but please limit that amount of transactions or blocks to scan to avoid running into issues. Requests that don't specify a blocklimit <= 360 will be denied to remote users. Return the last block it scanned, the amount of blocks it scanned and the scanned transactions.",
 				"Filters:\nstart - The signature of the starting block. \nblocklimit - The maximum amount of blocks to scan. \ntransactionlimit - The maximum amount of transactions to return.\ntype - Only return transactions with the given type.\nservice - Only return Arbitrary Transactions with the given service.\naddress - Only return transactions where the given address is involved.\nErrors: 1 -Json error. 102 - Invalid address. 101 - Invalid signature. 301 - Block does not exist.",
@@ -348,8 +353,13 @@ public class ApiClient {
 			},
 			{
 				"GET names/address/<address>", 
-				"Returns an array of all the names owned by a specific address in your wallet.",
-				"Errors: 102 - Invalid address. 201 - Wallet does not exist. 202 - Address does not exist in wallet."
+				"Returns an array of all the names owned by a specific address.",
+				"Errors: 102 - Invalid address."
+			},
+			{
+				"GET names/address/<address>/values", 
+				"Returns an array of all the names with values owned by a specific address.",
+				"Errors: 102 - Invalid address."
 			},
 			{
 				"GET names/<name>", 
