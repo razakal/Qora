@@ -126,7 +126,7 @@ public class Lang {
 		}
 
 		if( langJsonObject.size() == 0 ) {
-			System.out.println("ERROR reading language file " + filename + ".");	
+			LOGGER.error("ERROR reading language file " + filename + ".");	
 		}
 				
 		return langJsonObject;

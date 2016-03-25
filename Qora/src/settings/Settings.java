@@ -1,6 +1,7 @@
 package settings;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.Inet4Address;
@@ -166,12 +167,11 @@ public class Settings {
 				}	
 			}
 		}
-		catch(Exception e)
+		catch(IOException e)
 		{
-			//STOP
-			LOGGER.info("Error while reading/creating settings.json " + file.getAbsolutePath());
+			LOGGER.info("Error while reading/creating settings.json " + file.getAbsolutePath() + " using default!");
 			LOGGER.error(e.getMessage(),e);
-			System.exit(0);
+			settingsJSON =	settingsJSON == null ? new JSONObject() : settingsJSON;
 		}
 		
 		//TRY READ PEERS.JSON
@@ -198,12 +198,11 @@ public class Settings {
 			}
 			
 		}
-		catch(Exception e)
+		catch(IOException e)
 		{
-			//STOP
-			LOGGER.info("Error while reading peers.json " + file.getAbsolutePath());
+			LOGGER.info("Error while reading peers.json " + file.getAbsolutePath() + " using default!");
 			LOGGER.error(e.getMessage(),e);
-			System.exit(0);
+			this.peersJSON = new JSONObject();
 		}
 	}
 	
