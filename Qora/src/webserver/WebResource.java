@@ -3049,6 +3049,18 @@ public class WebResource {
 		}
 	}
 	
+	@Path("index/libs/js/third-party/qrcode.js")
+	@GET
+	public Response qrcodejs() {
+		File file = new File("web/libs/js/third-party/qrcode.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+	
 	public Response error404(HttpServletRequest request, String titleOpt) {
 
 		try {

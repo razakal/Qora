@@ -14,6 +14,8 @@
 	<script src="/index/libs/js/clipboard.js"></script>
 	<link href="/index/libs/css/sidebar.css" rel="stylesheet">
 	<script src="/index/libs/js/Base58.js" charset="utf-8"></script>
+	<script src="/index/libs/js/third-party/qrcode.js" charset="utf-8"></script>
+	
 	<style type="text/css">
       body {
       padding-top: 50px;
@@ -129,6 +131,28 @@
 		top: -64px;
 		visibility: hidden;
 	}
+
+	div#container {
+        width: 580px;
+        margin: 100px auto 0 auto;
+        padding: 20px;
+        background: #000;
+        border: 1px solid #1a1a1a;
+      }
+      
+      /* HOVER STYLES */
+      div#qr-pop-up {
+        display: none;
+        position: absolute;
+        width: 220px;
+		height: 220px;
+        padding: 10px;
+        background: #fff;
+        color: #000000;
+        border: 1px solid #1a1a1a;
+        font-size: 90%;
+      }
+	  
 	abbr.without {
 	    border-bottom: none !important;
 	}
@@ -138,6 +162,7 @@
 	
 var loading = true;
 var params;
+var qrcode;
 
 function asyncAjax (url, type){
 	var xmlhttp = getXmlHttp()
@@ -210,6 +235,7 @@ function asyncAjax (url, type){
 				
 				document.getElementById('loading').style.display = 'none';
 				loading = false;
+				setupQRpopup();
 
 			}
 		}
@@ -1068,7 +1094,9 @@ function mainQuery(data) {
 			
 			if (data.addresses.length == 1) 
 			{
-				output +='<font size="+1">Account: <a href="?addr=' + data.addresses[0] + '">' + data.addresses[0] + '</a></font><br>';
+				output += '<font size="+1">Account: <a href="?addr=' + data.addresses[0] + '" class="qrcode" data-qrtext="' + data.addresses[0] + '">' + data.addresses[0] + '</a></font>';
+				
+				output += '<br>';
 			}
 			else
 			{
@@ -1079,7 +1107,7 @@ function mainQuery(data) {
 					
 					n ++;
 					
-					output +='<font size="+1">Account ' +  n  + ': <a href="?addr=' + address + '">' + address + '</a>';
+					output +='<font size="+1">Account ' +  n  + ': <a href="?addr=' + address + '" class="qrcode" data-qrtext="' + address + '">' + address + '</a>';
 					
 					output +='</font> ';
 					
@@ -1311,7 +1339,7 @@ function mainQuery(data) {
 		if (data.type == 'at')
 		{
 			output += '<table width="1280" border=0><tr><td align=left>';	
-			output += '<br><font size="+1">AT Account: <a href=?addr=' + data.addresses[0] + '>' + data.addresses[0] + '</a></font>';
+			output += '<br><font size="+1">AT Account: <a href=?addr=' + data.addresses[0] + ' class="qrcode" data-qrtext="' + data.addresses[0] + '">' + data.addresses[0] + '</a></font>';
 
 			output += '<table width="100%" border=0><tr><td valign=top align=left rowspan=2>';	
 			output += '<br><b>Creator:</b> <a href=?addr=' + data.at.creator + '>' + data.at.creator + '</a>';
@@ -3140,6 +3168,31 @@ function parseUrlQuery() {
     return data;
 }
 
+function setupQRpopup() 
+{
+	var moveLeft = 20;
+	var moveDown = 10;
+	
+	$('a.qrcode').hover(function(e) {
+		$('div#qr-pop-up').html("");
+		var qrcode = new QRCode($('div#qr-pop-up')[0], {
+			width : 200,
+			height : 200
+			});
+		qrcode.makeCode($( this ).data("qrtext"));
+		$('div#qr-pop-up').show();
+	  //.css('top', e.pageY + moveDown)
+	  //.css('left', e.pageX + moveLeft)
+	  //.appendTo('body');
+	}, function() {
+	  $('div#qr-pop-up').hide();
+	});
+	
+	$('a.qrcode').mousemove(function(e) {
+	  $("div#qr-pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+	});
+}
+	
 function getQueryParams(name) {
    qs = location.search;
 
@@ -3484,6 +3537,7 @@ function start() {
 	document.title = title;
 	
 	document.getElementById('menuBlocks').setAttribute('class', 'active');
+	
 }
 	</script>
 </head>
@@ -3578,7 +3632,12 @@ function start() {
 
 </table>
 </body>
+
+<div id="qr-pop-up">
+</div>
+
 </html>
+
 
 <script>
 	document.getElementById('linkBlocks').innerHTML = Lang.getInstance().translate("Blocks");
