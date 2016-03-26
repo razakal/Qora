@@ -132,28 +132,37 @@
 		visibility: hidden;
 	}
 
-	div#container {
-        width: 580px;
-        margin: 100px auto 0 auto;
-        padding: 20px;
-        background: #000;
-        border: 1px solid #1a1a1a;
-      }
-      
-      /* HOVER STYLES */
-      div#qr-pop-up {
-        display: none;
-        position: absolute;
-        width: 220px;
-		height: 220px;
-        padding: 10px;
-        background: #fff;
-        color: #000000;
-        border: 1px solid #1a1a1a;
-        font-size: 90%;
+ 	  .modal-lg {
+		position: absolute;
+		width: 222px;
+		height: 237px;
+		margin: 0px;
+		padding: 0px;	
       }
 	  
-	abbr.without {
+	  .modal-content {
+		display: block;
+		width: 222px;
+		height: 237px;
+	  }
+	  
+	  #div-qr {
+		position: absolute;
+		top: 25px;
+		left: 10px;
+		width: 200px;
+		height: 200px;
+	  }
+	  
+	  #div-qr-test {
+  		position: absolute;
+		width: 222px;
+		top: 5px;
+		font-size: 75%;
+		font-weight: bold;
+	  }
+	  
+ 	abbr.without {
 	    border-bottom: none !important;
 	}
 	
@@ -162,7 +171,6 @@
 	
 var loading = true;
 var params;
-var qrcode;
 
 function asyncAjax (url, type){
 	var xmlhttp = getXmlHttp()
@@ -235,8 +243,6 @@ function asyncAjax (url, type){
 				
 				document.getElementById('loading').style.display = 'none';
 				loading = false;
-				setupQRpopup();
-
 			}
 		}
 	};
@@ -1031,6 +1037,35 @@ function genFilterUrl() {
 	document.getElementById("cancelFilter").href = urlBuf;
 }
 
+function showQR(text, parent)
+{
+	var position = $(parent).position();
+	
+	$('div#div-qr').html('');
+	var qrcode = new QRCode($('div#div-qr')[0], {
+			width : 200,
+			height : 200
+			});
+	qrcode.makeCode(text);
+	$("#div-qr-test").html(text);
+	$(".modal-lg").css('top', position.top - 1).css('left', position.left - 1);
+	$("#modal").modal('show');
+	
+	$(document).keydown(function(e) {
+		if(e.which == 27 && $("#modal").is(":visible"))
+		{
+			
+			$("#modal").modal('hide');	
+		}
+	});
+	$("#modal").click(	function( ) {
+		if($("#modal").is(":visible"))
+		{
+			$("#modal").modal('hide');
+		}
+	});
+}
+
 function mainQuery(data) {
 	
 	var output = '';
@@ -1094,9 +1129,11 @@ function mainQuery(data) {
 			
 			if (data.addresses.length == 1) 
 			{
-				output += '<font size="+1">Account: <a href="?addr=' + data.addresses[0] + '" class="qrcode" data-qrtext="' + data.addresses[0] + '">' + data.addresses[0] + '</a></font>';
+				output += '<font size="+1">Account: <a href="?addr=' + data.addresses[0] + '">' + data.addresses[0] + '</a>';
 				
-				output += '<br>';
+				output += ' <a href="javascript:void(0)" style="color:#000000;" onclick="showQR(\'' + data.addresses[0] + '\',this)"><span class="glyphicon glyphicon-qrcode"></span></a>';
+				
+				output += '</font><br>';
 			}
 			else
 			{
@@ -1107,7 +1144,9 @@ function mainQuery(data) {
 					
 					n ++;
 					
-					output +='<font size="+1">Account ' +  n  + ': <a href="?addr=' + address + '" class="qrcode" data-qrtext="' + address + '">' + address + '</a>';
+					output +='<font size="+1">Account ' +  n  + ': <a href="?addr=' + address + '">' + address + '</a>';
+				
+					output += ' <a href="javascript:void(0)" style="color:#000000;" onclick="showQR(\'' + address + '\',this)"><span class="glyphicon glyphicon-qrcode"></span></a>';
 					
 					output +='</font> ';
 					
@@ -1339,8 +1378,12 @@ function mainQuery(data) {
 		if (data.type == 'at')
 		{
 			output += '<table width="1280" border=0><tr><td align=left>';	
-			output += '<br><font size="+1">AT Account: <a href=?addr=' + data.addresses[0] + ' class="qrcode" data-qrtext="' + data.addresses[0] + '">' + data.addresses[0] + '</a></font>';
+			output += '<br><font size="+1">AT Account: <a href=?addr=' + data.addresses[0] + '>' + data.addresses[0] + '</a>';
 
+			output += ' <a href="javascript:void(0)" style="color:#000000;" onclick="showQR(\'' + data.addresses[0] + '\',this)"><span class="glyphicon glyphicon-qrcode"></span></a>';
+			
+			output += '</font>';
+			
 			output += '<table width="100%" border=0><tr><td valign=top align=left rowspan=2>';	
 			output += '<br><b>Creator:</b> <a href=?addr=' + data.at.creator + '>' + data.at.creator + '</a>';
 			output += '<br><br><b>AT Type:</b> ' + data.at.type;
@@ -3168,31 +3211,6 @@ function parseUrlQuery() {
     return data;
 }
 
-function setupQRpopup() 
-{
-	var moveLeft = 20;
-	var moveDown = 10;
-	
-	$('a.qrcode').hover(function(e) {
-		$('div#qr-pop-up').html("");
-		var qrcode = new QRCode($('div#qr-pop-up')[0], {
-			width : 200,
-			height : 200
-			});
-		qrcode.makeCode($( this ).data("qrtext"));
-		$('div#qr-pop-up').show();
-	  //.css('top', e.pageY + moveDown)
-	  //.css('left', e.pageX + moveLeft)
-	  //.appendTo('body');
-	}, function() {
-	  $('div#qr-pop-up').hide();
-	});
-	
-	$('a.qrcode').mousemove(function(e) {
-	  $("div#qr-pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
-	});
-}
-	
 function getQueryParams(name) {
    qs = location.search;
 
@@ -3633,9 +3651,14 @@ function start() {
 </table>
 </body>
 
-<div id="qr-pop-up">
-</div>
-
+    <div id="modal" class="modal fade">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+		  <div id="div-qr-test"></div>
+          <div id="div-qr"></div>
+        </div>
+      </div>
+    </div>
 </html>
 
 
