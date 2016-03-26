@@ -1052,7 +1052,7 @@ function showQR(text, parent)
 			});
 	qrcode.makeCode(text);
 	$("#div-qr-test").html(text);
-	$("#id-modal-dialog").css('top', linkPosition.top - 1).css('left', linkPosition.left - 1);
+	$("#id-modal-dialog").css('top', $(parent).offset().top - 1 - $(window).scrollTop()).css('left', $(parent).offset().left - 1 - $(window).scrollLeft());
 	//$("#modal").css('z-index', 9999);
 	 
 	var qrPosition = $("#id-modal-dialog").position();
