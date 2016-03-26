@@ -40,19 +40,40 @@ public class Start {
 		
 		boolean cli = false;
 		
+		
+		
 		for(String arg: args)
 		{
 			if(arg.equals("-cli"))
 			{
 				cli = true;
-			} if(arg.equals("-testnet")) {
-				Settings.getInstance().setGenesisStamp(System.currentTimeMillis());
-			} else if(arg.startsWith("-testnet=") && arg.length() > 9) {
-				try
+			} 
+			else 
+			{
+				if(arg.startsWith("-peers=") && arg.length() > 7) 
 				{
-					Settings.getInstance().setGenesisStamp(Long.parseLong(arg.substring(9)));
-				} catch(Exception e) {
-					Settings.getInstance().setGenesisStamp(Settings.DEFAULT_MAINNET_STAMP);
+					Settings.getInstance().setDefaultPeers(arg.substring(7).split(","));
+				}
+				
+				if(arg.equals("-testnet")) 
+				{
+					Settings.getInstance().setGenesisStamp(System.currentTimeMillis());
+				} 
+				else if(arg.startsWith("-testnet=") && arg.length() > 9) 
+				{
+					try
+					{
+						long testnetstamp = Long.parseLong(arg.substring(9));
+						
+						if (testnetstamp == 0)
+						{
+							testnetstamp = System.currentTimeMillis();
+						}
+							
+						Settings.getInstance().setGenesisStamp(testnetstamp);
+					} catch(Exception e) {
+						Settings.getInstance().setGenesisStamp(Settings.DEFAULT_MAINNET_STAMP);
+					}
 				}
 			}
 		}

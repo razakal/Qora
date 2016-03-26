@@ -9,13 +9,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-
-import lang.Lang;
-import network.Peer;
-import ntp.NTP;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -28,6 +23,9 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import controller.Controller;
+import lang.Lang;
+import network.Peer;
+import ntp.NTP;
 
 public class Settings {
 
@@ -41,7 +39,6 @@ public class Settings {
 	private static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
 	private static final int DEFAULT_PING_INTERVAL = 30000;
 	private static final boolean DEFAULT_TRYING_CONNECT_TO_BAD_PEERS = true;
-	private static final String[] DEFAULT_PEERS = { };
 
 	//TESTNET 
 	public static final long DEFAULT_MAINNET_STAMP = 1400247274336L; // QORA RELEASE
@@ -99,6 +96,9 @@ public class Settings {
 	
 	List<Peer> cacheInternetPeers;
 	long timeLoadInternetPeers;
+
+	private String[] defaultPeers = { };
+
 	
 	public static Settings getInstance()
 	{
@@ -217,6 +217,11 @@ public class Settings {
 		return (JSONObject) settingsJSON.clone();
 	}
 	
+	public void setDefaultPeers(String[] peers)
+	{
+		this.defaultPeers = peers;
+	}
+	
 	public String getSettingsPath()
 	{
 		return this.userPath + "settings.json";
@@ -267,7 +272,7 @@ public class Settings {
 				NTP.getTime() - Controller.getInstance().getToOfflineTime() > 5*60*1000
 				);
 			
-			List<Peer> knownPeers = new ArrayList<Peer>();
+			List<Peer> knownPeers = new ArrayList<>();
 			JSONArray peersArray = new JSONArray();
 	
 			try {
@@ -303,13 +308,15 @@ public class Settings {
 				LOGGER.info("Error with loading knownpeers from peers.json.");
 			}
 			
-			knownPeers = getKnownPeersFromJSONArray(peersArray);
+			knownPeers.addAll(this.getPeersFromDefault());
+			
+			knownPeers.addAll(getKnownPeersFromJSONArray(peersArray));
 			
 			if(knownPeers.size() == 0 || loadPeersFromInternet)
 			{
-				knownPeers = getKnownPeersFromInternet();
+				knownPeers.addAll(getKnownPeersFromInternet());
 			}
-				
+			
 			return knownPeers;
 		
 		} catch (Exception e) {
@@ -355,18 +362,38 @@ public class Settings {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	public List<Peer> getPeersFromDefault()
+	{
+		List<Peer> peers = new ArrayList<Peer>();
+		for(int i=0; i<this.defaultPeers.length; i++)
+		{
+			try
+			{
+				InetAddress address = InetAddress.getByName(this.defaultPeers[i]);
+				
+				if(!this.isLocalAddress(address))
+				{
+					//CREATE PEER
+					Peer peer = new Peer(address);
+								
+					//ADD TO LIST
+					peers.add(peer);
+				}
+			}catch(Exception e)
+			{
+				LOGGER.debug(e.getMessage(),e);
+				LOGGER.info(this.defaultPeers[i] + " - invalid peer address!");
+			}
+		}
+		return peers;
+	}
+	
 	public List<Peer> getKnownPeersFromJSONArray(JSONArray peersArray)
 	{
 		try
 		{
-			//GET PEERS FROM JSON
-			
-			if(peersArray.isEmpty())
-				peersArray.addAll(Arrays.asList(DEFAULT_PEERS));
-				
 			//CREATE LIST WITH PEERS
-			List<Peer> peers = new ArrayList<Peer>();
+			List<Peer> peers = new ArrayList<>();
 			
 			for(int i=0; i<peersArray.size(); i++)
 			{
