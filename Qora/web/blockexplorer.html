@@ -132,6 +132,10 @@
 		visibility: hidden;
 	}
 
+	  #modal {
+		z-index: 9999;
+	  }
+		
  	  .modal-lg {
 		position: absolute;
 		width: 222px;
@@ -1039,7 +1043,7 @@ function genFilterUrl() {
 
 function showQR(text, parent)
 {
-	var position = $(parent).position();
+	var linkPosition = $(parent).position();
 	
 	$('div#div-qr').html('');
 	var qrcode = new QRCode($('div#div-qr')[0], {
@@ -1048,17 +1052,35 @@ function showQR(text, parent)
 			});
 	qrcode.makeCode(text);
 	$("#div-qr-test").html(text);
-	$(".modal-lg").css('top', position.top - 1).css('left', position.left - 1);
+	$("#id-modal-dialog").css('top', linkPosition.top - 1).css('left', linkPosition.left - 1);
+	//$("#modal").css('z-index', 9999);
+	 
+	var qrPosition = $("#id-modal-dialog").position();
+
+	$('#modal').on('shown.bs.modal', function() {
+		var modal = $("#id-modal-dialog")[0];
+		var right = window.innerWidth - (modal.offsetLeft + modal.offsetWidth);
+		if (right < 0)
+		{
+			$("#id-modal-dialog").css('left', modal.offsetLeft + right);
+		}
+		
+		var bottom = window.innerHeight - (modal.offsetTop + modal.offsetHeight);
+		if (bottom < 0)
+		{
+			$("#id-modal-dialog").css('top', modal.offsetTop + bottom);
+		}
+	});
+	
 	$("#modal").modal('show');
 	
 	$(document).keydown(function(e) {
 		if(e.which == 27 && $("#modal").is(":visible"))
 		{
-			
 			$("#modal").modal('hide');	
 		}
 	});
-	$("#modal").click(	function( ) {
+	$("#modal").click( function( ) {
 		if($("#modal").is(":visible"))
 		{
 			$("#modal").modal('hide');
@@ -3652,7 +3674,7 @@ function start() {
 </body>
 
     <div id="modal" class="modal fade">
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-lg" id=id-modal-dialog>
         <div class="modal-content">
 		  <div id="div-qr-test"></div>
           <div id="div-qr"></div>
