@@ -97,6 +97,11 @@ public class ApiClient {
 				""
 			},
 			{
+				"GET peers/preset",
+				"Returns an array of all preset peers. From settings.json, peers.json, Internet, -peers=<address[,...]>",
+				""
+			},
+			{
 				"DELETE peers/known",
 				"Forget all known peers with all statistics.",
 				""

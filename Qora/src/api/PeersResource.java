@@ -2,6 +2,7 @@ package api;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import database.PeerMap.PeerInfo;
 import network.Peer;
 import network.PeerManager;
 import ntp.NTP;
+import settings.Settings;
 import utils.APIUtils;
 import utils.DateTimeFormat;
 
@@ -229,7 +231,7 @@ public class PeersResource
 	@SuppressWarnings({ "unchecked" })
 	@GET
 	@Path("known")
-	public String getFull() throws UnknownHostException
+	public String getKnown() throws UnknownHostException
 	{
 		List<String> addresses = DBSet.getInstance().getPeerMap().getAllPeersAddresses(-1);
 		
@@ -237,6 +239,23 @@ public class PeersResource
 
 		array.addAll(addresses);
 		
+		return array.toJSONString();
+	}
+	
+	@SuppressWarnings({ "unchecked" })
+	@GET
+	@Path("preset")
+	public String getPreset()
+	{
+		List<String> addresses = new ArrayList<>();
+		for (Peer peer : Settings.getInstance().getKnownPeers()) {
+			addresses.add(peer.getAddress().getHostAddress());
+		}
+		
+		JSONArray array = new JSONArray();
+		
+		array.addAll(addresses);
+
 		return array.toJSONString();
 	}
 	
