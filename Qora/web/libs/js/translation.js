@@ -11,7 +11,20 @@ function constructor() { // normal singlton goes here
 				var i;
 				for (i = 0; i < x.length; i++) {
 					x[i].innerHTML = Lang.getInstance().translate(x[i].innerHTML);
+					
+					if ('placeholder' in x[i])
+					{
+						x[i].placeholder = Lang.getInstance().translate(x[i].placeholder);
+					}
 				}
+			},
+			
+			translateArray : function(array) {
+				var newarray = [];
+				for (i = 0; i < array.length; i++) {
+					newarray[i] = Lang.getInstance().translate(array[i]);
+				}
+				return newarray;
 			},
 			
 			translate : function(message) {

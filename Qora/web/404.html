@@ -169,9 +169,9 @@
                 <h1>
                     </h1>
                 <h2>
-                    {{title}}</h2>
+                    <span class="translate">{{title}}</span></h2>
                 <div class="error-details">
-                    <h4>You can search Qora web using the search box below</h4>
+                    <h4 class="translate">You can search Qora web using the search box below</h4>
                 </div><br>
                 <div class="error-actions">
                   <div class="input-group">
@@ -188,6 +188,8 @@
     <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
     <script src="/index/libs/angular/angular.1.4.js"></script>
     <script src="/index/libs/js/sidebar.js"></script>
+	<script src="/index/libs/js/common.js"></script>
+	<script src="/index/libs/js/translation.js"></script>
     <script type="text/javascript">
     var transformToAssocArray;
     transformToAssocArray = function(prmstr) {
@@ -249,6 +251,8 @@
                 $('#button').trigger('click');
             }
         });
+
+		Lang.getInstance().translateByClass();
     });
     </script>
     <script type="text/javascript">

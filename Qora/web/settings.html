@@ -146,7 +146,7 @@
 			<div id=result></div>
             	{{result}}
             <div class="form-group">
-              <label for="select-name" class="col-lg-2 control-label">Name</label>
+              <label for="select-name" class="col-lg-2 control-label translate">Name</label>
               <div class="col-lg-10">
                 <select class="form-control" id="select-name">
                   {% for name in names %}
@@ -156,45 +156,45 @@
                 </select>
                 <div class="checkbox">
                   <label>
-                    <br><input type="checkbox" id="profile-status"> Enable Profile
+                    <br><input type="checkbox" id="profile-status"> <span class="translate">Enable Profile</span>
                   </label>
                 </div>
               </div>
             </div>
             <div class="form-group">
-              <label for="Banner" class="col-lg-2 control-label">Profile Banner</label>
+              <label for="Banner" class="col-lg-2 control-label translate">Profile Banner</label>
               <div class="col-lg-10">
-                <input type="url" class="form-control" id="banner" placeholder="Profile Banner" disabled="">
+                <input type="url" class="form-control translate" id="banner" placeholder="Profile Banner" disabled="">
               </div>
             </div>
             <div class="form-group">
-              <label for="avatar" class="col-lg-2 control-label">Profile Picture</label>
+              <label for="avatar" class="col-lg-2 control-label translate">Profile Picture</label>
               <div class="col-lg-10">
-                <input type="url" class="form-control" id="avatar" placeholder="Profile Picture" disabled="">
+                <input type="url" class="form-control translate" id="avatar" placeholder="Profile Picture" disabled="">
                 <div class="checkbox">
                   <label>
-                    <br><input type="checkbox" id="blog-status"> Enable Blog
+                    <br><input type="checkbox" id="blog-status"> <span class="translate">Enable Blog</span>
                   </label>
                 </div>
               </div>
             </div>
             <div class="form-group">
-              <label for="blogtitle" class="col-lg-2 control-label">Blog Title</label>
+              <label for="blogtitle" class="col-lg-2 control-label translate">Blog Title</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="blogtitle" placeholder="Blog Title" disabled="">
+                <input type="text" class="form-control translate" id="blogtitle" placeholder="Blog Title" disabled="">
               </div>
             </div>
             <div class="form-group">
-              <label for="blogdescription" class="col-lg-2 control-label">Blog Description</label>
+              <label for="blogdescription" class="col-lg-2 control-label translate">Blog Description</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="blogdescription" placeholder="Blog Description" disabled="">
+                <input type="text" class="form-control translate" id="blogdescription" placeholder="Blog Description" disabled="">
               </div>
             </div>
             <div class="form-group">
             <div class="checkbox">
               <label for="blockComments" class="col-lg-2 control-label"></label>
                   <label>
-                    <br><input type="checkbox" id="blockComments"> Disable Comments
+                    <br><input type="checkbox" id="blockComments"> <span class="translate">Disable Comments</span>
                   </label>
             </div>
             </div>
@@ -204,15 +204,15 @@
 
               <div class="col-lg-10">
                 <select class="form-control" id="select-list-type">
-					<option selected="selected" value=black class='translate'>Blacklist</option>
-					<option value=white class='translate'>Whitelist</option>
+					<option selected="selected" value=black class="translate">Blacklist</option>
+					<option value=white class="translate">Whitelist</option>
                 </select>
 				<br>
 				<div style="border: 2px solid #ddd;  border-radius: 6px; padding: 10px;">
 				<table id="tblData" width=100%>
 				<thead>
 				<tr>
-				<th class='translate'>Addresses:</th>
+				<th class="translate">Addresses:</th>
 				<th></th>
 				</tr>
 				</thead>
@@ -226,8 +226,8 @@
             </div>
             <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
-                <button type="reset" id="btncancel" onclick="javascript:reload()" class="btn btn-default">Cancel</button>
-            	 <button type="submit" id="btnsubmit" onclick="javascript:updateValue()" class="btn btn-primary pull-right">Submit</button>
+                <button type="reset" id="btncancel" onclick="javascript:reload()" class="btn btn-default translate">Cancel</button>
+            	 <button type="submit" id="btnsubmit" onclick="javascript:updateValue()" class="btn btn-primary pull-right translate">Submit</button>
               </div>
             </div>
           <!-- </fieldset> -->

@@ -841,7 +841,9 @@ public class WebResource {
 			pebbleHelper
 					.getContextMap()
 					.put("result",
-							"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a profile.<br></div>");
+							"<div class=\"alert alert-danger translate\" role=\"alert\">" 
+							+ "You need to register a name to create a profile.<br>"
+							+ "</div>");
 		}
 	}
 
@@ -884,7 +886,7 @@ public class WebResource {
 
 			pebbleHelper.getContextMap().put(
 					"walletstatus",
-					Controller.getInstance().isWalletUnlocked() ?  "<img src=\"/index/img/unlocked.png\" /> Wallet is unlocked" : "<img src=\"/index/img/locked.png\" /> Wallet is locked");
+					Controller.getInstance().isWalletUnlocked() ?  "<img src=\"/index/img/unlocked.png\" /> <span class=\"translate\">Wallet is unlocked</span>" : "<img src=\"/index/img/locked.png\" /> <span class=\"translate\">Wallet is locked</span>");
 			pebbleHelper.getContextMap().put(
 					"forgestatus",
 					Controller.getInstance().getForgingStatus().getName());
@@ -897,19 +899,19 @@ public class WebResource {
 			//TODO this needs to be moved to another place
 			
 			if(Controller.getInstance().getWalletSyncHeight() > 0) {
-				statustext = "Wallet Synchronizing ";
+				statustext = "<span class=\"translate\">Wallet Synchronizing</span> ";
 				statustext += 100 * Controller.getInstance().getWalletSyncHeight()/Controller.getInstance().getHeight() + "%<br>";
-				statustext += "Height: " + Controller.getInstance().getWalletSyncHeight() + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
+				statustext += "<span class=\"translate\">Height</span>: " + Controller.getInstance().getWalletSyncHeight() + "/" + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
 			} else if(status == Controller.STATUS_OK) {
 				statustext = "OK<br>";
-				statustext += "Height: " + Controller.getInstance().getHeight();
+				statustext += "<span class=\"translate\">Height</span>: " + Controller.getInstance().getHeight();
 			} else if(status == Controller.STATUS_NO_CONNECTIONS) {
-				statustext = "No connections<br>";
-				statustext += "Height: " + Controller.getInstance().getHeight();
+				statustext = "<span class=\"translate\">No connections</span><br>";
+				statustext += "<span class=\"translate\">Height</span>: " + Controller.getInstance().getHeight();
 			} else if(status == Controller.STATUS_SYNCHRONIZING) {
-				statustext = "Synchronizing ";
+				statustext = "<span class=\"translate\">Synchronizing</span> ";
 				statustext += 100 * Controller.getInstance().getHeight()/Controller.getInstance().getMaxPeerHeight() + "%<br>";
-				statustext += "Height: " + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
+				statustext += "<span class=\"translate\">Height</span>: " + Controller.getInstance().getHeight() + "/" + Controller.getInstance().getMaxPeerHeight();
 			} 
 						
 			pebbleHelper.getContextMap().put(
@@ -1710,11 +1712,6 @@ public class WebResource {
 
 				String creator = BlogUtils.getCreatorOrBlogOwnerOpt(blogEntryOpt);
 				
-				
-//				if(profileOpt != null && )
-				
-				
-
 				if (creator == null) {
 					jsonanswer.put("type", "deleteError");
 					jsonanswer
@@ -1848,7 +1845,7 @@ public class WebResource {
 					jsonanswer.put("type", "deleteError");
 					jsonanswer
 							.put("errordetail",
-									"You are not allowed to delete this post!You need to be owner of the blog or author of the blogpost!");
+									"You are not allowed to delete this post! You need to be owner of the blog or author of the blogpost!");
 
 					return Response
 							.status(200)
