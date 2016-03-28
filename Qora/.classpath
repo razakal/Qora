@@ -98,10 +98,14 @@
 	<classpathentry kind="lib" path="libs/jetty/jetty-util-9.3.7.v20160115.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-webapp-9.3.7.v20160115.jar"/>
 	<classpathentry kind="lib" path="libs/jetty/jetty-xml-9.3.7.v20160115.jar"/>
-	<classpathentry kind="lib" path="libs/mapdb-1.0.9.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-1.2.17.jar" sourcepath="libs/sourceandjavadoc/log4j-1.2.17-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/log4j-1.2.17-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/mapdb-1.0.7.jar" sourcepath="libs/sourceandjavadoc/mapdb-1.0.7-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Qora/libs/sourceandjavadoc/mapdb-1.0.7-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
