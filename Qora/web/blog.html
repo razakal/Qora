@@ -363,6 +363,9 @@
           			{%else%}
 						<h4 class="media-heading Commenter">{{comment.nameOrCreator}}</h4>
           			{%endif%}
+          				 {% if comment.getTitleOpt() is not null %}
+                        <b><p class="commentText">{{comment.titleOpt}}</p></b>
+                        {%endif%}
                         <p class="commentText">{{comment.description}}</p>
                         <span class="date sub-text">{{comment.creationTime}}</span>
 					</div>
