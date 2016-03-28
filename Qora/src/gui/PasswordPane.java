@@ -1,7 +1,14 @@
 package gui;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,6 +28,34 @@ public class PasswordPane
 		JLabel passwordLbl = new JLabel(Lang.getInstance().translate("Enter wallet password:"));
 		JPasswordField passwordFld = new JPasswordField();
 
+		passwordFld.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.getKeyCode();
+				
+				Container parent = passwordFld.getTopLevelAncestor();              
+				
+				if (keyCode == KeyEvent.VK_ENTER) 
+				{
+					if(e.isControlDown())
+					{
+						final JButton btn = getButton(parent, Lang.getInstance().translate("Unlock"));
+						btn.doClick();
+					}
+					else
+					{
+						final JButton btn = getButton(parent, Lang.getInstance().translate("Unlock for 2 minutes"));
+						btn.doClick();
+					}
+				}
+				else if (keyCode == KeyEvent.VK_ESCAPE) 
+				{
+					final JButton btn = getButton(parent, Lang.getInstance().translate("Cancel"));
+					btn.doClick();
+				}
+			}
+		});
+		      
 		//Add the components to the JPanel        
 		userPanel.add(passwordLbl);
 		userPanel.add(passwordFld);
@@ -70,4 +105,30 @@ public class PasswordPane
 			}
 		}
 	}
+	
+    public static JButton getButton(Container container, String text) {
+        JButton btn = null;
+        List<Container> children = new ArrayList<Container>(25);
+        for (Component child : container.getComponents()) {
+            if (child instanceof JButton) {
+                JButton button = (JButton) child;
+                if (text.equals(button.getText())) {
+                    btn = button;
+                    break;
+                }
+            } else if (child instanceof Container) {
+                children.add((Container) child);
+            }
+        }
+        if (btn == null) {
+            for (Container cont : children) {
+                JButton button = getButton(cont, text);
+                if (button != null) {
+                    btn = button;
+                    break;
+                }
+            }
+        }
+        return btn;
+    }
 }
