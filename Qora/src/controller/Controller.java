@@ -1108,7 +1108,7 @@ public class Controller extends Observable {
 
 	public boolean doesWalletExists() {
 		// CHECK IF WALLET EXISTS
-		return this.wallet.exists();
+		return this.wallet != null && this.wallet.exists();
 	}
 
 	public boolean doesWalletDatabaseExists() {
