@@ -343,11 +343,11 @@ public class Controller extends Observable {
 				DBSet.getInstance().getLocalDataMap().set("nsupdate", "1");
 			}
 			//CREATE TRANSACTIONS FINAL MAP
-			if (DBSet.getInstance().getLocalDataMap().get("txfinalmap") == null )
+			if (DBSet.getInstance().getLocalDataMap().get("txfinalmap") == null || !DBSet.getInstance().getLocalDataMap().get("txfinalmap").equals("2"))
 			{
 				//FIRST NAME STORAGE UPDATE
 				UpdateUtil.repopulateTransactionFinalMap(  );
-				DBSet.getInstance().getLocalDataMap().set("txfinalmap", "1");
+				DBSet.getInstance().getLocalDataMap().set("txfinalmap", "2");
 			}
 			
 			if (DBSet.getInstance().getLocalDataMap().get("blogpostmap") == null ||  !DBSet.getInstance().getLocalDataMap().get("blogpostmap").equals("2"))
@@ -358,7 +358,7 @@ public class Controller extends Observable {
 			}
 		} else {
 			DBSet.getInstance().getLocalDataMap().set("nsupdate", "1");
-			DBSet.getInstance().getLocalDataMap().set("txfinalmap", "1");
+			DBSet.getInstance().getLocalDataMap().set("txfinalmap", "2");
 			DBSet.getInstance().getLocalDataMap().set("blogpostmap", "2");
 		}
 		

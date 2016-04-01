@@ -1,7 +1,6 @@
 package database;
 
 import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -91,12 +90,8 @@ public class TransactionFinalMap extends DBMap<Tuple2<Integer, Integer>, Transac
 			@Override
 			public String[] run(Tuple2<Integer, Integer> key, Transaction val) {
 				List<String> recps = new ArrayList<String>();
-				for ( Account acc : val.getInvolvedAccounts())
+				for ( Account acc : val.getRecipientAccounts())
 				{
-					if ( val.getAmount(acc).compareTo( BigDecimal.ZERO) < 0 )
-					{
-						continue;
-					}
 					recps.add(acc.getAddress());
 				}
 				String[] ret = new String[ recps.size() ];

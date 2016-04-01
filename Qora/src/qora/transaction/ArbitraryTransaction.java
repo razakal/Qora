@@ -3,6 +3,7 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,10 +131,20 @@ public abstract class ArbitraryTransaction extends Transaction {
 	}
 
 	@Override
-	public List<Account> getInvolvedAccounts() {
-		List<Account> accounts = new ArrayList<Account>();
-
+	public HashSet<Account> getInvolvedAccounts() {
+		HashSet<Account> accounts = new HashSet<>();
+		
 		accounts.add(this.creator);
+		accounts.addAll(this.getRecipientAccounts());
+		
+		return accounts;
+	}
+
+	
+	@Override
+	public HashSet<Account> getRecipientAccounts()
+	{
+		HashSet<Account> accounts = new HashSet<>();
 
 		for (Payment payment : this.payments) {
 			accounts.add(payment.getRecipient());
@@ -141,7 +152,7 @@ public abstract class ArbitraryTransaction extends Transaction {
 
 		return accounts;
 	}
-
+	
 	@Override
 	public boolean isInvolved(Account account) 
 	{

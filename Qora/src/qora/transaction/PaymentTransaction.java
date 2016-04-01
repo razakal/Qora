@@ -3,8 +3,8 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -309,9 +309,19 @@ public class PaymentTransaction extends Transaction {
 	}
 	
 	@Override
-	public List<Account> getInvolvedAccounts()
+	public HashSet<Account> getInvolvedAccounts()
 	{
-		return Arrays.asList(this.sender, this.recipient);
+		HashSet<Account> accounts = new HashSet<Account>();
+		accounts.add(this.sender);
+		accounts.addAll(this.getRecipientAccounts());
+		return accounts;
+	}
+
+	@Override
+	public HashSet<Account> getRecipientAccounts() {
+		HashSet<Account> accounts = new HashSet<Account>();
+		accounts.add(this.recipient);
+		return accounts;
 	}
 	
 	@Override

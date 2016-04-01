@@ -3,8 +3,8 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -121,10 +121,21 @@ public abstract class MessageTransaction extends Transaction {
 	}
 
 	@Override
-	public List<Account> getInvolvedAccounts() {
-		return Arrays.asList(this.creator, this.recipient);
+	public HashSet<Account> getInvolvedAccounts()
+	{
+		HashSet<Account> accounts = new HashSet<Account>();
+		accounts.add(this.creator);
+		accounts.addAll(this.getRecipientAccounts());
+		return accounts;
 	}
 
+	@Override
+	public HashSet<Account> getRecipientAccounts() {
+		HashSet<Account> accounts = new HashSet<Account>();
+		accounts.add(this.recipient);
+		return accounts;
+	}
+	
 	@Override
 	public boolean isInvolved(Account account) {
 		String address = account.getAddress();

@@ -2,20 +2,12 @@ package qora.transaction;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
-
-import qora.account.Account;
-import qora.account.PrivateKeyAccount;
-import qora.account.PublicKeyAccount;
-import qora.assets.Asset;
-import qora.assets.Order;
-import qora.crypto.Crypto;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -23,6 +15,12 @@ import com.google.common.primitives.Longs;
 
 import database.BalanceMap;
 import database.DBSet;
+import qora.account.Account;
+import qora.account.PrivateKeyAccount;
+import qora.account.PublicKeyAccount;
+import qora.assets.Asset;
+import qora.assets.Order;
+import qora.crypto.Crypto;
 
 public class CreateOrderTransaction extends Transaction 
 {
@@ -367,13 +365,18 @@ public class CreateOrderTransaction extends Transaction
 
 
 	@Override
-	public List<Account> getInvolvedAccounts() 
+	public HashSet<Account> getInvolvedAccounts() 
 	{
-		List<Account> accounts = new ArrayList<Account>();
+		HashSet<Account> accounts = new HashSet<>();
 		accounts.add(this.creator);
 		return accounts;
 	}
 
+	@Override
+	public HashSet<Account> getRecipientAccounts()
+	{
+		return new HashSet<>();
+	}
 
 	@Override
 	public boolean isInvolved(Account account) 

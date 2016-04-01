@@ -3,9 +3,8 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -348,14 +347,19 @@ public class VoteOnPollTransaction extends Transaction
 
 
 	@Override
-	public List<Account> getInvolvedAccounts() 
+	public HashSet<Account> getInvolvedAccounts() 
 	{
-		List<Account> accounts = new ArrayList<Account>();
+		HashSet<Account> accounts = new HashSet<>();
 		accounts.add(this.creator);
 		return accounts;
 	}
 
-
+	@Override
+	public HashSet<Account> getRecipientAccounts()
+	{
+		return new HashSet<>();
+	}
+	
 	@Override
 	public boolean isInvolved(Account account) 
 	{

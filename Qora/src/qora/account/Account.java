@@ -253,6 +253,12 @@ public class Account {
 		return NumberAsString.getInstance().numberAsString(this.getConfirmedBalance(key)) + " - " + this.getAddress();
 	}
 	
+	@Override
+	public int hashCode()
+	{
+		return this.getAddress().hashCode();
+	}
+	
 	//EQUALS
 	@Override
 	public boolean equals(Object b)

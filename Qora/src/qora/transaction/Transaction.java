@@ -3,8 +3,8 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -300,7 +300,9 @@ public abstract class Transaction {
 	
 	public abstract PublicKeyAccount getCreator();
 	
-	public abstract List<Account> getInvolvedAccounts();
+	public abstract HashSet<Account> getInvolvedAccounts();
+	
+	public abstract HashSet<Account> getRecipientAccounts();
 		
 	public abstract boolean isInvolved(Account account);
 	

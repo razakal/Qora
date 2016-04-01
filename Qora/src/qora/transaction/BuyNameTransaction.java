@@ -3,21 +3,12 @@ package qora.transaction;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
-
-import qora.account.Account;
-import qora.account.PrivateKeyAccount;
-import qora.account.PublicKeyAccount;
-import qora.crypto.Base58;
-import qora.crypto.Crypto;
-import qora.naming.Name;
-import qora.naming.NameSale;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
@@ -25,6 +16,13 @@ import com.google.common.primitives.Longs;
 
 import database.BalanceMap;
 import database.DBSet;
+import qora.account.Account;
+import qora.account.PrivateKeyAccount;
+import qora.account.PublicKeyAccount;
+import qora.crypto.Base58;
+import qora.crypto.Crypto;
+import qora.naming.Name;
+import qora.naming.NameSale;
 
 public class BuyNameTransaction extends Transaction
 {
@@ -324,13 +322,21 @@ public class BuyNameTransaction extends Transaction
 	}
 
 	@Override
-	public List<Account> getInvolvedAccounts()
+	public HashSet<Account> getInvolvedAccounts()
 	{
-		List<Account> accounts = new ArrayList<Account>();
+		HashSet<Account> accounts = new HashSet<>();
 		
 		accounts.add(this.buyer);
-		accounts.add(this.getSeller());
+		accounts.addAll(this.getRecipientAccounts());
 		
+		return accounts;
+	}
+	
+	@Override
+	public HashSet<Account> getRecipientAccounts()
+	{
+		HashSet<Account> accounts = new HashSet<>();
+		accounts.add(this.getSeller());
 		return accounts;
 	}
 
