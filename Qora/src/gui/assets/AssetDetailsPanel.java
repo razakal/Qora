@@ -113,7 +113,7 @@ public class AssetDetailsPanel extends JPanel {
 		
 		//LABEL DIVISIBLE
 		labelGBC.gridy = 6;
-		JLabel divisibleLabel = new JLabel(Lang.getInstance().translate("Divisible:"));
+		JLabel divisibleLabel = new JLabel(Lang.getInstance().translate("Divisible") + ":");
 		this.add(divisibleLabel, labelGBC);
 		           
 		//DIVISIBLE

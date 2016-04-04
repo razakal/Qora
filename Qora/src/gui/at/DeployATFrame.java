@@ -238,7 +238,7 @@ public class DeployATFrame extends JFrame {
 
 		//LABEL QUANTITY
 		labelGBC.gridy = 11;
-		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity:"));
+		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity") + ":");
 		this.add(quantityLabel, labelGBC);
 
 		//TXT QUANTITY

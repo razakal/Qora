@@ -121,7 +121,7 @@ public class CreateOrderDetailsFrame extends JFrame
 		
 		//LABEL HAVE
 		labelGBC.gridy = 5;
-		JLabel haveLabel = new JLabel(Lang.getInstance().translate("Have:"));
+		JLabel haveLabel = new JLabel(Lang.getInstance().translate("Have") + ":");
 		this.add(haveLabel, labelGBC);
 		
 		//HAVE
@@ -133,7 +133,7 @@ public class CreateOrderDetailsFrame extends JFrame
 		
 		//LABEL WANT
 		labelGBC.gridy = 6;
-		JLabel wantLabel = new JLabel(Lang.getInstance().translate("Want:"));
+		JLabel wantLabel = new JLabel(Lang.getInstance().translate("Want") + ":");
 		this.add(wantLabel, labelGBC);
 		
 		//HAVE

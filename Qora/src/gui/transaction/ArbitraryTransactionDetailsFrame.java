@@ -142,7 +142,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 		
 		//LABEL SERVICE
 		labelGBC.gridy = componentLevel;
-		JLabel serviceLabel = new JLabel(Lang.getInstance().translate("Service ID:"));
+		JLabel serviceLabel = new JLabel(Lang.getInstance().translate("Service ID") + ":");
 		this.add(serviceLabel, labelGBC);
 		
 		//SERVICE
@@ -156,7 +156,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 
 		//LABEL DATA AS BASE58
 		labelGBC.gridy = componentLevel;
-		JLabel dataLabel = new JLabel(Lang.getInstance().translate("Data as Base58:"));
+		JLabel dataLabel = new JLabel(Lang.getInstance().translate("Data as Base58") + ":");
 		this.add(dataLabel, labelGBC);
 				
 		//DATA AS BASE58
@@ -178,7 +178,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 
 		//LABEL DATA AS TEXT
 		labelGBC.gridy = componentLevel;
-		JLabel dataTextLabel = new JLabel(Lang.getInstance().translate("Data as Text:"));
+		JLabel dataTextLabel = new JLabel(Lang.getInstance().translate("Data as Text") + ":");
 		this.add(dataTextLabel, labelGBC);
 		
 		//DATA AS TEXT
@@ -202,7 +202,7 @@ public class ArbitraryTransactionDetailsFrame extends JFrame
 			
 			//LABEL PAYMENTS
 			labelGBC.gridy = componentLevel;
-			JLabel paymentsLabel = new JLabel(Lang.getInstance().translate("Payments:"));
+			JLabel paymentsLabel = new JLabel(Lang.getInstance().translate("Payments") + ":");
 			this.add(paymentsLabel, labelGBC);
 			
 			//PAYMENTS

@@ -1734,7 +1734,7 @@ public class BlockExplorer
 
 			transactionDataJSON.put("confirmations", getHeight() - ((AT_Transaction)unit).getBlockHeight() + 1 );
 
-			if(((AT_Transaction)unit).getRecipient().equals("11111111111111111111111111"))
+			if(((AT_Transaction)unit).getRecipient().equals("1111111111111111111111111"))
 			{
 				transactionDataJSON.put("generatorAddress", block.getGenerator().getAddress());
 			}

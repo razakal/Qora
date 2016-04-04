@@ -125,7 +125,7 @@ public class ATDetailsFrame extends JFrame {
 
 		//LABEL QUANTITY
 		labelGBC.gridy = 5;
-		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity:"));
+		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity") + ":");
 		this.add(quantityLabel, labelGBC);
 
 		//QUANTITY

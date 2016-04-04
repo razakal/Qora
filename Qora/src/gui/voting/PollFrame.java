@@ -74,7 +74,7 @@ public class PollFrame extends JFrame{
 		pollTabPaneGBC.gridx = 0;
 		pollTabPaneGBC.gridy = 2;
 		
-		this.add(new JLabel(Lang.getInstance().translate("Asset:")), assetLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("Asset") + ":"), assetLabelGBC);
 		
 		cbxAssets = new JComboBox<Asset>(new AssetsAllComboBoxModel());
 		cbxAssets.setSelectedItem(asset);

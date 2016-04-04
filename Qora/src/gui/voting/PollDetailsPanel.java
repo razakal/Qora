@@ -126,7 +126,7 @@ public class PollDetailsPanel extends JPanel
 		
 		//LABEL OPTIONS
 		labelGBC.gridy = 5;
-		JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Options:"));
+		JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Options") + ":");
 		this.add(optionsLabel, labelGBC);
 		
 		//OPTIONS

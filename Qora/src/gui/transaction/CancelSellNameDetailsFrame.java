@@ -108,7 +108,7 @@ public class CancelSellNameDetailsFrame extends JFrame
 		
 		//LABEL REGISTRANT
 		labelGBC.gridy = 4;
-		JLabel registrantLabel = new JLabel(Lang.getInstance().translate("Seller:"));
+		JLabel registrantLabel = new JLabel(Lang.getInstance().translate("Seller") + ":");
 		this.add(registrantLabel, labelGBC);
 		
 		//REGISTRANT

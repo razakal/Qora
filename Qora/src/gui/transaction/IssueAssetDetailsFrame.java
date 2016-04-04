@@ -161,7 +161,7 @@ public class IssueAssetDetailsFrame extends JFrame
 		
 		//LABEL QUANTITY
 		labelGBC.gridy = 8;
-		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity:"));
+		JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity") + ":");
 		this.add(quantityLabel, labelGBC);
 				
 		//QUANTITY
@@ -173,7 +173,7 @@ public class IssueAssetDetailsFrame extends JFrame
 		
 		//LABEL DIVISIBLE
 		labelGBC.gridy = 9;
-		JLabel divisibleLabel = new JLabel(Lang.getInstance().translate("Divisible:"));
+		JLabel divisibleLabel = new JLabel(Lang.getInstance().translate("Divisible") + ":");
 		this.add(divisibleLabel, labelGBC);
 				
 		//QUANTITY

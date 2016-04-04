@@ -184,7 +184,7 @@ public class AllPollsFrame extends JFrame{
 		this.add(txtSearch, searchGBC);
 		this.add(new JScrollPane(pollsTable), tableGBC);
 
-		this.add(new JLabel(Lang.getInstance().translate("Asset:")), assetLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("Asset") + ":"), assetLabelGBC);
 		
 		cbxAssets = new JComboBox<Asset>(new AssetsAllComboBoxModel());
 		this.add(cbxAssets, assetsGBC);

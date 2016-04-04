@@ -163,7 +163,7 @@ public class MessageTransactionDetailsFrame extends JFrame
 		//LABEL SERVICE
 		componentLevel ++;
 		labelGBC.gridy = componentLevel;
-		JLabel serviceLabel = new JLabel(Lang.getInstance().translate("Message:"));
+		JLabel serviceLabel = new JLabel(Lang.getInstance().translate("Message") + ":");
 		this.add(serviceLabel, labelGBC);
 		
 		//ISTEXT

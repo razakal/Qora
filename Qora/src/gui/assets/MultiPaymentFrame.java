@@ -110,7 +110,7 @@ public class MultiPaymentFrame extends JFrame
         
 		//LABEL PAYMENTS
 		labelGBC.gridy = 1;
-		JLabel paymentsLabel = new JLabel(Lang.getInstance().translate("Payments:"));
+		JLabel paymentsLabel = new JLabel(Lang.getInstance().translate("Payments") + ":");
 		this.add(paymentsLabel, labelGBC);
 		
 		//OPTIONS

@@ -136,7 +136,7 @@ public class InitiateAcctFrame extends JFrame {
 
 		//SWAP LABEP
 		labelGBC.gridy = 1;
-		JLabel swapLabel = new JLabel(Lang.getInstance().translate("Trade:"));
+		JLabel swapLabel = new JLabel(Lang.getInstance().translate("Trade") + ":");
 		this.add(swapLabel, labelGBC);
 		
 		//TXT AMOUNT

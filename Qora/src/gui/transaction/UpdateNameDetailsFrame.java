@@ -126,7 +126,7 @@ public class UpdateNameDetailsFrame extends JFrame
 		
 		//LABEL OWNER
 		labelGBC.gridy = 5;
-		JLabel ownerLabel = new JLabel(Lang.getInstance().translate("New Owner:"));
+		JLabel ownerLabel = new JLabel(Lang.getInstance().translate("New Owner") + ":");
 		this.add(ownerLabel, labelGBC);
 				
 		//OWNER
@@ -150,7 +150,7 @@ public class UpdateNameDetailsFrame extends JFrame
 		
 		//LABEL VALUE
 		labelGBC.gridy = 7;
-		JLabel valueLabel = new JLabel(Lang.getInstance().translate("New Value:"));
+		JLabel valueLabel = new JLabel(Lang.getInstance().translate("New Value") + ":");
 		this.add(valueLabel, labelGBC);
 				
 		//VALUE
@@ -169,7 +169,7 @@ public class UpdateNameDetailsFrame extends JFrame
       	      	
       	//LABEL COMPRESSED
       	labelGBC.gridy = 8;
-      	JLabel compressedLabel = new JLabel(Lang.getInstance().translate("Compressed:"));
+      	JLabel compressedLabel = new JLabel(Lang.getInstance().translate("Compressed") + ":");
       	this.add(compressedLabel, labelGBC);
       		
   		//COMPRESSED

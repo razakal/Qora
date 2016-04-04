@@ -143,7 +143,7 @@ public class IssueAssetFrame extends JFrame
       	
       	//LABEL QUANTITY
       	labelGBC.gridy = 3;
-      	JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity:"));
+      	JLabel quantityLabel = new JLabel(Lang.getInstance().translate("Quantity") + ":");
       	this.add(quantityLabel, labelGBC);
       		
       	//TXT QUANTITY
@@ -154,7 +154,7 @@ public class IssueAssetFrame extends JFrame
         
       	//LABEL DIVISIBLE
       	labelGBC.gridy = 4;
-      	JLabel divisibleLabel = new JLabel(Lang.getInstance().translate("Divisible:"));
+      	JLabel divisibleLabel = new JLabel(Lang.getInstance().translate("Divisible") + ":");
       	this.add(divisibleLabel, labelGBC);
       		
       	//CHECKBOX DIVISIBLE

@@ -134,7 +134,7 @@ public class TransferAssetDetailsFrame extends JFrame
 		
 		//LABEL ASSET
 		labelGBC.gridy = 6;
-		JLabel assetLabel = new JLabel(Lang.getInstance().translate("Asset:"));
+		JLabel assetLabel = new JLabel(Lang.getInstance().translate("Asset") + ":");
 		this.add(assetLabel, labelGBC);
 		
 		//ASSET

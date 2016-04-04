@@ -99,7 +99,7 @@ public class CancelOrderFrame extends JFrame
         
         //LABEL HAVE
       	labelGBC.gridy = 2;
-      	JLabel haveLabel = new JLabel(Lang.getInstance().translate("Have:"));
+      	JLabel haveLabel = new JLabel(Lang.getInstance().translate("Have") + ":");
       	this.add(haveLabel, labelGBC);
       		
       	//TXT HAVE
@@ -110,7 +110,7 @@ public class CancelOrderFrame extends JFrame
       	
         //LABEL WANT
       	labelGBC.gridy = 3;
-      	JLabel wantLabel = new JLabel(Lang.getInstance().translate("Want:"));
+      	JLabel wantLabel = new JLabel(Lang.getInstance().translate("Want") + ":");
       	this.add(wantLabel, labelGBC);
       		
       	//TXT WANT

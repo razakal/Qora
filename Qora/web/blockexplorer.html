@@ -1260,12 +1260,12 @@ function mainQuery(data) {
 				
 				if (data.countTx.tradesCount > 0)
 				{
-					output += '<div style="display:inline-block; padding-left: 20px; width: 200px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=trades><a class=showOnly id=trades href=#>Trades: ' + data.countTx.tradesCount + '</a></div>\n';
+					output += '<div style="display:inline-block; padding-left: 20px; width: 240px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=trades><a class=showOnly id=trades href=#>' + Lang.getInstance().translate('Trades') + ': ' + data.countTx.tradesCount + '</a></div>\n';
 				}
 				
 				if (data.countTx.aTTxsCount > 0)
 				{
-					output += '<div style="display:inline-block; padding-left: 20px; width: 200px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=aTTxs><a class=showOnly id=aTTxs href=#>AT Transactions: ' + data.countTx.aTTxsCount + '</a></div>\n';
+					output += '<div style="display:inline-block; padding-left: 20px; width: 240px;"><input onchange=\'genFilterUrl();\' type=checkbox name=\'types\' checked=checked value=aTTxs><a class=showOnly id=aTTxs href=#>' + Lang.getInstance().translate('AT Transactions') + ': ' + data.countTx.aTTxsCount + '</a></div>\n';
 				}
 				
 				if (data.countTx.blocksCount > 0)
@@ -1425,49 +1425,49 @@ function mainQuery(data) {
 			url = '?atTx=' + data.atTransaction;
 			urlstart = url;
 			output +=  '<table width="1280" border=0><tr><td align=left>';	
-			output += '<font size="+1">Automated Transaction</font><br>';
+			output += '<font size="+1">' + Lang.getInstance().translate('Automated Transaction') + '</font><br>';
 		}
 
 
 		if (data.type == 'at')
 		{
 			output += '<table width="1280" border=0><tr><td align=left>';	
-			output += '<br><font size="+1">AT Account: <a href=?addr=' + data.addresses[0] + '>' + data.addresses[0] + '</a>';
+			output += '<br><font size="+1">' + Lang.getInstance().translate('AT Account') + ': <a href=?addr=' + data.addresses[0] + '>' + data.addresses[0] + '</a>';
 
 			output += ' <a href="javascript:void(0)" style="color:#000000;" onclick="showQR(\'' + data.addresses[0] + '\',this)"><span class="glyphicon glyphicon-qrcode"></span></a>';
 			
 			output += '</font>';
 			
 			output += '<table width="100%" border=0><tr><td valign=top align=left rowspan=2>';	
-			output += '<br><b>Creator:</b> <a href=?addr=' + data.at.creator + '>' + data.at.creator + '</a>';
-			output += '<br><br><b>AT Type:</b> ' + data.at.type;
-			output += '<br><br><b>Description:</b> ' + htmlFilter(wordwrap(data.at.description, 80, '\n', true));
-			output += '<br><br><b>Tags:</b> ' + htmlFilter(wordwrap(data.at.tags, 80, '\n', true));
-			output += '<br><br><b>Min Activation Amount:</b> ' + data.at.minActivation + ' Qora';
-			output += '<br><br><b>Dead:</b> ' + data.at.state.dead;
-			output += '<br><br><b>Frozen:</b> ' + data.at.state.frozen;
+			output += '<br><b>' + Lang.getInstance().translate('Creator') + ':</b> <a href=?addr=' + data.at.creator + '>' + data.at.creator + '</a>';
+			output += '<br><br><b>' + Lang.getInstance().translate('AT Type:') + '</b> ' + data.at.type;
+			output += '<br><br><b>' + Lang.getInstance().translate('Description') + ':</b> ' + htmlFilter(wordwrap(data.at.description, 80, '\n', true));
+			output += '<br><br><b>' + Lang.getInstance().translate('Tags:') + '</b> ' + htmlFilter(wordwrap(data.at.tags, 80, '\n', true));
+			output += '<br><br><b>' + Lang.getInstance().translate('Min Activation Amount:') + '</b> ' + data.at.minActivation + ' Qora';
+			output += '<br><br><b>' + Lang.getInstance().translate('Dead:') + '</b> ' + data.at.state.dead;
+			output += '<br><br><b>' + Lang.getInstance().translate('Frozen:') + '</b> ' + data.at.state.frozen;
 			
-			output += '<td><br><b>Code:</b><pre>';
+			output += '<td><br><b>' + Lang.getInstance().translate('Code:') + '</b><pre>';
 			if (data.at.state.machineCode != '')
 			{
 				output += wordwrap(data.at.state.machineCode, 100, '<br>', true);
 			}
 			else
 			{
-				output += '<b>No</b>';
+				output += '<b>' + Lang.getInstance().translate('No') + '</b>';
 			}
 			output += '<tr>';
-			output += '<td><b>Data:</b><pre>';
+			output += '<td><b>' + Lang.getInstance().translate('Data:') + '</b><pre>';
 			if (data.at.state.machineData != '')
 			{
 				output += wordwrap(data.at.state.machineData, 100, '<br>', true);
 			}
 			else
 			{
-				output += '<b>No</b>';
+				output += '<b>' + Lang.getInstance().translate('No') + '</b>';
 			}
 			output += '</table>';
-			output += '<br><br><font size="+1"><b>Balance:</b> ' + addCommas(data.at.accountBalance) + ' Qora</font>';
+			output += '<br><br><font size="+1"><b>' + Lang.getInstance().translate('Balance') + ':</b> ' + addCommas(data.at.accountBalance) + ' Qora</font>';
 			output += '<br><br>';
 		}						
 		
@@ -1476,7 +1476,7 @@ function mainQuery(data) {
 			url = '?trade=' + data.trade;
 			urlstart = url;
 			output +=  '<table width="1280" border=0><tr><td align=left>';	
-			output += '<font size="+1">Trade</font><br>';
+			output += '<font size="+1">' + Lang.getInstance().translate('Trade') + '</font><br>';
 		}
 		
 		if (data.type == 'standardAccount' || data.type == 'at')
@@ -1518,20 +1518,23 @@ function mainQuery(data) {
 					
 					output += '<a href=?block=' + data[i].block.signature + '>' + data[i].block.signature.substr(0, 80) + '...' + '</a></td>';
 					
-					output += '<td align=right width=250>Height: <a href=?block=' + data[i].block.height + '>' + data[i].block.height + '</a>';
-					output += ' / confirmations: ' + data[i].block.confirmations + '</td>';
+					output += '<td align=right width=250>' + Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].block.height + '>' + data[i].block.height + '</a>';
+					output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].block.confirmations + '</td>';
 						
 					output += '<td align=right width=200>' + data[i].block.dateTime + '</td></tr></table>';
 					
 					output += '<tr><td>';
 					output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
-					output += '<b>Action</b></td><td width="290"><b>Generator</b></td><td><b>Fee</b></td>';
+					output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+									+ Lang.getInstance().translate('Generator') + '</b></td><td><b>'
+									+ Lang.getInstance().translate('Fee') + '</b></td>';
 					if (data[i].hasOwnProperty('tXbalance'))
 					{
-						output += '<td width=180><b>Balance</b></td>';
+						output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 					}
 					output += '</tr>';
-					output += '<tr><td align="center"><img src="img/00_generating.png"><br><font size="-2">Generating</font></td>';
+					output += '<tr><td align="center"><img src="img/00_generating.png"><br><font size="-2">' 
+							+ Lang.getInstance().translate('Generating') + '</font></td>';
 					if (data[i].type == 'block')
 					{
 						output += '<td><a href=?addr=' + data[i].block.generator + '>' + data[i].block.generator + '</a>';
@@ -1562,20 +1565,22 @@ function mainQuery(data) {
 						
 					output += '<tr><td><a class=without href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 					output += '<a href=?trade=' + data[i].trade.initiatorTxSignature + '/' + data[i].trade.targetTxSignature + '>';
-					output += (data[i].trade.initiatorTxSignature + '/' + data[i].trade.targetTxSignature).substr(0, 100) + '...</a></td>';
-					output += '<td align=right width=250>Height: <a href=?block=' + data[i].trade.height + '>' + data[i].trade.height + '</a>';
-					output += ' / confirmations: ' + data[i].trade.confirmations + '</td>';
+					output += data[i].trade.initiatorTxSignature.substr(0, 40) + '&#8230;/' + data[i].trade.targetTxSignature.substr(0, 40) + '&#8230;</a></td>';
+					output += '<td align=right width=260>' + Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].trade.height + '>' + data[i].trade.height + '</a>';
+					output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].trade.confirmations + '</td>';
 					output += '<td align=right width=200>' + data[i].trade.dateTime + '</td></tr></table>';
 					
 					output += '<tr><td>';
 					output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 					
-					output += '<b>Action</b></td><td width="290"><b>Seller</b></td><td width="290"><b>Buyer</b></td>';
-					output += '<td width=135><b>Have</b></td><td width=135><b>Want</b></td><td width=135><b>Price</b></td>';
+					output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+									+ Lang.getInstance().translate('Seller') + '</b></td><td width="290"><b>' 
+									+ Lang.getInstance().translate('Buyer') + '</b></td>';
+					output += '<td width=135><b>' + Lang.getInstance().translate('Have') + '</b></td><td width=135><b>' + Lang.getInstance().translate('Want') + '</b></td><td width=135><b>' + Lang.getInstance().translate('Price') + '</b></td>';
 					
 					if (data[i].hasOwnProperty('tXbalance'))
 					{
-						output += '<td width=180><b>Balance</b></td>';
+						output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 					}
 					output += '</tr>';
 						
@@ -1583,7 +1588,7 @@ function mainQuery(data) {
 					
 					output += '<img src=img/asset_trade.png>';
 					
-					output += '<br><font size="-2">Asset Trade</font></td>';
+					output += '<br><font size="-2">' + Lang.getInstance().translate('Asset Trade') + '</font></td>';
 					
 					var img1 = '';
 					var img2 = '';
@@ -1687,11 +1692,11 @@ function mainQuery(data) {
 					
 					output += '<a href=?atTx=' + data[i].atTransaction.blockHeight + ':' + data[i].atTransaction.seq + '>';
 					output += data[i].atTransaction.blockHeight + ':' + data[i].atTransaction.seq + '</a></td>';
-					output += '<td align=right width=250>';
+					output += '<td align=right width=260>';
 					if (data.type != 'block')
 					{
-						output += 'Height: <a href=?block=' + data[i].atTransaction.blockHeight + '>' + data[i].atTransaction.blockHeight + '</a>';
-						output += ' / confirmations: ' + data[i].atTransaction.confirmations;
+						output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].atTransaction.blockHeight + '>' + data[i].atTransaction.blockHeight + '</a>';
+						output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].atTransaction.confirmations;
 					}
 					output += '</td>';
 					output += '<td align=right width=200>' + data[i].atTransaction.dateTime + '</td></tr></table>';
@@ -1700,11 +1705,14 @@ function mainQuery(data) {
 
 					output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-					output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
-					output += '<td><b>Recipient</b></td><td><b>Seq</b></td>';
+					output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+									+ Lang.getInstance().translate('Sender') + '</b></td><td width=200><b>'
+									+ Lang.getInstance().translate('Amount') + '</b></td>';
+					output += '<td><b>' + Lang.getInstance().translate('Recipient') + '</b></td><td><b>'
+										+ Lang.getInstance().translate('Seq') + '</b></td>';
 					if (data[i].hasOwnProperty('tXbalance'))
 					{
-						output += '<td width=180><b>Balance</b></td>';
+						output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 					}
 					output += '</tr>';
 					output += '<tr><td align="center" rowspan=2>';
@@ -1717,7 +1725,7 @@ function mainQuery(data) {
 					{
 						output += '<img src=img/at_tx_in.png>';
 					}
-					output += '<br><font size="-2">Automated Transaction</font></td>';
+					output += '<br><font size="-2">' + Lang.getInstance().translate('Automated Transaction') + '</font></td>';
 					
 					if (isIn(data[i].atTransaction.sender, data.addresses))
 					{
@@ -1735,11 +1743,13 @@ function mainQuery(data) {
 					}
 					else
 					{
-						if (data[i].atTransaction.recipient == '11111111111111111111111111')
+						if (data[i].atTransaction.recipient == '1111111111111111111111111')
 						{
-							output += '<td>11111111111111111111111111<br>';
-							output += '(generator of <a href=?block=' + data[i].atTransaction.blockHeight + '>' +  data[i].atTransaction.blockHeight  + '</a> block: ';
-							output += '<a href=?addr=' + data[i].atTransaction.generatorAddress + '>' + data[i].atTransaction.generatorAddress + '</a>)' ;
+							output += '<td>1111111111111111111111111<br>';
+							
+							output += Lang.getInstance().translate('(generator of <a href=?block=%blockHeight%>%blockHeight%</a> block: <a href=?addr=%generatorAddress%>%generatorAddress%</a>)')
+								.replace(/%blockHeight%/g, data[i].atTransaction.blockHeight)
+								.replace(/%generatorAddress%/g, data[i].atTransaction.generatorAddress);
 						}
 						else
 						{						
@@ -1758,9 +1768,9 @@ function mainQuery(data) {
 					var message = data[i].atTransaction.message;
 					if (message == '')
 					{
-						message = '<b>no</b>';
+						message = '<b>' + Lang.getInstance().translate('No') + '</b>';
 					}
-					output += '<tr><td colspan=3><b>Message:</b> ' + wordwrap(message, 80, '<br>', true);
+					output += '<tr><td colspan=3><b>' + Lang.getInstance().translate('Message') + ':</b> ' + wordwrap(message, 80, '<br>', true);
 					
 					output += '</table>';
 					
@@ -1781,11 +1791,11 @@ function mainQuery(data) {
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
 						
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						output += '</td>';
 						
@@ -1794,22 +1804,24 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
-						output += '<td><b>Recipient</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Sender') + '</b></td><td width=200><b>' 
+										+ Lang.getInstance().translate('Amount') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Recipient') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/01_genesis.jpg>';
-						output += '<br><font size="-2">Genesis</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Genesis') + '</font></td>';
 						
-						output += '<td>Genesis</td>';
+						output += '<td>' + Lang.getInstance().translate('Genesis') + '</td>';
 						
 						output += '<td>' + addCommas(data[i].transaction.amount) + ' <font size="-2">Qora</font>';
-						output += '<br>fee: ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
+						output += '<br>' + Lang.getInstance().translate('Fee') + ': ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
 						
 						if (isIn(data[i].transaction.recipient, data.addresses))
 						{
@@ -1839,11 +1851,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -1855,11 +1867,11 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
-						output += '<td><b>Recipient</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' + Lang.getInstance().translate('Sender') + '</b></td><td width=200><b>' + Lang.getInstance().translate('Amount') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Recipient') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
@@ -1872,7 +1884,7 @@ function mainQuery(data) {
 						{
 							output += '<img src=img/02_payment_in.png>';
 						}
-						output += '<br><font size="-2">Payment</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Payment') + '</font></td>';
 						
 						if (isIn(data[i].transaction.sender, data.addresses))
 						{
@@ -1883,7 +1895,7 @@ function mainQuery(data) {
 							output += '<td><a href=?addr=' + data[i].transaction.sender + '>' + data[i].transaction.sender + '</a></td>';
 						}
 						output += '<td>' + addCommas(data[i].transaction.amount) + ' <font size="-2">Qora</font>';
-						output += '<br>fee: ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
+						output += '<br>' + Lang.getInstance().translate('Fee') + ': ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
 						
 						if (isIn(data[i].transaction.recipient, data.addresses))
 						{
@@ -1911,11 +1923,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -1927,18 +1939,18 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Owner</b></td><td width=100><b>Fee</b></td>';
-						output += '<td><b>Name:</b> <a href="?name=' + encodeURIComponent(data[i].transaction.name) + '">' + htmlFilter(data[i].transaction.name) + '</a></td>';
-						output += '<td><b>Site:</b> <a href=/' + encodeURIComponent(data[i].transaction.name) + '>http://' +  document.location.host + '/' + htmlFilter(data[i].transaction.name)  + '</a></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' + Lang.getInstance().translate('Owner') + '</b></td><td width=100><b>' + Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Name') + ':</b> <a href="?name=' + encodeURIComponent(data[i].transaction.name) + '">' + htmlFilter(data[i].transaction.name) + '</a></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Site') + ':</b> <a href=/' + encodeURIComponent(data[i].transaction.name) + '>http://' +  document.location.host + '/' + htmlFilter(data[i].transaction.name)  + '</a></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/03_name_registration.png>';
-						output += '<br><font size="-2">Name Registration</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Name Registration') + '</font></td>';
 						
 						if (isIn(data[i].transaction.owner, data.addresses))
 						{
@@ -1953,9 +1965,9 @@ function mainQuery(data) {
 						output += '<td colspan=2><b>';
 						if (data[i].transaction.сompressed)
 						{
-							output += 'Compressed';
+							output += Lang.getInstance().translate('Compressed');
 						}
-						output += ' Value:</b><pre style="width: 95%;">' + htmlFilter(wordwrap(data[i].transaction.value, 80, '\n', true)) + '</pre>';
+						output += ' ' + Lang.getInstance().translate('Value') + ':</b><pre style="width: 95%;">' + htmlFilter(wordwrap(data[i].transaction.value, 80, '\n', true)) + '</pre>';
 						
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
@@ -1975,11 +1987,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a> ';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -1991,20 +2003,20 @@ function mainQuery(data) {
 						
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-						output += '<b>Action</b></td><td width="290"><b>New Owner</b></td><td width=100><b>Fee</b></td>';
-						output += '<td><b>Name:</b> <a href="?name=' + encodeURIComponent(data[i].transaction.name) + '">' + htmlFilter(data[i].transaction.name) + '</a></td>';
-						output += '<td><b>Site:</b> <a href=/' + encodeURIComponent(data[i].transaction.name) + '>http://' +  document.location.host + '/' + htmlFilter(data[i].transaction.name)  + '</a></td>';
+						output += '<b>Action</b></td><td width="290"><b>' + Lang.getInstance().translate('New Owner') + '</b></td><td width=100><b>' + Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Name') + ':</b> <a href="?name=' + encodeURIComponent(data[i].transaction.name) + '">' + htmlFilter(data[i].transaction.name) + '</a></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Site') + ':</b> <a href=/' + encodeURIComponent(data[i].transaction.name) + '>http://' +  document.location.host + '/' + htmlFilter(data[i].transaction.name)  + '</a></td>';
 						
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/04_name_update.png>';
-						output += '<br><font size="-2">Name Update</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Name Update') + '</font></td>';
 						
 						if (isIn(data[i].transaction.newOwner, data.addresses))
 						{
@@ -2018,12 +2030,16 @@ function mainQuery(data) {
 						
 						output += '<td>' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font>';
 						
-						output += '<td colspan=2><b>New ';
+						output += '<td colspan=2><b>';
 						if (data[i].transaction.сompressed)
 						{
-							output += 'Compressed';
+							output += Lang.getInstance().translate('New Compressed Value');
 						}
-						output += ' Value:</b><pre style="width: 95%;">' + htmlFilter(wordwrap(data[i].transaction.newValue, 80, '\n', true)) + '</pre>';
+						else
+						{
+							output += Lang.getInstance().translate('New Value');
+						}
+						output += ':</b><pre style="width: 95%;">' + htmlFilter(wordwrap(data[i].transaction.newValue, 80, '\n', true)) + '</pre>';
 						
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
@@ -2044,11 +2060,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2060,17 +2076,19 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Owner</b></td><td width=100><b>Fee</b></td>';
-						output += '<td width=200><b>Price</b></td><td><b>Name</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>'
+										+ Lang.getInstance().translate('Owner') + '</b></td><td width=100><b>' 
+										+ Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<td width=200><b>' + Lang.getInstance().translate('Price') + '</b></td><td><b>' + Lang.getInstance().translate('Name') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/05_name_sale.png>';
-						output += '<br><font size="-2">Name to Sale</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Name Sale') + '</font></td>';
 						
 						if (isIn(data[i].transaction.owner, data.addresses))
 						{
@@ -2104,11 +2122,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2120,17 +2138,19 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-						output += '<b>Action</b></td><td width="290"><b>Owner</b></td><td width=200><b>Fee</b></td>';
-						output += '<td><b>Name</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Owner') + '</b></td><td width=200><b>' 
+										+ Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Name') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/06_cancel_name_sale.png>';
-						output += '<br><font size="-2">Cancel Name Sale</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Cancel Name Sale') + '</font></td>';
 						
 						if (isIn(data[i].transaction.owner, data.addresses))
 						{
@@ -2163,11 +2183,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2179,11 +2199,14 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Seller</b></td><td><b>Name</b></td><td width=200><b>Amount</b></td>';
-						output += '<td><b>Buyer</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Seller') + '</b></td><td><b>' 
+										+ Lang.getInstance().translate('Name') + '</b></td><td width=200><b>' 
+										+ Lang.getInstance().translate('Amount') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Buyer') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
@@ -2191,12 +2214,12 @@ function mainQuery(data) {
 						if (isIn(data[i].transaction.seller, data.addresses))
 						{
 							output += '<img src=img/07_name_purchase_in.png>';
-							output += '<br><font size="-2">Name Selling</font></td>';
+							output += '<br><font size="-2">' + Lang.getInstance().translate('Name Purchase') + '</font></td>';
 						}
 						else
 						{
 							output += '<img src=img/07_name_purchase_out.png>';
-							output += '<br><font size="-2">Name Buying</font></td>';
+							output += '<br><font size="-2">' + Lang.getInstance().translate('Name Purchase') + '</font></td>';
 						}
 						
 						if (isIn(data[i].transaction.seller, data.addresses))
@@ -2211,7 +2234,7 @@ function mainQuery(data) {
 						output += '<td><a href="?name=' + encodeURIComponent(data[i].transaction.name) + '">' + htmlFilter(data[i].transaction.name) + '</a></td>';
 						
 						output += '<td>' + addCommas(data[i].transaction.amount) + ' <font size="-2">Qora</font>';
-						output += '<br>fee: ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
+						output += '<br>' + Lang.getInstance().translate('Fee') + ': ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
 						
 						if (isIn(data[i].transaction.buyer, data.addresses))
 						{
@@ -2240,7 +2263,7 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
 							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
@@ -2256,17 +2279,19 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Creator</b></td><td width=100><b>Fee</b></td>';
-						output += '<td><b>Poll</b></td><td><b>Options</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Creator') + '</b></td><td width=100><b>' 
+										+ Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Poll') + '</b></td><td><b>' + Lang.getInstance().translate('Options') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top" rowspan=2>';
 						
 						output += '<img src=img/08_poll_creation.jpg>';
-						output += '<br><font size="-2">Poll Creation</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Poll Creation') + '</font></td>';
 						
 						if (isIn(data[i].transaction.creator, data.addresses))
 						{
@@ -2308,11 +2333,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2325,17 +2350,17 @@ function mainQuery(data) {
 
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-						output += '<b>Action</b></td><td width="290"><b>Creator</b></td><td width=100><b>Fee</b></td>';
-						output += '<td><b>Poll</b></td><td><b>Option</b></td>';
+						output += '<b>Action</b></td><td width="290"><b>' + Lang.getInstance().translate('Creator') + '</b></td><td width=100><b>' + Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Poll') + '</b></td><td><b>' + Lang.getInstance().translate('Option') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/09_poll_vote.jpg>';
-						output += '<br><font size="-2">Poll Vote</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Poll Vote') + '</font></td>';
 						
 						if (isIn(data[i].transaction.creator, data.addresses))
 						{
@@ -2369,11 +2394,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2385,27 +2410,27 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Creator</b></td><td width=150><b>Fee:</b> ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font>' + '</td>';
-						output += '<td><b>Data Base58</b>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' + Lang.getInstance().translate('Creator') + '</b></td><td width=150><b>' + Lang.getInstance().translate('Fee') + ':</b> ' + addCommas(data[i].transaction.fee) + '</td>';
+						output += '<td><b>' + Lang.getInstance().translate('Data as Base58') + '</b> ';
 						
 						dataText = uintToString(Base58.decode(data[i].transaction.data));
 
 						dataText = dataText.replace(/"/g, '&quot;');
 						
 						output += ' <button class="btn copybtn btn-sm" style="text-transform: capitalize;" data-clipboard-action="copy" data-clipboard-text="'+dataText+'">';
-						output += 'Copy Text';
+						output += Lang.getInstance().translate('Copy Text');
 						output += '</button>';
 						output += '</td>';
 						
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td rowspan=3 align="center" valign="top">';
 						
 						output += '<img src=img/10_arbitrary_transaction.png>';
-						output += '<br><font size="-2">Arbitrary Transaction</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Arbitrary Transaction') + '</font></td>';
 						
 						if (isIn(data[i].transaction.creator, data.addresses))
 						{
@@ -2416,7 +2441,7 @@ function mainQuery(data) {
 							output += '<td><a href=?addr=' + data[i].transaction.creator + '>' + data[i].transaction.creator + '</a></td>';
 						}
 						
-						output += '<td><b>Service:</b> ' + data[i].transaction.service + '</td>';
+						output += '<td><b>' + Lang.getInstance().translate('Service ID') + ':</b> ' + data[i].transaction.service + '</td>';
 						
 						output += '<td rowspan=3><abbr id=datatext title="' + htmlFilter(dataText) + '"><pre>' + wordwrap(data[i].transaction.data, 70, '\n', true) + '</pre></abbr>';
 						
@@ -2430,7 +2455,7 @@ function mainQuery(data) {
 						{
 							amounts = data[i].transaction.amounts;
 
-							output += '<tr><td colspan=2><b>Payments:</b><br>';
+							output += '<tr><td colspan=2><b>' + Lang.getInstance().translate('Payments') + ':</b><br>';
 							payments = data[i].transaction.payments;
 							for(key in payments) {
 								output += addCommas(payments[key].amount) + ' ' + getAssetNameMini(payments[key].asset, 
@@ -2446,7 +2471,7 @@ function mainQuery(data) {
 								output += '<br>';
 							}
 							
-							output += '<tr><td colspan=2 height=99%><b>Amount:</b><br>';
+							output += '<tr><td colspan=2 height=99%><b>' + Lang.getInstance().translate('Amount') + ':</b><br>';
 							
 							for (key in amounts) {
 								output += addCommas(amounts[key]) + ' ' + getAssetNameMini(key, data.assetNames[key]) + '<br>';
@@ -2467,11 +2492,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' + urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2484,8 +2509,8 @@ function mainQuery(data) {
 						
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-						output += '<b>Action</b></td><td width="290"><b>Creator</b></td>';
-						output += '<td width="100"><b>Fee</b></td><td><b>Name:</b> ';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' + Lang.getInstance().translate('Creator') + '</b></td>';
+						output += '<td width="100"><b>' + Lang.getInstance().translate('Fee') + '</b></td><td><b>' + Lang.getInstance().translate('Name') + ':</b> ';
 						
 						if (data[i].transaction.asset!='-1') 
 						{
@@ -2496,16 +2521,16 @@ function mainQuery(data) {
 							output += htmlFilter(data[i].transaction.assetName);
 						}
 						
-						output += '</td><td><b>Key</b><td align=center><b>Quantity</b><td><b>Divisible</b>';
+						output += '</td><td><b>' + Lang.getInstance().translate('Key') + '</b><td align=center><b>' + Lang.getInstance().translate('Quantity') + '</b><td><b>' + Lang.getInstance().translate('Divisible') + '</b>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/11_asset_issue.png>';
-						output += '<br><font size="-2">Asset Issue</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Asset Issue') + '</font></td>';
 						
 						if (isIn(data[i].transaction.creator, data.addresses))
 						{
@@ -2517,7 +2542,7 @@ function mainQuery(data) {
 						}
 						output += '<td>' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
 						
-						output += '<td><b>Description:</b> ' + htmlFilter(data[i].transaction.description) + '</td>';
+						output += '<td><b>' + Lang.getInstance().translate('Description') + ':</b> ' + htmlFilter(data[i].transaction.description) + '</td>';
 						
 						output += '<td align=center>' + data[i].transaction.asset + '</td>';
 						output += '<td align=center>' + addCommas(data[i].transaction.quantity) + '</td>';
@@ -2541,11 +2566,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / '+ Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2557,11 +2582,11 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
-						output += '<td><b>Asset</b></td><td><b>Recipient</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' + Lang.getInstance().translate('Sender') + '</b></td><td width=200><b>' + Lang.getInstance().translate('Amount') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Asset') + '</b></td><td><b>' + Lang.getInstance().translate('Recipient') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
@@ -2575,7 +2600,7 @@ function mainQuery(data) {
 							output += '<img src=img/12_asset_transfer_in.png>';
 						}
 						
-						output += '<br><font size="-2">Asset Transfer</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Asset Transfer') + '</font></td>';
 						
 						if (isIn(data[i].transaction.sender, data.addresses))
 						{
@@ -2588,7 +2613,7 @@ function mainQuery(data) {
 						output += '<td>' + addCommas(data[i].transaction.amount);
 						output += ' ' + getAssetNameMini(data[i].transaction.asset, data.assetNames[data[i].transaction.asset]);
 						
-						output += '<br>fee: ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
+						output += '<br>' + Lang.getInstance().translate('Fee') + ': ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
 						
 						output += '<td>' + ' <a href=?asset=' + data[i].transaction.asset + '>' + getAssetName(data[i].transaction.asset, data.assetNames[data[i].transaction.asset]) + '</a>';
 						
@@ -2619,11 +2644,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2635,18 +2660,20 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Сreator</b></td><td width=100><b>Fee</b></td>';
-						output += '<td width=135><b>Have</b></td><td width=135><b>Want</b></td>';
-						output += '<td width=135><b>Price</b></td><td width=135><b>Amount</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Creator') + '</b></td><td width=100><b>'
+										+ Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<td width=135><b>' + Lang.getInstance().translate('Have') + '</b></td><td width=135><b>' + Lang.getInstance().translate('Want') + '</b></td>';
+						output += '<td width=135><b>' + Lang.getInstance().translate('Price') + '</b></td><td width=135><b>' + Lang.getInstance().translate('Amount') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/13_order_creation.png>';
-						output += '<br><font size="-2">Order Creation</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Order Creation') + '</font></td>';
 						
 						if (isIn(data[i].transaction.creator, data.addresses))
 						{
@@ -2690,11 +2717,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2706,18 +2733,21 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Сreator</b></td><td width=100><b>Fee</b></td>';
-						output += '<td width=135><b>Have</b></td><td width=135><b>Want</b></td>';
-						output += '<td width=135><b>Price</b></td><td width=135><b>Amount<font size=-2> left from <a href=?order=' + data[i].transaction.order + '>order</a></b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Сreator') + '</b></td><td width=100><b>'
+										+ Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<td width=135><b>' + Lang.getInstance().translate('Have') + '</b></td><td width=135><b>'
+													+ Lang.getInstance().translate('Want') + '</b></td>';
+						output += '<td width=135><b>' + Lang.getInstance().translate('Price') + '</b></td><td width=135><b>' + Lang.getInstance().translate("Amount <font size=-2> left from <a href=?order=%order%>order</a></font>").replace("%order%", data[i].transaction.order) + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
 						
 						output += '<img src=img/14_cancel_order.png>';
-						output += '<br><font size="-2">Cancel Order</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Cancel Order') + '</font></td>';
 						
 						if (isIn(data[i].transaction.creator, data.addresses))
 						{
@@ -2761,11 +2791,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2777,11 +2807,13 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
-						output += '<td><b>Recipient</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Sender') + '</b></td><td width=200><b>' 
+										+ Lang.getInstance().translate('Amount') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Recipients') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top">';
@@ -2794,7 +2826,7 @@ function mainQuery(data) {
 						{
 							output += '<img src=img/15_multi_payment_in.png>';
 						}
-						output += '<br><font size="-2">Multi Payment</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Multi Payment') + '</font></td>';
 						
 						if (isIn(data[i].transaction.sender, data.addresses))
 						{
@@ -2812,7 +2844,7 @@ function mainQuery(data) {
 							output += addCommas(amounts[key]) + ' ' + getAssetNameMini(key, data.assetNames[key]) + '<br>';
 						}
 						
-						output += 'fee: ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
+						output += Lang.getInstance().translate('Fee') + ': ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
 
 						output += '<td>';
 						payments = data[i].transaction.payments;
@@ -2850,11 +2882,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2866,18 +2898,20 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Creator</b></td><td width=200><b>Amount</b></td>';
-						output += '<td><b>Values';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Creator') + '</b></td><td width=200><b>' 
+										+ Lang.getInstance().translate('Amount') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Values');
 						
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top" rowspan=2>';
 						
 						output += '<img src=img/16_deploy_at.png>';
-						output += '<br><font size="-2">Deploy AT</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Deploy AT') + '</font></td>';
 						
 						if (isIn(data[i].transaction.creator, data.addresses))
 						{
@@ -2888,20 +2922,20 @@ function mainQuery(data) {
 							output += '<td><a href=?addr=' + data[i].transaction.creator + '>' + data[i].transaction.creator + '</a></td>';
 						}
 						output += '<td>' + addCommas(data[i].transaction.amount) + ' <font size="-2">Qora</font>';
-						output += '<br>fee: ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
+						output += '<br>' + Lang.getInstance().translate('Fee') + ': ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
 						
 						output += '<td><b>Name: </b>' + data[i].transaction.name;
 						if (isIn(data[i].transaction.atAddress, data.addresses))
 						{
-							output += '<br><b>AT Account: </b> <font color="dimgray">' + data[i].transaction.atAddress + '</font>';
+							output += '<br><b>' + Lang.getInstance().translate('AT Account') + ': </b> <font color="dimgray">' + data[i].transaction.atAddress + '</font>';
 						}
 						else
 						{
-							output += '<br><b>AT Account: </b><a href=?addr=' + data[i].transaction.atAddress + '>' + data[i].transaction.atAddress + '</a>';
+							output += '<br><b>' + Lang.getInstance().translate('AT Account') + ': </b><a href=?addr=' + data[i].transaction.atAddress + '>' + data[i].transaction.atAddress + '</a>';
 						}
-						output += '<br><b>AT Type:</b> ' + data[i].transaction.atType;
-						output += '<br><b>Description:</b> ' + data[i].transaction.description;
-						output += '<br><b>Tags:</b> ' + data[i].transaction.tags;
+						output += '<br><b>' + Lang.getInstance().translate('AT Type:') + '</b> ' + data[i].transaction.atType;
+						output += '<br><b>' + Lang.getInstance().translate('Description:') + '</b> ' + data[i].transaction.description;
+						output += '<br><b>' + Lang.getInstance().translate('Tags:') + '</b> ' + data[i].transaction.tags;
 						output += '</td>';
 						
 						
@@ -2912,7 +2946,7 @@ function mainQuery(data) {
 						output += '</tr>';
 						
 						
-						output += '<tr><td colspan=3><b>Creation Bytes:</b><pre>' + wordwrap(data[i].transaction.creationBytes, 138, '\n', true);
+						output += '<tr><td colspan=3><b>' + Lang.getInstance().translate('Creation Bytes') + ':</b><pre>' + wordwrap(data[i].transaction.creationBytes, 138, '\n', true);
 						
 						output += '</tr></table>';
 						
@@ -2928,11 +2962,11 @@ function mainQuery(data) {
 						output += '<tr><td><a href=' +  urlstart + '#' + i + '>#' + i + '</a>&nbsp;&nbsp;';
 						
 						output += '<a href=?tx=' + data[i].transaction.signature + '>' + data[i].transaction.signature + '</a></td>';
-						output += '<td align=right width=250>';
+						output += '<td align=right width=260>';
 						if (data[i].transaction.hasOwnProperty('blockHeight'))
 						{
-							output += 'Height: <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
-							output += ' / confirmations: ' + data[i].transaction.confirmations;
+							output += Lang.getInstance().translate('Height') + ': <a href=?block=' + data[i].transaction.blockHeight + '>' + data[i].transaction.blockHeight + '</a>';
+							output += ' / ' + Lang.getInstance().translate('confirmations') + ': ' + data[i].transaction.confirmations;
 						}
 						else
 						{
@@ -2944,11 +2978,15 @@ function mainQuery(data) {
 						output += '<tr><td>';
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 
-						output += '<b>Action</b></td><td width="290"><b>Sender</b></td><td width=200><b>Amount</b></td>';
-						output += '<td><b>Recipient</b></td><td><b>isText</b></td><td><b>Encrypted</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' 
+										+ Lang.getInstance().translate('Sender') + '</b></td><td width=200><b>' 
+										+ Lang.getInstance().translate('Amount') + '</b></td>';
+						output += '<td><b>' + Lang.getInstance().translate('Recipient') + '</b></td><td><b>' 
+											+ Lang.getInstance().translate('isText') + '</b></td><td><b>' 
+											+ Lang.getInstance().translate('Encrypted') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
-							output += '<td width=180><b>Balance</b></td>';
+							output += '<td width=180><b>' + Lang.getInstance().translate('Balance') + '</b></td>';
 						}
 						output += '</tr>';
 						output += '<tr><td align="center" valign="top" rowspan=2>';
@@ -2962,7 +3000,7 @@ function mainQuery(data) {
 							output += '<img src=img/17_message_in.png>';
 						
 						}
-						output += '<br><font size="-2">Message</font></td>';
+						output += '<br><font size="-2">' + Lang.getInstance().translate('Message') + '</font></td>';
 							
 						if (isIn(data[i].transaction.creator, data.addresses))
 						{
@@ -2984,7 +3022,7 @@ function mainQuery(data) {
 							output += ' <font size="-2">Qora</font>'
 						}
 						
-						output += '<br>fee: ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
+						output += '<br>' + Lang.getInstance().translate('Fee') + ': ' + addCommas(data[i].transaction.fee) + ' <font size="-2">Qora</font></td>';
 						
 						if (isIn(data[i].transaction.recipient, data.addresses))
 						{
@@ -3004,7 +3042,7 @@ function mainQuery(data) {
 						}
 						output += '</tr>';
 						
-						output += '<tr><td colspan=5><b>Message:</b> <pre>';
+						output += '<tr><td colspan=5><b>' + Lang.getInstance().translate('Message') + ':</b> <pre>';
 						
 						if (!data[i].transaction.isText)
 						{
@@ -3013,7 +3051,7 @@ function mainQuery(data) {
 						
 						if (data[i].transaction.encrypted)
 						{
-							output += '<font color=red>encrypted</font>';
+							output += '<font color=red>' + Lang.getInstance().translate('Encrypted') + '</font>';
 						}
 						else
 						{

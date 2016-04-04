@@ -772,7 +772,9 @@ public class Block {
 		db.getBlockMap().add(this);
 
 		//UPDATE LAST BLOCK
-		db.getBlockMap().setLastBlock(this);	
+		db.getBlockMap().setLastBlock(this);
+		
+		System.out.println("Process Block " + height);
 	}
 
 	public void orphan()

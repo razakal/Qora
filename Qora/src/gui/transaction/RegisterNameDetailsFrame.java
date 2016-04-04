@@ -169,7 +169,7 @@ public class RegisterNameDetailsFrame extends JFrame
       	      	
       	//LABEL COMPRESSED
       	labelGBC.gridy = 8;
-      	JLabel compressedLabel = new JLabel(Lang.getInstance().translate("Compressed:"));
+      	JLabel compressedLabel = new JLabel(Lang.getInstance().translate("Compressed") + ":");
       	this.add(compressedLabel, labelGBC);
       		
   		//COMPRESSED

@@ -136,7 +136,7 @@ public class CreatePollFrame extends JFrame
         
       	//LABEL OPTIONS
       	labelGBC.gridy = 3;
-      	JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Options:"));
+      	JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Options")+ ":");
       	this.add(optionsLabel, labelGBC);
       	
       	//TABLE OPTIONS

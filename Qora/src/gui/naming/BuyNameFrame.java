@@ -110,7 +110,7 @@ public class BuyNameFrame extends JFrame
         
         //LABEL BUYER
       	labelGBC.gridy = 2;
-      	JLabel ownerLabel = new JLabel(Lang.getInstance().translate("Buyer:"));
+      	JLabel ownerLabel = new JLabel(Lang.getInstance().translate("Buyer") + ":");
       	this.add(ownerLabel, labelGBC);
       		
       	//CBX BUYER

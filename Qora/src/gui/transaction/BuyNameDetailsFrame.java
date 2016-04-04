@@ -108,7 +108,7 @@ public class BuyNameDetailsFrame extends JFrame
 		
 		//LABEL SELLER
 		labelGBC.gridy = 4;
-		JLabel sellerLabel = new JLabel(Lang.getInstance().translate("Seller:"));
+		JLabel sellerLabel = new JLabel(Lang.getInstance().translate("Seller") + ":");
 		this.add(sellerLabel, labelGBC);
 		
 		//SELLER
@@ -120,7 +120,7 @@ public class BuyNameDetailsFrame extends JFrame
 		
 		//LABEL BUYER
 		labelGBC.gridy = 5;
-		JLabel buyerLabel = new JLabel(Lang.getInstance().translate("Buyer:"));
+		JLabel buyerLabel = new JLabel(Lang.getInstance().translate("Buyer") + ":");
 		this.add(buyerLabel, labelGBC);
 		
 		//BUYER

@@ -137,7 +137,7 @@ public class VoteFrame extends JFrame
 		assetsGBC.gridx = 1;
 		assetsGBC.gridy = 3;
 		
-		this.add(new JLabel(Lang.getInstance().translate("Asset:")), assetLabelGBC);
+		this.add(new JLabel(Lang.getInstance().translate("Asset") + ":"), assetLabelGBC);
 		
 		cbxAssets = new JComboBox<Asset>(new AssetsAllComboBoxModel());
 		cbxAssets.setSelectedItem(asset);
@@ -172,7 +172,7 @@ public class VoteFrame extends JFrame
 		
       	//LABEL OPTIONS
       	labelGBC.gridy = 5;
-      	JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Option:"));
+      	JLabel optionsLabel = new JLabel(Lang.getInstance().translate("Option") + ":");
       	this.add(optionsLabel, labelGBC);
       		
       	//CBX ACCOUNT

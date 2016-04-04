@@ -98,7 +98,7 @@ public class PayDividendFrame extends JFrame
 		
 		//LABEL ASSET
 		labelGBC.gridy = 0;
-		JLabel assetLabel = new JLabel(Lang.getInstance().translate("Asset:"));
+		JLabel assetLabel = new JLabel(Lang.getInstance().translate("Asset") + ":");
 		this.add(assetLabel, labelGBC);
 		
 		//TXT ASSET

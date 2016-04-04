@@ -215,7 +215,7 @@ public class SendMessagePanel extends JPanel
       	labelMessageGBC.gridx = 0;
       	labelMessageGBC.gridy = 4;
       	
-      	messageLabel = new JLabel(Lang.getInstance().translate("Message:"));
+      	messageLabel = new JLabel(Lang.getInstance().translate("Message") + ":");
       	
 		//TXT MESSAGE
 		GridBagConstraints txtMessageGBC = new GridBagConstraints();
@@ -422,7 +422,7 @@ public class SendMessagePanel extends JPanel
 		service.scheduleWithFixedDelay(	new Runnable() { 
 			public void run() {
 				
-				messageLabel.setText("<html>" + Lang.getInstance().translate("Message:") + "<br>("+ txtMessage.getText().length()+"/4000)</html>");
+				messageLabel.setText("<html>" + Lang.getInstance().translate("Message") + ":<br>("+ txtMessage.getText().length()+"/4000)</html>");
 				
 			}}, 0, 500, TimeUnit.MILLISECONDS);
 	}
