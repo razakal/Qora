@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.StringUtil;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -60,6 +61,8 @@ import api.NameStorageResource;
 import controller.Controller;
 import database.DBSet;
 import database.NameMap;
+import lang.Lang;
+import lang.LangFile;
 import qora.account.Account;
 import qora.account.PrivateKeyAccount;
 import qora.blockexplorer.BlockExplorer;
@@ -2476,6 +2479,18 @@ public class WebResource {
 		}
 	}
 
+	@Path("/index/libs/third-party/jquery.cookie.js")
+	@GET
+	public Response getjquerycookiejs() {
+		File file = new File("web/libs/js/third-party/jquery.cookie.js");
+
+		if (file.exists()) {
+			return Response.ok(file, "text/javascript").build();
+		} else {
+			return error404(request, null);
+		}
+	}
+
 	@Path("/index/libs/third-party/jquery.form.min.js")
 	@GET
 	public Response getFormMin() {
@@ -2487,7 +2502,7 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-
+	
 	@Path("index/libs/jquery/jquery.{version}.js")
 	@GET
 	public Response jquery(@PathParam("version") String version) {
@@ -3020,12 +3035,45 @@ public class WebResource {
 			return error404(request, null);
 		}
 	}
-	
-	@Path("index/translation.json")
+
+	@SuppressWarnings("unchecked")
+	@Path("index/translation/available.json")
 	@GET
-	public Response translationjson() {
+	public Response availabletranslationsjson() {
+
+		JSONArray langlist = new JSONArray();
+		for (LangFile langFile : Lang.getInstance().getLangListAvailable()) {
+			JSONObject lang = new JSONObject();
+			lang.put("file", langFile.getFileName());
+			lang.put("name", langFile.getName());
+			lang.put("selected", langFile.getFileName().equals(Settings.getInstance().getLang()));
+			langlist.add(lang);
+		}
+
+		return Response.status(200)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.entity(StrJSonFine.convert(langlist))
+				.build();
+	}
+	
+	@Path("index/translation/{filename}")
+	@GET
+	public Response translationjson(@PathParam("filename") String filename) {
+
+		if(filename.equals("en.json"))
+		{
+			return Response.status(200)
+					.header("Content-Type", "application/json; charset=utf-8")
+					.entity("{}")
+					.build();
+		}
 		
-		File file = new File("languages/" + Settings.getInstance().getLang());
+		if( !Lang.getInstance().getFileListAvailable().contains(filename) )
+		{
+			filename = Settings.getInstance().getLang();
+		}
+		
+		File file = new File("languages/" + filename);
 		
 		if (file.exists()) {
 			return Response.ok(file, "application/json").build();

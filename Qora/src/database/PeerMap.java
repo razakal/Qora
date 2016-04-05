@@ -25,6 +25,8 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.UnsignedBytes;
 
+import lang.Lang;
+
 public class PeerMap extends DBMap<byte[], byte[]> 
 {
 	private static final byte[] BYTE_WHITELISTED = new byte[]{0, 0};
@@ -304,13 +306,13 @@ public class PeerMap extends DBMap<byte[], byte[]>
 			}
 			
 			if(allFromSettings) {
-				LOGGER.info("Peers loaded from database : " + peers.size());
+				LOGGER.info(Lang.getInstance().translate("Peers loaded from database : %peers%").replace("%peers%", String.valueOf(peers.size())));
 			}
 
 			List<Peer> knownPeers = Settings.getInstance().getKnownPeers();
 			
 			if(allFromSettings) {
-				LOGGER.info("Peers loaded from settings : " + knownPeers.size());
+				LOGGER.info(Lang.getInstance().translate("Peers loaded from settings : %peers%").replace("%peers%", String.valueOf(knownPeers.size())));
 			}
 				
 			for (Peer knownPeer : knownPeers) {

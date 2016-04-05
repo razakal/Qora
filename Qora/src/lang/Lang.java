@@ -132,9 +132,35 @@ public class Lang {
 		return langJsonObject;
 	}
 
-	public List<LangFile> getListOfAvailable()
+	public List<LangFile> getLangListAvailable()
 	{
 		List<LangFile> lngList = new ArrayList<>();
+
+		List<String> fileList = getFileListAvailable();
+		
+		lngList.add( new LangFile() );
+
+        for(int i=0; i<fileList.size(); i++)           
+        {
+        	if(!fileList.get(i).equals("en.json"))
+        	{
+        		try {
+        			JSONObject langFile = openLangFile(fileList.get(i));
+        			String lang_name = (String)langFile.get("_lang_name_");
+        			long time_of_translation = ((Long)langFile.get("_timestamp_of_translation_")).longValue();
+        			lngList.add( new LangFile( lang_name, fileList.get(i), time_of_translation) );
+        		} catch (Exception e) {
+        			LOGGER.error(e.getMessage(),e);
+        		}
+        	}
+        }
+        
+        return lngList;
+	}
+	
+	public List<String> getFileListAvailable()
+	{
+		List<String> lngFileList = new ArrayList<>();
 		
 		File[] fileList;        
         File dir = new File(Settings.getInstance().getLangDir());
@@ -145,25 +171,15 @@ public class Lang {
         
         fileList = dir.listFiles();
         
-		lngList.add( new LangFile() );
-
+        lngFileList.add("en.json");
+        
         for(int i=0; i<fileList.length; i++)           
         {
         	if(fileList[i].isFile() && fileList[i].getName().endsWith(".json")) {
-        		try {
-        			JSONObject langFile = openLangFile(fileList[i].getName());
-        			String lang_name = (String)langFile.get("_lang_name_");
-        			long time_of_translation = ((Long)langFile.get("_timestamp_of_translation_")).longValue();
-        			lngList.add( new LangFile( lang_name, fileList[i].getName(), time_of_translation) );
-        		} catch (Exception e) {
-        			LOGGER.error(e.getMessage(),e);
-        		}
+        		lngFileList.add(fileList[i].getName());
         	}
         }
         
-        return lngList;
+        return lngFileList;
 	}
-	
-	
-	
 }

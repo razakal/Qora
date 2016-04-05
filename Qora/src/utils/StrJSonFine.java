@@ -3,12 +3,17 @@ package utils;
 import java.io.StringWriter;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class StrJSonFine{
 
     public static String convert(JSONObject json) {
+    	return convert(json.toJSONString());
+    }
+    
+    public static String convert(JSONArray json) {
     	return convert(json.toJSONString());
     }
     

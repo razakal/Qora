@@ -103,7 +103,7 @@ public class SellOrdersTableModel extends QoraTableModel<BigInteger, Order> impl
 			case COLUMN_PRICE:
 				
 				if(row == this.orders.size())
-					return "<html>"+Lang.getInstance().translate("Total:")+"</html>";
+					return "<html>"+Lang.getInstance().translate("Total")+":</html>";
 				
 				return NumberAsString.getInstance().numberAsString(order.getPrice());
 			

@@ -35,7 +35,7 @@ public class AssetPairSelectTableModel extends AbstractTableModel implements Obs
 			.getLogger(AssetPairSelectTableModel.class);
 	
 	public long key;
-	private String[] columnNames = {Lang.getInstance().translate("Key"), Lang.getInstance().translate("Name"), Lang.getInstance().translate("<html>Orders<br>Count</html>"), Lang.getInstance().translate("Orders Volume"), Lang.getInstance().translate("<html>Trades<br>Count</html>"), Lang.getInstance().translate("Trades Volume")};
+	private String[] columnNames = {Lang.getInstance().translate("Key"), Lang.getInstance().translate("Name"), "<html>" + Lang.getInstance().translate("Orders<br>Count") + "</html>", Lang.getInstance().translate("Orders Volume"), "<html>" + Lang.getInstance().translate("Trades<br>Count") + "</html>", Lang.getInstance().translate("Trades Volume")};
 	public List<Asset> assets;
 	Map<Long, Tuple6<Integer, Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> all; 
 	

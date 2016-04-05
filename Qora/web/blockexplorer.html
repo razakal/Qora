@@ -4,6 +4,7 @@
 	<title>Qora BlockExplorer</title>
 	<link href="/index/libs/bootstrap/3/css/theme.css" rel="stylesheet">
     <script src="/index/libs/jquery/jquery.2.js"></script>
+    <script src="/index/libs/third-party/jquery.cookie.js"></script>
 	<script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
 	<link href="/index/libs/css/style.css" rel="stylesheet">
 	<script src="/index/libs/js/sidebar.js"></script>
@@ -678,7 +679,7 @@ function asset(data)
 	
 	output += '<table width="1280" border=0><tr><td align=left><br>';
 	
-	output += '<a href="?assets"><h3 style="display:inline;">Assets</h3></a>';
+	output += '<a href="?assets"><h3 style="display:inline;">' + Lang.getInstance().translate('Assets') + '</h3></a>';
 	
 	output += '<h3 style="display:inline;"> | </h3>';
 	
@@ -687,24 +688,24 @@ function asset(data)
 	
 	output += '<br><br>';
 	
-	output += '<b>Key:</b> ' + data.asset.this.key;
+	output += '<b>' + Lang.getInstance().translate('Key') + ':</b> ' + data.asset.this.key;
 	
 	output += '<br><br>';
 	
-	output += '<b>Owner:</b> <a href=?addr=' + data.asset.this.owner + '>' + data.asset.this.owner + '</a>';
+	output += '<b>' + Lang.getInstance().translate('Owner') + ':</b> <a href=?addr=' + data.asset.this.owner + '>' + data.asset.this.owner + '</a>';
 	
 	output += '<br><br>';
 	
 	
-	output += '<b>Description:</b> ' + htmlFilter(wordwrap(data.asset.this.description, 80, '\n', true));
+	output += '<b>' + Lang.getInstance().translate('Description') + ':</b> ' + htmlFilter(wordwrap(data.asset.this.description, 80, '\n', true));
 	
 	output += '<br><br>';
 	
-	output += '<b>Divisible:</b> ' + data.asset.this.isDivisible;
+	output += '<b>' + Lang.getInstance().translate('Divisible') + ':</b> ' + data.asset.this.isDivisible;
 		
 	output += '<br><br>';
 	
-	output += '<b>Quantity:</b> ' + addCommas(data.asset.this.quantity) + ' ' + getAssetNameMini(data.asset.this.key, data.asset.this.name);	
+	output += '<b>' + Lang.getInstance().translate('Quantity') + ':</b> ' + addCommas(data.asset.this.quantity) + ' ' + getAssetNameMini(data.asset.this.key, data.asset.this.name);	
 	
 	output += '<br><br>';
 	
@@ -717,17 +718,17 @@ function asset(data)
 		assetUrl = '';
 	}	
 	
-	output += '<b>Holders:</b> <a href=?top=allnotzero' + assetUrl + '>View</a>';
+	output += '<b>' + Lang.getInstance().translate('Holders') + ':</b> <a href=?top=allnotzero' + assetUrl + '>' + Lang.getInstance().translate('View') + '</a>';
 		
 	output += '<br><br>';
 	
-	output += '<h3>Available pairs</h3>';
+	output += '<h3>' + Lang.getInstance().translate('Available pairs') + '</h3>';
 	
 	output += '<table border="0" cellspacing="10" class="table table-striped" style="border: 1px solid #ddd;"><tr>';
-	output += '<td><b>Pair</b></td><td><b>Orders<br>Count</b></td>';
-	output += '<td><b>Open Orders Volume</b></td>';
-	output += '<td><b>Trades<br>Count</b></td><td><b>Trades Volume</b></td>';
-	output += '<td><b>Description</b></td></tr>';
+	output += '<td><b>' + Lang.getInstance().translate('Pair') + '</b></td><td nowrap><b>' + Lang.getInstance().translate('Orders<br>Count') + '</b></td>';
+	output += '<td><b>' + Lang.getInstance().translate('Open Orders Volume') + '</b></td>';
+	output += '<td nowrap><b>' + Lang.getInstance().translate('Trades<br>Count') + '</b></td><td><b>' + Lang.getInstance().translate('Trades Volume') + '</b></td>';
+	output += '<td><b>' + Lang.getInstance().translate('Description') + '</b></td></tr>';
 	
 	for(key in data.asset.pairs) {
 		output += '<tr>';
@@ -798,7 +799,7 @@ function trades(data)
 	
 	output += '<table width="1180" border=0><tr><td align=left><br>';
 	
-	output += '<a href="?assets"><h3 style="display:inline;">Assets</h3></a>';
+	output += '<a href="?assets"><h3 style="display:inline;">' + Lang.getInstance().translate('Assets') + '</h3></a>';
 	
 	output += '<h3 style="display:inline;"> | </h3>';
 	
@@ -809,9 +810,9 @@ function trades(data)
 	output += '<br><br>';
 	
 	output += '<table border="0" cellspacing="10"><tr valign="top"><td width="600">';
-	output += '<h4>Sell Orders</h4></td><td width="10">&nbsp;<td width="600"><h4>Buy Orders</h4></td></tr>';
+	output += '<h4>' + Lang.getInstance().translate('Sell Orders') + '</h4></td><td width="10">&nbsp;<td width="600"><h4>' + Lang.getInstance().translate('Buy Orders') + '</h4></td></tr>';
 	output += '<tr valign="top"><td width="600"><table border="0" cellspacing="3" cellpadding="5" class="table table-striped" style="border: 1px solid #ddd;">';
-	output += '<tr bgcolor="e0e0e0"><td><b>tx<td width="190"><b>Price</b></td><td width="190"><b>Amount</b></td><td width="190"><b>Total</b></td></tr>';
+	output += '<tr bgcolor="e0e0e0"><td><b>tx<td width="190"><b>' + Lang.getInstance().translate('Price') + '</b></td><td width="190"><b>' + Lang.getInstance().translate('Amount') + '</b></td><td width="190"><b>' + Lang.getInstance().translate('Total') + '</b></td></tr>';
 	
 	for(key in data.sells) {
 	
@@ -828,13 +829,13 @@ function trades(data)
 	
 	output += '<tr bgcolor="#f9f9f9">';
 	
-	output += '<td colspan=2><b>Total:<td>' + addCommas(data.sellsSumAmountGood) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+	output += '<td colspan=2><b>' + Lang.getInstance().translate('Total') + ':<td>' + addCommas(data.sellsSumAmountGood) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
 	output += '<td>' + addCommas(data.sellsSumTotalGood) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
 	
 	output += '</table>';
 	
 	output += '<td width="10">&nbsp;<td width="600"><table border="0" cellspacing="3" cellpadding="5" class="table table-striped" style="border: 1px solid #ddd;">';
-	output += '<tr bgcolor="e0e0e0"><td><b>tx<td width="190"><b>Price</b></td><td width="190"><b>Amount</b></td><td width="190"><b>Total</b></td></tr>';
+	output += '<tr bgcolor="e0e0e0"><td><b>tx<td width="190"><b>' + Lang.getInstance().translate('Price') + '</b></td><td width="190"><b>' + Lang.getInstance().translate('Amount') + '</b></td><td width="190"><b>' + Lang.getInstance().translate('Total') + '</b></td></tr>';
 	
 	for(key in data.buys) {
 		
@@ -851,18 +852,18 @@ function trades(data)
 
 	output += '<tr bgcolor="#f9f9f9">';
 	
-	output += '<td colspan=2><b>Total:<td>' + addCommas(data.buysSumAmountGood) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+	output += '<td colspan=2><b>' + Lang.getInstance().translate('Total') + ':<td>' + addCommas(data.buysSumAmountGood) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
 	output += '<td>' + addCommas(data.buysSumTotalGood) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
 	
 	output += '</table>';
 	
 	output += '<tr><td colspan=3 width="100%" align=center>';
 	
-	output += '<h4 style="text-align: left;">Trade History</h4>';
+	output += '<h4 style="text-align: left;">' + Lang.getInstance().translate('Trade History') + '</h4>';
 	
 	output += '<table border="0" cellspacing="3" cellpadding="5" width="100%" class="table table-striped" style="border: 1px solid #ddd;">';
-	output += '<tr bgcolor="e0e0e0"><td align=center><b>tx<td align=center><b>Timestamp<td align=center><b>Type</b></td>';
-	output += '<td align=right><b><a href=?asset=' + data.assetHave + '>' + getAssetName2(data.assetHave, data.assetHaveName) + '</b></td><td align=center><b>Price</b></td>';
+	output += '<tr bgcolor="e0e0e0"><td align=center><b>tx<td align=center><b>' + Lang.getInstance().translate('Timestamp') + '<td align=center><b>' + Lang.getInstance().translate('Type') + '</b></td>';
+	output += '<td align=right><b><a href=?asset=' + data.assetHave + '>' + getAssetName2(data.assetHave, data.assetHaveName) + '</b></td><td align=center><b>' + Lang.getInstance().translate('Price') + '</b></td>';
 	
 	output += '<td><b><a href=?asset=' + data.assetWant + '>' + getAssetName2(data.assetWant, data.assetWantName) + '</b></td></tr>';
 	
@@ -961,10 +962,10 @@ function trades(data)
 	
 	output += '</table>';
 	
-	output += '<b>Trade Volume:</b>&nbsp;&nbsp;&nbsp;&nbsp;' + addCommas(data.tradeHaveAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
+	output += '<b>' + Lang.getInstance().translate('Trades Volume') + ':</b>&nbsp;&nbsp;&nbsp;&nbsp;' + addCommas(data.tradeHaveAmount) + ' ' + getAssetNameMini(data.assetHave, data.assetHaveName);
 	output += '&nbsp;&nbsp;&nbsp;&nbsp;' + addCommas(data.tradeWantAmount) + ' ' + getAssetNameMini(data.assetWant, data.assetWantName);
 	
-	output += '<br><br><b>Go To: <a href=?asset=' + data.assetHave + '>' + getAssetName2(data.assetHave, data.assetHaveName) + '</a>';
+	output += '<br><br><b>' + Lang.getInstance().translate('Go To') + ': <a href=?asset=' + data.assetHave + '>' + getAssetName2(data.assetHave, data.assetHaveName) + '</a>';
 	output += '&nbsp;&nbsp;<a href=?asset=' + data.assetWant + '>' + getAssetName2(data.assetWant, data.assetWantName) + '</a>';
 	output += '&nbsp;&nbsp;<a href=?asset=' + data.assetWant + '&asset=' + data.assetHave + '>' +  getAssetName2(data.assetWant, data.assetWantName) + '/' + getAssetName2(data.assetHave, data.assetHaveName);
 	output += '</b>';
@@ -3732,9 +3733,16 @@ function start() {
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a id=home href=''>BlockExplorer</a></li>
+
+			<li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" onclick="Lang.loadLangList()" class="dropdown-toggle"><span class="glyphicon glyphicon-globe"></span></a>
+				<div role="menu" class="dropdown-menu" id=langList>
+				123
+				</div>
+			</li>
 			
 			<li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="glyphicon glyphicon-th"></span></a>
-          <div role="menu" class="dropdown-menu">
+
+			<div role="menu" class="dropdown-menu">
             <div class="menu-grid">
               <div class="list">
                 <div class="row">

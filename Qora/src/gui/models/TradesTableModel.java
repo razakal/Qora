@@ -126,7 +126,7 @@ public class TradesTableModel extends QoraTableModel<Tuple2<BigInteger, BigInteg
 			case COLUMN_TIMESTAMP:
 				
 				if(row == this.trades.size())
-					return "<html>"+Lang.getInstance().translate("Total:")+"</html>";
+					return "<html>"+Lang.getInstance().translate("Total")+":</html>";
 				
 				return DateTimeFormat.timestamptoString(trade.getTimestamp());
 				

@@ -131,13 +131,13 @@ public class ExchangeFrame extends JFrame
 		//CREATE SELL ORDERS LABEL
 		labelGBC.gridx = 0;
 		labelGBC.gridy = 3;
-		JLabel lblSellOrders = new JLabel(Lang.getInstance().translate("Sell orders"));
+		JLabel lblSellOrders = new JLabel(Lang.getInstance().translate("Sell Orders"));
 		lblSellOrders.setFont(new Font("Serif", Font.PLAIN, 18));
 		this.add(lblSellOrders, labelGBC);
 		
 		//CREATE BUY ORDERS LABEL
 		labelGBC.gridx = 1;
-		JLabel lblBuyOrders = new JLabel(Lang.getInstance().translate("Buy orders"));
+		JLabel lblBuyOrders = new JLabel(Lang.getInstance().translate("Buy Orders"));
 		lblBuyOrders.setFont(new Font("Serif", Font.PLAIN, 18));
 		this.add(lblBuyOrders, labelGBC);
 						

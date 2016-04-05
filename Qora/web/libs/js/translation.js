@@ -4,7 +4,16 @@ Lang = (function(){
 var instance;
 
 function constructor() { // normal singlton goes here
-		var langObj = getResponseJson('translation.json');
+		
+		var langName = $.cookie('lang');
+		
+		if( !langName )
+		{
+			langName = 'default';
+		}
+		
+		var langObj = getResponseJson('translation/' + langName);
+		
 		return { 
 			translateByClass : function() {
 				var x = document.getElementsByClassName("translate");
@@ -67,6 +76,32 @@ return {
 			instance = constructor();
 		}
 		return instance;
+	},
+	freeInstance : function(){
+		instance = null;
+	},
+	setLang : function(langname){
+		$.cookie('lang', langname);
+		instance = null;
+	},
+	loadLangList : function() {
+		var langList = getResponseJson('translation/available.json');
+		
+		var langListText = '<div>';
+		for(key in langList)
+		{
+			if((!$.cookie('lang') && langList[key]['selected']) || ($.cookie('lang') == langList[key]['file']))
+			{
+				langListText += '<div style="padding-left: 10px;background-color: #6467FF; color: #ffffff;">[' + langList[key]['file'].replace(/\.[^.]+$/, "") +'] ' + langList[key]['name'] + '</div>';			
+			}
+			else
+			{
+				langListText += '<a href="" onclick="Lang.setLang(\'' + langList[key]['file'] + '\')"><div style="padding-left: 10px;">' + '[' + langList[key]['file'].replace(/\.[^.]+$/, "") +'] ' + langList[key]['name'] + '</div></a>';
+			}
+		}
+		langListText += '</div>'
+		
+		$('#langList').html(langListText);
 	}
 }
 })();
