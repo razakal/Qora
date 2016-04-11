@@ -145,7 +145,7 @@
         <div class="main">
           <div class="col-sm-20 col-centered">
                     <div class="form-horizontal">
-            <legend>Create or update keys in namestorage
+            <legend><span class='translate'>Create or update keys in namestorage</span>
 
 
          <div class="col-sm-4 col-xs-6 pull-right">
@@ -160,7 +160,7 @@
 			<div id=result></div>
             	{{result}}
             <div class="form-group">
-              <label for="select-name" class="col-lg-2 control-label">Name</label>
+              <label for="select-name" class="col-lg-2 control-label translate">Name</label>
               <div class="col-lg-10">
                 <select class="form-control" id="select-name">
                   {% for name in names %}
@@ -169,29 +169,29 @@
 					{% endfor %}
                 </select>
               </div>
-            <label for="title" class="col-lg-2 control-label">Key</label>
+            <label for="title" class="col-lg-2 control-label translate">Key</label>
             <div class="col-lg-10">
-              <input id="key" type="text" placeholder="Key (use key website or leave it blank to create a website)" class="form-control">
+              <input id="key" type="text" placeholder="Key (use key website or leave it blank to create a website)" class="form-control translate">
             </div>
           </div>
             <div class="form-group">
-            <label for="website" class="col-lg-2 control-label"><br>Data</label>
+            <label for="website" class="col-lg-2 control-label"><br><span class='translate'>Data</span></label>
 			<div class="col-lg-10">
-			  <div style="text-align: right;"><input name="WYSIWYG" id="WYSIWYG" type="checkbox"><label for="WYSIWYG">Visual editor</label></div>
+			  <div style="text-align: right;"><input name="WYSIWYG" id="WYSIWYG" type="checkbox"><label for="WYSIWYG" class='translate'>Visual editor</label></div>
               <pre><textarea id="website" rows="10" class="form-control">{{website}}</textarea></pre>
             </div>
           </div>
 
 <div class="form-group" id="divfile">
-  <label for="file" class="col-lg-2 control-label">File</label>
+  <label for="file" class="col-lg-2 control-label translate">File</label>
 <form action="/index/encodefile.html" method="post" enctype="multipart/form-data" id="form">
   <input type="file" name="file" class="file">
 <div class="input-group">
   <span class="input-group-addon"><i class="glyphicon glyphicon-file"></i></span>
-  <input type="text" class="form-control" disabled placeholder="Upload File">
+  <input type="text" class="form-control translate" disabled placeholder="Upload File">
   <span class="input-group-btn">
-    <button class="browse btn btn-primary" type="button"><i class="glyphicon glyphicon-search"></i> Browse</button>
-    <button class="submit btn btn-primary" type="submit" ><i class="glyphicon glyphicon-upload"></i> Upload</button>
+    <button class="browse btn btn-primary" type="button"><i class="glyphicon glyphicon-search"></i> <span class='translate'>Browse</span></button>
+    <button class="submit btn btn-primary" type="submit" ><i class="glyphicon glyphicon-upload"></i> <span class='translate'>Upload</span></button>
   </span>
 </div>
 </form>
@@ -205,9 +205,9 @@
 
         <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
-                <button type="reset" id="btncancel" onclick="javascript:reload()" class="btn btn-default">Cancel</button>
-            	 <button type="preview" id="btnpreview" onclick="javascript:previewValue()" class="btn btn-primary pull-default">Preview</button>
-            	 <button type="submit" id="btnsubmit" onclick="javascript:updateValue()" class="btn btn-primary pull-right">Submit</button>
+                <button type="reset" id="btncancel" onclick="javascript:reload()" class="btn btn-default translate">Cancel</button>
+            	 <button type="preview" id="btnpreview" onclick="javascript:previewValue()" class="btn btn-primary pull-default translate">Preview</button>
+            	 <button type="submit" id="btnsubmit" onclick="javascript:updateValue()" class="btn btn-primary pull-right translate">Submit</button>
               </div>
         </div>
       </div>
@@ -215,12 +215,8 @@
       </div>
     </div>
     </div>
-    <script src="/index/libs/jquery/jquery.2.js"></script>
     <script src="/index/libs/third-party/jquery.form.min.js"></script>
-    <script src="/index/libs/bootstrap/3/js/bootstrap.min.js"></script>
-    <script src="/index/libs/angular/angular.1.4.js"></script>
-	<script src="/index/libs/ckeditor/ckeditor.js"></script>
-    <script src="/index/libs/js/sidebar.js"></script>
+    <script src="/index/libs/ckeditor/ckeditor.js"></script>
     <script type="text/javascript">
     var transformToAssocArray;
     transformToAssocArray = function(prmstr) {
@@ -379,7 +375,7 @@
  	 $('#form').ajaxForm(
     {
        beforeSubmit: function() {
-         $('#results').html('Submitting...');
+         $('#results').html(Lang.getInstance().translate('Submitting...'));
        },
        success: function(data) {
 
@@ -436,7 +432,8 @@
 		 $('ul.nav-tabs > li:nth-child(1) > a').attr('href', '/index/main.html?search=' + $('#name').val());
         	$('ul.nav-tabs > li:nth-child(2) > a').attr('href', '/index/blogsearch.html?search=' + $('#name').val());
 		
-		$("#WYSIWYG").attr("checked",false);			
+		$("#WYSIWYG").attr("checked",false);
+		Lang.getInstance().translateByClass();
     });
     {% endautoescape %}
 
@@ -484,7 +481,6 @@ $(document).on('change', '#WYSIWYG', function(){
 	$("pre").css("padding","11px");
 	$("#divfile").show();
   }
-  
 });
 
     </script>
