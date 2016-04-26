@@ -309,8 +309,7 @@ public class WebResource {
 			} else {
 				pebbleHelper
 						.getContextMap()
-						.put("result",
-								"<div class=\"alert alert-danger\" role=\"alert\">You need to register a name to create a website.<br></div>");
+						.put("result", "needToRegisterAName");
 			}
 			return Response.ok(pebbleHelper.evaluate(),
 					"text/html; charset=utf-8").build();
@@ -843,10 +842,7 @@ public class WebResource {
 		} else {
 			pebbleHelper
 					.getContextMap()
-					.put("result",
-							"<div class=\"alert alert-danger translate\" role=\"alert\">" 
-							+ "You need to register a name to create a profile.<br>"
-							+ "</div>");
+					.put("result", "needToRegisterAName");
 		}
 	}
 
@@ -1410,9 +1406,7 @@ public class WebResource {
 
 				pebbleHelper
 						.getContextMap()
-						.put("errormessage",
-								"<div id=\"result\"><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button>You can't post to this blog! None of your accounts has balance or the blog owner did not allow your accounts to post!<br></div></div>");
-
+						.put("errormessage", "you_can_t_post_to_this_blog");
 			}
 
 			Profile activeProfileOpt = ProfileHelper.getInstance()
@@ -1487,9 +1481,7 @@ public class WebResource {
 
 				pebbleHelper
 						.getContextMap()
-						.put("errormessage",
-								"<div id=\"result\"><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button>You can't post to this blog! None of your accounts has balance or the blog owner did not allow your accounts to post!<br></div></div>");
-
+						.put("errormessage", "you_can_t_post_to_this_blog");
 			}
 
 			Profile activeProfileOpt = ProfileHelper.getInstance()

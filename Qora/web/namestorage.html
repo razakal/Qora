@@ -158,7 +158,9 @@
                   </div></legend>
           <!-- <fieldset> -->
 			<div id=result></div>
-            	{{result}}
+            	{%if result == "needToRegisterAName"%}
+				<div class="alert alert-danger translate" role="alert">You need to register a name to create a website.<br></div>
+				{%endif%}
             <div class="form-group">
               <label for="select-name" class="col-lg-2 control-label translate">Name</label>
               <div class="col-lg-10">

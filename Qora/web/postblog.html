@@ -11,6 +11,11 @@
     <link href="/index/libs/css/style.css" rel="stylesheet">
     <link href="/index/libs/css/sidebar.css" rel="stylesheet">
     <link href="/index/libs/css/timeline.css" rel="stylesheet">
+    <script src="/index/libs/jquery/jquery.2.js"></script>
+    <script src="/index/libs/third-party/jquery.cookie.js"></script>
+	<script src="/index/libs/js/common.js"></script>
+	<script src="/index/libs/js/translation.js"></script>
+
     <style type="text/css">
 	     html, body {
 		   height: 100%;
@@ -91,29 +96,32 @@
           <form class="form-horizontal">
           <fieldset>
           --><br>
-          <legend>Create a new post</legend>
-          <div class="form-group"><div id=result></div>{{ errormessage}}
-            <label for="title" class="col-lg-2 control-label">Title</label>
+          <legend class="translate">Create a new post</legend>
+          <div class="form-group"><div id=result></div>
+			{%if errormessage == "you_can_t_post_to_this_blog"%}
+				<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button><span class="translate">You can't post to this blog! None of your accounts has balance or the blog owner did not allow your accounts to post!</span><br></div>
+			{%endif%}
+            <label for="title" class="col-lg-2 control-label translate">Title</label>
             <div class="col-lg-10">
-              <input id="title" type="text" placeholder="Title (optional)" class="form-control">
+              <input id="title" type="text" placeholder="Title (optional)" class="form-control translate">
             </div>
           </div>
           <div class="form-group">
-            <label for="content" class="col-lg-2 control-label">Content</label>
+            <label for="content" class="col-lg-2 control-label translate">Content</label>
             <div class="col-lg-10">
               <textarea id="content" rows="3" class="form-control"></textarea><span class="help-block"></span><span id="charNum" class="help-block">3000</span>
             </div>
           </div>
           <div class="form-group">
-            <label for="select" class="col-lg-2 control-label">Address</label>
+            <label for="select" class="col-lg-2 control-label translate">Address</label>
             <div class="col-lg-10">
               <select id="addr" value="1" class="form-control">{{ option }}</select>
             </div>
           </div>
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2"><br>
-              <button type="preview" name="do" value="post" onclick="javascript:processpost(true)" class="btn btn-primary">Preview</button>
-              <button type="submit" name="do" value="post" onclick="javascript:processpost(false)" class="btn btn-primary pull-right">Submit</button>
+              <button type="preview" name="do" value="post" onclick="javascript:processpost(true)" class="btn btn-primary translate">Preview</button>
+              <button type="submit" name="do" value="post" onclick="javascript:processpost(false)" class="btn btn-primary pull-right translate">Submit</button>
             </div>
           </div>
           <!--
@@ -145,7 +153,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" name="close" onclick="javascript:hide()" data-dismiss="modal" class="btn btn-default">Close</button>
+            <button type="button" name="close" onclick="javascript:hide()" data-dismiss="modal" class="btn btn-default translate">Close</button>
           </div>
         </div>
       </div>
@@ -175,11 +183,11 @@
         postid = getParameter('postid');
 
 		if (content == '') {
-			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Entering text is mandatory.<br></div>");
+			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" + Lang.getInstance().translate("Entering text is mandatory.") + "<br></div>");
             return 0;
         }
         if (creator == '') {
-			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Entering creator is mandatory.<br></div>");
+			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" + Lang.getInstance().translate("Entering creator is mandatory.") + "<br></div>");
             return 0;
         }
 
@@ -206,7 +214,7 @@
 					addYoutube();
 					$("#result").html('');
 				} else if (data.type == 'postSuccessful') {
-					$("#result").html('<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Your post was successful<br>'+wordwrap(data.result, 50, '<br>', true)+'<br></div>');
+					$("#result").html('<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate("Your post was successful")+'<br>'+wordwrap(data.result, 50, '<br>', true)+'<br></div>');
 					
 					var location1;
 					
@@ -236,11 +244,11 @@
 						message = data.error;
 					}
 
-					$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Your post was NOT successful<br>' + message+'<br></div>');
+					$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate("Your post was NOT successful") + '<br>' + message+'<br></div>');
 				}
 
 			}).fail( function(xhr, textStatus, errorThrown) {
-				$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>ERROR<br>'+xhr.responseText+'<br></div>');
+				$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate("ERROR") + '<br>'+xhr.responseText+'<br></div>');
 			});
 		return 0;
     };
@@ -257,6 +265,8 @@
       {% else %}
       $('#addr').val('{{ oldcreator }}');
       {% endif %}
+	  
+	  Lang.getInstance().translateByClass();
       });
 
 	function addYoutube()
