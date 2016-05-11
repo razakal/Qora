@@ -145,7 +145,7 @@
             <legend class='translate'>Settings</legend>
 			<div id=result></div>
             {%if result == "needToRegisterAName"%}
-				<div class="alert alert-danger translate" role="alert">You need to register a name to create a profile.<br></div>
+				<div class="alert alert-danger" role="alert"><span class="translate">You need to register a name to create a profile.</span><br></div>
 			{%endif%}
             <div class="form-group">
               <label for="select-name" class="col-lg-2 control-label translate">Name</label>
@@ -291,15 +291,21 @@
 			.done( function(data) {
 				if (data.type == 'settingsSuccessfullySaved')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Settings successfully saved.<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">" 
+																+ Lang.getInstance().translate("Settings successfully saved.")
+																+ "<br></div>";
 				}
 				else if(data.type == 'parametersMissing')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Some parameters are missing.<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" 
+																+ Lang.getInstance().translate("Some parameters are missing.")
+																+ "<br></div>";
 				}
 				else if(data.type == 'profileNameisnotAllowed')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Profile Name is not Allowed.<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" 
+																+ Lang.getInstance().translate("Profile Name is not Allowed.") 
+																+ "<br></div>";
 				}
 				else if (data.type == 'error')
 				{
@@ -310,15 +316,21 @@
 						message = data.error;
 					}
 
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occurred while saving settings.<br>"+message+"<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" 
+																+ Lang.getInstance().translate("An error occurred while saving settings.")
+																+ "<br>"+message+"<br></div>";
 				}
 				else
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Unknown response:<br>"+data+"<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" 
+																+ Lang.getInstance().translate("Unknown response")
+																+ ":<br>"+data+"<br></div>";
 				}
 			})
 			.fail( function(xhr, textStatus, errorThrown) {
-				document.getElementById('result').innerHTML = '<div class=\"alert alert-danger\" role=\"alert\">ERROR<br>'+xhr.responseText+'<br></div>';
+				document.getElementById('result').innerHTML = '<div class=\"alert alert-danger\" role=\"alert\">' 
+															+ Lang.getInstance().translate('ERROR') 
+															+ '<br>'+xhr.responseText+'<br></div>';
 			});
     };
 

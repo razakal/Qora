@@ -272,10 +272,10 @@
             <div class="tl-profile-text">
               <h1>{{blogprofile.getName().getName()}}</h1>
               <ul class="profile-options list-inline">&nbsp;&nbsp;
-                <li class="co-tabs pull-left"><ul class="co-lists list-unstyled"><li class="co-top">Followers</li><li class="co-bottom">{{ follower.size() }}</li></ul></li>
-                <li class="co-tabs pull-left"><ul class="co-lists list-unstyled"><li class="co-top">Following</li><li class="co-bottom">{{ blogprofile.getFollowedBlogs().size() }}</li></ul></li>
+                <li class="co-tabs pull-left"><ul class="co-lists list-unstyled"><li class="co-top translate">Followers</li><li class="co-bottom">{{ follower.size() }}</li></ul></li>
+                <li class="co-tabs pull-left"><ul class="co-lists list-unstyled"><li class="co-top translate">Following</li><li class="co-bottom">{{ blogprofile.getFollowedBlogs().size() }}</li></ul></li>
           		{% if blogprofile is not empty and  blogprofile.isBlogEnabled()%}
-              <li class="po-tabs pull-right"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">{%if isFollowing%}Unfollow {%else%}Follow {%endif%}<div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
+              <li class="po-tabs pull-right"><a><span style='cursor: pointer;' onclick="javascript:processfollow()">{%if isFollowing%}<span class="translate">Unfollow</span> {%else%}<span class="translate">Follow</span> {%endif%}<div id="divFollow" class="glyphicon glyphicon-user"{%if isFollowing%}style="color: #6467FF;"{%else%}{%endif%}></div> <span id=profFollower>
 			  </span></span></a></li>
               {%endif%}
               </ul>
@@ -381,7 +381,7 @@
                 {%if blogprofile is empty or blogprofile.isCommentingAllowed() %}
                     <form class="form-inline" role="form">
                       <div class="form-group">
-                        <a style="cursor: pointer;" onclick="javascript:showCommentForm('{{blogpost.getSignature()}}');">Comment</a>
+                        <a style="cursor: pointer;" onclick="javascript:showCommentForm('{{blogpost.getSignature()}}');" class="translate">Comment</a>
                       </div>
                     </form>
                 {%endif%}
@@ -390,9 +390,9 @@
               </div>
             </li>			{% endfor %}
             {%else%}
-             <h1 style="font-family: Verdana;">This blog is currently disabled.<br>
+             <h1 style="font-family: Verdana;"><span class="translate">This blog is currently disabled.</span><br>
              {% if ownProfileName is not null %}
-        	You can enable the blog <a href="/index/settings.html?profilename={{ownProfileName}}">here</a>
+        	<span class="translate">You can enable the blog <a href='/index/settings.html?profilename={{ownProfileName}}'>here</a></span>
         	{%endif%}
       		</h1><br>
             {% endif %}
@@ -436,14 +436,15 @@
       // });
 			if (!blogname) {
 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
-								+ "You can't follow the Mainblog<br>"
+								+ Lang.getInstance().translate("You can't follow the Mainblog")
+								+ "<br>"
 								+ "</div></center>");
 				return 0;
 			}
 
 			{% if activeProfile is null %}
 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
-								+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+								+ Lang.getInstance().translate("This feature can only be used with an active profile.\nPlease choose a Profile first!")
 								+ "</div></center>");
 				return 0;
 			{%  endif %}
@@ -455,25 +456,33 @@
 				follow: follow
 			}).done( function(data) {
 				if(data.type == 'youAlreadyFollowThisBlog'){
-					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
-										+ "You already follow this blog"
+					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" 
+										+ Lang.getInstance().translate("Blog follow not successful<br>You already follow this blog")
 										+ "</div></center>");
 				} else if (data.type == 'youCantFollowYourOwnProfiles'){
-					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
-										+ "You can't follow your own profiles"
+					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" 
+										+ Lang.getInstance().translate("Blog follow not successful<br>You can't follow your own profiles")
 										+ "</div></center>");
 				} else if (data.type == 'YouFollowThisBlogNow'){
-					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You follow this blog now<br>"
+					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" 
+										+ Lang.getInstance().translate("You follow this blog now")
+										+ "<br>"
 										+ "</div>");
 				} else if (data.type == 'BlogFollowNotSuccessful'){
-					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog follow not successful<br>"
+					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" 
+										+ Lang.getInstance().translate("Blog follow not successful")
+										+ "<br>"
 										+ parseError(data.result)
 										+ "</div></center>");
 				} else if (data.type == 'unfollowSuccessful'){
-					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Unfollow successful<br>"
+					$("#apimessage").html("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" 
+										+ Lang.getInstance().translate("Unfollow successful")
+										+ "<br>"
 										+ "</div>");
 				} else if (data.type == 'blogUnfollowNotSuccessful'){
-					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Blog unfollow not successful<br>"
+					$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" 
+										+ Lang.getInstance().translate("Blog unfollow not successful")
+										+ "<br>"
 										+ parseError(data.result)
 										+ "</div></center>");
 				}
@@ -498,8 +507,11 @@
 				}
 
 			}).fail( function(xhr, textStatus, errorThrown) {
-				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Follow Error<br>'
-										+ 'Connection Error<br>'
+				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Follow Error')
+										+ '<br>' 
+										+ Lang.getInstance().translate('Connection Error')
+										+ '<br>'
 										+ xhr.responseText + '</div></center>');
 			});
 
@@ -536,10 +548,12 @@
 				signature: signature,
 			}).done( function(data) {
 				if(data.type == 'deleteError'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate('Delete Error') + '<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Delete Error') + '<br>'
 										+ Lang.getInstance().translate(data.errordetail) + '</div></center>');
 				} else if (data.type == 'deleteSuccessful'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate('Delete successful') + '<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Delete successful') + '<br>'
 										+ '</div></center>');
 					setTimeout(function() { window.location.reload(); }, 1500);
 				}
@@ -547,7 +561,8 @@
 
 			}).fail( function(xhr, textStatus, errorThrown) {
 			
-				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate('Delete Error') + '<br>'
+				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Delete Error') + '<br>'
 										+ Lang.getInstance().translate('Connection Error') + '<br>'
 										+ parseError(xhr.responseText) + '</div></center>');
 			});
@@ -562,10 +577,12 @@
 				signature: signature,
 			}).done( function(data) {
 				if(data.type == 'deleteError'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate('Delete Error') + '<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Delete Error') + '<br>'
 										+ Lang.getInstance().translate(parseError(data.errordetail)) + '</div></center>');
 				} else if (data.type == 'deleteSuccessful'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate('Delete successful') + '<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Delete successful') + '<br>'
 										+ '</div></center>');
 					setTimeout(function() { window.location.reload(); }, 1500);
 				}
@@ -573,7 +590,8 @@
 
 			}).fail( function(xhr, textStatus, errorThrown) {
 				
-				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate('Delete Error') + '<br>'
+				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Delete Error') + '<br>'
 										+ Lang.getInstance().translate('Connection Error') + '<br>'
 										+ parseError(xhr.responseText) + '</div></center>');
 			});
@@ -586,7 +604,7 @@
 
 			{% if activeProfile is null %}
 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
-									+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+									+ Lang.getInstance().translate("This feature can only be used with an active profile.\nPlease choose a Profile first!")
 									+ "</div></center>");
 				return 0;
 			{%  endif %}
@@ -598,31 +616,45 @@
 				blogname: blogname,
 			}).done( function(data) {
 				if(data.type == 'YouAlreadySharedThisPost'){
-					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You already shared this post'
+					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('You already shared this post')
 										+ '<br></div></center>');
 				} else if (data.type == 'YouCantShareYourOwnPosts'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
-										+ 'This Blogentry is already in your blog.'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Share not successful')
+										+ '<br>'
+										+ Lang.getInstance().translate('This Blogentry is already in your blog.')
 										+ '</div></center>');
 				} else if (data.type == 'ShareSuccessful'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share successful<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Share successful')
+										+ '<br>'
 										+ '</div></center>');
 				} else if (data.type == 'ShareNotSuccessful'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Share not successful')
+										+ '<br>'
 										+ parseError(data.result) + '</div></center>');
 				} else if (data.type == 'error'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share Error<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Share Error')
+										+ '<br>'
 										+ data.error + '</div></center>');
 				}else if (data.type == 'BlogIsDisabled'){
-					("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share not successful<br>'
-										+ 'The Blog of your active profile is disabled!'
+					("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Share not successful')
+										+ '<br>'
+										+ Lang.getInstance().translate('The Blog of your active profile is disabled!')
 										+ '</div></center>');
 				}
 
 
 			}).fail( function(xhr, textStatus, errorThrown) {
-				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Share Error<br>'
-										+ 'Connection Error<br>'
+				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Share Error')
+										+ '<br>'
+										+ Lang.getInstance().translate('Connection Error')
+										+ '<br>'
 										+ parseError(xhr.responseText) + '</div></center>');
 			});
 
@@ -638,7 +670,7 @@
 
 			{% if activeProfile is null %}
 				$("#apimessage").html("<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>"
-									+ "This feature can only be used with an active profile.\nPlease choose a Profile first!"
+									+ Lang.getInstance().translate("This feature can only be used with an active profile.\nPlease choose a Profile first!")
 									+ "</div></center>");
 				return 0;
 			{%  endif %}
@@ -650,14 +682,19 @@
 				like: like
 			}).done( function(data) {
 				if(data.type == 'YouAlreadyLikeThisPost'){
-					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>You already like this post'
+					$("#apimessage").html('<center><div class="alert alert-dismissible alert-danger" role="alert"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
+										+ Lang.getInstance().translate('You already like this post')
 										+ '<br></div></center>');
 				} else if (data.type == 'YouCantLikeYourOwnPosts'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like not successful<br>'
-										+ 'You can\'t like your own posts'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
+										+ Lang.getInstance().translate('Like not successful')
+										+ '<br>'
+										+ Lang.getInstance().translate('You can\'t like your own posts')
 										+ '</div></center>');
 				} else if (data.type == 'LikeSuccessful'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like successful<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
+										+ Lang.getInstance().translate('Like successful')
+										+ '<br>'
 										+ '</div></center>');
 				} else if (data.type == 'LikeNotSuccessful'){
 					try {
@@ -667,20 +704,27 @@
 						message = data.result;
 					}
 
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like not successful<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Like not successful')
+										+ '<br>'
 										+ message + '</div></center>');
 				} else if (data.type == 'LikeRemovedSuccessful'){
 
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like removed successful<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
+										+ Lang.getInstance().translate('Like removed successful') 
+										+ '<br>'
 										+ '</div></center>');
 				} else if (data.type == 'LikeRemovedNotSuccessful'){
 					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
-										+ 'Like remove not successful<br>'
+										+ Lang.getInstance().translate('Like remove not successful')
+										+ '<br>'
 										+ parseError(data.result)
 										+ '</div></center>');
 					$("#profLikes").html(data.newlikes);
 				} else if (data.type == 'error'){
-					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like Error<br>'
+					$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+										+ Lang.getInstance().translate('Like Error')
+										+ '<br>'
 										+ parseError(data.error) + '</div></center>');
 				}
 
@@ -698,8 +742,11 @@
 
 
 			}).fail( function(xhr, textStatus, errorThrown) {
-				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>Like Error<br>'
-										+ 'Connection Error<br>'
+				$("#apimessage").html('<center><div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>'
+										+ Lang.getInstance().translate('Like Error')
+										+ '<br>'
+										+ Lang.getInstance().translate('Connection Error')
+										+ '<br>'
 										+ xhr.responseText + '</div></center>');
 			});
 
@@ -837,6 +884,8 @@
       $('#{{blogpost.getSignature()}} > .timeline-badge').toggleClass("highlighted");
    };
     {% endfor %}
+	
+	Lang.getInstance().translateByClass();
   });
 
     </script>

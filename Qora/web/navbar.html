@@ -64,7 +64,7 @@
       <li><a href="/index/settings.html">
       <span class="item"><span class="item-left">
         <i id="prof-glyph" class="glyphicon glyphicon-exclamation-sign"></i>
-        <span class="item-info"><span>Profiles disabled</span></span></span><span class="item-right"></span></span></a></li>
+        <span class="item-info"><span class="translate">Profiles disabled</span></span></span><span class="item-right"></span></span></a></li>
 		{% else %}
 		{% for profile in profiles %}
             <li><a href="/index/blog.html?blogname={{profile.getName().getName()}}&amp;switchprofile={{profile.getName().getName()}}"><span class="item"><span class="item-left">
@@ -126,3 +126,8 @@
     </div>
   </div>
 </div>
+<script type="text/javascript">
+$(document).ready(function() {
+	Lang.getInstance().translateByClass();
+});
+</script>

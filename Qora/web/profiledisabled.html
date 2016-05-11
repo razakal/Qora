@@ -164,9 +164,9 @@
         <div class="col-md-12">
             <div class="error-template">
                <div class="container"><img src="img/qora.png" alt="">
-      <h1 style="font-family: Verdana;">This profile is currently disabled.
+      <h1 style="font-family: Verdana;"><span class="translate">This profile is currently disabled.</span>
         {% if ownProfileName is not null %}
-        	You can enable the profile <a href="/index/settings.html?profilename={{ownProfileName}}">here</a>
+        	<span class="translate">You can enable the profile <a href='/index/settings.html?profilename={{ownProfileName}}'>here</a></span>
         {%endif%}
       </h1><br>
     </div>
@@ -234,6 +234,7 @@
                 $('#button').trigger('click');
             }
         });
+		Lang.getInstance().translateByClass();
     });
     </script>
     <script type="text/javascript">

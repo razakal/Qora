@@ -136,7 +136,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" onclick="javascript:hide()" data-dismiss="modal" aria-hidden="true" class="close">×</button>
-            <h4 class="modal-title">Post preview</h4>
+            <h4 class="modal-title translate">Post preview</h4>
           </div>
           <div class="modal-body">
             <div class="main">
@@ -183,15 +183,21 @@
         postid = getParameter('postid');
 
 		if (content == '') {
-			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" + Lang.getInstance().translate("Entering text is mandatory.") + "<br></div>");
+			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" 
+							+ Lang.getInstance().translate("Entering text is mandatory.") 
+							+ "<br></div>");
             return 0;
         }
         if (creator == '') {
-			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" + Lang.getInstance().translate("Entering creator is mandatory.") + "<br></div>");
+			$("#result").html("<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>" 
+							+ Lang.getInstance().translate("Entering creator is mandatory.") 
+							+ "<br></div>");
             return 0;
         }
 
-		$("#result").html('<div class=\"alert alert-info\" role=\"alert\">Sending...<br></div>');
+		$("#result").html('<div class=\"alert alert-info\" role=\"alert\">' 
+						+ Lang.getInstance().translate('Sending...')
+						+ '<br></div>');
 
 		$.post(
 			"/index/postblogprocessing.html",
@@ -214,7 +220,10 @@
 					addYoutube();
 					$("#result").html('');
 				} else if (data.type == 'postSuccessful') {
-					$("#result").html('<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate("Your post was successful")+'<br>'+wordwrap(data.result, 50, '<br>', true)+'<br></div>');
+					$("#result").html('<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+									+ Lang.getInstance().translate("Your post was successful") 
+									+ '<br>' + wordwrap(data.result, 50, '<br>', true) 
+									+ '<br></div>');
 					
 					var location1;
 					
@@ -244,11 +253,15 @@
 						message = data.error;
 					}
 
-					$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate("Your post was NOT successful") + '<br>' + message+'<br></div>');
+					$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+									+ Lang.getInstance().translate("Your post was NOT successful") 
+									+ '<br>' + message + '<br></div>');
 				}
 
 			}).fail( function(xhr, textStatus, errorThrown) {
-				$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' + Lang.getInstance().translate("ERROR") + '<br>'+xhr.responseText+'<br></div>');
+				$("#result").html('<div class=\"alert alert-dismissible alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>' 
+								+ Lang.getInstance().translate("ERROR") 
+								+ '<br>'+xhr.responseText+'<br></div>');
 			});
 		return 0;
     };

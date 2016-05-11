@@ -159,7 +159,7 @@
           <!-- <fieldset> -->
 			<div id=result></div>
             	{%if result == "needToRegisterAName"%}
-				<div class="alert alert-danger translate" role="alert">You need to register a name to create a website.<br></div>
+					<div class="alert alert-danger" role="alert"><span class="translate">You need to register a name to create a website.</span><br></div>
 				{%endif%}
             <div class="form-group">
               <label for="select-name" class="col-lg-2 control-label translate">Name</label>
@@ -247,7 +247,7 @@
     var updateValue;
     updateValue = function() {
 
-		document.getElementById('result').innerHTML = '<div class=\"alert alert-info\" role=\"alert\">Saving...please confirm the security call and then wait until you get a success message! If the transaction amount is high this may take some time...<br></div>';
+		document.getElementById('result').innerHTML = '<div class=\"alert alert-info\" role=\"alert\">' + Lang.getInstance().translate('Saving...please confirm the security call and then wait until you get a success message! If the transaction amount is high this may take some time...') + '<br></div>';
 
 		var websitebuf;
 		
@@ -267,15 +267,15 @@
 			.done( function(data) {
 				if (data.type == 'settingsSuccessfullySaved')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Key successfully saved.<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">" + Lang.getInstance().translate("Key successfully saved.") + "<br></div>";
 				}
 				else if(data.type == 'parametersMissing')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Some parameters are missing.<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" + Lang.getInstance().translate("Some parameters are missing.") + "<br></div>";
 				}
 				else if(data.type == 'badKey')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">This key is an internal qora key and can't be edited this way!<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" + Lang.getInstance().translate("This key is an internal qora key and can't be edited this way!") + "<br></div>";
 				}
 				else if (data.type == 'error')
 				{
@@ -286,11 +286,11 @@
 						message = data.error;
 					}
 
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occurred while saving the website.<br>"+message+"<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" + Lang.getInstance().translate("An error occurred while saving the website.") + "<br>"+message+"<br></div>";
 				}
 				else
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Unknown response:<br>"+data+"<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" + Lang.getInstance().translate("Unknown response") + ":<br>"+data+"<br></div>";
 				}
 			})
 			.fail( function(xhr, textStatus, errorThrown) {
@@ -301,7 +301,7 @@
 						message = xhr.responseText;
 				}
 
-				document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occurred while saving the website.<br>"+message+"<br></div>";
+				document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" + Lang.getInstance().translate("An error occurred while saving the website.") + "<br>"+message+"<br></div>";
 			});
     };
 
@@ -384,19 +384,20 @@
        			if (data.type == 'success')
 				{
 			       document.getElementById('website').value = data.result + "";
-			         document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">The file has been added to the key! You still need to submit the result to make it persistent!<br></div>";
+			         document.getElementById('result').innerHTML = "<div class=\"alert alert-success\" role=\"alert\">" + Lang.getInstance().translate("The file has been added to the key! You still need to submit the result to make it persistent!") + "<br></div>";
 				}
-				else  if(data.type =='error')
+				else if(data.type =='error')
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">"+data.result+"<br></div>";
-				}else
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" + Lang.getInstance().translate(data.result) + "<br></div>";
+				}
+				else
 				{
-					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">Unknown response:<br>"+data+"<br></div>";
+					document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" + Lang.getInstance().translate("Unknown response") + ":<br>"+data+"<br></div>";
 				}
 
         },
         error:function(){
-                document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error occured:<br></div>";
+                document.getElementById('result').innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">" + Lang.getInstance().translate("An error occured") + ":<br></div>";
             }
     });
 
