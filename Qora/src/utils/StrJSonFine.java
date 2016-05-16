@@ -31,10 +31,12 @@ public class StrJSonFine{
     	StringWriter output = new StringWriter();
     	
     	char ch;
+    	char prevCh = 0;
+    	
     	for (int n = 0; n < chars.length; n++) {
     		ch = chars[n];
     		
-    		if(ch == '"' && n > 0 && chars[n-1] != '\\' )
+    		if(ch == '"' && prevCh != '\\' )
     		{
     			value = !value;
     		}
@@ -55,14 +57,19 @@ public class StrJSonFine{
 	    		    indent--;
 	    		    writeIndentation(output, indent);
 	    		    output.write(ch);
-	    		} else {
+	    		} else if (ch == ':') {
+	    			output.write(ch);
+	    			output.write(" ");
+    			}
+    			else 
+    			{
 	    			output.write(ch);
 	    		}
     		}
     		else {
     			output.write(ch);
 	    	}
-    			
+    		prevCh = ch;
 		}
     	return output.toString();
     }
