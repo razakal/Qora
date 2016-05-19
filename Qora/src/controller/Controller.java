@@ -191,11 +191,11 @@ public class Controller extends Observable {
 	public void statusInfo()
 	{
 		LOGGER.info(
-			"STATUS OK\n" 
-			+ "| Last Block Signature: " + Base58.encode(this.blockChain.getLastBlock().getSignature()) + "\n"
-			+ "| Last Block Height: " + this.blockChain.getLastBlock().getHeight() + "\n"
-			+ "| Last Block Time: " + DateTimeFormat.timestamptoString(this.blockChain.getLastBlock().getTimestamp()) + "\n"
-			+ "| Last Block Found " + DateTimeFormat.timeAgo(this.blockChain.getLastBlock().getTimestamp()) + " ago."
+			Lang.getInstance().translate("STATUS OK") + "\n" 
+			+ "| " + Lang.getInstance().translate("Last Block Signature") + ": " + Base58.encode(this.blockChain.getLastBlock().getSignature()) + "\n"
+			+ "| " + Lang.getInstance().translate("Last Block Height") + ": " + this.blockChain.getLastBlock().getHeight() + "\n"
+			+ "| " + Lang.getInstance().translate("Last Block Time") + ": " + DateTimeFormat.timestamptoString(this.blockChain.getLastBlock().getTimestamp()) + "\n"
+			+ "| " + Lang.getInstance().translate("Last Block Found %time% ago.").replace("%time%", DateTimeFormat.timeAgo(this.blockChain.getLastBlock().getTimestamp()))
 			);
 	}
 	
