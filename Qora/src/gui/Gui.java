@@ -11,6 +11,8 @@ import javax.swing.UIManager;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.log4j.Logger;
+
 import controller.Controller;
 import gui.create.NoWalletFrame;
 import gui.create.SettingLangFrame;
@@ -19,6 +21,8 @@ import settings.Settings;
 import utils.SysTray;
 
 public class Gui extends JFrame{
+
+	static Logger LOGGER = Logger.getLogger(Gui.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -57,7 +61,11 @@ public class Gui extends JFrame{
         } 
         else
         {
-        	new SettingLangFrame();
+        	try {
+        		new SettingLangFrame();
+        	} catch (Exception e) {
+				LOGGER.error(e);
+        	}
         } 
         
         //CHECK IF WALLET EXISTS
