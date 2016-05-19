@@ -872,7 +872,7 @@ function trades(data)
 			
 		output += '<td align=center><a href=?trade=' + data.trades[key].initiatorTxSignature + '/' + data.trades[key].targetTxSignature + '>#';
 		output += '<td align=center>' + data.trades[key].dateTime;
-		output += '<td align=center>' + data.trades[key].type;
+		output += '<td align=center>' + Lang.getInstance().translate(data.trades[key].type);
 		
 		
 		if (data.trades[key].type == 'sell')
@@ -1182,7 +1182,7 @@ function mainQuery(data) {
 			
 			if (data.addresses.length == 1) 
 			{
-				output += '<font size="+1">Account: <a href="?addr=' + data.addresses[0] + '">' + data.addresses[0] + '</a>';
+				output += '<font size="+1">' + Lang.getInstance().translate('Account') + ': <a href="?addr=' + data.addresses[0] + '">' + data.addresses[0] + '</a>';
 				
 				output += ' <a href="javascript:void(0)" style="color:#000000;" onclick="showQR(\'' + data.addresses[0] + '\',this)"><span class="glyphicon glyphicon-qrcode"></span></a>';
 				
@@ -1197,7 +1197,7 @@ function mainQuery(data) {
 					
 					n ++;
 					
-					output +='<font size="+1">Account ' +  n  + ': <a href="?addr=' + address + '">' + address + '</a>';
+					output +='<font size="+1">' + Lang.getInstance().translate('Account') + ' ' +  n  + ': <a href="?addr=' + address + '">' + address + '</a>';
 				
 					output += ' <a href="javascript:void(0)" style="color:#000000;" onclick="showQR(\'' + address + '\',this)"><span class="glyphicon glyphicon-qrcode"></span></a>';
 					
@@ -2004,7 +2004,7 @@ function mainQuery(data) {
 						
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-						output += '<b>Action</b></td><td width="290"><b>' + Lang.getInstance().translate('New Owner') + '</b></td><td width=100><b>' + Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' + Lang.getInstance().translate('New Owner') + '</b></td><td width=100><b>' + Lang.getInstance().translate('Fee') + '</b></td>';
 						output += '<td><b>' + Lang.getInstance().translate('Name') + ':</b> <a href="?name=' + encodeURIComponent(data[i].transaction.name) + '">' + htmlFilter(data[i].transaction.name) + '</a></td>';
 						output += '<td><b>' + Lang.getInstance().translate('Site') + ':</b> <a href=/' + encodeURIComponent(data[i].transaction.name) + '>http://' +  document.location.host + '/' + htmlFilter(data[i].transaction.name)  + '</a></td>';
 						
@@ -2351,7 +2351,7 @@ function mainQuery(data) {
 
 						output += '<table width="100%" class="table table-striped"><tr><td width="70" align="center">';
 						
-						output += '<b>Action</b></td><td width="290"><b>' + Lang.getInstance().translate('Creator') + '</b></td><td width=100><b>' + Lang.getInstance().translate('Fee') + '</b></td>';
+						output += '<b>' + Lang.getInstance().translate('Action') + '</b></td><td width="290"><b>' + Lang.getInstance().translate('Creator') + '</b></td><td width=100><b>' + Lang.getInstance().translate('Fee') + '</b></td>';
 						output += '<td><b>' + Lang.getInstance().translate('Poll') + '</b></td><td><b>' + Lang.getInstance().translate('Option') + '</b></td>';
 						if (data[i].hasOwnProperty('tXbalance'))
 						{
@@ -3542,11 +3542,11 @@ function start() {
 		
 		if (addr[0].substring(0, 1) == 'A')
 		{
-			document.title = title + ' - AT Account - ' + params['addr'];
+			document.title = title + ' - ' + Lang.getInstance().translate('AT Account') + ' - ' + params['addr'];
 		}
 		else if (addr[0].substring(0, 1) == 'Q')
 		{
-			document.title = title + ' - Account - ' + params['addr'];
+			document.title = title + ' - ' + Lang.getInstance().translate('Account') + ' - ' + params['addr'];
 		}
 		
 		return;
@@ -3732,7 +3732,7 @@ function start() {
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a id=home href=''>BlockExplorer</a></li>
+            <li><a id=home href='' class="translate">Block Explorer</a></li>
 
 			<li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" onclick="Lang.loadLangList()" class="dropdown-toggle"><span class="glyphicon glyphicon-globe"></span></a>
 				<div role="menu" class="dropdown-menu" id=langList>
@@ -3747,15 +3747,15 @@ function start() {
               <div class="list">
                 <div class="row">
 					<div class="col-sm-4 col-xs-6"><a href="/index/webdirectory.html">
-                      <div class="menu"><span class="glyphicon glyphicon-globe"></span><a href="/index/webdirectory.html">Webdirectory</a></div></a></div>
+                      <div class="menu"><span class="glyphicon glyphicon-globe"></span><a href="/index/webdirectory.html" class="translate">Webdirectory</a></div></a></div>
 					<div class="col-sm-4 col-xs-6"><a href="/index/blogdirectory.html">
-                      <div class="menu"><span class="glyphicon glyphicon-list"></span><a href="/index/blogdirectory.html">Blogdirectory</a></div></a></div>
+                      <div class="menu"><span class="glyphicon glyphicon-list"></span><a href="/index/blogdirectory.html" class="translate">Blogdirectory</a></div></a></div>
                   <div class="col-sm-4 col-xs-6"><a href="/index/blog.html">
-                      <div class="menu"><span class="glyphicon glyphicon-edit"></span><a href="/index/blog.html">Blog</a></div></a></div>
+                      <div class="menu"><span class="glyphicon glyphicon-edit"></span><a href="/index/blog.html" class="translate">Blog</a></div></a></div>
                   <div class="col-sm-4 col-xs-6"><a href="/index/namestorage.html">
-                      <div class="menu"><span class="glyphicon glyphicon-file"></span><a href="/index/namestorage.html">NameStorage</a></div></a></div>
+                      <div class="menu"><span class="glyphicon glyphicon-file"></span><a href="/index/namestorage.html" class="translate">NameStorage</a></div></a></div>
 					<div class="col-sm-4 col-xs-6"><a href="/index/hashtag.html?hashtag=qora">
-                      <div class="menu"><span class="glyphicon glyphicon-fire"></span><a href="/index/hashtag.html?hashtag=qora">Hashtag</a></div></a></div>
+                      <div class="menu"><span class="glyphicon glyphicon-fire"></span><a href="/index/hashtag.html?hashtag=qora" class="translate">Hashtag</a></div></a></div>
                 </div>
               </div>
             </div>
@@ -3835,4 +3835,5 @@ function start() {
 	document.getElementById('linkPolls').innerHTML = Lang.getInstance().translate("Polls");
 	document.getElementById('linkAssets').innerHTML = Lang.getInstance().translate("Assets");
 	document.getElementById('linkATs').innerHTML = Lang.getInstance().translate("AT");
+	Lang.getInstance().translateByClass();
 </script>
