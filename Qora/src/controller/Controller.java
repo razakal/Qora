@@ -94,7 +94,7 @@ public class Controller extends Observable {
 	
 	private static final Logger LOGGER = Logger.getLogger(Controller.class);
 	private String version = "0.26.0";
-	private String buildTime = "2016-05-20 00:00:00 UTC";
+	private String buildTime = "2016-05-24 00:00:00 UTC";
 	private long buildTimestamp;
 	
 	public static final String releaseVersion = "0.26.0";
