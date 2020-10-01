@@ -1,4 +1,4 @@
-# Qora
+# Qora details 
 Public GIT for the Qora cryptocurrency project.
 
 * Website: http://qora.org
